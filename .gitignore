@@ -1,0 +1,15 @@
+# Java
+*.class
+*.jar
+
+# Sublime
+*.sublime-workspace
+
+# OS X
+*~
+*.DS_Store
+*.Trashes
+
+# Windows
+thumbs.db
+Desktop.ini
