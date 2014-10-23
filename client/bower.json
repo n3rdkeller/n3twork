@@ -1,0 +1,20 @@
+{
+  "name": "n3twork",
+  "version": "0.1.0",
+  "authors": [
+    "Robin Temme <robin@n3rdkeller.de>",
+    "Johannes Wolf <johannes@n3rdkeller.de>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.2.0"
+  }
+}
