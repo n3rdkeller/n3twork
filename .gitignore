@@ -2,8 +2,9 @@
 *.class
 *.jar
 
-# Bootstrap
-client/bower_components/
+# Bootstrap & jQuery
+# (uncomment if there's a better solution)
+# client/bower_components/
 
 # Sublime
 *.sublime-workspace
