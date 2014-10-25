@@ -3,11 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>n3twork</title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
   </head>
   <body style="padding-top: 70px;">
 
@@ -64,11 +66,31 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-    <div class="container-fluid">
+    <div class="container">
 
-      <h1>Hello, world!</h1>
+      <div class="jumbotron landing-page" style="background: #00CC66;">
+        <h1 class="text-center">w3lcome to n3twork, the next generation social experience!</h1>
+      </div>
 
+      <div class="container col-lg-4 col-lg-offset-4 text-center">
+        <form>
+          <p class="input-group">
+            <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+            <input class="form-control" type="text" placeholder="Email address">
+          </p>
+          <p class="input-group">
+            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+            <input class="form-control" type="password" placeholder="Password">
+          </p>
+          <p>
+            <input type="submit" class="btn btn-primary" value="Register">
+             now or
+            <a href="#">Login</a>
+          </p>
+        </form>
+      </div>
     </div>
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="js/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
