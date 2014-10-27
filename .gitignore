@@ -1,6 +1,6 @@
 # Java
 *.class
-*.jar
+#*.jar
 
 # Bootstrap & jQuery
 # (uncomment if there's a better solution)
