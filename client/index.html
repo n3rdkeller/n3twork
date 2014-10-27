@@ -4,18 +4,20 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
     <title>n3twork</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- BootstrapValidator -->
+    <link rel="stylesheet" href="css/bootstrapValidator.min.css"/>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="css/font-awesome.min.css">
   </head>
-  <body style="padding-top: 70px;">
+  <body>
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-static-top hidden-xs" role="navigation">
       <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
             <span class="sr-only">Toggle navigation</span>
@@ -26,7 +28,6 @@
           <a class="navbar-brand" href="#">n3twork</a>
         </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-collapse-1">
           <ul class="nav navbar-nav">
        <!-- <li class="active"><a href="#">Link</a></li>
@@ -51,16 +52,18 @@
             <button type="submit" class="btn btn-default">Submit</button>
           </form> -->
      <!-- <ul class="nav navbar-nav navbar-right"> -->
-          <form class="navbar-form navbar-right" role="search">
-            <span class="input-group">
-              <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-              <input class="form-control" type="text" placeholder="Email address">
-            </span>
-            <span class="input-group">
+          <form class="navbar-form navbar-right" method="post" role="form">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+              <input class="form-control" type="text" name="login" placeholder="Username or Email">
+            </div>
+            <div class="input-group">
               <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
-              <input class="form-control" type="password" placeholder="Password">
-            </span>
-            <input type="submit" class="btn btn-primary" value="Login">
+              <input class="form-control" type="password" name="pw" placeholder="Password">
+            </div>
+            <div class="input-group">
+              <button type="submit" class="btn btn-warning" value="Login">Login</button>
+            </div>
 <!--
 
             <div class="form-group">
@@ -85,40 +88,157 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
-    <div class="container" style="background: #00CCFF; ">
+    <div class="container" style="background: #FF8000;"> <!-- 58ACFA FF8000 -->
 
-      <!-- <div class="jumbotron landing-page" style="background: #00CCFF;"> -->
-        <h1 class="text-center">w3lcome to n3twork</h1>
-      <!-- </div> -->
-
-      <div class="container col-lg-4 col-lg-offset-4 text-center">
-        <form class="registerForm" method="post">
-          <p class="input-group">
-            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-            <input class="form-control" type="text" placeholder="Username">
-          </p>
-          <p class="input-group">
-            <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-            <input class="form-control" type="text" placeholder="Email address">
-          </p>
-          <p class="input-group">
-            <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
-            <input class="form-control" type="password" placeholder="Password">
-          </p>
-          <p class="input-group">
-            <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
-            <input class="form-control" type="password" placeholder="Retype password">
-          </p>
-          <p>
-            <input type="submit" class="btn btn-primary" value="Register">
-          </p>
-        </form>
+      <div class="page-header">
+        <h1 class="text-center">w3lcome to n3twork</h1><br>
       </div>
+
+      <div class="hidden-sm hidden-md hidden-lg">
+        <!-- TODO: login form for mobiles -->
+      </div>
+
+      <!-- <div class="row"> -->
+        <form class="registerForm col-lg-8 col-lg-offset-2 form-horizontal" role="form">
+          <div class="col-lg-4 col-lg-offset-4">
+            <div class="form-group">
+              <input type="text" class="form-control" name="user" placeholder="Username" />
+            </div>
+
+            <div class="form-group">
+              <input type="text" class="form-control" id="mailadjust" name="email" placeholder="Email"/>
+            </div>
+
+            <div class="form-group">
+              <input type="password" class="form-control" name="pw" placeholder="Password"/>
+            </div>
+
+            <div class="form-group">
+              <input type="password" class="form-control" name="pwagain" placeholder="Confirm Password"/>
+            </div>
+
+            <div class="form-group text-center">
+              <button type="submit" class="btn btn-lg btn-block btn-warning">Sign up</button>
+            </div>
+          </div>
+
+        </form>
     </div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="js/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    <!-- jQuery -->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <!-- BootstrapValidator -->
+    <script type="text/javascript" src="js/bootstrapValidator.min.js"></script>
+
+    <!-- Adjust font-size-function -->
+    <script type="text/javascript">
+      function adjust(event) {
+        var element = $(event.target);
+
+        // pseudo-span-element tag directly after element
+        var id = btoa(Math.floor(Math.random() * Math.pow(2, 64)));
+        var tag = $('<span id="' + id + '">' + element.val() + '</span>').css({
+              'display': 'none',
+              'font-family': element.css('font-family'),
+              'font-size': element.css('font-size')
+          }).insertAfter(element);
+
+        // adjust element width on keydown
+        function update() {
+          // give browser time to add current letter
+          setTimeout(function() {
+            var factor = element.width() / tag.width();
+            var formersize = 14;
+            var smaller = tag.width() < element.width();
+            var size = smaller ? (formersize + 'px') : ((factor * formersize) + 'px');
+            element.css('font-size', size);
+          }, 0);
+        };
+        update();
+      };
+
+      $('#mailadjust').on('input', adjust);
+    </script>
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('.registerForm').bootstrapValidator({
+          feedbackIcons: {
+            valid: 'glyphicon glyphicon-ok',
+            invalid: 'glyphicon glyphicon-remove',
+            validating: 'glyphicon glyphicon-refresh'
+          },
+          fields: {
+            user: {
+              message: 'Username is not valid.',
+              validators: {
+                notEmpty: {
+                  message: 'Username cannot be empty.'
+                },
+                stringLength: {
+                  min: 6,
+                  max: 20,
+                  message: 'Username must be between 6 and 20 characters long.'
+                },
+                regexp: {
+                  regexp: /^[a-zA-Z0-9]+$/,
+                  message: 'Username can only consist of alphabetical and number.'
+                },
+                different: {
+                  field: 'pw',
+                  message: 'Username and password cannot be the same.'
+                }
+              }
+            },
+            email: {
+              validators: {
+                notEmpty: {
+                  message: 'Email address cannot be empty.'
+                },
+                emailAddress: {
+                  message: 'Email address is not valid.'
+                }
+              }
+            },
+            pw: {
+              validators: {
+                notEmpty: {
+                  message: 'Password cannot be empty.'
+                },
+                different: {
+                  field: 'username',
+                  message: 'Password cannot be the same as username.'
+                },
+                stringLength: {
+                  min: 6,
+                  message: 'Password must have at least 6 characters.'
+                }
+              }
+            },
+            pwagain: {
+              validators: {
+                notEmpty: {
+                  message: 'Confirm your password.'
+                },
+                identical: {
+                  field: 'pw',
+                  message: 'Passwords do not match.'
+                }
+              }
+            }
+          }
+        });
+        $('.registerForm').on('success.form.bv', function(e) {
+          // Prevent form submission
+          e.preventDefault();
+          var $form        = $(e.target),
+              validator    = $form.data('bootstrapValidator'),
+              submitButton = validator.getSubmitButton();
+          alert('bla');
+        });
+      });
+    </script>
   </body>
 </html>
