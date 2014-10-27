@@ -144,6 +144,6 @@ public class User {
   }
 
   public Boolean delUser() {
-
+    return null;
   }
 }

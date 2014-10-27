@@ -8,7 +8,7 @@ public class Group {
   private int id;
   private String name;
   private String descr;
-  private List<User> members = new ArrayList<User>()
+  private List<User> members = new ArrayList<User>();
   private User owner;
   private Map<String,String> otherProperties = new HashMap<String,String>();
 
