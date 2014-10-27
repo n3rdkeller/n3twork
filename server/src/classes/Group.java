@@ -12,6 +12,12 @@ public class Group {
   private User owner;
   private Map<String,String> otherProperties = new HashMap<String,String>();
 
+  public Group(String name, String descr, User owner, Map<String,String> otherProperties) {
+    this.name = name;
+    this.descr = descr;
+    this.owner = owner;
+    this.otherProperties = otherProperties;
+  }
   public String getName() {
     return null;
   }

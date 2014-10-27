@@ -11,6 +11,12 @@ public class Post {
   private Boolean visibility;
   private Map<User,Date> upVotes = new HashMap<User,Date>();
 
+  public Post(User owner, String title, Boolean visibility) {
+    this.owner = owner;
+    this.title = title;
+    this.visibility = visibility;
+  }
+
   public User getOwner() {
     return null;
   }

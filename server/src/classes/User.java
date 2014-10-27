@@ -28,7 +28,7 @@ public class User {
    * @param  pw                          Password
    * @param  Map<String,otherProperties> Other Properties
    */
-  private User(String uname, String email, String pw, Map<String,String> otherProperties) {
+  public User(String uname, String email, String pw, Map<String,String> otherProperties) {
     this.uname = uname;
     this.email = email;
     this.passwd = pw;
