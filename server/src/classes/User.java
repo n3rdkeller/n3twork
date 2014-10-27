@@ -21,6 +21,16 @@ public class User {
   private List<Post> posts = new ArrayList<Post>();
   private List<Msg> messages = new ArrayList<Msg>();
   //Methods:
+  /**
+   * Constructor
+   */
+  User(String uname, String email, String pw, Map<String,String> otherProperties) {
+    this.uname = uname;
+    this.email = email;
+    this.passwd = pw;
+    this.otherProperties = otherProperties;
+  }
+
   public String login() {
     return null;
   }

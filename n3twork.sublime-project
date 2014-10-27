@@ -8,6 +8,11 @@
 	],
 	"javatar":
 	{
+		"dependencies":
+		[
+			"./server/src/dep/mysql-connector-java-5.1.33-bin.jar"
+		],
+		"dependencies_path": "./server/src/dep",
 		"source_folder": "./server/src"
 	},
 	"settings":
