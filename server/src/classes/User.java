@@ -23,8 +23,12 @@ public class User {
   //Methods:
   /**
    * Constructor
+   * @param  uname                       Username
+   * @param  email                       Email
+   * @param  pw                          Password
+   * @param  Map<String,otherProperties> Other Properties
    */
-  User(String uname, String email, String pw, Map<String,String> otherProperties) {
+  private User(String uname, String email, String pw, Map<String,String> otherProperties) {
     this.uname = uname;
     this.email = email;
     this.passwd = pw;
