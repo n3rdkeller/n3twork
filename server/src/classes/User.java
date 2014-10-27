@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import classes.*;
 /**
  * The User class represents a user in the social Network.
  */
