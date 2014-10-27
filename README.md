@@ -1,8 +1,8 @@
-# n3twork #
+# n3twork
 
 Welcome to our social network n3twork.
 
-## 3rd party frameworks and libraries ##
+### 3rd party frameworks and libraries
 Thanks to all the people involved in the following:
 - Bootstrap
 - AngularJS
@@ -10,9 +10,9 @@ Thanks to all the people involved in the following:
 - BootstrapValidator
 
 
-## License
+### License
 n3twork is under the MIT license.
 
-## Todo
+### Todo
 - add missing links
 - add whole license text
