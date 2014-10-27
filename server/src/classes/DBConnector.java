@@ -1,0 +1,43 @@
+package classes;
+
+import java.sql.*;
+
+public class DBConnector {
+  private String url;
+  private String username;
+  private String password;
+  private String database;
+  private Connection con = null;
+
+  public DBConnector() {
+    this.url = "jdbc:mysql://141.2.89.26";
+    this.password = "LcCN8HJR";
+    this.username = "TEAM_2E";
+    this.database = "TEAM_2E_DB";
+  }
+
+  public Boolean connect() {
+    try {
+      con = DriverManager.getConnection(
+        this.url, this.username, this.password
+      );
+      System.out.print("Established connection to database. Gratz.");
+      return true;
+    } catch (Exception e) {
+      System.err.print("Error establishing your dbcon. b00n.");
+      return false;
+    } finally {
+      try {
+        if (con != null) con.close();
+      } catch (Exception e) {
+        System.err.print("Couldn't close your dbcon. SERVER OVERFLOOOOOOOOOWING!!!!111einself!");
+      }
+    }
+  }
+
+  public ResultSet query() {
+
+  }
+
+
+}
