@@ -8,6 +8,9 @@ public class DBConnector {
   private String password;
   private String database;
   private Connection con = null;
+  private Statement stmt = null;
+  //private PreparedStatement pStmt = null;
+
 
   public DBConnector() {
     this.url = "jdbc:mysql://141.2.89.26";
@@ -29,6 +32,7 @@ public class DBConnector {
     } finally {
       try {
         if (con != null) con.close();
+        System.err.print("Connection closed.")
       } catch (Exception e) {
         System.err.print("Couldn't close your dbcon. SERVER OVERFLOOOOOOOOOWING!!!!111einself!");
       }
