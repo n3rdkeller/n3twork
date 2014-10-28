@@ -28,12 +28,14 @@ public class DBConnector {
    */
   public Boolean connect() {
     try {
+      Class.forName("com.mysql.jdbc.Driver").newInstance();
       con = DriverManager.getConnection(
         this.url, this.username, this.password
       );
       System.out.print("Established connection to database. Gratz.");
       return true;
     } catch (Exception e) {
+      System.err.print(e.toString() + "\n");
       System.err.print("Error establishing your dbcon. b00n.");
       return false;
     } finally {

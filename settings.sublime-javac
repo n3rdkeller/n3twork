@@ -1,0 +1,11 @@
+{
+    "project_name"      : "n3twork",
+    "output_dir"  : "server/bin",
+    "sources_dir" : "server/src",
+    "resources"   : [],
+    "libs"        : ["server/dep/mysql-connector-java-5.1.33-bin.jar"],
+    "encoding"    : "utf-8",
+
+    "entry_file"        : "classes/Main.java",
+    "entry_point"       : "classes.Main"
+}
