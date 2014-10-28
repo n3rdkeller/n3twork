@@ -32,7 +32,7 @@ public class DBConnector {
     } finally {
       try {
         if (con != null) con.close();
-        System.err.print("Connection closed.")
+        System.err.print("Connection closed.");
       } catch (Exception e) {
         System.err.print("Couldn't close your dbcon. SERVER OVERFLOOOOOOOOOWING!!!!111einself!");
       }
@@ -40,7 +40,7 @@ public class DBConnector {
   }
 
   public ResultSet query() {
-
+    return null;
   }
 
 
