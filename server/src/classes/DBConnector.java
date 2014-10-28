@@ -11,7 +11,10 @@ public class DBConnector {
   private Statement stmt = null;
   //private PreparedStatement pStmt = null;
 
-
+  /**
+   * Constructor
+   * @return initialized DBConnector object //is that true?
+   */
   public DBConnector() {
     this.url = "jdbc:mysql://141.2.89.26";
     this.password = "LcCN8HJR";
@@ -19,6 +22,10 @@ public class DBConnector {
     this.database = "TEAM_2E_DB";
   }
 
+  /**
+   * Connect to mysql server
+   * @return true if connection successful and false if not
+   */
   public Boolean connect() {
     try {
       con = DriverManager.getConnection(
@@ -39,9 +46,11 @@ public class DBConnector {
     }
   }
 
+  /**
+   * Make query to mysql server
+   * @return ResultSet, a set of the queried elements
+   */
   public ResultSet query() {
     return null;
   }
-
-
 }
