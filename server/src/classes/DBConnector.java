@@ -13,7 +13,7 @@ public class DBConnector {
 
   /**
    * Constructor
-   * @return initialized DBConnector object //is that true?
+   * @return initialized DBConnector object // is that true? yes
    */
   public DBConnector() {
     this.url = "jdbc:mysql://141.2.89.26";
