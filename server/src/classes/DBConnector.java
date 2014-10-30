@@ -32,18 +32,18 @@ public class DBConnector {
       con = DriverManager.getConnection(
         this.url, this.username, this.password
       );
-      System.out.print("Established connection to database. Gratz.");
+      System.out.print("Established connection to database. Gratz.\n");
       return true;
     } catch (Exception e) {
       System.err.print(e.toString() + "\n");
-      System.err.print("Error establishing your dbcon. b00n.");
+      System.err.print("Error establishing your dbcon. b00n.\n");
       return false;
     } finally {
       try {
         if (con != null) con.close();
-        System.err.print("Connection closed.");
+        System.err.print("Connection closed.\n");
       } catch (Exception e) {
-        System.err.print("Couldn't close your dbcon. SERVER OVERFLOOOOOOOOOWING!!!!111einself!");
+        System.err.print("Couldn't close your dbcon. SERVER OVERFLOOOOOOOOOWING!!!!111einself!\n");
       }
     }
   }
