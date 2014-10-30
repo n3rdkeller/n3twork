@@ -32,21 +32,53 @@ public class DBConnector {
       con = DriverManager.getConnection(
         this.url, this.username, this.password
       );
-      System.out.print("Established connection to database. Gratz.\n");
+      System.out.println("Established connection to database.");
       return true;
     } catch (Exception e) {
-      System.err.print(e.toString() + "\n");
-      System.err.print("Error establishing your dbcon. b00n.\n");
+      System.err.println(e.toString());
+      System.err.println("Error establishing your dbcon. b00n.");
       return false;
     } finally {
       try {
         if (con != null) con.close();
-        System.err.print("Connection closed.\n");
+        System.out.println("Connection closed.");
       } catch (Exception e) {
-        System.err.print("Couldn't close your dbcon. SERVER OVERFLOOOOOOOOOWING!!!!111einself!\n");
+        System.err.println("Couldn't close your dbcon. SERVER OVERFLOOOOOOOOWING!!!!111einself!");
+        System.err.println(e.toString());
       }
     }
   }
+
+  public void simpleQuery() {
+    System.out.println("Actually doing something1");
+    try {
+    Statement stmt = null;
+    String query = "select * from Users";
+
+        stmt = con.createStatement();
+        System.out.println("Actually doing something");
+        ResultSet rs = stmt.executeQuery(query);
+        System.out.println(rs.getString("ID"));
+        // while (rs.next()) {
+        //     String coffeeName = rs.getString("COF_NAME");
+        //     int supplierID = rs.getInt("SUP_ID");
+        //     float price = rs.getFloat("PRICE");
+        //     int sales = rs.getInt("SALES");
+        //     int total = rs.getInt("TOTAL");
+        //     System.out.println(coffeeName + "\t" + supplierID +
+        //                        "\t" + price + "\t" + sales +
+        //                        "\t" + total);
+        // }
+    } catch (SQLException e ) {
+      System.err.println(e.getSQLState());
+    } finally {
+        try {
+         if (stmt != null) { stmt.close(); }
+        } catch (Exception e) {
+          System.err.println(e.toString());
+        }
+    }
+}
 
   /**
    * Make query to mysql server
