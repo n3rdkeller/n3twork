@@ -43,7 +43,7 @@ public class DBConnector {
         if (con != null) con.close();
         System.out.println("Connection closed.");
       } catch (Exception e) {
-        System.err.println("Couldn't close your dbcon. SERVER OVERFLOOOOOOOOWING!!!!111einself!");
+        System.err.println("Couldn't close your dbcon. SERVER OVERFL00000000WING!!!!111einself!");
         System.err.println(e.toString());
       }
     }
