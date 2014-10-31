@@ -1,5 +1,6 @@
 {
   "name": "n3twork",
+  "description": "frontend for our social n3twork",
   "version": "0.1.0",
   "authors": [
     "Robin Temme <robin@n3rdkeller.de>",
@@ -15,6 +16,9 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.2.0"
+    "bootstrap": "~3.2.0",
+    "bootstrapvalidator": "~0.5.2",
+    "fontawesome": "~4.2.0",
+    "angular-bootstrap": "~0.11.2"
   }
 }
