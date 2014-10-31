@@ -1,5 +1,6 @@
 {
   "name": "n3twork",
+  "description": "frontend for our social n3twork",
   "version": "0.1.0",
   "authors": [
     "Robin Temme <robin@n3rdkeller.de>",
