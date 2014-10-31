@@ -16,6 +16,8 @@
   ],
   "dependencies": {
     "bootstrap": "~3.2.0",
-    "bootstrapvalidator": "~0.5.2"
+    "bootstrapvalidator": "~0.5.2",
+    "fontawesome": "~4.2.0",
+    "angular-bootstrap": "~0.11.2"
   }
 }
