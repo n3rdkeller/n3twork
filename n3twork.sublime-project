@@ -3,7 +3,18 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "."
+			"path": ".",
+			"folder_exclude_patterns": ["client", "server"]
+		},
+		{
+			"follow_symlinks": true,
+			"path": "client",
+			"folder_exclude_patterns": ["dist"]
+		},
+		{
+			"name": "server",
+			"follow_symlinks": true,
+			"path": "server/src"
 		}
 	],
 	"javatar":
