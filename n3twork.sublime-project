@@ -14,7 +14,8 @@
 		{
 			"name": "server",
 			"follow_symlinks": true,
-			"path": "server/src"
+			"path": "server/src",
+			"file_include_patterns": ["*", "*.jar", "*.class"]
 		},
 		{
 			"name": "client/dist",
