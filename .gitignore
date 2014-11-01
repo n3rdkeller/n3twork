@@ -3,7 +3,9 @@
 *.jar
 
 # Frameworks and Libraries
-client/bower_components/
+client/src/bower_components/
+client/node_modules/
+client/dist/
 
 # Sublime
 *.sublime-workspace

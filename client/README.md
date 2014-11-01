@@ -11,9 +11,11 @@ There are some steps you need to follow before you can test it.
 2. Install `bower` [Bower Package Manager][2]
 3. Install `grunt` [Grunt JavaScript Task Runner][3]
 4. Run `bower install` to install all needed dependencies specified in `bower.json`
-5. Link `client` to your local webserver
-6. Open it (or containing `index.html`) in your browser
-7. Have fun with `n3twork`!
+5. Run `npm install` to install all needed dependencies specified in `package.json`
+6. Run `grunt dist` to minify and copy all scripts
+6. Link `dist` to your local webserver
+7. Open it (or containing `index.html`) in your browser
+8. Have fun with `n3twork`!
 
 
 [1]: https://www.npmjs.org

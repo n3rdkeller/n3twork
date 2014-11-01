@@ -7,20 +7,32 @@ Here are some of the most important folders and files in our project:
 
 	n3twork
 	├── client/
-	|   ├── bower_components/
-	|   |   ├── angular/
-	|   |   ├── bootstrap/
-	|   |   └── ... (third party technologies are here)
-	|   ├── app/
-	|   |   ├── some folders
-	|   |   ├── and files
-	|   |   └── containing angular-stuff
-	|   ├── css/
-	|   ├── js/
-	|   ├── fonts/
-	|   ├── index.html
-	|   ├── README.md
-	|   └── bower.json
+	|   ├── src/
+	|   |	├── bower_components/
+	|   |   |	├── angular/
+	|	|   |   ├── bootstrap/
+	|	|   |   └── ... (third party technologies are here)
+	|	|   ├── app/
+	|	|   |   ├── some folders
+	|	|   |   ├── and files
+	|	|   |   └── containing angular-stuff
+	|	|   ├── css/
+	|	|   ├── less/
+	|	|   ├── js/
+	|	|   ├── fonts/
+	|	|   └── index.html
+	|   |
+	|	├── dist/
+	|	|	├── angular-app/
+	|	|   ├── css/
+	|	|   ├── js/
+	|	|   ├── fonts/
+	|	|   └── index.html
+	|	|
+	|	├── bower.json
+	|	├── .bowerrc
+	|	├── package.json
+	|	└── README.md
 	|
 	├── server/
 	|   ├── bin/
