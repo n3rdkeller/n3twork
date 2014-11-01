@@ -9,12 +9,18 @@
 		{
 			"follow_symlinks": true,
 			"path": "client",
-			"folder_exclude_patterns": ["dist"]
+			"folder_exclude_patterns": ["dist", "node_modules", "bower_components"]
 		},
 		{
 			"name": "server",
 			"follow_symlinks": true,
 			"path": "server/src"
+		},
+		{
+			"name": "client/dist",
+			"follow_symlinks": false,
+			"path": "client/dist",
+			"file_include_patterns": ["*"]
 		}
 	],
 	"javatar":
