@@ -51,6 +51,7 @@ module.exports = function(grunt) {
         },
         files:{
           'dist/js/app.min.js' : 'src/app/**/*.js',
+          'dist/js/stuff.min.js' : ['src/js/*.js', '!**/*.min.js']
         }
       }
     },
@@ -64,7 +65,7 @@ module.exports = function(grunt) {
           '*.html',
           'css/*',
           'fonts/*',
-          'js/*.js'
+          'js/*.min.*'
         ],
         dest: 'dist/'
       },
