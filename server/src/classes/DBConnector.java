@@ -16,9 +16,13 @@ public class DBConnector {
    * @return initialized DBConnector object // is that true? yes
    */
   public DBConnector() {
-    this.url = "jdbc:mysql://141.2.89.26";
-    this.password = "LcCN8HJR";
-    this.username = "TEAM_2E";
+    // this.url = "jdbc:mysql://141.2.89.26";
+    // this.password = "LcCN8HJR";
+    // this.username = "TEAM_2E";
+    // this.database = "TEAM_2E_DB";
+    this.url = "jdbc:mysql://192.168.178.51";
+    this.password = "Wurstsalat";
+    this.username = "root";
     this.database = "TEAM_2E_DB";
   }
 
