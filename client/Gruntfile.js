@@ -50,7 +50,7 @@ module.exports = function(grunt) {
           sourceMap: true
         },
         files:{
-          'dist/js/app.min.js' : 'src/app/**/*.js',
+          // 'dist/js/app.min.js' : 'src/app/**/*.js',
           'dist/js/stuff.min.js' : ['src/js/*.js', '!**/*.min.js']
         }
       }
@@ -62,6 +62,7 @@ module.exports = function(grunt) {
         expand: true,
         cwd: 'src/',
         src: [
+          'app/**',
           '*.html',
           'css/*',
           'fonts/*',
