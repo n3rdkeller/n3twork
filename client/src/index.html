@@ -32,19 +32,7 @@
         </div>
 
         <div class="collapse navbar-collapse" id="navbar-collapse-1">
-          <form class="navbar-form navbar-right hidden-xs" method="post" role="form">
-            <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-              <input class="form-control" type="text" name="login" placeholder="Username or Email">
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
-              <input class="form-control" type="password" name="pw" placeholder="Password">
-            </div>
-            <div class="input-group">
-              <button type="submit" class="btn btn-primary" value="Login">Login</button>
-            </div>
-          </form>
+          <ng-include src="app/auth/auth.login.html"></ng-include>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
@@ -56,97 +44,16 @@
     <script type="text/javascript" src="js/angular.min.js"></script>
     <script type="text/javascript" src="js/angular-route.min.js"></script>
     <script type="text/javascript" src="js/angular-resource.min.js"></script>
+    <script type="text/javascript" src="app/app.js"></script>
+    <script type="text/javascript" src="app/register/register.js"></script>
+    <script type="text/javascript" src="app/register/register.controller.js"></script>
+    <script type="text/javascript" src="app/auth/auth.js"></script>
 
     <!-- jQuery -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <!-- Bootstrap -->
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <!-- BootstrapValidator -->
-    <script type="text/javascript" src="js/bootstrapValidator.min.js"></script>
-    <!-- Adjust font-size-function -->
-    <script type="text/javascript" src="js/adjust.js"></script>
-    <!-- Register and Initialize -->
-    <script type="text/javascript">
-      // Adjust function
-      $('#mailadjust').on('input', adjust);
-
-      // BootstrapValidator
-      $(document).ready(function() {
-        $('.registerForm').bootstrapValidator({
-          feedbackIcons: {
-            valid: 'glyphicon glyphicon-ok',
-            invalid: 'glyphicon glyphicon-remove',
-            validating: 'glyphicon glyphicon-refresh'
-          },
-          fields: {
-            user: {
-              message: 'Username is not valid.',
-              validators: {
-                notEmpty: {
-                  message: 'Username cannot be empty.'
-                },
-                stringLength: {
-                  min: 6,
-                  max: 20,
-                  message: 'Username must be between 6 and 20 characters long.'
-                },
-                regexp: {
-                  regexp: /^[a-zA-Z0-9]+$/,
-                  message: 'Username can only consist of alphabetical and number.'
-                },
-                different: {
-                  field: 'pw',
-                  message: 'Username and password cannot be the same.'
-                }
-              }
-            },
-            email: {
-              validators: {
-                notEmpty: {
-                  message: 'Email address cannot be empty.'
-                },
-                emailAddress: {
-                  message: 'Email address is not valid.'
-                }
-              }
-            },
-            pw: {
-              validators: {
-                notEmpty: {
-                  message: 'Password cannot be empty.'
-                },
-                different: {
-                  field: 'username',
-                  message: 'Password cannot be the same as username.'
-                },
-                stringLength: {
-                  min: 6,
-                  message: 'Password must have at least 6 characters.'
-                }
-              }
-            },
-            pwagain: {
-              validators: {
-                notEmpty: {
-                  message: 'Confirm your password.'
-                },
-                identical: {
-                  field: 'pw',
-                  message: 'Passwords do not match.'
-                }
-              }
-            }
-          }
-        });
-        $('.registerForm').on('success.form.bv', function(e) {
-          // Prevent form submission
-          e.preventDefault();
-          var $form        = $(e.target),
-              validator    = $form.data('bootstrapValidator'),
-              submitButton = validator.getSubmitButton();
-          alert('bla');
-        });
-      });
-    </script>
+    <!-- Collection of own scripts -->
+    <script type="text/javascript" src="js/stuff.min.js"></script>
   </body>
 </html>
