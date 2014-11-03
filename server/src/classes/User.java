@@ -3,15 +3,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.Serializable;
+
 /**
  * The User class represents a user in the social Network.
  */
-public class User {
+public class User extends Object implements Serializable {
   //Attributes:
   private int id;
   private String name;
   private String firstName;
-  private String uname;
+  private String username;
   private String email;
   private String passwd;
   private Map<String,String> otherProperties = new HashMap<String,String>();
@@ -19,17 +21,17 @@ public class User {
   private List<User> friends = new ArrayList<User>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
-  private List<Msg> messages = new ArrayList<Msg>();
+  private List<Message> messages = new ArrayList<Message>();
   //Methods:
   /**
    * Constructor
-   * @param  uname                       Username
+   * @param  username                    username
    * @param  email                       Email
    * @param  pw                          Password
    * @param  Map<String,otherProperties> Other Properties
    */
-  public User(String uname, String email, String pw, Map<String,String> otherProperties) {
-    this.uname = uname;
+  public User(String username, String email, String pw, Map<String,String> otherProperties) {
+    this.username = username;
     this.email = email;
     this.passwd = pw;
     this.otherProperties = otherProperties;
@@ -63,8 +65,8 @@ public class User {
 
   }
 
-  public String getUname() {
-    return null;
+  public String getUsername() {
+    return this.username;
   }
 
   public String getEmail() {
@@ -127,19 +129,19 @@ public class User {
 
   }
 
-  public List<Msg> getMsgs() {
+  public List<Message> getMessages() {
     return null;
   }
 
-  public void sendMsg(Msg msg) {
+  public void sendMessage(Message Message) {
 
   }
 
-  public void deleteMsg(Msg msg) {
+  public void deleteMessage(Message Message) {
 
   }
 
-  public void readMessage(Msg msg) {
+  public void readMessage(Message Message) {
 
   }
 

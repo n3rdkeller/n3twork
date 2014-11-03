@@ -3,92 +3,89 @@ package classes;
 import java.sql.*;
 
 public class DBConnector {
-  private String url;
-  private String username;
-  private String password;
-  private String database;
-  private Connection con = null;
-  private Statement stmt = null;
+  private static String driver = "com.mysql.jdbc.Driver";
+  private static String url = "jdbc:mysql://141.2.89.26";
+  private static String username = "TEAM_2E";
+  private static String password = "LcCN8HJR";
+  private static String database = "TEAM_2E_DB";
+  // this.url = "jdbc:mysql://192.168.178.51";
+  // this.password = "Wurstsalat";
+  // this.username = "root";
+
+  // ?1: Table; ?2: Serialized Object
+  static final String WRITE_OBJECT_SQL = "INSERT INTO ?(key, value) VALUES (?, ?)";
+
+  // ?1: Table ?2: Key
+  static final String READ_OBJECT_SQL = "SELECT value FROM ? WHERE key = ?";
+
   //private PreparedStatement pStmt = null;
 
   /**
-   * Constructor
-   * @return initialized DBConnector object // is that true? yes
+   * Static function to build connection
+   * @return Connection databaseconnection
+   * @throws Exception
    */
-  public DBConnector() {
-    // this.url = "jdbc:mysql://141.2.89.26";
-    // this.password = "LcCN8HJR";
-    // this.username = "TEAM_2E";
-    // this.database = "TEAM_2E_DB";
-    this.url = "jdbc:mysql://192.168.178.51";
-    this.password = "Wurstsalat";
-    this.username = "root";
-    this.database = "TEAM_2E_DB";
+  public static Connection getConnection() throws Exception {
+    Class.forName(driver).newInstance();
+    Connection conn = DriverManager.getConnection(url, username, password);
+    return conn;
   }
 
   /**
-   * Connect to mysql server
-   * @return true if connection successful and false if not
+   * Write object to database
+   * @param  conn      Connection to database
+   * @param  object    Object to save in database
+   * @throws Exception
    */
-  public Boolean connect() {
-    try {
-      Class.forName("com.mysql.jdbc.Driver").newInstance();
-      con = DriverManager.getConnection(
-        this.url, this.username, this.password
-      );
-      System.out.println("Established connection to database.");
-      return true;
-    } catch (Exception e) {
-      System.err.println(e.toString());
-      System.err.println("Error establishing your dbcon. b00n.");
-      return false;
-    } finally {
-      try {
-        if (con != null) con.close();
-        System.out.println("Connection closed.");
-      } catch (Exception e) {
-        System.err.println("Couldn't close your dbcon. SERVER OVERFL00000000WING!!!!111einself!");
-        System.err.println(e.toString());
-      }
-    }
+  public static void writeData(Connection conn, String table, String key, Object object) throws Exception {
+    // set table name from class name & prepare statement
+    PreparedStatement pstmt = conn.prepareStatement(WRITE_OBJECT_SQL);
+
+    System.out.println(pstmt);
+
+    // set input parameters
+    pstmt.setString(1, table);
+    System.out.println(pstmt);
+    pstmt.setString(2, key);
+    System.out.println(pstmt);
+    pstmt.setObject(3, object);
+
+    System.out.println(pstmt);
+
+    // do query
+    pstmt.executeUpdate();
+    System.out.println("executeUpdate");
+
+    // close connection
+    pstmt.close();
+    System.out.println("writeData: done serializing: " + key);
   }
 
-  public void simpleQuery() {
-    System.out.println("Actually doing something1");
-    try {
-    Statement stmt = null;
-    String query = "select * from Users";
-
-        stmt = con.createStatement();
-        System.out.println("Actually doing something");
-        ResultSet rs = stmt.executeQuery(query);
-        System.out.println(rs.getString("ID"));
-        // while (rs.next()) {
-        //     String coffeeName = rs.getString("COF_NAME");
-        //     int supplierID = rs.getInt("SUP_ID");
-        //     float price = rs.getFloat("PRICE");
-        //     int sales = rs.getInt("SALES");
-        //     int total = rs.getInt("TOTAL");
-        //     System.out.println(coffeeName + "\t" + supplierID +
-        //                        "\t" + price + "\t" + sales +
-        //                        "\t" + total);
-        // }
-    } catch (SQLException e ) {
-      System.err.println(e.getSQLState());
-    } finally {
-        try {
-         if (stmt != null) { stmt.close(); }
-        } catch (Exception e) {
-          System.err.println(e.toString());
-        }
-    }
-}
-
   /**
-   * Make query to mysql server
-   * @return ResultSet, a set of the queried elements
+   * Read object from database
+   * @param  conn      Connection to database
+   * @param  table     Table the object comes from
+   * @param  key       Key
+   * @return           Object
+   * @throws Exception
    */
-  public ResultSet query() {
-    return null;
+  public static Object readData(Connection conn, String table, String key) throws Exception {
+    // prepare statement
+    PreparedStatement pstmt = conn.prepareStatement(READ_OBJECT_SQL);
+
+    // set parameters
+    pstmt.setString(1, table);
+    pstmt.setString(2, key);
+
+    // do query
+    ResultSet rs = pstmt.executeQuery();
+    rs.next();
+    Object object = rs.getObject(1);
+    String className = object.getClass().getName();
+
+    rs.close();
+    pstmt.close();
+    System.out.println("readData: done de-serializing: " + className);
+    return object;
   }
 }

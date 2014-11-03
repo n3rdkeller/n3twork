@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Msg {
+public class Message {
   private int id;
   private User sender;
   private List<User> reciever = new ArrayList<User>();
@@ -14,7 +14,7 @@ public class Msg {
   private Date sendDate;
   private Map<User,Boolean> read = new HashMap<User,Boolean>();
 
-  public Msg(User sender, List<User> reciever, String subject, String content) {
+  public Message(User sender, List<User> reciever, String subject, String content) {
     this.sender = sender;
     this.reciever = reciever;
     this.subject = subject;
