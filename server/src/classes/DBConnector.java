@@ -61,6 +61,47 @@ public class DBConnector {
     System.out.println("writeData: done serializing: " + key);
   }
 
+  public static void addUser(Connection conn, User user) throws Exception {
+    username = user.getUsername();
+    // prepare statement
+    PreparedStatement pStmt = conn.prepareStatement("INSERT INTO Users(username,name,email) VALUES(?,?,?)");
+    // set input parameter
+    pStmt.setString(1,user.getUsername());
+    pStmt.setString(2,user.getName());
+    pStmt.setString(3,user.getEmail());
+    System.out.println(pStmt);
+
+    // do query
+    pStmt.executeUpdate();
+    System.out.println("executed");
+
+    // close connection
+    pStmt.close();
+
+    System.out.println("addUser: done");
+  }
+
+  public static void updateUser(Connection conn, String collumn, String value, String username) throws Exception {
+    // prepare statement
+    PreparedStatement pstmt = conn.prepareStatement("UPDATE Users SET ?=? WHERE username=?");
+
+    System.out.println(pstmt);
+
+    // set input parameters
+    pstmt.setString(1, collumn);
+    pstmt.setString(2, value);
+    pStmt.setString(3, username);
+    System.out.println(pstmt);
+
+    // do query
+    pstmt.executeUpdate();
+    System.out.println("executed");
+
+    // close connection
+    pstmt.close();
+    System.out.println("writeUser: done");
+  }
+
   /**
    * Read object from database
    * @param  conn      Connection to database

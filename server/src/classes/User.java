@@ -50,7 +50,7 @@ public class User extends Object implements Serializable {
   }
 
   public String getName() {
-    return null;
+    return this.name;
   }
 
   public void setName(String name) {
@@ -58,10 +58,10 @@ public class User extends Object implements Serializable {
   }
 
   public String getFirstName() {
-    return null;
+    return this.firstName;
   }
 
-  public void setFirstName() {
+  public void setFirstName(String firstName) {
 
   }
 
@@ -70,7 +70,7 @@ public class User extends Object implements Serializable {
   }
 
   public String getEmail() {
-    return null;
+    return this.email;
   }
 
   public void setEmail(String email) {
