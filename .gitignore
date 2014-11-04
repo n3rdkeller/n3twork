@@ -1,6 +1,6 @@
 # Java
 *.class
-*.jar
+#*.jar
 
 # Frameworks and Libraries
 client/src/bower_components/

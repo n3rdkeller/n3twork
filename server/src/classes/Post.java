@@ -7,6 +7,7 @@ public class Post {
   private int id;
   private User owner;
   private String content;
+  private String title;
   private Date postDate;
   private Boolean visibility;
   private Map<User,Date> upVotes = new HashMap<User,Date>();
