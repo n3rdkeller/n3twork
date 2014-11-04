@@ -31,36 +31,6 @@ public class DBConnector {
     return conn;
   }
 
-  /**
-   * Write object to database
-   * @param  conn      Connection to database
-   * @param  object    Object to save in database
-   * @throws Exception
-   */
-  public static void writeData(Connection conn, String table, String key, Object object) throws Exception {
-    // set table name from class name & prepare statement
-    PreparedStatement pstmt = conn.prepareStatement(WRITE_OBJECT_SQL);
-
-    System.out.println(pstmt);
-
-    // set input parameters
-    pstmt.setString(1, table);
-    System.out.println(pstmt);
-    pstmt.setString(2, key);
-    System.out.println(pstmt);
-    pstmt.setObject(3, object);
-
-    System.out.println(pstmt);
-
-    // do query
-    pstmt.executeUpdate();
-    System.out.println("executeUpdate");
-
-    // close connection
-    pstmt.close();
-    System.out.println("writeData: done serializing: " + key);
-  }
-
   public static void addUser(Connection conn, User user) throws Exception {
     username = user.getUsername();
     // prepare statement
@@ -83,50 +53,44 @@ public class DBConnector {
 
   public static void updateUser(Connection conn, String collumn, String value, String username) throws Exception {
     // prepare statement
-    PreparedStatement pstmt = conn.prepareStatement("UPDATE Users SET ?=? WHERE username=?");
+    PreparedStatement pStmt = conn.prepareStatement("UPDATE Users SET ? = ? WHERE username = ?");
 
-    System.out.println(pstmt);
+    System.out.println(pStmt);
 
     // set input parameters
-    pstmt.setString(1, collumn);
-    pstmt.setString(2, value);
+    pStmt.setString(1, collumn);
+    pStmt.setString(2, value);
     pStmt.setString(3, username);
-    System.out.println(pstmt);
+    System.out.println(pStmt);
 
     // do query
-    pstmt.executeUpdate();
+    pStmt.executeUpdate();
     System.out.println("executed");
 
     // close connection
-    pstmt.close();
+    pStmt.close();
     System.out.println("writeUser: done");
   }
 
-  /**
-   * Read object from database
-   * @param  conn      Connection to database
-   * @param  table     Table the object comes from
-   * @param  key       Key
-   * @return           Object
-   * @throws Exception
-   */
-  public static Object readData(Connection conn, String table, String key) throws Exception {
+  public static String readUserData(Connection conn, String collumn, String username) throws Exception {
     // prepare statement
-    PreparedStatement pstmt = conn.prepareStatement(READ_OBJECT_SQL);
+    PreparedStatement pStmt = conn.prepareStatement("SELECT ? FROM Users WHERE username = ?");
 
     // set parameters
-    pstmt.setString(1, table);
-    pstmt.setString(2, key);
+    pStmt.setString(1, collumn);
+    pStmt.setString(2, username);
+    System.out.println(pStmt);
 
     // do query
-    ResultSet rs = pstmt.executeQuery();
+    ResultSet rs = pStmt.executeQuery();
     rs.next();
-    Object object = rs.getObject(1);
-    String className = object.getClass().getName();
+    String userData = rs.getString(1);
+    System.out.println(userData);
 
     rs.close();
-    pstmt.close();
-    System.out.println("readData: done de-serializing: " + className);
-    return object;
+    pStmt.close();
+    System.out.println("readUserData: done");
+    return userData;
   }
+
 }

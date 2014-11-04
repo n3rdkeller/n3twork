@@ -8,11 +8,11 @@ public class Main {
     try {
       Connection dbc = DBConnector.getConnection();
       User dieter = new User("dieter", "horst@dieter.de", "bla", new HashMap<String,String>());
-      System.out.println("Writing serialized");
-      DBConnector.writeData(dbc, "Users", dieter.getUsername(), dieter);
-      System.out.println("Reading serialized");
-      User gottenUser = (User)DBConnector.readData(dbc, "Users", "dieter");
-      System.out.println(gottenUser.getUsername());
+      System.out.println("Writing");
+      DBConnector.addUser(dbc, dieter);
+      System.out.println("Reading");
+      String username = DBConnector.readUserData(dbc,"username","dieter");
+      System.out.println(username);
      } catch (Exception e) {
       System.err.println(e.toString());
     }
