@@ -8,6 +8,7 @@ public class Main {
     try {
       Connection dbc = DBConnector.getConnection();
       User dieter = new User("dieter", "horst@dieter.de", "bla", new HashMap<String,String>());
+      dieter.setName("Meier");
       System.out.println("Writing");
       DBConnector.addUser(dbc, dieter);
       System.out.println("Reading");

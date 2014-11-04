@@ -12,14 +12,6 @@ public class DBConnector {
   // this.password = "Wurstsalat";
   // this.username = "root";
 
-  // ?1: Table; ?2: Serialized Object
-  static final String WRITE_OBJECT_SQL = "INSERT INTO ?(key, value) VALUES (?, ?)";
-
-  // ?1: Table ?2: Key
-  static final String READ_OBJECT_SQL = "SELECT value FROM ? WHERE key = ?";
-
-  //private PreparedStatement pStmt = null;
-
   /**
    * Static function to build connection
    * @return Connection databaseconnection
@@ -34,7 +26,7 @@ public class DBConnector {
   public static void addUser(Connection conn, User user) throws Exception {
     username = user.getUsername();
     // prepare statement
-    PreparedStatement pStmt = conn.prepareStatement("INSERT INTO Users(username,name,email) VALUES(?,?,?)");
+    PreparedStatement pStmt = conn.prepareStatement("INSERT INTO " + database + ".Users(username,name,email) VALUES(?,?,?)");
     // set input parameter
     pStmt.setString(1,user.getUsername());
     pStmt.setString(2,user.getName());
@@ -53,7 +45,7 @@ public class DBConnector {
 
   public static void updateUser(Connection conn, String collumn, String value, String username) throws Exception {
     // prepare statement
-    PreparedStatement pStmt = conn.prepareStatement("UPDATE Users SET ? = ? WHERE username = ?");
+    PreparedStatement pStmt = conn.prepareStatement("UPDATE " + database + ".Users SET ? = ? WHERE username = ?");
 
     System.out.println(pStmt);
 
@@ -74,7 +66,7 @@ public class DBConnector {
 
   public static String readUserData(Connection conn, String collumn, String username) throws Exception {
     // prepare statement
-    PreparedStatement pStmt = conn.prepareStatement("SELECT ? FROM Users WHERE username = ?");
+    PreparedStatement pStmt = conn.prepareStatement("SELECT ? FROM " + database + ".Users WHERE username = ?");
 
     // set parameters
     pStmt.setString(1, collumn);

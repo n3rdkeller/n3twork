@@ -54,6 +54,7 @@ public class User extends Object implements Serializable {
   }
 
   public void setName(String name) {
+    this.name = name;
 
   }
 
