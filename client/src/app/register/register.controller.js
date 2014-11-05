@@ -7,6 +7,23 @@
 
   function RegisterController() {
     var vm = this;
-    vm.title = 'RegisterController';
-  }
+
+    vm.message = "";
+
+    vm.user = {
+      username: "",
+      password: "",
+      confirmPassword: ""
+    };
+
+    vm.submit = function(isValid) {
+      console.log("h");
+      if (isValid) {
+        vm.message = "Submitted " + vm.user.username;
+      } else {
+        vm.message = "There are still invalid fields.";
+      }
+    };
+
+  };
 })();
