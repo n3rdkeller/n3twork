@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.Serializable;
+import javax.json.JsonObject;
+import javax.json.JsonArray;
+import javax.json.JsonNumber;
+import javax.json.JsonString;
 
 /**
  * The User class represents a user in the social Network.
  */
-public class User extends Object implements Serializable {
+public class User {
   //Attributes:
   private int id;
   private String name;
@@ -30,11 +34,42 @@ public class User extends Object implements Serializable {
    * @param  pw                          Password
    * @param  Map<String,otherProperties> Other Properties
    */
-  public User(String username, String email, String pw, Map<String,String> otherProperties) {
+  public User(String username, String email, String pw) {
     this.username = username;
     this.email = email;
     this.passwd = pw;
-    this.otherProperties = otherProperties;
+
+  }
+  public Boolean getUserFromDB() {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnect.executeQuery(conn, "SELECT * FROM Users WHERE id=" + this.id);
+    Map<String,String> userMap = new HashMap<String,String>();
+
+    if (userList.size() = 1) return false;
+
+    ArrayList<String> keyRow = userList.get(0);
+    ArrayList<String> dataRow = userList.get(1);
+    for (int i = 0, i < keyRow.size(), i++) {
+      userMap.put(keyRow.get(i),dataRow.get(i));
+
+    }
+
+    this.name = userMap.get("name");
+    this.username = userMap.get("username");
+    this.email = userMap.get("email");
+    this.otherProperties = userMap("otherProperties");
+
+    return true;
+
+  }
+  public JsonObject getUserAsJson() {
+    JsonObject userJson = new JsonObject();
+    userJson.put("id", this.id);
+    userJson.put("username", this.username);
+    userJson.put("name", this.name);
+    userJson.put("email", this.email);
+
+    return userJson;
   }
 
   public String login() {
