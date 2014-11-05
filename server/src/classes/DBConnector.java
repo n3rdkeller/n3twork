@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 public class DBConnector {
   private static String DRIVER = "com.mysql.jdbc.Driver";
-  private static String DATABASE = "TEAM_2E_DB";
+  public static String DATABASE = "TEAM_2E_DB";
   private static String URL = "jdbc:mysql://141.2.89.26";
   private static String USERNAME = "TEAM_2E";
   private static String PASSWORD = "n3rdkeller sind die besten"; // old: LcCN8HJR
@@ -52,7 +52,7 @@ public class DBConnector {
     pStmt.close();
     rs.close();
 
-    System.out.print("selectQuery: done");
+    System.out.println("selectQuery: done");
     return output;
 
   }
@@ -77,7 +77,7 @@ public class DBConnector {
     }
 
     System.out.println("retun ids: " + idsPrintString);
-    System.out.print("executeUpdate: done");
+    System.out.println("executeUpdate: done");
     return ids;
 
   }

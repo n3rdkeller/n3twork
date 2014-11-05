@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.Serializable;
-import javax.json.JsonObject;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonString;
+import java.sql.*;
+import javax.json.*;
 
 /**
  * The User class represents a user in the social Network.
@@ -40,16 +38,20 @@ public class User {
     this.passwd = pw;
 
   }
-  public Boolean getUserFromDB() {
-    Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = DBConnect.executeQuery(conn, "SELECT * FROM Users WHERE id=" + this.id);
-    Map<String,String> userMap = new HashMap<String,String>();
+  public User(int id) {
+    this.id = id;
+  }
 
-    if (userList.size() = 1) return false;
+  public Boolean getFromDB() throws Exception {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
+    Map<String,String> userMap = new HashMap<String,String>();
+    conn.close();
+    if (userList.size() == 1) return false;
 
     ArrayList<String> keyRow = userList.get(0);
     ArrayList<String> dataRow = userList.get(1);
-    for (int i = 0, i < keyRow.size(), i++) {
+    for (int i = 0; i < keyRow.size(); i++) {
       userMap.put(keyRow.get(i),dataRow.get(i));
 
     }
@@ -57,22 +59,25 @@ public class User {
     this.name = userMap.get("name");
     this.username = userMap.get("username");
     this.email = userMap.get("email");
-    this.otherProperties = userMap("otherProperties");
 
     return true;
 
   }
-  public JsonObject getUserAsJson() {
-    JsonObject userJson = new JsonObject();
-    userJson.put("id", this.id);
-    userJson.put("username", this.username);
-    userJson.put("name", this.name);
-    userJson.put("email", this.email);
 
-    return userJson;
+  public String getAsJson() {
+    JsonObject userJson = Json.createObjectBuilder()
+      .add("id", this.id)
+      .add("username", this.username)
+      .add("name", this.name)
+      .add("email", this.email)
+      .build();
+    String jsonString = String.valueOf(userJson);
+    return jsonString;
   }
 
-  public String login() {
+  public String login() throws Exception{
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "");
     return null;
   }
 
