@@ -17,7 +17,7 @@ public class User {
   private String firstName;
   private String username;
   private String email;
-  private String passwd;
+  private String password;
   private Map<String,String> otherProperties = new HashMap<String,String>();
   private List<Integer> sessionIDs = new ArrayList<Integer>();
   private List<User> friends = new ArrayList<User>();
@@ -35,7 +35,7 @@ public class User {
   public User(String username, String email, String pw) {
     this.username = username;
     this.email = email;
-    this.passwd = pw;
+    this.password = pw;
 
   }
   public User(int id) {
@@ -77,7 +77,17 @@ public class User {
 
   public String login() throws Exception{
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "");
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
+    conn.close();
+    if(userList.size() > 1) {
+      if(userList.get(1).get(1).equals(this.password)) {
+        this.id = Integer.parseInt(userList.get(1).get(0));
+        getFromDB();
+        System.out.println("login successfull");
+        return "";
+      } else System.out.println("wrong password");
+    }
+    System.out.println("login failed");
     return null;
   }
 
@@ -118,11 +128,11 @@ public class User {
 
   }
 
-  public Boolean checkPasswd(String pw) {
+  public Boolean checkPassword(String pw) {
     return null;
   }
 
-  public void setPasswd(String pw) {
+  public void setPassword(String pw) {
 
   }
 
