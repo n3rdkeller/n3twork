@@ -38,8 +38,14 @@ public class User {
     this.password = pw;
 
   }
+
+
   public User(int id) {
     this.id = id;
+  }
+
+  public User() {
+    // empty
   }
 
   public Boolean getFromDB() throws Exception {
@@ -75,18 +81,28 @@ public class User {
     return jsonString;
   }
 
+  /**
+   * Gets all data out of the database if the password is correct
+   * @return
+   * @throws Exception forwarded exceptions
+   */
   public String login() throws Exception{
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
     conn.close();
+
     if(userList.size() > 1) {
       if(userList.get(1).get(1).equals(this.password)) {
+
         this.id = Integer.parseInt(userList.get(1).get(0));
         getFromDB();
         System.out.println("login successfull");
         return "";
+
       } else System.out.println("wrong password");
+
     }
+    // if one of the previous if-conditions returns false
     System.out.println("login failed");
     return null;
   }
