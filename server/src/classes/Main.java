@@ -6,15 +6,15 @@ public class Main {
 
   public static void main(String[] args) {
     try {
-      Connection dbc = DBConnector.getConnection();
-      DBConnector.testQuerys(dbc);
-      // User dieter = new User("dieter", "horst@dieter.de", "bla", new HashMap<String,String>());
-/*      dieter.setName("Meier");
-      System.out.println("Writing");
-      DBConnector.addUser(dbc, dieter);
-      System.out.println("Reading");
-      String username = DBConnector.readUserData(dbc,"username","dietr");
-      System.out.println(username);*/
+      // User Tests
+      User user = new User("dieter","horst@dieter.de","hi");
+      if(user.login() != null)
+      //if(user.getFromDB())
+        System.out.println(user.getAsJson());
+
+      // DBConnector Tests
+      // Connection dbc = DBConnector.getConnection();
+      // DBConnector.testQuerys(dbc);
      } catch (Exception e) {
       System.err.println(e.toString());
     }

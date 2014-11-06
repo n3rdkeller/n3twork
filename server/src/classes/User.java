@@ -4,18 +4,20 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.io.Serializable;
+import java.sql.*;
+import javax.json.*;
 
 /**
  * The User class represents a user in the social Network.
  */
-public class User extends Object implements Serializable {
+public class User {
   //Attributes:
   private int id;
   private String name;
   private String firstName;
   private String username;
   private String email;
-  private String passwd;
+  private String password;
   private Map<String,String> otherProperties = new HashMap<String,String>();
   private List<Integer> sessionIDs = new ArrayList<Integer>();
   private List<User> friends = new ArrayList<User>();
@@ -30,14 +32,78 @@ public class User extends Object implements Serializable {
    * @param  pw                          Password
    * @param  Map<String,otherProperties> Other Properties
    */
-  public User(String username, String email, String pw, Map<String,String> otherProperties) {
+  public User(String username, String email, String pw) {
     this.username = username;
     this.email = email;
-    this.passwd = pw;
-    this.otherProperties = otherProperties;
+    this.password = pw;
+
   }
 
-  public String login() {
+
+  public User(int id) {
+    this.id = id;
+  }
+
+  public User() {
+    // empty
+  }
+
+  public Boolean getFromDB() throws Exception {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
+    Map<String,String> userMap = new HashMap<String,String>();
+    conn.close();
+    if (userList.size() == 1) return false;
+
+    ArrayList<String> keyRow = userList.get(0);
+    ArrayList<String> dataRow = userList.get(1);
+    for (int i = 0; i < keyRow.size(); i++) {
+      userMap.put(keyRow.get(i),dataRow.get(i));
+
+    }
+
+    this.name = userMap.get("name");
+    this.username = userMap.get("username");
+    this.email = userMap.get("email");
+
+    return true;
+
+  }
+
+  public String getAsJson() {
+    JsonObject userJson = Json.createObjectBuilder()
+      .add("id", this.id)
+      .add("username", this.username)
+      .add("name", this.name)
+      .add("email", this.email)
+      .build();
+    String jsonString = String.valueOf(userJson);
+    return jsonString;
+  }
+
+  /**
+   * Gets all data out of the database if the password is correct
+   * @return
+   * @throws Exception forwarded exceptions
+   */
+  public String login() throws Exception{
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
+    conn.close();
+
+    if(userList.size() > 1) {
+      if(userList.get(1).get(1).equals(this.password)) {
+
+        this.id = Integer.parseInt(userList.get(1).get(0));
+        getFromDB();
+        System.out.println("login successfull");
+        return "";
+
+      } else System.out.println("wrong password");
+
+    }
+    // if one of the previous if-conditions returns false
+    System.out.println("login failed");
     return null;
   }
 
@@ -78,11 +144,11 @@ public class User extends Object implements Serializable {
 
   }
 
-  public Boolean checkPasswd(String pw) {
+  public Boolean checkPassword(String pw) {
     return null;
   }
 
-  public void setPasswd(String pw) {
+  public void setPassword(String pw) {
 
   }
 
