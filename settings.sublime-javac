@@ -1,9 +1,22 @@
 {
-    "project_name"      : "n3twork",
-    "output_dir"  : "server/bin",
-    "sources_dir" : "server/src",
-    "resources"   : [],
-    "libs"        : ["server/src/dep/mysql-connector-java-5.1.33-bin.jar","server/src/dep/javax.json-1.0.4.jar","server/src"],
+    "project_name": "n3twork",
+    "output_dir": "server/bin",
+    "sources_dir": "server/src",
+    "resources": [],
+    "libs": [
+      "server/src",
+      "server/src/dep/mysql-connector-java-5.1.33-bin.jar",
+      "server/src/dep/javax.json-1.0.4.jar",
+      "server/src/dep/jersey-container-jdk-http-2.4.jar",
+      "server/src/dep/jaxb-api-2.2.7.jar",
+      "server/src/dep/jersey-client.jar",
+      "server/src/dep/jersey-common.jar",
+      "server/src/dep/jersey-container-servlet-core.jar",
+      "server/src/dep/jersey-container-servlet.jar",
+      "server/src/dep/jersey-guava-2.13.jar",
+      "server/src/dep/jersey-server.jar",
+      "server/src/dep/javax.ws.rs-api-2.0.1.jar"
+    ],
     "encoding"    : "utf-8",
 
     "entry_file"        : "classes/Main.java",
