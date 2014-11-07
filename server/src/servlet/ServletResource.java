@@ -17,6 +17,6 @@ public class ServletResource {
   @GET @Path("/bye")
   @Produces(MediaType.TEXT_PLAIN)
   public String sayBye() {
-    return "Bye!"
+    return "Bye!";
   }
 }
