@@ -89,7 +89,7 @@ public class User {
     if(this.username.equals("")) {
     	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
     } else if(this.email.equals("")) {
-    	System.out.println("neither username nor email are given")
+    	System.out.println("neither username nor email are given");
     	return"";
     } else {
     	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
