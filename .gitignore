@@ -1,9 +1,20 @@
 # Java
 *.class
-*.jar
+#*.jar
+*.war
+server/bin/
+
+# Frameworks and Libraries
+client/src/bower_components/
+client/node_modules/
+client/dist/
 
 # Sublime
 *.sublime-workspace
+
+# Eclipse
+.metadata
+.recommenders
 
 # OS X
 *~

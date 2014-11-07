@@ -3,13 +3,27 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "."
-		}
+			"path": ".",
+			"folder_exclude_patterns": ["client", "server"]
+		},
+		{
+			"follow_symlinks": true,
+			"path": "client",
+			"folder_exclude_patterns": ["dist", "node_modules", "bower_components"]
+		},
+		{
+			"name": "client/dist",
+			"follow_symlinks": false,
+			"path": "client/dist",
+			"file_include_patterns": ["*"]
+		},
+		{
+			"name": "server",
+			"follow_symlinks": true,
+			"path": "server/src",
+			"file_include_patterns": ["*", "*.jar", "*.class"]
+		},
 	],
-	"javatar":
-	{
-		"source_folder": "./server/src"
-	},
 	"settings":
 	{
 		"default_line_ending": "unix",
