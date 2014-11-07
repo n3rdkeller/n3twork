@@ -11,7 +11,6 @@ import javax.json.*;
  * The User class represents a user in the social Network.
  */
 public class User {
-  //Attributes:
   private int id;
   private String name;
   private String firstName;
@@ -24,13 +23,11 @@ public class User {
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
   private List<Message> messages = new ArrayList<Message>();
-  //Methods:
   /**
    * Constructor
    * @param  username                    username
    * @param  email                       Email
    * @param  pw                          Password
-   * @param  Map<String,otherProperties> Other Properties
    */
   public User(String username, String email, String pw) {
     this.username = username;
@@ -96,7 +93,7 @@ public class User {
 
         this.id = Integer.parseInt(userList.get(1).get(0));
         getFromDB();
-        System.out.println("login successfull");
+        System.out.println("login successful");
         return "";
 
       } else System.out.println("wrong password");
