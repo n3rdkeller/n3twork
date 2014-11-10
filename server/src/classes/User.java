@@ -66,6 +66,10 @@ public class User {
     return true;
 
   }
+  
+  public Boolean registerInDB() throws Exception {
+    return null;
+  }
 
   public String getAsJson() {
     JsonObject userJson = Json.createObjectBuilder()
@@ -83,14 +87,14 @@ public class User {
    * @return
    * @throws Exception forwarded exceptions
    */
-  public String login() throws Exception{
+  public Boolean login() throws Exception{
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
     if(this.username.equals("")) {
     	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
     } else if(this.email.equals("")) {
     	System.out.println("neither username nor email are given");
-    	return"";
+    	return false;
     } else {
     	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
     }
@@ -102,14 +106,14 @@ public class User {
         this.id = Integer.parseInt(userList.get(1).get(0));
         getFromDB();
         System.out.println("login successful");
-        return "";
+        return true;
 
       } else System.out.println("wrong password");
 
     }
     // if one of the previous if-conditions returns false
     System.out.println("login failed");
-    return null;
+    return false;
   }
 /*//propably a bullshit function!
   public Boolean logout() {
