@@ -105,6 +105,13 @@ public class User {
       return false;
     }
   }
+  
+  public Boolean updateDB() throws Exception {
+    if (this.id == 0) return false;
+    Connection conn = DBConnector.getConnection();
+    List<Integer> emptyList = DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET username=" + this.username + ", email=" + this.email);
+    return null;
+  }
 
   /**
    * Method to get the User object as a Json dictionary
