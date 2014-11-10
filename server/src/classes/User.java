@@ -3,12 +3,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.Serializable;
 import java.sql.*;
 import javax.json.*;
 
 /**
- * The User class represents a user in the social Network.
+ * The User class represents a user in the social n3twork.
  */
 public class User {
   private int id;
@@ -23,11 +22,12 @@ public class User {
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
   private List<Message> messages = new ArrayList<Message>();
+  
   /**
-   * Constructor
-   * @param  username                    username
-   * @param  email                       Email
-   * @param  pw                          Password
+   * Constructor for login and registration
+   * @param  username
+   * @param  email
+   * @param  pw - password
    */
   public User(String username, String email, String pw) {
     this.username = username;
@@ -36,15 +36,27 @@ public class User {
 
   }
 
-
+  /**
+   * Constructor to look up user via id
+   * @param id
+   */
   public User(int id) {
     this.id = id;
   }
-
+  
+  /**
+   * Empty constructor: always handy
+   */
   public User() {
     // empty
   }
-
+  
+  /**
+   * Method to get all user data except the password from the database.
+   * TODO: friends, otherProperties, groups, posts, messages
+   * @return
+   * @throws Exception
+   */
   public Boolean getFromDB() throws Exception {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
@@ -111,7 +123,7 @@ public class User {
 
   /**
    * Gets all data out of the database if the password is correct
-   * @return
+   * @return Boolean - true if login was successful; false if not
    * @throws Exception forwarded exceptions
    */
   public Boolean login() throws Exception{
@@ -158,40 +170,76 @@ public class User {
 	  this.messages = null;
     return true;
   }*/
-
+  
+  /**
+   * Simple getter for the attribute id
+   * @return id
+   */
   public int getId() {
     return 0;
   }
-
+  
+  /**
+   * Simple getter for the attribute name
+   * @return name
+   */
   public String getName() {
     return this.name;
   }
-
+  
+  /**
+   * Simple setter for the attribute name
+   * @param name
+   */
   public void setName(String name) {
     this.name = name;
 
   }
 
+  /**
+   * Simple getter for the attribute firstName
+   * @return firstName
+   */
   public String getFirstName() {
     return this.firstName;
   }
-
+  
+  /**
+   * Simple setter for the attribute firstName
+   * @param firstName
+   */
   public void setFirstName(String firstName) {
-
+    this.firstName = firstName;
   }
 
+  /**
+   * Simple getter for the attribute username
+   * @return username
+   */
   public String getUsername() {
     return this.username;
   }
 
+  /**
+   * Simple getter for the attribute email
+   * @return email
+   */
   public String getEmail() {
     return this.email;
   }
 
+  /**
+   * Simple setter for the attribute email
+   * @param email
+   */
   public void setEmail(String email) {
 
   }
 
+  /**
+   * Simple setter for the attribute password
+   * @param pw - password 
+   */
   public void setPassword(String pw) {
 
   }
@@ -255,8 +303,5 @@ public class User {
   public void readMessage(Message Message) {
 
   }
-
-  public Boolean delUser() {
-    return null;
-  }
+  
 }

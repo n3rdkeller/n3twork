@@ -16,7 +16,7 @@ public class DBConnector {
 
   /**
    * Static function to build connection
-   * @return Connection database connection
+   * @return database connection
    * @throws Exception
    */
   public static Connection getConnection() throws Exception {
@@ -25,6 +25,13 @@ public class DBConnector {
     return conn;
   }
 
+  /**
+   * Function to execute a select query and parse the output into a matrix
+   * @param conn - should be initialized with DBConnector.getConnection()
+   * @param sqlQuery - any select query
+   * @return the output table in matrix form
+   * @throws Exception
+   */
   public static List<ArrayList<String>> selectQuery(Connection conn, String sqlQuery) throws Exception {
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     System.out.println(pStmt);
@@ -57,7 +64,14 @@ public class DBConnector {
     return output;
 
   }
-
+ 
+  /**
+   * Function to execute insert and update queries
+   * @param conn - should be initialized with DBConnector.getConnection()
+   * @param sqlQuery - insert or update query
+   * @return A List of the generated keys (returns empty list on update query)
+   * @throws Exception
+   */
   public static List<Integer> executeUpdate(Connection conn, String sqlQuery) throws Exception {
     Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_UPDATABLE);
     System.out.println(stmt);
