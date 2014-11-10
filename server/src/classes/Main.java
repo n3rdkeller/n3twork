@@ -7,10 +7,11 @@ public class Main {
     try {
       // User Tests
       User user = new User("dieter","horst@dieter.de","hi");
-      if(user.login() != null)
+      System.out.println(user.getUsername());
+    /*if(user.login() != null)
       //if(user.getFromDB())
         System.out.println(user.getAsJson());
-
+*/
       // DBConnector Tests
       // Connection dbc = DBConnector.getConnection();
       // DBConnector.testQuerys(dbc);

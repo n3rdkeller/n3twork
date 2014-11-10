@@ -111,10 +111,22 @@ public class User {
     System.out.println("login failed");
     return null;
   }
-
+/*//propably a bullshit function!
   public Boolean logout() {
-    return null;
-  }
+	  this.id = 0;
+	  this.name = null;
+	  this.firstName = null;
+	  this.username = null;
+	  this.email = null;
+	  this.password = null;
+	  this.otherProperties = null;
+	  this.sessionIDs = null;
+	  this.friends = null;
+	  this.groups = null;
+	  this.posts = null;
+	  this.messages = null;
+    return true;
+  }*/
 
   public int getId() {
     return 0;
