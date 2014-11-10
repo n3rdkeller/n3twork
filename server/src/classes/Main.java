@@ -1,13 +1,12 @@
 package classes;
-import java.sql.Connection;
 
 public class Main {
 
   public static void main(String[] args) {
     try {
       // User Tests
-      User user = new User("dieter","horst@dieter.de","hi");
-      System.out.println(user.getUsername());
+      User user = new User();
+      System.out.println(user.getId());
     /*if(user.login() != null)
       //if(user.getFromDB())
         System.out.println(user.getAsJson());

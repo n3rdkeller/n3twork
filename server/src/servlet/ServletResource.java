@@ -49,7 +49,23 @@ public class ServletResource {
   public Response register(@FormParam("username") String username,
                            @FormParam("email") String email,
                            @FormParam("pw") String pw){
-    return null;
+    User user = new User(username, email, pw);
+    try {
+      if (user.registerInDB()){
+        return Response.ok("registration successful")
+            .header(HEADER, "*")
+            .build();
+      } else {
+        return Response.ok("registration not successful")
+            .header(HEADER, "*")
+            .build();
+      }
+    } catch (Exception e){
+      return Response.ok(e.toString()) //Needs to return error!!!
+          .header(HEADER, "*")
+          .build();
+    }
   }
+  
   
 }

@@ -67,10 +67,37 @@ public class User {
 
   }
   
+  /**
+   * Inserts the User object into the database if there is no entry with the same username or email.
+   * @return Boolean - true if the registration was successful; false if either, neither username nor email are given, or the user already exists.
+   * @throws Exception mostly SQLExceptions
+   */
   public Boolean registerInDB() throws Exception {
-    return null;
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
+    if(this.username.equals("")) {
+      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
+    } else if(this.email.equals("")) {
+      System.out.println("neither username nor email are given");
+      return false;
+    } else {
+      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
+    }
+    
+    if (userList.size() == 1) {
+      List<Integer> ids = DBConnector.executeUpdate(conn, "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(" + this.username + "," + this.email + "," + this.password + ")"); 
+      this.id = ids.get(0);
+      return true;
+    } else {
+      System.out.println("User already exists");
+      return false;
+    }
   }
 
+  /**
+   * Method to get the User object as a Json dictionary
+   * @return JsonObject converted to String
+   */
   public String getAsJson() {
     JsonObject userJson = Json.createObjectBuilder()
       .add("id", this.id)
