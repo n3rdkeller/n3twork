@@ -5,7 +5,7 @@
       'ngRoute',
       'n3twork.register',
       'n3twork.auth',
-      'n3twork.hw'
+      'n3twork.main'
     ])
     .config(config);
 
@@ -15,10 +15,13 @@
         templateUrl: 'app/register/register.html',
         controller: 'RegisterController'
       })
-      .when('/hw', {
-        templateUrl: 'app/main/main.html',
-        controller: 'HwController',
-        resolve: ['APISvc']
+      .when('/main', {
+        templateUrl: 'app/mainpage/main.html',
+        controller: 'MainCtrl'
+      })
+      .when('/login', {
+        templateUrl: 'app/auth/auth.login.html',
+        controller: 'AuthCtrl'
       })
       .otherwise({
         redirectTo: '/'

@@ -2,5 +2,5 @@
   'use strict';
 
   angular
-    .module('n3twork.auth', []);
+    .module('n3twork.main', []);
 })();

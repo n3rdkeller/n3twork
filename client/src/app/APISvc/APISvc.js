@@ -1,32 +1,33 @@
 (function() {
-    'use strict';
+  'use strict';
 
-    angular
-        .module('n3twork')
-        .factory('APISvc', APISvc);
+  angular
+    .module('n3twork')
+    .factory('APISvc', APISvc);
 
-    APISvc.$inject = ['$http', '$q'];
+  APISvc.$inject = ['$http', '$q'];
 
-    function APISvc($http, $q) {
-        var service = {
-            request: request,
-        };
+  function APISvc($http, $q) {
+    var service = {
+      request: request,
+    };
 
-        return service;
+    return service;
 
-        function request(req) {
-            var APIUrl = 'http://n3twork.n3rdkeller.de:8080/n3/';
-            req.url = APIUrl + req.url;
-            var promise = $http(req).then(complete).catch(failed);
-            return promise;
-        }
-
-        function complete(response) {
-            return response.data;
-        }
-
-        function failed(error) {
-            console.log(error);
-        }
+    function request(req) {
+      var APIUrl = 'http://n3twork.n3rdkeller.de:8080/n3/';
+      req.url = APIUrl + req.url;
+      var promise = $http(req).then(complete).catch(failed);
+      return promise;
     }
+
+    function complete(response) {
+      console.log(response);
+      return response.data;
+    }
+
+    function failed(error) {
+      console.log(error);
+    }
+  }
 })();
