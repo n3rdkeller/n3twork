@@ -43,6 +43,7 @@ public class User {
   public User(String userAsJson) {
     JsonReader jsonReader = Json.createReader(new StringReader(userAsJson));
     JsonObject userAsJsonObject = jsonReader.readObject();
+    userAsJsonObject = userAsJsonObject.getJsonObject("data");
     this.username = userAsJsonObject.getString("username");
     this.email = userAsJsonObject.getString("email");
     this.password = userAsJsonObject.getString("password");
