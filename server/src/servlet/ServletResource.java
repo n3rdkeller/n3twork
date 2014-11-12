@@ -3,6 +3,7 @@ package servlet;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,7 +26,7 @@ public class ServletResource {
   
   @POST @Path("/login")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response login(String input){
+  public Response login(@HeaderParam("Host") String sessionID,String input){
     this.user = new User(input);
     try {
       if (this.user.login()){
@@ -43,6 +44,29 @@ public class ServletResource {
           .header(ACCESSHEADER, "*")
           .build();
     }
+  }
+  @POST @Path("/login")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response login(@HeaderParam("Session") String sessionID){
+    this.user = new User(sessionID.toCharArray());
+    try {
+      if (this.user.checkSessionID()){
+        this.user.getFromDB();
+        return Response.ok(this.user.getAsJson())
+            .header(ACCESSHEADER, "*")
+            .header("Session", this.user.createSessionID())//"<sessionid>") //TODO pack die seschonid
+            .build();
+      } else {
+        return Response.ok("login not successful")
+            .header(ACCESSHEADER, "*")
+            .build();
+      }
+    } catch (Exception e){
+      return Response.ok(e.toString()) //TODO Needs to return error!!!
+          .header(ACCESSHEADER, "*")
+          .build();
+    }
+    
   }
   
   @POST @Path("/register")
@@ -66,6 +90,11 @@ public class ServletResource {
           .header(ACCESSHEADER, "*")
           .build();
     }
+  }
+  
+  private Boolean checkSessionID(String sessionID){
+    
+    return null;
   }
   
   

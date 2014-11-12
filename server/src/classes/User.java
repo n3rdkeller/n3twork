@@ -31,7 +31,7 @@ public class User {
   private List<Message> messages = new ArrayList<Message>();
   
   /**
-   * Constructor for login and registration
+   * Old constructor for login and registration
    * @param  username
    * @param  email
    * @param  pw - password
@@ -43,6 +43,10 @@ public class User {
 
   }
   
+  /**
+   * Constructor for login and registration
+   * @param userAsJson
+   */
   public User(String userAsJson) {
     JsonReader jsonReader = Json.createReader(new StringReader(userAsJson));
     JsonObject userAsJsonObject = jsonReader.readObject();
@@ -50,6 +54,14 @@ public class User {
     this.username = userAsJsonObject.getString("username");
     this.email = userAsJsonObject.getString("email");
     this.password = userAsJsonObject.getString("password");
+  }
+  
+  /**
+   * Constructor for login with sessionID
+   * @param sessionID - this is a char[] to differentiate this constructor from User(String userAsJson)
+   */
+  public User(char[] sessionID){
+    this.sessionID = new String(sessionID);
   }
 
   /**
@@ -322,8 +334,15 @@ public class User {
     return this.sessionID;
   }
 
-  public Boolean checkSessionID(int id) {
-    return null;
+  public Boolean checkSessionID() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+    if(userList.size() == 1) {
+      return false;
+    } else {
+      this.id = Integer.parseInt(userList.get(1).get(0));
+      return true;
+    }
   }
 
   public List<User> getFriends() {
