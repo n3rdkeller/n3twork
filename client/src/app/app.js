@@ -17,7 +17,8 @@
       })
       .when('/hw', {
         templateUrl: 'app/main/main.html',
-        controller: 'HwController'
+        controller: 'HwController',
+        resolve: ['APISvc']
       })
       .otherwise({
         redirectTo: '/'

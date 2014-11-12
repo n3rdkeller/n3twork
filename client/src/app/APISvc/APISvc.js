@@ -7,18 +7,26 @@
 
     APISvc.$inject = ['$http', '$q'];
 
-    function APISvc($http) {
+    function APISvc($http, $q) {
         var service = {
-            doRequest: doRequest
+            request: request,
         };
+
         return service;
 
-        function doRequest(req) {
-          req = req ? req : '';
-          $http.get('http://n3twork.n3rdkeller.de:8080/n3/' + req)
-            .success(function(data) {
-              vm.response = data;
-            });
+        function request(req) {
+            var APIUrl = 'http://n3twork.n3rdkeller.de:8080/n3/';
+            req.url = APIUrl + req.url;
+            var promise = $http(req).then(complete).catch(failed);
+            return promise;
+        }
+
+        function complete(response) {
+            return response.data;
+        }
+
+        function failed(error) {
+            console.log(error);
         }
     }
 })();
