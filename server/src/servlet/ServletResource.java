@@ -11,35 +11,36 @@ import classes.User;
 
 @Path("/")
 public class ServletResource {
-  private static String HEADER = "Access-Control-Allow-Origin";
-  
+  private static String ACCESSHEADER = "Access-Control-Allow-Origin";
+  User user;
   @GET
   @Produces(MediaType.TEXT_PLAIN)
   public Response sayHello() {
     return Response.ok("root")
-    		.header(HEADER, "*")
+    		.header(ACCESSHEADER, "*")
     		.build();
   }
   
   @POST @Path("/login")
-  @Produces(MediaType.TEXT_PLAIN)
+  @Produces(MediaType.APPLICATION_JSON)
   public Response login(@FormParam("username") String username,
 		  				          @FormParam("email") String email,
 		  				          @FormParam("pw") String pw){
-    User user = new User(username, email, pw);
+    this.user = new User(username, email, pw);
     try {
-      if (user.login()){
-    		return Response.ok("login successful")
-    				.header(HEADER, "*")
+      if (this.user.login()){
+    		return Response.ok(this.user.getAsJson())
+    				.header(ACCESSHEADER, "*")
+    				.header("Session", "b3df3e70c2daabd61e7e8175f3f8f9d4")//"<sessionid>") //TODO pack die seschonid
     				.build();
     	} else {
     		return Response.ok("login not successful")
-    				.header(HEADER, "*")
+    				.header(ACCESSHEADER, "*")
     				.build();
     	}
     } catch (Exception e){
-      return Response.ok(e.toString()) //Needs to return error!!!
-          .header(HEADER, "*")
+      return Response.ok(e.toString()) //TODO Needs to return error!!!
+          .header(ACCESSHEADER, "*")
           .build();
     }
   }
@@ -53,16 +54,16 @@ public class ServletResource {
     try {
       if (user.registerInDB()){
         return Response.ok("registration successful")
-            .header(HEADER, "*")
+            .header(ACCESSHEADER, "*")
             .build();
       } else {
         return Response.ok("registration not successful")
-            .header(HEADER, "*")
+            .header(ACCESSHEADER, "*")
             .build();
       }
     } catch (Exception e){
-      return Response.ok(e.toString()) //Needs to return error!!!
-          .header(HEADER, "*")
+      return Response.ok(e.toString()) //TODO Needs to return error!!!
+          .header(ACCESSHEADER, "*")
           .build();
     }
   }

@@ -71,7 +71,7 @@ public class User {
 
     }
 
-    this.name = userMap.get("name");
+    //this.name = userMap.get("name");
     this.username = userMap.get("username");
     this.email = userMap.get("email");
 
@@ -106,13 +106,6 @@ public class User {
     }
   }
   
-  public Boolean updateDB() throws Exception {
-    if (this.id == 0) return false;
-    Connection conn = DBConnector.getConnection();
-    List<Integer> emptyList = DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET username=" + this.username + ", email=" + this.email);
-    return null;
-  }
-
   /**
    * Method to get the User object as a Json dictionary
    * @return JsonObject converted to String
@@ -121,7 +114,6 @@ public class User {
     JsonObject userJson = Json.createObjectBuilder()
       .add("id", this.id)
       .add("username", this.username)
-      .add("name", this.name)
       .add("email", this.email)
       .build();
     String jsonString = String.valueOf(userJson);
@@ -136,12 +128,12 @@ public class User {
   public Boolean login() throws Exception{
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
-    if(this.username.equals("")) {
+    if(this.username.equals("") && ! this.email.equals("")) {
     	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
     } else if(this.email.equals("")) {
     	System.out.println("neither username nor email are given");
     	return false;
-    } else {
+    } else if(! this.username.equals("")) {
     	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
     }
     conn.close();
@@ -198,9 +190,10 @@ public class User {
    * Simple setter for the attribute name
    * @param name
    */
-  public void setName(String name) {
+  public void setName(String name) throws Exception{
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET name=" + name + " WHERE id=" + this.id);
     this.name = name;
-
   }
 
   /**
@@ -215,7 +208,9 @@ public class User {
    * Simple setter for the attribute firstName
    * @param firstName
    */
-  public void setFirstName(String firstName) {
+  public void setFirstName(String firstName) throws Exception {
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET firstName=" + firstName + " WHERE id=" + this.id);
     this.firstName = firstName;
   }
 
@@ -239,8 +234,10 @@ public class User {
    * Simple setter for the attribute email
    * @param email
    */
-  public void setEmail(String email) {
-
+  public void setEmail(String email) throws Exception{
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET email=" + email + " WHERE id=" + this.id);
+    this.email = email;
   }
 
   /**
