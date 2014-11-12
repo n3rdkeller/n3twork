@@ -3,7 +3,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
+
 import javax.json.*;
 
 /**
@@ -16,8 +20,8 @@ public class User {
   private String username;
   private String email;
   private String password;
+  private String sessionID;
   private Map<String,String> otherProperties = new HashMap<String,String>();
-  private List<Integer> sessionIDs = new ArrayList<Integer>();
   private List<User> friends = new ArrayList<User>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
@@ -34,6 +38,14 @@ public class User {
     this.email = email;
     this.password = pw;
 
+  }
+  
+  public User(String userAsJson) {
+    JsonReader jsonReader = Json.createReader(new StringReader(userAsJson));
+    JsonObject userAsJsonObject = jsonReader.readObject();
+    this.username = userAsJsonObject.getString("username");
+    this.email = userAsJsonObject.getString("email");
+    this.password = userAsJsonObject.getString("password");
   }
 
   /**
@@ -128,14 +140,14 @@ public class User {
   public Boolean login() throws Exception{
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
-    if(this.username.equals("") && ! this.email.equals("")) {
+    if(!this.email.equals("") && this.username.equals("")) { // username given
     	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
-    } else if(this.email.equals("")) {
+    } else if(this.email.equals("") && !this.username.equals("")) { // email given
+      userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
+    }else if(this.email.equals("") && this.username.equals("")) { // neither given
     	System.out.println("neither username nor email are given");
     	return false;
-    } else if(! this.username.equals("")) {
-    	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
-    }
+    } 
     conn.close();
 
     if(userList.size() > 1) {
@@ -255,7 +267,14 @@ public class User {
   public void setOtherProperty(String key, String value) {
 
   }
+  
+  public String createSessionID() throws UnsupportedEncodingException{
+    Random randomGenerator = new Random();
+    String seed = this.username + randomGenerator.nextInt(100);
+    byte[] bytesOfSeed = seed.getBytes("UTF-8");
 
+    return null;
+  }
   public List<Integer> getSessionIDs() {
     return null;
   }

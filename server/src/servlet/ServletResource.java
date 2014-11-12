@@ -1,5 +1,6 @@
 package servlet;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -7,6 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import classes.User;
 
 @Path("/")
@@ -22,11 +24,9 @@ public class ServletResource {
   }
   
   @POST @Path("/login")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response login(@FormParam("username") String username,
-		  				          @FormParam("email") String email,
-		  				          @FormParam("pw") String pw){
-    this.user = new User(username, email, pw);
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response login(String input){
+    this.user = new User(input);
     try {
       if (this.user.login()){
     		return Response.ok(this.user.getAsJson())
