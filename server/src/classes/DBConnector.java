@@ -17,9 +17,12 @@ public class DBConnector {
   /**
    * Static function to build connection
    * @return database connection
-   * @throws Exception
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public static Connection getConnection() throws Exception {
+  public static Connection getConnection() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     Class.forName(DRIVER).newInstance();
     Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
     return conn;
@@ -30,9 +33,9 @@ public class DBConnector {
    * @param conn - should be initialized with DBConnector.getConnection()
    * @param sqlQuery - any select query
    * @return the output table in matrix form
-   * @throws Exception
+   * @throws SQLException 
    */
-  public static List<ArrayList<String>> selectQuery(Connection conn, String sqlQuery) throws Exception {
+  public static List<ArrayList<String>> selectQuery(Connection conn, String sqlQuery) throws SQLException{
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     System.out.println(pStmt);
 
@@ -70,9 +73,9 @@ public class DBConnector {
    * @param conn - should be initialized with DBConnector.getConnection()
    * @param sqlQuery - insert or update query
    * @return A List of the generated keys (returns empty list on update query)
-   * @throws Exception
+   * @throws SQLException 
    */
-  public static List<Integer> executeUpdate(Connection conn, String sqlQuery) throws Exception {
+  public static List<Integer> executeUpdate(Connection conn, String sqlQuery) throws SQLException {
     Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_UPDATABLE);
     System.out.println(stmt);
     stmt.executeUpdate(sqlQuery, Statement.RETURN_GENERATED_KEYS);

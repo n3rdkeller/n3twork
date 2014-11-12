@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Random;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
 import javax.json.*;
@@ -68,9 +71,12 @@ public class User {
    * Method to get all user data except the password from the database.
    * TODO: friends, otherProperties, groups, posts, messages
    * @return
-   * @throws Exception
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public Boolean getFromDB() throws Exception {
+  public Boolean getFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     Map<String,String> userMap = new HashMap<String,String>();
@@ -95,9 +101,12 @@ public class User {
   /**
    * Inserts the User object into the database if there is no entry with the same username or email.
    * @return Boolean - true if the registration was successful; false if either, neither username nor email are given, or the user already exists.
-   * @throws Exception mostly SQLExceptions
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException
    */
-  public Boolean registerInDB() throws Exception {
+  public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
     if(this.username.equals("")) {
@@ -136,9 +145,12 @@ public class User {
   /**
    * Gets all data out of the database if the password is correct
    * @return Boolean - true if login was successful; false if not
-   * @throws Exception forwarded exceptions
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public Boolean login() throws Exception{
+  public Boolean login() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
     if(!this.email.equals("") && this.username.equals("")) { // username given
@@ -202,8 +214,12 @@ public class User {
   /**
    * Simple setter for the attribute name
    * @param name
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public void setName(String name) throws Exception{
+  public void setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET name=" + name + " WHERE id=" + this.id);
     this.name = name;
@@ -220,8 +236,12 @@ public class User {
   /**
    * Simple setter for the attribute firstName
    * @param firstName
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public void setFirstName(String firstName) throws Exception {
+  public void setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET firstName=" + firstName + " WHERE id=" + this.id);
     this.firstName = firstName;
@@ -246,8 +266,12 @@ public class User {
   /**
    * Simple setter for the attribute email
    * @param email
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public void setEmail(String email) throws Exception{
+  public void setEmail(String email) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET email=" + email + " WHERE id=" + this.id);
     this.email = email;
@@ -269,15 +293,33 @@ public class User {
 
   }
   
-  public String createSessionID() throws UnsupportedEncodingException{
+  public String createSessionID() throws UnsupportedEncodingException, NoSuchAlgorithmException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
     Random randomGenerator = new Random();
-    String seed = this.username + randomGenerator.nextInt(100);
-    byte[] bytesOfSeed = seed.getBytes("UTF-8");
-
-    return null;
+    String seed = this.username + randomGenerator.nextInt(1000);
+    MessageDigest m = MessageDigest.getInstance("MD5");
+    m.update(seed.getBytes("UTF-8"));
+    byte[] digest = m.digest();
+    BigInteger bigInt = new BigInteger(1,digest);
+    String hashtext = bigInt.toString(16);
+    // Now we need to zero pad it if you actually want the full 32 chars.
+    while(hashtext.length() < 32 ){
+      hashtext = "0"+hashtext;
+    }
+    this.sessionID = hashtext;
+    // save in db
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+    if(userList.size() > 1) {
+      this.createSessionID();
+    } else {
+      DBConnector.executeUpdate(conn, "INSERT INTO " + DBConnector.DATABASE + ".SessionIDs(userID,sessionID) VALUES(" + this.id + ",'" + this.sessionID + "')"); 
+    }
+    
+    return this.sessionID;
   }
-  public List<Integer> getSessionIDs() {
-    return null;
+  
+  public String getSessionID() {
+    return this.sessionID;
   }
 
   public Boolean checkSessionID(int id) {

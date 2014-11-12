@@ -31,7 +31,7 @@ public class ServletResource {
       if (this.user.login()){
     		return Response.ok(this.user.getAsJson())
     				.header(ACCESSHEADER, "*")
-    				.header("Session", "b3df3e70c2daabd61e7e8175f3f8f9d4")//"<sessionid>") //TODO pack die seschonid
+    				.header("Session", this.user.createSessionID())//"<sessionid>") //TODO pack die seschonid
     				.build();
     	} else {
     		return Response.ok("login not successful")
