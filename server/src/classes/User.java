@@ -17,6 +17,7 @@ import javax.json.*;
  * The User class represents a user in the social n3twork.
  */
 public class User {
+  
   private int id;
   private String name;
   private String firstName;
@@ -50,7 +51,7 @@ public class User {
   public User(String userAsJson) {
     JsonReader jsonReader = Json.createReader(new StringReader(userAsJson));
     JsonObject userAsJsonObject = jsonReader.readObject();
-    userAsJsonObject = userAsJsonObject.getJsonObject("data");
+    //userAsJsonObject = userAsJsonObject.getJsonObject("data");
     this.username = userAsJsonObject.getString("username");
     this.email = userAsJsonObject.getString("email");
     this.password = userAsJsonObject.getString("password");
@@ -82,10 +83,10 @@ public class User {
   /**
    * Method to get all user data except the password from the database.
    * TODO: friends, otherProperties, groups, posts, messages
-   * @return
-   * @throws SQLException 
-   * @throws ClassNotFoundException 
-   * @throws IllegalAccessException 
+   * @return true if successful
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   * @throws IllegalAccessException
    * @throws InstantiationException 
    */
   public Boolean getFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
@@ -113,9 +114,9 @@ public class User {
   /**
    * Inserts the User object into the database if there is no entry with the same username or email.
    * @return Boolean - true if the registration was successful; false if either, neither username nor email are given, or the user already exists.
-   * @throws SQLException 
-   * @throws ClassNotFoundException 
-   * @throws IllegalAccessException 
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   * @throws IllegalAccessException
    * @throws InstantiationException
    */
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
@@ -157,9 +158,9 @@ public class User {
   /**
    * Gets all data out of the database if the password is correct
    * @return Boolean - true if login was successful; false if not
-   * @throws SQLException 
-   * @throws ClassNotFoundException 
-   * @throws IllegalAccessException 
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   * @throws IllegalAccessException
    * @throws InstantiationException 
    */
   public Boolean login() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
@@ -226,9 +227,9 @@ public class User {
   /**
    * Simple setter for the attribute name
    * @param name
-   * @throws SQLException 
-   * @throws ClassNotFoundException 
-   * @throws IllegalAccessException 
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   * @throws IllegalAccessException
    * @throws InstantiationException 
    */
   public void setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
@@ -248,10 +249,10 @@ public class User {
   /**
    * Simple setter for the attribute firstName
    * @param firstName
-   * @throws SQLException 
-   * @throws ClassNotFoundException 
-   * @throws IllegalAccessException 
-   * @throws InstantiationException 
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   * @throws IllegalAccessException
+   * @throws InstantiationException
    */
   public void setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
@@ -278,10 +279,10 @@ public class User {
   /**
    * Simple setter for the attribute email
    * @param email
-   * @throws SQLException 
-   * @throws ClassNotFoundException 
-   * @throws IllegalAccessException 
-   * @throws InstantiationException 
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   * @throws IllegalAccessException
+   * @throws InstantiationException
    */
   public void setEmail(String email) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
@@ -313,7 +314,7 @@ public class User {
     byte[] digest = m.digest();
     BigInteger bigInt = new BigInteger(1,digest);
     String hashtext = bigInt.toString(16);
-    // Now we need to zero pad it if you actually want the full 32 chars.
+    // zero padding to get the full 32 chars
     while(hashtext.length() < 32 ){
       hashtext = "0"+hashtext;
     }

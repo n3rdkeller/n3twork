@@ -1,5 +1,12 @@
 package servlet;
 
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javassist.bytecode.stackmap.TypeData.ClassName;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -9,13 +16,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import classes.User;
 
 @Path("/")
-public class ServletResource {
+public class ServletResource {{
+  try {
+    Handler fh = new FileHandler("servlet.log");
+  }catch(Exception e){}
+    
+  }
+  private static final Logger log = Logger.getLogger( ClassName.class.getName() );
   private static String ACCESSHEADER = "Access-Control-Allow-Origin";
-  User user;
+  private User user;
   @GET
   @Produces(MediaType.TEXT_PLAIN)
   public Response sayHello() {
@@ -26,48 +40,54 @@ public class ServletResource {
   
   @POST @Path("/login")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response login(@HeaderParam("Host") String sessionID,String input){
+  public Response login(@HeaderParam("Host") String host,String input){
     this.user = new User(input);
+    log.log( Level.FINE, input );
     try {
       if (this.user.login()){
-    		return Response.ok(this.user.getAsJson())
+    		return Response.ok()
+    		    .entity(this.user.getAsJson())
     				.header(ACCESSHEADER, "*")
-    				.header("Session", this.user.createSessionID())//"<sessionid>") //TODO pack die seschonid
+    				.header("Session", this.user.createSessionID())
     				.build();
     	} else {
-    		return Response.ok("login not successful")
+    		return Response.status(Status.UNAUTHORIZED)
+    		    .entity("login not successful")
     				.header(ACCESSHEADER, "*")
     				.build();
     	}
     } catch (Exception e){
-      return Response.ok(e.toString()) //TODO Needs to return error!!!
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
           .header(ACCESSHEADER, "*")
           .build();
     }
   }
-  @POST @Path("/login")
-  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response login(@HeaderParam("Session") String sessionID){
-    this.user = new User(sessionID.toCharArray());
-    try {
-      if (this.user.checkSessionID()){
-        this.user.getFromDB();
-        return Response.ok(this.user.getAsJson())
-            .header(ACCESSHEADER, "*")
-            .header("Session", this.user.createSessionID())//"<sessionid>") //TODO pack die seschonid
-            .build();
-      } else {
-        return Response.ok("login not successful")
-            .header(ACCESSHEADER, "*")
-            .build();
-      }
-    } catch (Exception e){
-      return Response.ok(e.toString()) //TODO Needs to return error!!!
-          .header(ACCESSHEADER, "*")
-          .build();
-    }
-    
-  }
+//  @POST @Path("/login")
+//  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+//  public Response login(@HeaderParam("Session") String sessionID){
+//    this.user = new User(sessionID.toCharArray());
+//    try {
+//      if (this.user.checkSessionID()){
+//        this.user.getFromDB();
+//        return Response.ok(this.user.getAsJson())
+//            .header(ACCESSHEADER, "*")
+//            .header("Session", this.user.createSessionID())
+//            .build();
+//      } else {
+//        return Response.status(Status.UNAUTHORIZED)
+//            .entity("login not successful")
+//            .header(ACCESSHEADER, "*")
+//            .build();
+//      }
+//    } catch (Exception e){
+//      return Response.status(Status.INTERNAL_SERVER_ERROR)
+//          .entity(e.toString()) //TODO Needs to return error!!!
+//          .header(ACCESSHEADER, "*")
+//          .build();
+//    }
+//    
+//  }
   
   @POST @Path("/register")
   @Produces(MediaType.TEXT_PLAIN)
@@ -81,19 +101,20 @@ public class ServletResource {
             .header(ACCESSHEADER, "*")
             .build();
       } else {
-        return Response.ok("registration not successful")
+        return Response.status(Status.INTERNAL_SERVER_ERROR)
+            .entity("registration not successful")
             .header(ACCESSHEADER, "*")
             .build();
       }
     } catch (Exception e){
-      return Response.ok(e.toString()) //TODO Needs to return error!!!
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
           .header(ACCESSHEADER, "*")
           .build();
     }
   }
   
   private Boolean checkSessionID(String sessionID){
-    
     return null;
   }
   
