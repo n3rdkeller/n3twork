@@ -15,15 +15,16 @@
     return service;
 
     function request(req) {
-      var APIUrl = 'http://n3twork.n3rdkeller.de:8080/n3/';
+      var APIUrl = 'http://n3twork.n3rdkeller.de:8080/n3';
       req.url = APIUrl + req.url;
       var promise = $http(req).then(complete).catch(failed);
+      console.log(req);
       return promise;
     }
 
     function complete(response) {
       console.log(response);
-      return response.data;
+      return response;
     }
 
     function failed(error) {

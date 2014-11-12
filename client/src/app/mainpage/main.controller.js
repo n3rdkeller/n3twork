@@ -16,10 +16,10 @@
     function getData() {
       APISvc.request({
         method: 'GET',
-        url: ''
-      }).then(function(data) {
+        url: '/'
+      }).then(function(response) {
         deferred.resolve(true);
-        vm.username = data;
+        vm.username = response.data;
       })
     }
   }
