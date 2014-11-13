@@ -16,22 +16,16 @@
 
     function login(username, email, password) {
       APISvc.request({
-        method: 'GET',
+        method: 'POST',
         url: '/login',
-        headers: {
-          'Content-Type': 'application/json'
-        },
         data: {
-          'data': {
-            'email': email,
-            'username': username,
-            'password': password
-          }
+          'username': username,
+          'email': email,
+          'password': password
         }
       })
       .then(function(response) {
         deferred.resolve(true);
-        console.log(response);
         vm.data = response.data;
       });
       return;
