@@ -1,12 +1,5 @@
 package servlet;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javassist.bytecode.stackmap.TypeData.ClassName;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -18,16 +11,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.logging.log4j.*;
+
 import classes.User;
 
 @Path("/")
-public class ServletResource {{
-  try {
-    Handler fh = new FileHandler("servlet.log");
-  }catch(Exception e){}
-    
-  }
-  private static final Logger log = Logger.getLogger( ClassName.class.getName() );
+public class ServletResource {
+  static Logger log = LogManager.getLogger(ServletResource.class.getName());
+  
   private static String ACCESSHEADER = "Access-Control-Allow-Origin";
   private User user;
   @GET
@@ -42,7 +33,6 @@ public class ServletResource {{
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response login(@HeaderParam("Host") String host,String input){
     this.user = new User(input);
-    log.log( Level.FINE, input );
     try {
       if (this.user.login()){
     		return Response.ok()
