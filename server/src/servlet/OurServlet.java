@@ -17,10 +17,10 @@ public class OurServlet extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
-        
         // register resources
         classes.add(ServletResource.class);
         
         return classes;
     }
+
 }

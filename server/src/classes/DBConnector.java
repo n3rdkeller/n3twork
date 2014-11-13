@@ -4,13 +4,13 @@ import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import servlet.ServletResource;
 
 public class DBConnector {
-  final static Logger log = LogManager.getLogger(ServletResource.class);
+  final static Logger log = LogManager.getLogger(DBConnector.class);
   private static String DRIVER = "com.mysql.jdbc.Driver";
   public static String DATABASE = "TEAM_2E_DB";
   private static String URL = "jdbc:mysql://141.2.89.26";
@@ -43,7 +43,7 @@ public class DBConnector {
    */
   public static List<ArrayList<String>> selectQuery(Connection conn, String sqlQuery) throws SQLException{
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    log.debug(pStmt);
+    log.debug(sqlQuery);
 
     ResultSet rs = pStmt.executeQuery();
     ResultSetMetaData rsmd = rs.getMetaData();
@@ -83,7 +83,7 @@ public class DBConnector {
    */
   public static List<Integer> executeUpdate(Connection conn, String sqlQuery) throws SQLException {
     Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_UPDATABLE);
-    log.debug(stmt);
+    log.debug(sqlQuery);
     stmt.executeUpdate(sqlQuery, Statement.RETURN_GENERATED_KEYS);
 
     ResultSet rs = stmt.getGeneratedKeys();

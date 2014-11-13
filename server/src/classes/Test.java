@@ -1,7 +1,7 @@
 package classes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import servlet.ServletResource;
 
@@ -11,7 +11,7 @@ public class Test {
   public static void loginTest() {
     User user = new User("dieter","","hi");
     try{
-    user.login();
+      user.login();
     }catch(Exception e) {
       log.error(e);
     }
