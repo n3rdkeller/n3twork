@@ -13,10 +13,16 @@ import java.sql.*;
 
 import javax.json.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import servlet.ServletResource;
+
 /**
  * The User class represents a user in the social n3twork.
  */
 public class User {
+  final static Logger log = LogManager.getLogger(ServletResource.class);
   
   private int id;
   private String name;
@@ -84,11 +90,27 @@ public class User {
    * Method to get all user data except the password from the database.
    * TODO: friends, otherProperties, groups, posts, messages
    * @return true if successful
+   * @throws NoSuchAlgorithmException 
+   * @throws UnsupportedEncodingException 
    * @throws SQLException
    * @throws ClassNotFoundException
    * @throws IllegalAccessException
    * @throws InstantiationException 
    */
+  
+  private static String md5(String seed) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    MessageDigest m = MessageDigest.getInstance("MD5");
+    m.update(seed.getBytes("UTF-8"));
+    byte[] digest = m.digest();
+    BigInteger bigInt = new BigInteger(1,digest);
+    String hashtext = bigInt.toString(16);
+    // zero padding to get the full 32 chars
+    while(hashtext.length() < 32 ){
+      hashtext = "0" + hashtext;
+    }
+    return hashtext;
+  }
+  
   public Boolean getFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
@@ -122,12 +144,17 @@ public class User {
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
-    if(this.username.equals("")) {
+    if(!this.email.equals("") && this.username.equals("")) { // username given
+      log.debug("registrating " + this.username);
+      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
+    } else if(this.email.equals("") && !this.username.equals("")) { // email given
+      log.debug("registrating " + this.email);
       userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
-    } else if(this.email.equals("")) {
-      System.out.println("neither username nor email are given");
+    } else if(this.email.equals("") && this.username.equals("")) { // neither given
+      log.debug("neither username nor email are given");
       return false;
-    } else {
+    } else { // username and email are given -> use username
+      log.debug("registrating " + this.username);
       userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
     }
     
@@ -136,7 +163,7 @@ public class User {
       this.id = ids.get(0);
       return true;
     } else {
-      System.out.println("User already exists");
+      log.debug("User already exists");
       return false;
     }
   }
@@ -167,13 +194,18 @@ public class User {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
     if(!this.email.equals("") && this.username.equals("")) { // username given
+      log.debug("login of " + this.username);
     	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
     } else if(this.email.equals("") && !this.username.equals("")) { // email given
+      log.debug("login of " + this.email);
       userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
     }else if(this.email.equals("") && this.username.equals("")) { // neither given
-    	System.out.println("neither username nor email are given");
+    	log.debug("neither username nor email are given");
     	return false;
-    } 
+    } else { // username and email are given -> use username
+      log.debug("login of " + this.username);
+      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
+    }
     conn.close();
 
     if(userList.size() > 1) {
@@ -181,17 +213,18 @@ public class User {
 
         this.id = Integer.parseInt(userList.get(1).get(0));
         getFromDB();
-        System.out.println("login successful");
+        log.debug("login successful");
         return true;
 
-      } else System.out.println("wrong password");
+      } else log.debug("wrong password");
 
     }
     // if one of the previous if-conditions returns false
-    System.out.println("login failed");
+    log.debug("login failed");
     return false;
   }
-/*//propably a bullshit function!
+  
+/*//probably a bullshit function!
   public Boolean logout() {
 	  this.id = 0;
 	  this.name = null;
@@ -309,20 +342,11 @@ public class User {
   public String createSessionID() throws UnsupportedEncodingException, NoSuchAlgorithmException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
     Random randomGenerator = new Random();
     String seed = this.username + randomGenerator.nextInt(1000);
-    MessageDigest m = MessageDigest.getInstance("MD5");
-    m.update(seed.getBytes("UTF-8"));
-    byte[] digest = m.digest();
-    BigInteger bigInt = new BigInteger(1,digest);
-    String hashtext = bigInt.toString(16);
-    // zero padding to get the full 32 chars
-    while(hashtext.length() < 32 ){
-      hashtext = "0"+hashtext;
-    }
-    this.sessionID = hashtext;
+    this.sessionID = md5(seed);
     // save in db
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
-    if(userList.size() > 1) {
+    if(userList.size() > 1) { //sessionID already exists
       this.createSessionID();
     } else {
       DBConnector.executeUpdate(conn, "INSERT INTO " + DBConnector.DATABASE + ".SessionIDs(userID,sessionID) VALUES(" + this.id + ",'" + this.sessionID + "')"); 

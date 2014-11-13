@@ -1,12 +1,19 @@
 package classes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import servlet.ServletResource;
+
 public class Test {
+
+  final static Logger log = LogManager.getLogger(ServletResource.class);
   public static void loginTest() {
     User user = new User("dieter","","hi");
     try{
     user.login();
     }catch(Exception e) {
-      System.out.println(e.toString());
+      log.error(e);
     }
   }
 }

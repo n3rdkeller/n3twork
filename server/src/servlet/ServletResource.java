@@ -11,13 +11,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import classes.User;
 
 @Path("/")
 public class ServletResource {
-  static Logger log = LogManager.getLogger(ServletResource.class.getName());
+  final static Logger log = LogManager.getLogger(ServletResource.class);
   
   private static String ACCESSHEADER = "Access-Control-Allow-Origin";
   private User user;
@@ -32,6 +33,7 @@ public class ServletResource {
   @POST @Path("/login")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response login(@HeaderParam("Host") String host,String input){
+    log.debug("login input:" + input);
     this.user = new User(input);
     try {
       if (this.user.login()){
@@ -47,6 +49,7 @@ public class ServletResource {
     				.build();
     	}
     } catch (Exception e){
+      log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
           .entity(e.toString())
           .header(ACCESSHEADER, "*")
@@ -97,6 +100,7 @@ public class ServletResource {
             .build();
       }
     } catch (Exception e){
+      log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
           .entity(e.toString())
           .header(ACCESSHEADER, "*")
