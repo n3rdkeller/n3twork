@@ -177,6 +177,7 @@ public class User {
       .add("id", this.id)
       .add("username", this.username)
       .add("email", this.email)
+      .add("session", this.sessionID)
       .build();
     String jsonString = String.valueOf(userJson);
     return jsonString;
@@ -356,7 +357,7 @@ public class User {
     } else {
       DBConnector.executeUpdate(conn, "INSERT INTO " + DBConnector.DATABASE + ".SessionIDs(userID,sessionID) VALUES(" + this.id + ",'" + this.sessionID + "')"); 
     }
-    
+    conn.close();
     return this.sessionID;
   }
   

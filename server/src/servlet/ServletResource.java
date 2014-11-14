@@ -49,10 +49,10 @@ public class ServletResource {
     this.user = new User(input);
     try {
       if (this.user.login()){
+        this.user.createSessionID();
     		return Response.ok()
     		    .entity(this.user.getAsJson())
     				.header(ACCESSHEADER, "*")
-    				.header("Session", this.user.createSessionID())
     				.build();
     	} else {
     		return Response.status(Status.UNAUTHORIZED)
