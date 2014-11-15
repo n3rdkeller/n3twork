@@ -1,45 +1,52 @@
-<div class="container" id="register">
+<div class="container" id="register" ng-controller="RegisterController as register">
   <!-- Page Header -->
   <div class="page-header">
     <h1 class="text-center">w3lcome to n3twork</h1><br>
   </div>
 
+  <div class="text-center" ng-show="register.submitted">
+    <h3 ng-bind="register.message">Here is going to appear some text.</h3>
+    <br><br>
+  </div>
+
   <!-- Login Form for Mobile Devices -->
-  <div class="hidden-sm hidden-md hidden-lg">
+  <div class="visible-xs">
     <!-- TODO: login form for mobiles -->
   </div>
 
   <!-- Register Form -->
-  <form name="registerForm" ng-submit="register.submit(registerForm.$valid)" ng-controller="RegisterController as register" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 form-horizontal" role="form">
+  <form ng-show="(!register.submitted || !register.signedup) && !loggedin" name="registerForm" ng-submit="register.submit(registerForm.$valid)" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 form-horizontal" role="form" novalidate>
     <div class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
-      <div class="form-group" ng-class="{ 'has-error': registerForm.username.$invalid && registerForm.username.$dirty, 'has-success': registerForm.username.$valid && registerForm.username.$dirty }">
-        <input required type="text" ng-model="register.user.username" class="form-control" name="username" placeholder="Username"/>
-        <div class="help-block" ng-messages="registerForm.username.$error" ng-messages-include="app/register/messages.html"></div>
+      <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
+        <input required type="text" ng-model="register.user.username" ng-minlength=3
+         ng-maxlength=20 ng-taken class="form-control" name="username" placeholder="Username"/>
+        <div ng-show="registerForm.username.$dirty && registerForm.username.$invalid" class="help-block" ng-messages="registerForm.username.$error" ng-messages-include="app/register/messages.html"></div>
       </div>
 
-      <div class="form-group">
-        <input required type="text" ng-model="register.user.mail" class="form-control" id="mailadjust" name="mail" placeholder="Email"/>
-        <div class="help-block" ng-messages="registerForm.mail.$error" ng-messages-include="app/register/messages.html"></div>
+      <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
+        <input required type="email" ng-model="register.user.mail" class="form-control" name="mail" placeholder="Email"/>
+        <div ng-show="registerForm.mail.$dirty && registerForm.mail.$invalid" class="help-block" ng-messages="registerForm.mail.$error" ng-messages-include="app/register/messages.html"></div>
       </div>
 
-      <div class="form-group">
-        <input required type="password" ng-model="register.user.pw" class="form-control" name="pw" placeholder="Password"/>
-        <div class="help-block" ng-messages="registerForm.pw.$error" ng-messages-include="app/register/messages.html"></div>
+      <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
+        <input required ng-minlength=8
+         ng-maxlength=50 type="password" ng-model="register.user.pw" class="form-control" name="pw" placeholder="Password"/>
+        <div ng-show="registerForm.pw.$dirty && registerForm.pw.$invalid" class="help-block" ng-messages="registerForm.pw.$error" ng-messages-include="app/register/messages.html"></div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
         <input required type="password" ng-model="register.user.pwconfirm" compare-to="register.user.pw" class="form-control" name="pwconfirm" placeholder="Confirm Password"/>
-        <div class="help-block" ng-messages="registerForm.pwconfirm.$error" ng-messages-include="app/register/messages.html"></div>
+        <div ng-show="registerForm.pwconfirm.$dirty && registerForm.pwconfirm.$invalid" class="help-block" ng-messages="registerForm.pwconfirm.$error" ng-messages-include="app/register/messages.html"></div>
       </div>
 
       <div class="form-group text-center">
-        <button type="submit" class="btn btn-lg btn-block btn-primary">Sign up</button>
+        <button ng-disabled="registerForm.$invalid" type="submit" class="btn btn-lg btn-block btn-primary">Sign up</button>
       </div>
     </div>
   </form>
 </div>
 
-<!-- Adjust function -->
+<!-- Adjust function
 <script type="text/javascript">
   $('#mailadjust').on('input', adjust);
-</script>
+</script> -->

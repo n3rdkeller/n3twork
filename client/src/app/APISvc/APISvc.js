@@ -10,6 +10,7 @@
   function APISvc($http, $q) {
     var service = {
       request: request,
+      hashpw: hashpw
     };
 
     return service;
@@ -30,5 +31,10 @@
     function failed(error) {
       console.log(error);
     }
+
+    function hashpw(user) {
+      return user.pw; // TODO: Hashing
+    }
+
   }
 })();

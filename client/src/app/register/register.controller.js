@@ -5,23 +5,48 @@
     .module('n3twork.register')
     .controller('RegisterController', RegisterController);
 
-  function RegisterController() {
-    var vm = this;
+  RegisterController.$inject = ['APISvc', '$q', '$rootScope'];
 
-    vm.message = "";
+  function RegisterController(APISvc, $q, $rootScope) {
+    var vm = this;
+    var deferred = $q.defer();
+
+    vm.loggedin = $rootScope.loggedin;
+    vm.submitted = false;
+    vm.signedup = false;
 
     vm.user = {
       username: "",
+      email: "",
       password: "",
-      confirmPassword: ""
     };
 
+
     vm.submit = function(isValid) {
-      console.log("h");
       if (isValid) {
-        vm.message = "Submitted " + vm.user.username;
+        APISvc.request({
+          method: 'POST',
+          url: '/register',
+          data: {
+            'username': vm.user.username,
+            'email': vm.user.mail,
+            'password': APISvc.hashpw(vm.user)
+          }
+        })
+        .then(function(response) {
+          deferred.resolve(true);
+          if (response.data.successful) {
+            vm.submitted = true;
+            vm.signedup = true;
+            vm.message = "Congratz! Successfully signed up. You can now login.";
+          } else {
+            vm.submitted = true;
+            vm.signedup = false;
+            vm.message = "Error signing up. Try again using another username.";
+          }
+        });
       } else {
-        vm.message = "There are still invalid fields.";
+        console.log("There are still invalid fields.");
       }
     };
 
