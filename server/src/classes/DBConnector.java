@@ -3,7 +3,12 @@ package classes;
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class DBConnector {
+  final static Logger log = LogManager.getLogger(DBConnector.class);
   private static String DRIVER = "com.mysql.jdbc.Driver";
   public static String DATABASE = "TEAM_2E_DB";
   private static String URL = "jdbc:mysql://141.2.89.26";
@@ -15,23 +20,33 @@ public class DBConnector {
 
   /**
    * Static function to build connection
-   * @return Connection database connection
-   * @throws Exception
+   * @return database connection
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public static Connection getConnection() throws Exception {
+  public static Connection getConnection() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
     Class.forName(DRIVER).newInstance();
     Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
     return conn;
   }
 
-  public static List<ArrayList<String>> selectQuery(Connection conn, String sqlQuery) throws Exception {
+  /**
+   * Function to execute a select query and parse the output into a matrix
+   * @param conn - should be initialized with DBConnector.getConnection()
+   * @param sqlQuery - any select query
+   * @return the output table in matrix form
+   * @throws SQLException 
+   */
+  public static List<ArrayList<String>> selectQuery(Connection conn, String sqlQuery) throws SQLException{
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    System.out.println(pStmt);
+    log.debug(sqlQuery);
 
     ResultSet rs = pStmt.executeQuery();
     ResultSetMetaData rsmd = rs.getMetaData();
     int columnsNumber = rsmd.getColumnCount();
-    System.out.println("executed");
+    log.debug("executed");
 
     List<ArrayList<String>> output  = new ArrayList<ArrayList<String>>();
     ArrayList<String> row = new ArrayList<String>();
@@ -52,18 +67,25 @@ public class DBConnector {
     pStmt.close();
     rs.close();
 
-    System.out.println("selectQuery: done");
+    log.debug("selectQuery: done");
     return output;
 
   }
-
-  public static List<Integer> executeUpdate(Connection conn, String sqlQuery) throws Exception {
+ 
+  /**
+   * Function to execute insert and update queries
+   * @param conn - should be initialized with DBConnector.getConnection()
+   * @param sqlQuery - insert or update query
+   * @return A List of the generated keys (returns empty list on update query)
+   * @throws SQLException 
+   */
+  public static List<Integer> executeUpdate(Connection conn, String sqlQuery) throws SQLException {
     Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_UPDATABLE);
-    System.out.println(stmt);
+    log.debug(sqlQuery);
     stmt.executeUpdate(sqlQuery, Statement.RETURN_GENERATED_KEYS);
 
     ResultSet rs = stmt.getGeneratedKeys();
-    System.out.println("executed");
+    log.debug("executed");
 
     List<Integer> ids = new ArrayList<Integer>();
     while (rs.next()) {
@@ -76,8 +98,8 @@ public class DBConnector {
         idsPrintString = idsPrintString + value + " ";
     }
 
-    System.out.println("retun ids: " + idsPrintString);
-    System.out.println("executeUpdate: done");
+    log.debug("retun ids: " + idsPrintString);
+    log.debug("executeUpdate: done");
     return ids;
 
   }
@@ -98,7 +120,7 @@ public class DBConnector {
         printString = printString + value + " | ";
       }
     }
-    System.out.println(printString);
+    log.debug(printString);
   }
 
 }

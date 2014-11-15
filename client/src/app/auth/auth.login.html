@@ -1,0 +1,18 @@
+<div ng-controller="AuthCtrl as auth">
+  <form ng-show="!auth.loggedin" class="hidden-xs navbar-form navbar-right" name="loginForm" method="post" role="form" ng-submit="auth.submit()">
+    <div class="input-group">
+      <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+      <input required ng-minlength=3 class="form-control" type="text" ng-model="auth.user.login" name="login" placeholder="Username or Email">
+    </div>
+    <div class="input-group">
+      <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
+      <input required ng-minlength=8 class="form-control" type="password" ng-model="auth.user.pw" name="pw" placeholder="Password">
+    </div>
+    <div class="input-group">
+      <button type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid" value="Login">Login</button>
+    </div>
+  </form>
+  <p ng-show="auth.loginFailed" style="color: #a94442;" class="has-error help-block navbar-text navbar-right">Login failed. Try again.</p>
+  <p ng-show="auth.loggedin" class="navbar-text navbar-right">Signed in as <u><span ng-bind="auth.username"></span></u></p>
+  <button ng-show="auth.loggedin" ng-click="auth.logout()" type="button" class="btn btn-danger navbar-btn navbar-right">Logout</button>
+</div>
