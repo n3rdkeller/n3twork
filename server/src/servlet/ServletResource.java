@@ -1,5 +1,13 @@
 package servlet;
 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -24,6 +32,7 @@ public class ServletResource {
   
   private static String ACCESSHEADER = "Access-Control-Allow-Origin";
   private User user;
+  private List<String> userList = new ArrayList<String>();
   
   @GET
   @Produces(MediaType.TEXT_PLAIN)
@@ -55,8 +64,10 @@ public class ServletResource {
     				.header(ACCESSHEADER, "*")
     				.build();
     	} else {
-    		return Response.status(Status.UNAUTHORIZED)
-    		    .entity("login not successful")
+    		return Response.ok()
+    		    .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", false)
+                .build()))
     				.header(ACCESSHEADER, "*")
     				.build();
     	}
@@ -94,19 +105,33 @@ public class ServletResource {
 //    
 //  }
   
+  @OPTIONS @Path("/register")
+  public Response corsRegister() {
+     return Response.ok()
+         .header(ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
   @POST @Path("/register")
-  @Produces(MediaType.TEXT_PLAIN)
-  public Response register(String input){
-    log.debug("login input: " + input);
-    this.user = new User(input);
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response register(String jsonInput){
+    log.debug("login input: " + jsonInput);
+    this.user = new User(jsonInput);
     try {
       if (user.registerInDB()){
-        return Response.ok("registration successful")
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", true)
+                .build()))
             .header(ACCESSHEADER, "*")
             .build();
       } else {
-        return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity("registration not successful")
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", false)
+                .build()))
             .header(ACCESSHEADER, "*")
             .build();
       }
@@ -118,6 +143,45 @@ public class ServletResource {
           .build();
     }
   }
+  
+  @POST @Path("/register/checkuser")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response checkUser(String jsonInput){
+    log.debug(jsonInput);
+    try {
+      if (this.userList.size() == 0){
+        this.userList = User.getUserList();
+      } 
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject userAsJsonObject = jsonReader.readObject();
+      String user = userAsJsonObject.getString("username");
+      if(userList.contains(user)){
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("username", user)
+                .add("taken", true)
+                .build()))
+            .header(ACCESSHEADER, "*")
+            .build();
+      } else {
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("username", user)
+                .add("taken", false)
+                .build()))
+            .header(ACCESSHEADER, "*")
+            .build();
+      }
+      
+    } catch (Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
   
   private Boolean checkSessionID(String sessionID){
     return null;

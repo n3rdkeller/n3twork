@@ -98,7 +98,7 @@ public class User {
    * @throws InstantiationException 
    */
   
-  private static String md5(String seed) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+  public static String md5(String seed) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     MessageDigest m = MessageDigest.getInstance("MD5");
     m.update(seed.getBytes("UTF-8"));
     byte[] digest = m.digest();
@@ -122,7 +122,6 @@ public class User {
     ArrayList<String> dataRow = userList.get(1);
     for (int i = 0; i < keyRow.size(); i++) {
       userMap.put(keyRow.get(i),dataRow.get(i));
-
     }
 
     //this.name = userMap.get("name");
@@ -144,21 +143,14 @@ public class User {
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
-    if(!this.email.equals("") && this.username.equals("")) { // username given
-      log.debug("registrating " + this.username);
-      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
-      
-    } else if(this.email.equals("") && !this.username.equals("")) { // email given
-      log.debug("registrating " + this.email);
-      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
-      
-    } else if(this.email.equals("") && this.username.equals("")) { // neither given
+    
+    if(this.email.equals("") && this.username.equals("")) { // neither given
       log.debug("neither username nor email are given");
       return false;
       
-    } else { // username and email are given      
-      log.debug("registrating " + this.username);
-      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "' OR email='" + this.email + "'");
+    } else {
+      log.debug("logging in: " + this.username + " " + this.email);
+      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "' OR username='" + this.username + "'");
     }
     
     if (userList.size() == 1) {
@@ -197,25 +189,18 @@ public class User {
   public Boolean login() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
-    if(!this.email.equals("") && this.username.equals("")) { // username given
-      log.debug("login with username: " + this.username);
-    	userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
     
-    } else if(this.email.equals("") && !this.username.equals("")) { // email given
-      log.debug("login with email: " + this.email);
-      userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
-    
-    }else if(this.email.equals("") && this.username.equals("")) { // neither given
-    	log.debug("neither username nor email are given");
-    	return false;
-    
-    } else { // username and email are given -> use username
-      log.debug("login with username(email given, too): " + this.username);
-      userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
+    if(this.email.equals("") && this.username.equals("")) { // neither given
+      log.debug("neither username nor email are given");
+      return false;
+      
+    } else {
+      log.debug("logging in: " + this.username + " " + this.email);
+      userList = DBConnector.selectQuery(conn, "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "' OR username='" + this.username + "'");
     }
     conn.close();
 
-    if(userList.size() > 1) {
+    if(userList.size() == 2) {
       if(userList.get(1).get(1).equals(this.password)) {
 
         this.id = Integer.parseInt(userList.get(1).get(0));
@@ -225,8 +210,10 @@ public class User {
 
       } else log.debug("wrong password");
 
-    } else {
+    } else if(userList.size() == 1) {
       log.debug("user doesn't exist");
+    } else {
+      log.debug("email and username dont match or someone doesnt have an email");
     }
     // if one of the previous if-conditions returns false
     log.debug("login failed");
@@ -250,6 +237,23 @@ public class User {
     return true;
   }*/
   
+  /**
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
+   * 
+   */
+  public static List<String> getUserList() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT username FROM " + DBConnector.DATABASE + ".Users");
+    List<String> usernameList = new ArrayList<String>();
+    for(ArrayList<String> list : userList){
+      usernameList.add(list.get(1));
+    }
+    usernameList.remove(0);
+    return usernameList;
+  }
   /**
    * Simple getter for the attribute id
    * @return id
