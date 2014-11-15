@@ -249,7 +249,7 @@ public class User {
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT username FROM " + DBConnector.DATABASE + ".Users");
     List<String> usernameList = new ArrayList<String>();
     for(ArrayList<String> list : userList){
-      usernameList.add(list.get(1));
+      usernameList.add(list.get(0));
     }
     usernameList.remove(0);
     return usernameList;

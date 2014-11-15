@@ -144,6 +144,15 @@ public class ServletResource {
     }
   }
   
+  @OPTIONS @Path("/register/checkuser")
+  public Response corsCheckUser() {
+     return Response.ok()
+         .header(ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
   @POST @Path("/register/checkuser")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response checkUser(String jsonInput){
@@ -155,6 +164,7 @@ public class ServletResource {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject userAsJsonObject = jsonReader.readObject();
       String user = userAsJsonObject.getString("username");
+      
       if(userList.contains(user)){
         return Response.ok()
             .entity(String.valueOf(Json.createObjectBuilder()
