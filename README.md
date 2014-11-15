@@ -35,9 +35,15 @@ Here are some of the most important folders and files in our project:
 	|
 	├── server/
 	|   ├── bin/
-	|   └── src/
-	|       ├── classes/
-	|       └── dep/
+	|   ├── src/
+	|   |   ├── classes/
+	|   |   └── servlet/
+	|	├── lib/
+	|	|	└── ... (all java dependencies)
+	|	└── WebContent
+	|		├── WEB-INF/
+	|		|	└── web.xml
+	|		└── META-INF/
 	|
 	├── n3twork.sublime-project
 	├── .editorconfig
@@ -50,7 +56,7 @@ Most of the structure is self-explanatory. And the rest is language and technolo
 There is a README.md in every folder we thought it could be helpful.
 Read it extremely carefully and follow every step described in there.
 
-*Warning*: Most instructions were only tested on Ubuntu 14.04 LTS and OS X 10.10.
+*Warning*: Most instructions were only tested on Ubuntu 14.04 LTS, Debian 3.2, Arch (Kernel 3.17) and OS X 10.10.
 
 
 ### 3rd party frameworks and libraries
