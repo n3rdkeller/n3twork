@@ -147,19 +147,22 @@ public class User {
     if(!this.email.equals("") && this.username.equals("")) { // username given
       log.debug("registrating " + this.username);
       userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
+      
     } else if(this.email.equals("") && !this.username.equals("")) { // email given
       log.debug("registrating " + this.email);
       userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email='" + this.email + "'");
+      
     } else if(this.email.equals("") && this.username.equals("")) { // neither given
       log.debug("neither username nor email are given");
       return false;
-    } else { // username and email are given
+      
+    } else { // username and email are given      
       log.debug("registrating " + this.username);
       userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "' OR email='" + this.email + "'");
     }
     
     if (userList.size() == 1) {
-      List<Integer> ids = DBConnector.executeUpdate(conn, "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(" + this.username + "," + this.email + "," + this.password + ")"); 
+      List<Integer> ids = DBConnector.executeUpdate(conn, "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES('" + this.username + "','" + this.email + "','" + this.password + "')"); 
       this.id = ids.get(0);
       return true;
     } else {
@@ -207,7 +210,7 @@ public class User {
     	return false;
     
     } else { // username and email are given -> use username
-      log.debug("login with username(email given,too): " + this.username);
+      log.debug("login with username(email given, too): " + this.username);
       userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE username='" + this.username + "'");
     }
     conn.close();

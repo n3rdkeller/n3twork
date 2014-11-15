@@ -96,10 +96,9 @@ public class ServletResource {
   
   @POST @Path("/register")
   @Produces(MediaType.TEXT_PLAIN)
-  public Response register(@FormParam("username") String username,
-                           @FormParam("email") String email,
-                           @FormParam("pw") String pw){
-    User user = new User(username, email, pw);
+  public Response register(String input){
+    log.debug("login input: " + input);
+    this.user = new User(input);
     try {
       if (user.registerInDB()){
         return Response.ok("registration successful")
