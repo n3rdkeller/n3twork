@@ -27,9 +27,9 @@ public class User {
   private int id;
   private String name;
   private String firstName;
-  private String username;
-  private String email;
-  private String password;
+  private String username = "";
+  private String email = "";
+  private String password = "";
   private String sessionID;
   private Map<String,String> otherProperties = new HashMap<String,String>();
   private List<User> friends = new ArrayList<User>();
@@ -42,25 +42,38 @@ public class User {
    * @param  username
    * @param  email
    * @param  pw - password
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public User(String username, String email, String pw) {
+  public User(String username, String email, String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     this.username = username;
     this.email = email;
-    this.password = pw;
+    this.password = md5(pw);
 
   }
   
   /**
    * Constructor for login and registration
    * @param userAsJson
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public User(String userAsJson) {
+  public User(String userAsJson) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonReader jsonReader = Json.createReader(new StringReader(userAsJson));
     JsonObject userAsJsonObject = jsonReader.readObject();
     //userAsJsonObject = userAsJsonObject.getJsonObject("data");
-    this.username = userAsJsonObject.getString("username");
-    this.email = userAsJsonObject.getString("email");
-    this.password = userAsJsonObject.getString("password");
+    if (userAsJsonObject.containsKey("login")){
+      String login = userAsJsonObject.getString("login");
+      if (login.contains("@")) {
+        this.email = login;
+      } else {
+        this.username = login;
+      }
+    } else {
+      this.username = userAsJsonObject.getString("username");
+      this.email = userAsJsonObject.getString("email");
+    }
+    this.password = md5(userAsJsonObject.getString("password"));
   }
   
   /**

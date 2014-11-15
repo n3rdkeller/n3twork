@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import servlet.ServletResource;
-
 public class DBConnector {
   final static Logger log = LogManager.getLogger(DBConnector.class);
   private static String DRIVER = "com.mysql.jdbc.Driver";

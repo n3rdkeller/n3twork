@@ -5,20 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.LogManager;
@@ -55,8 +51,8 @@ public class ServletResource {
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response login(String input){
     log.debug("login input: " + input);
-    this.user = new User(input);
     try {
+      this.user = new User(input);
       if (this.user.login()){
         this.user.createSessionID();
     		return Response.ok()
@@ -118,8 +114,8 @@ public class ServletResource {
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response register(String jsonInput){
     log.debug("login input: " + jsonInput);
-    this.user = new User(jsonInput);
     try {
+      this.user = new User(jsonInput);
       if (user.registerInDB()){
         return Response.ok()
             .entity(String.valueOf(Json.createObjectBuilder()
@@ -193,6 +189,7 @@ public class ServletResource {
   }
   
   
+  @SuppressWarnings("unused")
   private Boolean checkSessionID(String sessionID){
     return null;
   }
