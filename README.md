@@ -11,18 +11,21 @@ Here are some of the most important folders and files in our project:
 	|   |   ├── bower_components/
 	|   |   |   ├── angular/
 	|   |   |   ├── bootstrap/
-	|   |   |   └── ... (third party technologies are here)
+	|   |   |   └── ... (third party components are here)
 	|   |   ├── app/
 	|   |   |   ├── some folders
 	|   |   |   ├── and files
-	|   |   |   └── containing angular-stuff
+	|   |   |   ├── containing the
+	|   |   |   └── whole angular-app
+	|   |   |
 	|   |   ├── css/
 	|   |   ├── less/
 	|   |   ├── js/
 	|   |   ├── fonts/
 	|   |   └── index.html
 	|   |
-	|   ├── dist/
+	|   ├── dist/ (created by grunt)
+	|   |   ├── app/
 	|   |   ├── css/
 	|   |   ├── js/
 	|   |   ├── fonts/
@@ -30,20 +33,28 @@ Here are some of the most important folders and files in our project:
 	|   |
 	|   ├── bower.json
 	|   ├── .bowerrc
+	|   ├── Gruntfile.js
 	|   ├── package.json
 	|   └── README.md
 	|
 	├── server/
-	|   ├── bin/
+	|   ├── bin/ (created by java compiler)
+	|   ├── lib/
+	|   |   └── ... (all java dependencies)
+	|   |
 	|   ├── src/
 	|   |   ├── classes/
 	|   |   └── servlet/
-	|	├── lib/
-	|	|	└── ... (all java dependencies)
-	|	└── WebContent
-	|		├── WEB-INF/
-	|		|	└── web.xml
-	|		└── META-INF/
+	|   |
+	|   ├── WebContent
+	|   |   ├── WEB-INF/
+	|   |   |   └── web.xml
+	|   |   |
+	|   |   └── META-INF/
+	|   |
+	|   ├─ .classpath
+	|   ├─ .project
+	|   └─ README.md
 	|
 	├── n3twork.sublime-project
 	├── .editorconfig
@@ -65,17 +76,13 @@ Thanks to all the people involved in the following:
 - [AngularJS][2]
 - [AngularJS Styleguide][3]
 - [FontAwesome][4]
-- [BootstrapValidator][5]
+- [Angular Bootstrap Show Errors][5]
 
 [1]: http://getbootstrap.com
 [2]: https://angularjs.org
-[3]: https://github.com/johnpapa/angularjs-styleguide#application-structure
+[3]: https://github.com/johnpapa/angularjs-styleguide
 [4]: http://fortawesome.github.io/Font-Awesome/
-[5]: http://bootstrapvalidator.com
+[5]: https://github.com/paulyoder/angular-bootstrap-show-errors
 
 ### License
 n3twork is under the MIT license.
-
-### Todo
-- add missing files and folders
-- add whole license text

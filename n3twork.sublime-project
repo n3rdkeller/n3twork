@@ -20,7 +20,7 @@
 		{
 			"name": "server",
 			"follow_symlinks": true,
-			"path": "server/src",
+			"path": "server",
 			"file_include_patterns": ["*", "*.jar", "*.class"]
 		},
 	],
