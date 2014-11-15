@@ -12,6 +12,8 @@
     var deferred = $q.defer();
 
     vm.loggedin = false;
+    vm.loginButtonClicked = false;
+    vm.loginFailed = false;
 
     if ($window.localStorage.getItem('authdata')) {
       var parsedauthdata = JSON.parse($window.localStorage.getItem('authdata'));
@@ -19,8 +21,11 @@
         vm.session = parsedauthdata.session;
         vm.username = parsedauthdata.username;
         vm.loggedin = true;
+        vm.loginFailed = false;
         $rootScope.loggedin = true;
+        vm.loginButtonClicked = true;
       } else {
+        vm.loginFailed = false;
         vm.loggedin = false;
         $rootScope.loggedin = false;
       }
@@ -31,6 +36,7 @@
     }
 
     function login(logindata, password) {
+      vm.loginButtonClicked = true;
       APISvc.request({
         method: 'POST',
         url: '/login',
@@ -43,26 +49,30 @@
         deferred.resolve(true);
         var session = response.data.session;
         var user = response.data.username;
-        vm.username = user;
-        if (session) {
-          vm.loggedin = true;
-          $rootScope.loggedin = true;
-          var authdata = {
-            session: session,
-            username: user
+        if (user) {
+          vm.username = user;
+          if (session) {
+            vm.loggedin = true;
+            $rootScope.loggedin = true;
+            vm.loginFailed = false;
+            var authdata = {
+              session: session,
+              username: user
+            }
+            $window.localStorage.setItem('authdata', JSON.stringify(authdata));
           }
-          console.log(authdata);
-          $window.localStorage.setItem('authdata', JSON.stringify(authdata));
+        } else {
+          vm.loginFailed = true;
         }
       });
       return;
     }
 
     vm.logout = function() {
-      console.log('Logging now out.');
       $window.localStorage.removeItem('authdata');
       vm.loggedin = false;
       $rootScope.loggedin = false;
+      vm.loginButtonClicked = false;
     }
 
 }
