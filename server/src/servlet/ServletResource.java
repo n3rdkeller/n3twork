@@ -1,7 +1,9 @@
 package servlet;
 
 import java.io.StringReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.json.Json;
@@ -188,10 +190,63 @@ public class ServletResource {
     }
   }
   
+  @OPTIONS @Path("/usersettings")
+  public Response corsUpdateUserSettings() {
+     return Response.ok()
+         .header(ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  @POST @Path("/usersettings")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response updateUserSettings(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject settingsAsJson = jsonReader.readObject();
+      user.setFirstName(settingsAsJson.getString("firstName")); //TODO change all these setters from void to Boolean?
+      user.setName(settingsAsJson.getString("name"));
+      user.setEmail(settingsAsJson.getString("email"));
+      user.setPassword(settingsAsJson.getString("password"));
+      JsonObject otherPropertiesAsJson = settingsAsJson.getJsonObject("otherProperties");
+      HashMap<String,String> otherProperties = new HashMap<String,String>();
+      //for(Entry<String, String> e : otherPropertiesAsJson.entrySet()));
+      if (settingsAsJson.containsKey("dateOfBirth")){
+        otherProperties.put("dateOfBirth", settingsAsJson.getString("dateOfBirth"));
+      }
+      if (settingsAsJson.containsKey("education")) {
+        otherProperties.put("education", settingsAsJson.getString("education"));
+      }
+      if (settingsAsJson.containsKey("gender")) {
+        otherProperties.put("gender", settingsAsJson.getString("gender"));
+      }
+      user.setOtherProperties(otherProperties);
+      return Response.ok()
+          .entity(String.valueOf(Json.createObjectBuilder()
+              .add("successful", true)
+              .build()))
+          .header(ACCESSHEADER, "*")
+          .build();
+    } catch (Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(ACCESSHEADER, "*")
+          .build();
+    }
+  }
   
   @SuppressWarnings("unused")
   private Boolean checkSessionID(String sessionID){
-    return null;
+    log.debug("checkSessionID: " + sessionID);
+    this.user = new User(sessionID.toCharArray());
+    try {
+      return user.getFromDB();
+    } catch (Exception e) {
+      log.error(e);
+      return false;
+    }
   }
   
   
