@@ -18,7 +18,9 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
- * The User class represents a user in the social n3twork.
+ * A User class object represents a user in the social n3twork.
+ * @author johannes
+ *
  */
 public class User {
   final static Logger log = LogManager.getLogger(User.class);
@@ -99,18 +101,13 @@ public class User {
     // empty
   }
   
-  /**
-   * Method to get all user data except the password from the database.
-   * TODO: friends, otherProperties, groups, posts, messages
-   * @return true if successful
-   * @throws NoSuchAlgorithmException 
-   * @throws UnsupportedEncodingException 
-   * @throws SQLException
-   * @throws ClassNotFoundException
-   * @throws IllegalAccessException
-   * @throws InstantiationException 
-   */
-  
+/**
+ * Hashes the seed with md5
+ * @param seed
+ * @return hashed seed
+ * @throws NoSuchAlgorithmException
+ * @throws UnsupportedEncodingException
+ */
   public static String md5(String seed) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     MessageDigest m = MessageDigest.getInstance("MD5");
     m.update(seed.getBytes("UTF-8"));
@@ -125,7 +122,8 @@ public class User {
   }
   
   /**
-   * 
+   * Gets all data except password from the database if userid or sessionid is given.
+   * TODO: friends, otherProperties, groups, posts, messages
    * @return true if successful
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -262,29 +260,27 @@ public class User {
     return false;
   }
   
-/*//probably a bullshit function!
-  public Boolean logout() {
-	  this.id = 0;
-	  this.name = null;
-	  this.firstName = null;
-	  this.username = null;
-	  this.email = null;
-	  this.password = null;
-	  this.otherProperties = null;
-	  this.sessionIDs = null;
-	  this.friends = null;
-	  this.groups = null;
-	  this.posts = null;
-	  this.messages = null;
-    return true;
-  }*/
+  /**
+   * Deletes the sessionID out of the db if it exists
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public void logout() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    if (DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'").size() != 1) {
+      DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+    }
+  }
   
   /**
+   * Produces a list of all usernames. Should not be accessible directly in the api!
    * @throws SQLException 
    * @throws ClassNotFoundException 
    * @throws IllegalAccessException 
    * @throws InstantiationException 
-   * 
+   * @return list of all users
    */
   public static List<String> getUserList() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
@@ -313,7 +309,7 @@ public class User {
   }
   
   /**
-   * Simple setter for the attribute name
+   * Simple setter for the attribute name. Also sets value in db.
    * @param name
    * @throws SQLException
    * @throws ClassNotFoundException
@@ -336,7 +332,7 @@ public class User {
   }
   
   /**
-   * Simple setter for the attribute firstName
+   * Simple setter for the attribute firstName. Also sets value in db.
    * @param firstName
    * @throws SQLException
    * @throws ClassNotFoundException
@@ -367,7 +363,7 @@ public class User {
   }
 
   /**
-   * Simple setter for the attribute email
+   * Simple setter for the attribute email. Also sets value in db.
    * @param email
    * @throws SQLException
    * @throws ClassNotFoundException
@@ -381,7 +377,7 @@ public class User {
   }
 
   /**
-   * Simple setter for the attribute password
+   * Simple setter for the attribute password. Also sets value in db.
    * @param pw - password 
    * @throws UnsupportedEncodingException 
    * @throws NoSuchAlgorithmException 
