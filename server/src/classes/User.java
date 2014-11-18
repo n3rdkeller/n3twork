@@ -160,7 +160,8 @@ public class User {
       userMap.put(keyRow.get(i),dataRow.get(i));
     }
 
-    //this.name = userMap.get("name");
+    this.name = userMap.get("name");
+    this.firstName = userMap.get("firstName");
     this.username = userMap.get("username");
     this.email = userMap.get("email");
 
@@ -300,7 +301,7 @@ public class User {
    * @return id
    */
   public int getId() {
-    return 0;
+    return this.id;
   }
   
   /**
@@ -322,6 +323,7 @@ public class User {
   public void setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET name=" + name + " WHERE id=" + this.id);
+    conn.close();
     this.name = name;
   }
 
@@ -344,6 +346,7 @@ public class User {
   public void setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET firstName=" + firstName + " WHERE id=" + this.id);
+    conn.close();
     this.firstName = firstName;
   }
 
@@ -393,18 +396,25 @@ public class User {
     DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET password='" + this.password + "' WHERE id=" + this.id);
   }
 
+  /**
+   * Gets property by name. e.g. getOtherProperty("gender")
+   * @param key
+   * @return property
+   */
   public String getOtherProperty(String key) {
-    return null;
+    return this.otherProperties.get(key);
   }
-
+  
+  /**
+   * Setter for otherProperties. Set the whole Map at once. TODO Also sets values in db.
+   * @param otherProperties
+   */
   public void setOtherProperties(HashMap<String,String> otherProperties) {
     this.otherProperties = otherProperties;
-    // TODO put in db
   }
   
   public String createSessionID() throws UnsupportedEncodingException, NoSuchAlgorithmException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
-    Random randomGenerator = new Random();
-    String seed = this.username + randomGenerator.nextInt(1000);
+    String seed = this.username + System.currentTimeMillis();
     this.sessionID = md5(seed);
     // save in db
     Connection conn = DBConnector.getConnection();
