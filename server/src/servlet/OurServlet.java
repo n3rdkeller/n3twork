@@ -19,6 +19,7 @@ public class OurServlet extends Application {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
         // register resources
         classes.add(ServletResource.class);
+        classes.add(UserResource.class);
         
         return classes;
     }

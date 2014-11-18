@@ -23,134 +23,177 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import classes.User;
-
+/**
+ * Basic part of the api. Contains login, registration and logout
+ * @author johannes@n3rdkeller.de
+ *
+ */
 @Path("/")
 public class ServletResource {
   final static Logger log = LogManager.getLogger(ServletResource.class);
-  
-  private static String ACCESSHEADER = "Access-Control-Allow-Origin";
-  private User user;
+
   private List<String> userList = new ArrayList<String>();
   
+  /**
+   * Simple get request to check availability of api
+   * @return Response with simple String as entity
+   */
   @GET
   @Produces(MediaType.TEXT_PLAIN)
   public Response sayHello() {
     return Response.ok("root")
-    		.header(ACCESSHEADER, "*")
+    		.header(Helper.ACCESSHEADER, "*")
     		.build();
   }
-  
+  /**
+   * Options request for login
+   * @return Response with all the needed headers
+   */
   @OPTIONS @Path("/login")
   public Response corsLogin() {
      return Response.ok()
-         .header(ACCESSHEADER, "*")
+         .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
          .header("Access-Control-Allow-Headers", "Content-Type")
          .build();
   }
-
+  
+  /**
+   * Post request for login. 
+   * @param input as Json ( '{ "login" : "username/email", "password" : "pw in plain text" }' )
+   * @return The user as Json / '{ "successful" : false }' with html error code 200 or any exception with html error code 500
+   */
   @POST @Path("/login")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response login(String input){
     log.debug("login input: " + input);
     try {
-      this.user = new User(input);
-      if (this.user.login()){
-        this.user.createSessionID();
+      User user = new User(input);
+      if (user.login()){
+        // login successful
+        user.createSessionID();
     		return Response.ok()
-    		    .entity(this.user.getAsJson())
-    				.header(ACCESSHEADER, "*")
+    		    .entity(user.getAsJson())
+    				.header(Helper.ACCESSHEADER, "*")
     				.build();
     	} else {
+    	  // login not successful
     		return Response.ok()
     		    .entity(String.valueOf(Json.createObjectBuilder()
                 .add("successful", false)
                 .build()))
-    				.header(ACCESSHEADER, "*")
+    				.header(Helper.ACCESSHEADER, "*")
     				.build();
     	}
     } catch (Exception e){
+      // internal server error
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
           .entity(e.toString())
-          .header(ACCESSHEADER, "*")
+          .header(Helper.ACCESSHEADER, "*")
           .build();
     }
   }
-//  @POST @Path("/login")
-//  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-//  public Response login(@HeaderParam("Session") String sessionID){
-//    this.user = new User(sessionID.toCharArray());
-//    try {
-//      if (this.user.checkSessionID()){
-//        this.user.getFromDB();
-//        return Response.ok(this.user.getAsJson())
-//            .header(ACCESSHEADER, "*")
-//            .header("Session", this.user.createSessionID())
-//            .build();
-//      } else {
-//        return Response.status(Status.UNAUTHORIZED)
-//            .entity("login not successful")
-//            .header(ACCESSHEADER, "*")
-//            .build();
-//      }
-//    } catch (Exception e){
-//      return Response.status(Status.INTERNAL_SERVER_ERROR)
-//          .entity(e.toString()) //TODO Needs to return error!!!
-//          .header(ACCESSHEADER, "*")
-//          .build();
-//    }
-//    
-//  }
   
-  @OPTIONS @Path("/register")
-  public Response corsRegister() {
+  /**
+   * Options request for logout
+   * @return Response with all needed headers
+   */
+  @OPTIONS @Path("/logout")
+  public Response corsLogout() {
      return Response.ok()
-         .header(ACCESSHEADER, "*")
+         .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
          .header("Access-Control-Allow-Headers", "Content-Type")
          .build();
   }
   
-  @POST @Path("/register")
+  /**
+   * Post request for logout
+   * @param jsonInput '{ "session" : "sessionID" }'
+   * @return '{ "successful" : false }' with html error code 200 or any exception with html error code 500
+   */
+  @POST @Path("/logout")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response register(String jsonInput){
-    log.debug("login input: " + jsonInput);
+  public Response logout(String jsonInput){
+    log.debug("logout input: " + jsonInput);
     try {
-      this.user = new User(jsonInput);
-      if (user.registerInDB()){
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", true)
-                .build()))
-            .header(ACCESSHEADER, "*")
-            .build();
-      } else {
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .build()))
-            .header(ACCESSHEADER, "*")
-            .build();
-      }
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject sessionID = jsonReader.readObject();
+      User user = new User(sessionID.getString("session").toCharArray());
+      user.logout();
+      return Response.ok()
+          .entity(String.valueOf(Json.createObjectBuilder()
+              .add("successful", true)
+              .build()))
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
     } catch (Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
           .entity(e.toString())
-          .header(ACCESSHEADER, "*")
+          .header(Helper.ACCESSHEADER, "*")
           .build();
     }
   }
   
-  @OPTIONS @Path("/register/checkuser")
-  public Response corsCheckUser() {
+  /**
+   * Options request for register
+   * @return Response with all needed headers
+   */
+  @OPTIONS @Path("/register")
+  public Response corsRegister() {
      return Response.ok()
-         .header(ACCESSHEADER, "*")
+         .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
          .header("Access-Control-Allow-Headers", "Content-Type")
          .build();
   }
   
+  /**
+   * Post request for register
+   * @param jsonInput '{"email":"email@text","password":"pw as plain text","username":"usernametext"}'
+   * @return '{"successful": true/false}' with html error code 200 or any exception with html error code 500
+   */
+  @POST @Path("/register")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response register(String jsonInput){
+    log.debug("register input: " + jsonInput);
+    try {
+      User user = new User(jsonInput);
+      return Response.ok()
+          .entity(String.valueOf(Json.createObjectBuilder()
+              .add("successful", user.registerInDB())
+              .build()))
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    } catch (Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  /**
+   * Options request for checkuser
+   * @return Response with all needed headers
+   */
+  @OPTIONS @Path("/register/checkuser")
+  public Response corsCheckUser() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post request for checkuser. Gets a List of all usernames and then checks if the user in in that list
+   * @param jsonInput '{"username":"usernametext"}'
+   * @return {"username":"usernametext", "taken":true/false} with html error code 200 or any exception with html error code 500
+   */
   @POST @Path("/register/checkuser")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response checkUser(String jsonInput){
@@ -162,92 +205,25 @@ public class ServletResource {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject userAsJsonObject = jsonReader.readObject();
       String user = userAsJsonObject.getString("username");
-      
-      if(userList.contains(user)){
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("username", user)
-                .add("taken", true)
-                .build()))
-            .header(ACCESSHEADER, "*")
-            .build();
-      } else {
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("username", user)
-                .add("taken", false)
-                .build()))
-            .header(ACCESSHEADER, "*")
-            .build();
-      }
-      
-    } catch (Exception e){
-      log.error(e);
-      return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(e.toString())
-          .header(ACCESSHEADER, "*")
-          .build();
-    }
-  }
-  
-  @OPTIONS @Path("/usersettings")
-  public Response corsUpdateUserSettings() {
-     return Response.ok()
-         .header(ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
-  @POST @Path("/usersettings")
-  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response updateUserSettings(String jsonInput){
-    try{
-      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
-      JsonObject settingsAsJson = jsonReader.readObject();
-      user.setFirstName(settingsAsJson.getString("firstName")); //TODO change all these setters from void to Boolean?
-      user.setName(settingsAsJson.getString("name"));
-      user.setEmail(settingsAsJson.getString("email"));
-      user.setPassword(settingsAsJson.getString("password"));
-      JsonObject otherPropertiesAsJson = settingsAsJson.getJsonObject("otherProperties");
-      HashMap<String,String> otherProperties = new HashMap<String,String>();
-      //for(Entry<String, String> e : otherPropertiesAsJson.entrySet()));
-      if (settingsAsJson.containsKey("dateOfBirth")){
-        otherProperties.put("dateOfBirth", settingsAsJson.getString("dateOfBirth"));
-      }
-      if (settingsAsJson.containsKey("education")) {
-        otherProperties.put("education", settingsAsJson.getString("education"));
-      }
-      if (settingsAsJson.containsKey("gender")) {
-        otherProperties.put("gender", settingsAsJson.getString("gender"));
-      }
-      user.setOtherProperties(otherProperties);
       return Response.ok()
           .entity(String.valueOf(Json.createObjectBuilder()
-              .add("successful", true)
+              .add("username", user)
+              .add("taken", userList.contains(user))
               .build()))
-          .header(ACCESSHEADER, "*")
+          .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch (Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
           .entity(e.toString())
-          .header(ACCESSHEADER, "*")
+          .header(Helper.ACCESSHEADER, "*")
           .build();
     }
   }
   
-  @SuppressWarnings("unused")
-  private Boolean checkSessionID(String sessionID){
-    log.debug("checkSessionID: " + sessionID);
-    this.user = new User(sessionID.toCharArray());
-    try {
-      return user.getFromDB();
-    } catch (Exception e) {
-      log.error(e);
-      return false;
-    }
-  }
+  
+  
+
   
   
 }
