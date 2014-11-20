@@ -15,8 +15,9 @@
         <input required ng-minlength=8 class="form-control" type="password" ng-model="auth.user.pw" name="pw" placeholder="Password">
       </div>
       <div class="input-group">
-        <button type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid" value="Login">
-          <i class="fa fa-sign-in"></i> Login
+        <button type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid || auth.loading" value="Login">
+          <span ng-hide="auth.loading"><i class="fa fa-sign-in"></i> Login</span>
+          <span ng-show="auth.loading"><i class="fa fa-spinner fa-spin"></i> Logging in</span>
         </button>
       </div>
     </form>

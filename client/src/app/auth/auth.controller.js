@@ -28,6 +28,7 @@
 
     function login(logindata, password) {
       vm.loginButtonClicked = true;
+      vm.loading = true;
       APISvc.request({
         method: 'POST',
         url: '/login',
@@ -43,6 +44,7 @@
         if (user) {
           vm.username = user;
           if (session) {
+            vm.loading = false;
             vm.loggedin = true;
             $rootScope.loggedin = true;
             vm.loginFailed = false;
