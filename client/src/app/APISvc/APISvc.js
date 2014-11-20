@@ -9,14 +9,13 @@
 
   function APISvc($http, $q) {
     var service = {
-      request: request,
-      hashpw: hashpw
+      request: request
     };
 
     return service;
 
     function request(req) {
-      var APIUrl = 'http://n3twork.n3rdkeller.de:8080/n3';
+      var APIUrl = 'http://178.62.239.25:8080/n3';
       req.url = APIUrl + req.url;
       var promise = $http(req).then(complete).catch(failed);
       // console.log(req);
@@ -30,10 +29,6 @@
 
     function failed(error) {
       console.log(error);
-    }
-
-    function hashpw(user) {
-      return user.pw; // TODO: Hashing
     }
 
   }

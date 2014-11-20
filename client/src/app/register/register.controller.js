@@ -15,6 +15,8 @@
     vm.submitted = false;
     vm.signedup = false;
 
+    vm.submit = submit;
+
     vm.user = {
       username: "",
       email: "",
@@ -22,7 +24,7 @@
     };
 
 
-    vm.submit = function(isValid) {
+    function submit(isValid) {
       if (isValid) {
         APISvc.request({
           method: 'POST',
@@ -30,7 +32,7 @@
           data: {
             'username': vm.user.username,
             'email': vm.user.mail,
-            'password': APISvc.hashpw(vm.user)
+            'password': vm.user.pw
           }
         })
         .then(function(response) {
