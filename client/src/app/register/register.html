@@ -10,9 +10,9 @@
   </div>
 
   <!-- Login Form for Mobile Devices -->
-  <div class="visible-xs">
-    <!-- TODO: login form for mobiles -->
-  </div>
+  <!-- <div class="visible-xs">
+    <ng-include src="'app/auth/auth.mobile.login.html'"></ng-include>
+  </div> -->
 
   <!-- Register Form -->
   <form ng-show="(!register.submitted || !register.signedup) && !loggedin" name="registerForm" ng-submit="register.submit(registerForm.$valid)" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 form-horizontal" role="form" novalidate>

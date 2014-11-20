@@ -66,7 +66,8 @@ module.exports = function(grunt) {
           '*.html',
           'css/*',
           'fonts/*',
-          'js/*.min.**'
+          'js/*.min.**',
+          'img/**'
         ],
         dest: 'dist/'
       },

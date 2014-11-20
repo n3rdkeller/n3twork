@@ -5,33 +5,24 @@
     .module('n3twork.auth')
     .controller('AuthCtrl', AuthCtrl);
 
-  AuthCtrl.$inject = ['APISvc', '$q', '$window', '$rootScope'];
+  AuthCtrl.$inject = ['APISvc', 'UserSvc', '$q', '$window', '$location', '$rootScope'];
 
-  function AuthCtrl(APISvc, $q, $window, $rootScope) {
+  function AuthCtrl(APISvc, UserSvc, $q, $window, $location, $rootScope) {
     var vm = this;
     var deferred = $q.defer();
 
+    // methods
+    vm.submit = submit;
+    vm.logout = logout;
+
     vm.loggedin = false;
+    $rootScope.loggedin = false;
     vm.loginButtonClicked = false;
     vm.loginFailed = false;
 
-    if ($window.localStorage.getItem('authdata')) {
-      var parsedauthdata = JSON.parse($window.localStorage.getItem('authdata'));
-      if (parsedauthdata.session && parsedauthdata.username) {
-        vm.session = parsedauthdata.session;
-        vm.username = parsedauthdata.username;
-        vm.loggedin = true;
-        vm.loginFailed = false;
-        $rootScope.loggedin = true;
-        vm.loginButtonClicked = true;
-      } else {
-        vm.loginFailed = false;
-        vm.loggedin = false;
-        $rootScope.loggedin = false;
-      }
-    }
+    UserSvc.isLoggedIn();
 
-    vm.submit = function() {
+    function submit() {
       login(vm.user.login, vm.user.pw);
     }
 
@@ -51,27 +42,33 @@
         var user = response.data.username;
         if (user) {
           vm.username = user;
+          $rootScope.username = user;
           if (session) {
             vm.loggedin = true;
             $rootScope.loggedin = true;
+            $rootScope.session = session;
             vm.loginFailed = false;
             var authdata = {
               session: session,
               username: user
             }
-            $window.localStorage.setItem('authdata', JSON.stringify(authdata));
+            $window.localStorage.setItem('n3twork', JSON.stringify(authdata));
+            $location.path('/');
           }
         } else {
+          $location.path('/login');
           vm.loginFailed = true;
         }
       });
       return;
     }
 
-    vm.logout = function() {
-      $window.localStorage.removeItem('authdata');
+    function logout() {
+      // TODO: API-Request
+      $window.localStorage.removeItem('n3twork');
       vm.loggedin = false;
       $rootScope.loggedin = false;
+      $location.path('/login');
       vm.loginButtonClicked = false;
     }
 
