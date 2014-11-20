@@ -42,16 +42,15 @@
         var user = response.data.username;
         if (user) {
           vm.username = user;
-          $rootScope.username = user;
           if (session) {
             vm.loggedin = true;
             $rootScope.loggedin = true;
-            $rootScope.session = session;
             vm.loginFailed = false;
             var authdata = {
               session: session,
               username: user
             }
+            $rootScope.authdata = authdata;
             $window.localStorage.setItem('n3twork', JSON.stringify(authdata));
             $location.path('/');
           }
