@@ -11,7 +11,8 @@
     var vm = this;
     var deferred = $q.defer();
 
-    getData();
+    vm.username = $rootScope.authdata.username;
+    // getData();
 
     function getData() {
       APISvc.request({

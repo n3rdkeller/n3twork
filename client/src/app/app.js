@@ -38,7 +38,7 @@
     auth: ['$q', '$rootScope', 'UserSvc', function($q, $rootScope, UserSvc){
 
       var deferred = $q.defer();
-      var loggedIn = UserSvc.isLoggedIn;
+      var loggedIn = UserSvc.isLoggedIn();
 
       if(loggedIn){
         deferred.resolve(loggedIn);
