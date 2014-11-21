@@ -1,7 +1,7 @@
-<ul ng-controller="AuthCtrl as auth" class="hidden-xs nav navbar-nav navbar-right">
+<ul ng-controller="AuthCtrl as auth" class="nav navbar-nav navbar-right">
   <li ng-show="auth.loginFailed" id="loginFailedText" class="navbar-text">Login failed. Try again.</li>
-  <li ng-show="!loggedin">
-    <form class="navbar-form" name="loginForm" method="post" role="form" ng-submit="auth.submit()">
+  <li ng-hide="loggedin">
+    <form name="loginForm" method="post" role="form" ng-submit="auth.submit()">
       <div class="input-group" ng-class="{ 'has-error': auth.loginFailed }">
         <span class="input-group-addon">
           <i class="fa fa-user fa-fw"></i>
@@ -22,17 +22,17 @@
       </div>
     </form>
   </li>
-  <li ng-show="loggedin" id="userButton" class="btn-group navbar-btn" dropdown>
-    <button type="button" class="btn btn-default">
-      <span class="fa fa-user"></span>
+  <li ng-show="loggedin" id="userButton" class="dropdown">
+    <a role="button" href="#/" class="dropdown-toggle" data-toggle="dropdown">
+      <span class="fa fa-user fa-fw"></span>
       <span ng-bind="authdata.username"></span>
-    </button>
-    <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
       <span class="caret"></span>
-      <span class="sr-only">Toggle User Dropdown</span>
-    </button>
+    </a>
     <ul class="dropdown-menu" role="menu">
-      <li><a href="#"><span class="fa fa-cog fa-fw"></span> Settings</a></li>
+      <li>
+        <a href="#/profile"><span class="fa fa-user fa-fw"></span> Profile</a>
+      </li>
+      <li><a href="#/settings"><span class="fa fa-cog fa-fw"></span> Settings</a></li>
       <li class="divider"></li>
       <li><a ng-click="auth.logout()" href="#"><span class="fa fa-sign-out fa-fw"></span> Logout</a></li>
     </ul>

@@ -8,18 +8,6 @@ nav {
     color: #a94442;
     margin-right: 0;
   }
-
-  // to set logout button position right
-  #userButton {
-    margin-right: 15px;
-  }
-
-  // to fix navbar-dropdown
-  ul.dropdown-menu {
-    margin-top: 2px !important;
-    border-radius: 4px !important;
-    min-width: 180px;
-  }
 }
 
 .container-fluid {
@@ -32,4 +20,18 @@ nav {
 
 .page-header {
   color: white;
+}
+
+
+@screen-sm: 768px;
+@media (max-width: @screen-sm) {
+  .navbar-collapse {
+    ul {
+      li {
+        div {
+          padding: 4px 10px;
+        }
+      }
+    }
+  }
 }

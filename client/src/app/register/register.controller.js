@@ -26,6 +26,7 @@
 
     function submit(isValid) {
       if (isValid) {
+        vm.loading = true;
         APISvc.request({
           method: 'POST',
           url: '/register',
@@ -36,6 +37,7 @@
           }
         })
         .then(function(response) {
+          vm.loading = false;
           deferred.resolve(true);
           if (response.data.successful) {
             vm.submitted = true;
