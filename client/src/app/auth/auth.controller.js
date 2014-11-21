@@ -17,7 +17,6 @@
 
     vm.loggedin = false;
     $rootScope.loggedin = false;
-    vm.loginButtonClicked = false;
     vm.loginFailed = false;
 
     UserSvc.isLoggedIn();
@@ -27,7 +26,7 @@
     }
 
     function login(logindata, password) {
-      vm.loginButtonClicked = true;
+      vm.loginFailed = false;
       vm.loading = true;
       APISvc.request({
         method: 'POST',
@@ -38,13 +37,13 @@
         }
       })
       .then(function(response) {
+        vm.loading = false;
         deferred.resolve(true);
         var session = response.data.session;
         var user = response.data.username;
         if (user) {
           vm.username = user;
           if (session) {
-            vm.loading = false;
             vm.loggedin = true;
             $rootScope.loggedin = true;
             vm.loginFailed = false;
@@ -70,7 +69,6 @@
       vm.loggedin = false;
       $rootScope.loggedin = false;
       $location.path('/login');
-      vm.loginButtonClicked = false;
     }
 
 }
