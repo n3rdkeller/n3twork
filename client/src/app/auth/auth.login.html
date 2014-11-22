@@ -1,7 +1,7 @@
 <ul ng-controller="AuthCtrl as auth" class="nav navbar-nav navbar-right">
   <li ng-show="auth.loginFailed" id="loginFailedText" class="navbar-text">Login failed. Try again.</li>
-  <li ng-hide="loggedin">
-    <form name="loginForm" method="post" role="form" ng-submit="auth.submit()">
+  <li ng-hide="loggedin" id="loginForm">
+    <form name="loginForm" class="navbar-form" method="post" role="form" ng-submit="auth.submit()">
       <div class="input-group" ng-class="{ 'has-error': auth.loginFailed }">
         <span class="input-group-addon">
           <i class="fa fa-user fa-fw"></i>
@@ -15,7 +15,7 @@
         <input required ng-minlength=8 class="form-control" type="password" ng-model="auth.user.pw" name="pw" placeholder="Password">
       </div>
       <div class="input-group">
-        <button type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid || auth.loading" value="Login">
+        <button type="submit" class="btn btn-warning" ng-disabled="loginForm.$invalid || auth.loading" value="Login">
           <span ng-hide="auth.loading"><i class="fa fa-sign-in"></i> Login</span>
           <span ng-show="auth.loading"><i class="fa fa-spinner fa-spin"></i> Logging in</span>
         </button>
