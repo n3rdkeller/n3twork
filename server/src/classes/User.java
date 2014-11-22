@@ -33,23 +33,40 @@ public class User {
   private String sessionID;
   private Map<String,String> otherProperties = new HashMap<String,String>();
   private List<User> friends = new ArrayList<User>();
+  private List<User> friendRequests = new ArrayList<User>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
   private List<Message> messages = new ArrayList<Message>();
   
+//  /**
+//   * Old constructor for login and registration
+//   * @param  username
+//   * @param  email
+//   * @param  pw - password
+//   * @throws UnsupportedEncodingException 
+//   * @throws NoSuchAlgorithmException 
+//   */
+//  public User(String username, String email, String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+//    this.username = username;
+//    this.email = email;
+//    this.password = md5(pw);
+//
+//  }
+  
   /**
-   * Old constructor for login and registration
-   * @param  username
-   * @param  email
-   * @param  pw - password
-   * @throws UnsupportedEncodingException 
-   * @throws NoSuchAlgorithmException 
+   * Constructor for friends list. It just sets the params.
+   * @param id
+   * @param username
+   * @param email
+   * @param name
+   * @param firstName
    */
-  public User(String username, String email, String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+  public User(int id, String username, String email, String name, String firstName) {
+    this.id = id;
     this.username = username;
     this.email = email;
-    this.password = md5(pw);
-
+    this.name = name;
+    this.firstName = firstName;
   }
   
   /**
@@ -96,20 +113,8 @@ public class User {
    * Empty constructor: always handy
    */
   public User() {
-    // empty
+    // empty on purpose
   }
-  
-  /**
-   * Method to get all user data except the password from the database.
-   * TODO: friends, otherProperties, groups, posts, messages
-   * @return true if successful
-   * @throws NoSuchAlgorithmException 
-   * @throws UnsupportedEncodingException 
-   * @throws SQLException
-   * @throws ClassNotFoundException
-   * @throws IllegalAccessException
-   * @throws InstantiationException 
-   */
   
   public static String md5(String seed) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     MessageDigest m = MessageDigest.getInstance("MD5");
@@ -124,23 +129,69 @@ public class User {
     return hashtext;
   }
   
+  /**
+   * Method to get all user data except the password from the database.
+   * TODO: otherProperties, groups, posts, messages
+   * @return true if successful / user exists
+   * @throws NoSuchAlgorithmException 
+   * @throws UnsupportedEncodingException 
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   * @throws IllegalAccessException
+   * @throws InstantiationException 
+   */
   public Boolean getFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
-    Map<String,String> userMap = new HashMap<String,String>();
+    List<ArrayList<String>> friendsTable = DBConnector.selectQuery(conn, "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Friends JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Friends.userID2 WHERE Friends.userID1=" + this.id);
+    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".FriendRequests JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Friends.userID2 WHERE FriendRequests.requestedID=" + this.id);
     conn.close();
     if (userList.size() == 1) return false;
+    Map<String,String> userMap = new HashMap<String,String>();
+    List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
+    List<HashMap<String, String>> friendRequestsList = new ArrayList<HashMap<String,String>>();
 
     ArrayList<String> keyRow = userList.get(0);
     ArrayList<String> dataRow = userList.get(1);
     for (int i = 0; i < keyRow.size(); i++) {
-      userMap.put(keyRow.get(i),dataRow.get(i));
+      userMap.put(keyRow.get(i), dataRow.get(i));
     }
-
-    //this.name = userMap.get("name");
+    
+    // fill up friendsList
+    keyRow = friendsTable.get(0);
+    friendsTable.remove(0);
+    for (ArrayList<String> data : friendsTable){
+      HashMap<String,String> userHelperMap = new HashMap<String,String>();
+      for (int i = 0; i < keyRow.size(); i++){
+        userHelperMap.put(keyRow.get(i), data.get(i));
+      }
+      friendsList.add(userHelperMap);
+    }
+    
+    // fill up friendRequestsList
+    keyRow = friendRequestsTable.get(0);
+    friendRequestsTable.remove(0);
+    for (ArrayList<String> data : friendRequestsTable){
+      HashMap<String,String> userHelperMap = new HashMap<String,String>();
+      for (int i = 0; i < keyRow.size(); i++){
+        userHelperMap.put(keyRow.get(i), data.get(i));
+      }
+      friendRequestsList.add(userHelperMap);
+    }
+    
+    //setting attributes
+    this.name = userMap.get("name");
+    this.firstName = userMap.get("firstName");
     this.username = userMap.get("username");
     this.email = userMap.get("email");
-
+    for (HashMap<String, String> user : friendsList){
+      // adding every User in friendsList with the User(id, username, email, name, firstName) constructor
+      this.friends.add(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")));
+    }
+    for (HashMap<String, String> user : friendRequestsList){
+      // adding every User in friendsList with the User(id, username, email, name, firstName) constructor
+      this.friendRequests.add(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")));
+    }
     return true;
 
   }
@@ -354,7 +405,7 @@ public class User {
    * @param pw - password 
    */
   public void setPassword(String pw) {
-
+    
   }
 
   public String getOtherProperty(String key) {
