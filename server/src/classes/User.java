@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -16,10 +17,10 @@ import javax.json.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import servlet.ServletResource;
-
 /**
- * The User class represents a user in the social n3twork.
+ * A User class object represents a user in the social n3twork.
+ * @author johannes
+ *
  */
 public class User {
   final static Logger log = LogManager.getLogger(User.class);
@@ -27,11 +28,12 @@ public class User {
   private int id;
   private String name;
   private String firstName;
-  private String username = "";
+  private String username = ""; //TODO change login and register methods, so these don't have to be initialized
   private String email = "";
   private String password = "";
   private String sessionID;
   private Map<String,String> otherProperties = new HashMap<String,String>();
+  // date of birth, education, gender
   private List<User> friends = new ArrayList<User>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
@@ -99,18 +101,13 @@ public class User {
     // empty
   }
   
-  /**
-   * Method to get all user data except the password from the database.
-   * TODO: friends, otherProperties, groups, posts, messages
-   * @return true if successful
-   * @throws NoSuchAlgorithmException 
-   * @throws UnsupportedEncodingException 
-   * @throws SQLException
-   * @throws ClassNotFoundException
-   * @throws IllegalAccessException
-   * @throws InstantiationException 
-   */
-  
+/**
+ * Hashes the seed with md5
+ * @param seed
+ * @return hashed seed
+ * @throws NoSuchAlgorithmException
+ * @throws UnsupportedEncodingException
+ */
   public static String md5(String seed) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     MessageDigest m = MessageDigest.getInstance("MD5");
     m.update(seed.getBytes("UTF-8"));
@@ -124,8 +121,32 @@ public class User {
     return hashtext;
   }
   
+  /**
+   * Gets all data except password from the database if userid or sessionid is given.
+   * TODO: friends, otherProperties, groups, posts, messages
+   * @return true if successful
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Boolean getFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
+    // get id from sessionID if only sessionID is given
+    if (sessionID != null && this.id == 0) {
+      log.debug("getFromDB with SessionID " + this.sessionID);
+      List<ArrayList<String>> idList = DBConnector.selectQuery(conn, "SELECT userID FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+      if (idList.size() == 2) {
+        this.id = Integer.parseInt(idList.get(1).get(0));
+      } else if (idList.size() == 1) {
+        log.debug("SessionID doesnt exist");
+        return false;
+      } else {
+        log.debug("This SessionID exists more than once");
+        return false;
+      }
+    }
+    
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     Map<String,String> userMap = new HashMap<String,String>();
     conn.close();
@@ -137,7 +158,8 @@ public class User {
       userMap.put(keyRow.get(i),dataRow.get(i));
     }
 
-    //this.name = userMap.get("name");
+    this.name = userMap.get("name");
+    this.firstName = userMap.get("firstName");
     this.username = userMap.get("username");
     this.email = userMap.get("email");
 
@@ -157,7 +179,7 @@ public class User {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
     
-    if(this.email.equals("") && this.username.equals("")) { // neither given
+    if(this.email.equals("") && this.username.equals("")) { // neither given //TODO make it work with null
       log.debug("neither username nor email are given");
       return false;
       
@@ -181,11 +203,16 @@ public class User {
    * @return JsonObject converted to String
    */
   public String getAsJson() {
+    JsonObjectBuilder otherProperties = Json.createObjectBuilder();
+    for (Entry<String, String> e : this.otherProperties.entrySet()) {
+      otherProperties.add(e.getKey(), e.getValue());
+    }
     JsonObject userJson = Json.createObjectBuilder()
       .add("id", this.id)
       .add("username", this.username)
       .add("email", this.email)
       .add("session", this.sessionID)
+      .add("otherProperties", otherProperties)
       .build();
     String jsonString = String.valueOf(userJson);
     return jsonString;
@@ -233,29 +260,27 @@ public class User {
     return false;
   }
   
-/*//probably a bullshit function!
-  public Boolean logout() {
-	  this.id = 0;
-	  this.name = null;
-	  this.firstName = null;
-	  this.username = null;
-	  this.email = null;
-	  this.password = null;
-	  this.otherProperties = null;
-	  this.sessionIDs = null;
-	  this.friends = null;
-	  this.groups = null;
-	  this.posts = null;
-	  this.messages = null;
-    return true;
-  }*/
+  /**
+   * Deletes the sessionID out of the db if it exists
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public void logout() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    if (DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'").size() != 1) {
+      DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+    }
+  }
   
   /**
+   * Produces a list of all usernames. Should not be accessible directly in the api!
    * @throws SQLException 
    * @throws ClassNotFoundException 
    * @throws IllegalAccessException 
    * @throws InstantiationException 
-   * 
+   * @return list of all users
    */
   public static List<String> getUserList() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
@@ -272,7 +297,7 @@ public class User {
    * @return id
    */
   public int getId() {
-    return 0;
+    return this.id;
   }
   
   /**
@@ -284,7 +309,7 @@ public class User {
   }
   
   /**
-   * Simple setter for the attribute name
+   * Simple setter for the attribute name. Also sets value in db.
    * @param name
    * @throws SQLException
    * @throws ClassNotFoundException
@@ -294,6 +319,7 @@ public class User {
   public void setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET name=" + name + " WHERE id=" + this.id);
+    conn.close();
     this.name = name;
   }
 
@@ -306,7 +332,7 @@ public class User {
   }
   
   /**
-   * Simple setter for the attribute firstName
+   * Simple setter for the attribute firstName. Also sets value in db.
    * @param firstName
    * @throws SQLException
    * @throws ClassNotFoundException
@@ -316,6 +342,7 @@ public class User {
   public void setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET firstName=" + firstName + " WHERE id=" + this.id);
+    conn.close();
     this.firstName = firstName;
   }
 
@@ -336,7 +363,7 @@ public class User {
   }
 
   /**
-   * Simple setter for the attribute email
+   * Simple setter for the attribute email. Also sets value in db.
    * @param email
    * @throws SQLException
    * @throws ClassNotFoundException
@@ -345,29 +372,45 @@ public class User {
    */
   public void setEmail(String email) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET email=" + email + " WHERE id=" + this.id);
+    DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET email='" + email + "' WHERE id=" + this.id);
     this.email = email;
   }
 
   /**
-   * Simple setter for the attribute password
+   * Simple setter for the attribute password. Also sets value in db.
    * @param pw - password 
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public void setPassword(String pw) {
-
+  public void setPassword(String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    this.password = md5(pw);
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, "UPDATE " + DBConnector.DATABASE + ".Users SET password='" + this.password + "' WHERE id=" + this.id);
   }
 
+  /**
+   * Gets property by name. e.g. getOtherProperty("gender")
+   * @param key
+   * @return property
+   */
   public String getOtherProperty(String key) {
-    return null;
+    return this.otherProperties.get(key);
   }
-
-  public void setOtherProperty(String key, String value) {
-
+  
+  /**
+   * Setter for otherProperties. Set the whole Map at once. TODO Also sets values in db.
+   * @param otherProperties
+   */
+  public void setOtherProperties(HashMap<String,String> otherProperties) {
+    this.otherProperties = otherProperties;
   }
   
   public String createSessionID() throws UnsupportedEncodingException, NoSuchAlgorithmException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
-    Random randomGenerator = new Random();
-    String seed = this.username + randomGenerator.nextInt(1000);
+    String seed = this.username + System.currentTimeMillis();
     this.sessionID = md5(seed);
     // save in db
     Connection conn = DBConnector.getConnection();
