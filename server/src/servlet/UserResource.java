@@ -44,7 +44,15 @@ public class UserResource {
     try{
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject settingsAsJson = jsonReader.readObject();
-      User user = Helper.checkSessionID(settingsAsJson.getString("session"));
+      User user = Helper.checkSessionIDMin(settingsAsJson.getString("session"));
+      if (user == null) {
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", false)
+                .build()))
+            .header(Helper.ACCESSHEADER, "*")
+            .build();
+      }
       if (settingsAsJson.containsKey("firstName")) {
         user.setFirstName(settingsAsJson.getString("firstName")); //TODO change all these setters from void to Boolean?
       }
@@ -71,6 +79,80 @@ public class UserResource {
           .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch (Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  @OPTIONS @Path("/friends")
+  public Response corsGetFriends() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  @POST @Path("/friends")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response getFriends(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject settingsAsJson = jsonReader.readObject();
+      User user = Helper.checkSessionID(settingsAsJson.getString("session"));
+      if (user == null) {
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", false)
+                .build()))
+            .header(Helper.ACCESSHEADER, "*")
+            .build();
+      }
+      return Response.ok()
+          .entity(user.getFriendsAsJson())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  @OPTIONS @Path("/friendRequests")
+  public Response corsGetFriendRequests() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  @POST @Path("/friendRequests")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response getFriendRequests(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject settingsAsJson = jsonReader.readObject();
+      User user = Helper.checkSessionID(settingsAsJson.getString("session"));
+      if (user == null) {
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", false)
+                .build()))
+            .header(Helper.ACCESSHEADER, "*")
+            .build();
+      }
+      return Response.ok()
+          .entity(user.getFriendRequestsAsJson())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    } catch(Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
           .entity(e.toString())

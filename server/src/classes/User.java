@@ -40,20 +40,20 @@ public class User {
   private List<Post> posts = new ArrayList<Post>();
   private List<Message> messages = new ArrayList<Message>();
   
-//  /**
-//   * Old constructor for login and registration
-//   * @param  username
-//   * @param  email
-//   * @param  pw - password
-//   * @throws UnsupportedEncodingException 
-//   * @throws NoSuchAlgorithmException 
-//   */
-//  public User(String username, String email, String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//    this.username = username;
-//    this.email = email;
-//    this.password = md5(pw);
-//
-//  }
+  /**
+   * Old constructor for login and registration. Used for testing
+   * @param  username
+   * @param  email
+   * @param  pw - password
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
+   */
+  public User(String username, String email, String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    this.username = username;
+    this.email = email;
+    this.password = md5(pw);
+
+  }
   
   /**
    * Constructor for friends list. It just sets the params.
@@ -175,6 +175,7 @@ public class User {
     List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
     List<HashMap<String, String>> friendRequestsList = new ArrayList<HashMap<String,String>>();
 
+    // fill up userMap
     ArrayList<String> keyRow = userList.get(0);
     ArrayList<String> dataRow = userList.get(1);
     for (int i = 0; i < keyRow.size(); i++) {
@@ -216,6 +217,51 @@ public class User {
       // adding every User in friendsList with the User(id, username, email, name, firstName) constructor
       this.friendRequests.add(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")));
     }
+    return true;
+
+  }
+  
+  /**
+   * Minimalist method to get only name, firstName, username and email from db with less SQL queries
+   * @return true if successful / user exists
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public Boolean getFromDBMin() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    // get id from sessionID if only sessionID is given
+    if (sessionID != null && this.id == 0) {
+      log.debug("getFromDB with SessionID " + this.sessionID);
+      List<ArrayList<String>> idList = DBConnector.selectQuery(conn, "SELECT userID FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+      if (idList.size() == 2) {
+        this.id = Integer.parseInt(idList.get(1).get(0));
+      } else if (idList.size() == 1) {
+        log.debug("SessionID doesnt exist");
+        return false;
+      } else {
+        log.debug("This SessionID exists more than once");
+        return false;
+      }
+    }
+    
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
+    conn.close();
+    if (userList.size() == 1) return false;
+    Map<String,String> userMap = new HashMap<String,String>();
+    
+    ArrayList<String> keyRow = userList.get(0);
+    ArrayList<String> dataRow = userList.get(1);
+    for (int i = 0; i < keyRow.size(); i++) {
+      userMap.put(keyRow.get(i), dataRow.get(i));
+    }
+    
+    //setting attributes
+    this.name = userMap.get("name");
+    this.firstName = userMap.get("firstName");
+    this.username = userMap.get("username");
+    this.email = userMap.get("email");
     return true;
 
   }
@@ -264,6 +310,8 @@ public class User {
       .add("id", this.id)
       .add("username", this.username)
       .add("email", this.email)
+      .add("name", this.name)
+      .add("firstName", this.firstName)
       .add("session", this.sessionID)
       .add("otherProperties", otherProperties)
       .build();
@@ -297,7 +345,7 @@ public class User {
       if(userList.get(1).get(1).equals(this.password)) {
 
         this.id = Integer.parseInt(userList.get(1).get(0));
-        getFromDB();
+        getFromDBMin();
         log.debug("login successful");
         return true;
 
@@ -492,12 +540,48 @@ public class User {
     }
   }
 
-  public List<User> getFriends() {
-    return null;
+  public String getFriendsAsJson() {
+    JsonArrayBuilder friendList = Json.createArrayBuilder();
+    for (User friend : this.friends) {
+      friendList.add(Json.createObjectBuilder()
+          .add("id", friend.getId())
+          .add("username", friend.getUsername())
+          .add("email", friend.getEmail())
+          .add("name", friend.getName())
+          .add("firstName", friend.getFirstName()));
+    }
+    
+    JsonObject friendsObject = Json.createObjectBuilder()
+      .add("friends", friendList)
+      .build();
+    String jsonString = String.valueOf(friendsObject);
+    return jsonString;
+  }
+  
+  public String getFriendRequestsAsJson() {
+    JsonArrayBuilder friendRequestsList = Json.createArrayBuilder();
+    for (User friendRequest : this.friendRequests) {
+      friendRequestsList.add(Json.createObjectBuilder()
+          .add("id", friendRequest.getId())
+          .add("username", friendRequest.getUsername())
+          .add("email", friendRequest.getEmail())
+          .add("name", friendRequest.getName())
+          .add("firstName", friendRequest.getFirstName()));
+    }
+    
+    JsonObject friendRequestsObject = Json.createObjectBuilder()
+      .add("friends", friendRequestsList)
+      .build();
+    String jsonString = String.valueOf(friendRequestsObject);
+    return jsonString;
   }
 
+  public void addFriendRequest(User friend) {
+    
+  }
+  
   public void addFriend(User friend) {
-
+    
   }
 
   public List<Group> getGroups() {
