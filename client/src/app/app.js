@@ -7,7 +7,8 @@
       'ui.bootstrap.showErrors',
       'n3twork.register',
       'n3twork.auth',
-      'n3twork.main'
+      'n3twork.main',
+      'n3twork.settings'
     ])
     .config(config);
 
@@ -16,29 +17,35 @@
       .when('/', {
         templateUrl: 'app/mainpage/main.html',
         controller: 'MainCtrl',
+        activetab: 'main',
         resolve: authResolver
       })
       .when('/register', {
         templateUrl: 'app/register/register.html',
-        controller: 'RegisterController',
+        controller: 'RegisterCtrl'
       })
       .when('/login', {
-        redirectTo: '/register',
+        redirectTo: '/register'
+      })
+      .when('/settings', {
+        templateUrl: 'app/settings/settings.html',
+        controller: 'SettingsCtrl',
+        activetab: 'settings',
+        resolve: authResolver
       })
       .otherwise({
-        redirectTo: '/',
-        resolve: authResolver
+        redirectTo: '/'
       });
   }
 
-  /**
-   * determines if a user is authenticated
-   */
   var authResolver = {
     auth: ['$q', '$rootScope', 'UserSvc', function($q, $rootScope, UserSvc){
 
       var deferred = $q.defer();
       var loggedIn = UserSvc.isLoggedIn();
+
+      // only for debugging
+      // var loggedIn = true;
 
       if(loggedIn){
         deferred.resolve(loggedIn);
@@ -55,12 +62,6 @@
 (function() {
   'use strict';
 
-  /**
-   * Eventhandler for route change events
-   * success -> normal direction to intended route
-   * error   -> several strategies depending on the eventObj
-   *            see '$routeChangeError'
-   */
   angular
   .module('n3twork')
   .run(['$rootScope', '$location', routeChange]);
@@ -77,7 +78,6 @@
       }
 
       if (eventObj.redirectTo) {
-        // console.log('redirecting to: ' + eventObj.redirectTo);
         $location.path(eventObj.redirectTo);
       }
     });
