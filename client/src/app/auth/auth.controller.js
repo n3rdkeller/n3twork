@@ -15,7 +15,6 @@
     vm.submit = submit;
     vm.logout = logout;
 
-    vm.loggedin = false;
     $rootScope.loggedin = false;
     vm.loginFailed = false;
 
@@ -39,22 +38,17 @@
       .then(function(response) {
         vm.loading = false;
         deferred.resolve(true);
-        var session = response.data.session;
-        var user = response.data.username;
-        if (user) {
-          vm.username = user;
-          if (session) {
-            vm.loggedin = true;
-            $rootScope.loggedin = true;
-            vm.loginFailed = false;
-            var authdata = {
-              session: session,
-              username: user
-            }
-            $rootScope.authdata = authdata;
-            $window.localStorage.setItem('n3twork', JSON.stringify(authdata));
-            $location.path('/');
+        if (response.data.successful) {
+          $rootScope.loggedin = true;
+          vm.loginFailed = false;
+          var userdata = {
+            session: response.data.session,
+            name: response.data.username,
+            email: response.data.email
           }
+          $rootScope.userdata = userdata;
+          $window.localStorage.setItem('n3twork', JSON.stringify(userdata));
+          $location.path('/');
         } else {
           $location.path('/login');
           vm.loginFailed = true;
@@ -66,7 +60,6 @@
     function logout() {
       // TODO: API-Request
       $window.localStorage.removeItem('n3twork');
-      vm.loggedin = false;
       $rootScope.loggedin = false;
       $location.path('/login');
     }
