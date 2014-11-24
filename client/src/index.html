@@ -34,13 +34,16 @@
         </div>
 
         <div class="collapse navbar-collapse" id="navbar-collapse-1">
-          <ng-include src="'app/auth/auth.login.html'"></ng-include>
+          <ng-include src="'app/views/navbar.login.html'"></ng-include>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
 
-    <!-- Main Container (also working as ng-view) -->
-    <div ng-view class="container-fluid"></div>
+    <!-- Main Container (containing ng-view container-fluid) -->
+    <div>
+      <ng-include src="'app/views/tabs.html'"></ng-include>
+      <div ng-view class="container-fluid"></div><br>
+    </div>
 
     <!-- Angular-App and Dependencies -->
     <script type="text/javascript" src="js/angular.min.js"></script>
