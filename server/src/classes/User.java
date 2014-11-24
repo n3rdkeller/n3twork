@@ -34,8 +34,8 @@ public class User {
   private String sessionID;
   private Map<String,String> otherProperties = new HashMap<String,String>();
   // date of birth, education, gender
-  private List<User> friends = new ArrayList<User>();
-//  private List<User> friendRequests = new ArrayList<User>();
+  private Map<User,Boolean> friends = new HashMap<User,Boolean>();
+  //  private List<User> friendRequests = new ArrayList<User>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
   private List<Message> messages = new ArrayList<Message>();
@@ -168,18 +168,25 @@ public class User {
     
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     List<ArrayList<String>> friendsTable = DBConnector.selectQuery(conn, "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Friends JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Friends.friendID WHERE Friends.userID=" + this.id);
-//    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".FriendRequests JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Friends.userID2 WHERE FriendRequests.requestedID=" + this.id);
+    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, "SELECT userID FROM " + DBConnector.DATABASE + ".Friends WHERE Friends.friendID=" + this.id);
     conn.close();
     if (userList.size() == 1) return false;
     Map<String,String> userMap = new HashMap<String,String>();
     List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
-//    List<HashMap<String, String>> friendRequestsList = new ArrayList<HashMap<String,String>>();
+
 
     // fill up userMap
     ArrayList<String> keyRow = userList.get(0);
     ArrayList<String> dataRow = userList.get(1);
     for (int i = 0; i < keyRow.size(); i++) {
       userMap.put(keyRow.get(i), dataRow.get(i));
+    }
+    
+    //  fill up bothWayFriendsList
+    List<String> bothWayFriendsList = new ArrayList<String>();
+    friendRequestsTable.remove(0);
+    for (ArrayList<String> smallList : friendRequestsTable) {
+      bothWayFriendsList.add(smallList.get(0));
     }
     
     // fill up friendsList
@@ -210,8 +217,13 @@ public class User {
     this.username = userMap.get("username");
     this.email = userMap.get("email");
     for (HashMap<String, String> user : friendsList){
-      // adding every User in friendsList with the User(id, username, email, name, firstName) constructor
-      this.friends.add(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")));
+      if (bothWayFriendsList.contains(user.get("id"))) {
+        // adding every User in friendsList with the User(id, username, email, name, firstName) constructor and true because they are true friends
+        this.friends.put(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")),true);
+      } else {
+        // adding every User in friendsList with the User(id, username, email, name, firstName) constructor and false because they are false friends
+        this.friends.put(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")),false);
+      }
     }
 //    for (HashMap<String, String> user : friendRequestsList){
 //      // adding every User in friendsList with the User(id, username, email, name, firstName) constructor
@@ -543,13 +555,15 @@ public class User {
 
   public String getFriendsAsJson() {
     JsonArrayBuilder friendList = Json.createArrayBuilder();
-    for (User friend : this.friends) {
+    for (Entry<User, Boolean> friend : this.friends.entrySet()) {
       friendList.add(Json.createObjectBuilder()
-          .add("id", friend.getId())
-          .add("username", friend.getUsername())
-          .add("email", friend.getEmail())
-          .add("name", friend.getName())
-          .add("firstName", friend.getFirstName()));
+          .add("id", friend.getKey().getId())
+          .add("username", friend.getKey().getUsername())
+          .add("email", friend.getKey().getEmail())
+          .add("name", friend.getKey().getName())
+          .add("firstName", friend.getKey().getFirstName())
+          .add("trueFriend", friend.getValue())
+          .add("successful", true));
     }
     
     JsonObject friendsObject = Json.createObjectBuilder()
@@ -558,31 +572,11 @@ public class User {
     String jsonString = String.valueOf(friendsObject);
     return jsonString;
   }
-  
-  public String getFriendRequestsAsJson() {
-    JsonArrayBuilder friendRequestsList = Json.createArrayBuilder();
-    for (User friendRequest : this.friendRequests) {
-      friendRequestsList.add(Json.createObjectBuilder()
-          .add("id", friendRequest.getId())
-          .add("username", friendRequest.getUsername())
-          .add("email", friendRequest.getEmail())
-          .add("name", friendRequest.getName())
-          .add("firstName", friendRequest.getFirstName()));
-    }
-    
-    JsonObject friendRequestsObject = Json.createObjectBuilder()
-      .add("friends", friendRequestsList)
-      .build();
-    String jsonString = String.valueOf(friendRequestsObject);
-    return jsonString;
-  }
 
-  public void addFriendRequest(User friend) {
-    
-  }
   
-  public void addFriend(User friend) {
-    
+  public void addFriendToDB(int friendID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, "INSERT INTO " + DBConnector.DATABASE + ".Friends(userID,friendID) VALUES (" + this.id + "," + friendID + ")");
   }
 
   public List<Group> getGroups() {

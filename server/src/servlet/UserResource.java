@@ -123,9 +123,9 @@ public class UserResource {
           .build();
     }
   }
-  
-  @OPTIONS @Path("/friendRequests")
-  public Response corsGetFriendRequests() {
+
+  @OPTIONS @Path("/friend/add")
+  public Response corsAddFriend() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -133,13 +133,13 @@ public class UserResource {
          .build();
   }
   
-  @POST @Path("/friendRequests")
+  @POST @Path("/friend/add")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response getFriendRequests(String jsonInput){
+  public Response AddFriend(String jsonInput){
     try{
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
-      JsonObject settingsAsJson = jsonReader.readObject();
-      User user = Helper.checkSessionID(settingsAsJson.getString("session"));
+      JsonObject inputAsJson = jsonReader.readObject();
+      User user = Helper.checkSessionID(inputAsJson.getString("session"));
       if (user == null) {
         return Response.ok()
             .entity(String.valueOf(Json.createObjectBuilder()
@@ -147,11 +147,15 @@ public class UserResource {
                 .build()))
             .header(Helper.ACCESSHEADER, "*")
             .build();
+      } else {
+        user.addFriendToDB(inputAsJson.getInt("friendID"));
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", true)
+                .build()))
+            .header(Helper.ACCESSHEADER, "*")
+            .build();
       }
-      return Response.ok()
-          .entity(user.getFriendRequestsAsJson())
-          .header(Helper.ACCESSHEADER, "*")
-          .build();
     } catch(Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
