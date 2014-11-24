@@ -1,0 +1,20 @@
+<ul ng-show="loggedin" class="nav nav-tabs nav-justified" ng-controller="NavCtrl as nav">
+  <li role="presentation" ng-class="{ active: nav.isActive('/')}">
+    <a href="#/">Home</a>
+  </li>
+  <li class="disabled" role="presentation" ng-class="{ active: nav.isActive('/posts')}">
+    <a href="">Posts</a>
+  </li>
+  <li class="disabled" role="presentation" ng-class="{ active: nav.isActive('/friends')}">
+    <a href="">Friends</a>
+  </li>
+  <li class="disabled" role="presentation" ng-class="{ active: nav.isActive('/messages')}">
+    <a href="">Messages <span class="badge">42</span></a>
+  </li>
+  <li role="presentation" ng-class="{ active: nav.isActive('/groups')}">
+    <a href="#/groups">Groups</a>
+  </li>
+  <li role="presentation" ng-class="{ active: nav.isActive('/settings')}">
+    <a href="#/settings">Settings</a>
+  </li>
+</ul>

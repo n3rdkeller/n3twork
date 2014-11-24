@@ -1,0 +1,40 @@
+<ul ng-controller="AuthCtrl as auth" class="nav navbar-nav navbar-right">
+  <li ng-show="auth.loginFailed" id="loginFailedText" class="navbar-text">Login failed. Try again.</li>
+  <li ng-hide="loggedin" id="loginForm">
+    <form name="loginForm" class="navbar-form" method="post" role="form" ng-submit="auth.submit()">
+      <div class="input-group" ng-class="{ 'has-error': auth.loginFailed }">
+        <span class="input-group-addon">
+          <i class="fa fa-user fa-fw"></i>
+        </span>
+        <input required ng-minlength=3 class="form-control" type="text" ng-model="auth.user.login" name="login" placeholder="Username or Email">
+      </div>
+      <div class="input-group" ng-class="{ 'has-error': auth.loginFailed }">
+        <span class="input-group-addon">
+          <i class="fa fa-lock fa-fw"></i>
+        </span>
+        <input required ng-minlength=8 class="form-control" type="password" ng-model="auth.user.pw" name="pw" placeholder="Password">
+      </div>
+      <div class="input-group">
+        <button type="submit" class="btn btn-warning" ng-disabled="loginForm.$invalid || auth.loading" value="Login">
+          <span ng-hide="auth.loading"><i class="fa fa-sign-in"></i> Login</span>
+          <span ng-show="auth.loading"><i class="fa fa-spinner fa-spin"></i> Logging in</span>
+        </button>
+      </div>
+    </form>
+  </li>
+  <li ng-show="userdata.loggedin" id="userButton" class="dropdown">
+    <a role="button" href="" class="dropdown-toggle" data-toggle="dropdown">
+      <span class="fa fa-user fa-fw"></span>
+      <span ng-bind="userdata.name"></span>
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu" role="menu">
+      <li>
+        <a href="#/profile"><span class="fa fa-user fa-fw"></span> Profile</a>
+      </li>
+      <li><a href="#/settings"><span class="fa fa-cog fa-fw"></span> Settings</a></li>
+      <li class="divider"></li>
+      <li><a ng-click="auth.logout()" href="#"><span class="fa fa-sign-out fa-fw"></span> Logout</a></li>
+    </ul>
+  </li>
+</ul>

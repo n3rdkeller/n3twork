@@ -3,29 +3,104 @@
   angular
     .module('n3twork', [
       'ngRoute',
+      'ui.bootstrap',
       'ui.bootstrap.showErrors',
       'n3twork.register',
       'n3twork.auth',
-      'n3twork.main'
+      'n3twork.main',
+      'n3twork.settings'
     ])
     .config(config);
 
   function config($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'app/register/register.html',
-        controller: 'RegisterController'
-      })
-      .when('/main', {
         templateUrl: 'app/mainpage/main.html',
-        controller: 'MainCtrl'
+        controller: 'MainCtrl',
+        activetab: 'main',
+        resolve: authResolver
       })
-      // .when('/login', {
-      //   templateUrl: 'app/auth/auth.login.html',
-      //   controller: 'AuthCtrl'
-      // })
+      .when('/register', {
+        templateUrl: 'app/register/register.html',
+        controller: 'RegisterCtrl'
+      })
+      .when('/login', {
+        redirectTo: '/register'
+      })
+      .when('/settings', {
+        templateUrl: 'app/settings/settings.html',
+        controller: 'SettingsCtrl',
+        activetab: 'settings',
+        resolve: authResolver
+      })
       .otherwise({
         redirectTo: '/'
       });
   }
+
+  var authResolver = {
+    auth: ['$q', '$rootScope', 'UserSvc', function($q, $rootScope, UserSvc){
+
+      var deferred = $q.defer();
+      var loggedIn = UserSvc.isLoggedIn();
+
+      // only for debugging
+      // var loggedIn = true;
+
+      if(loggedIn){
+        deferred.resolve(loggedIn);
+      }else{
+        deferred.reject({authenticated: false, redirectTo: '/register'});
+      }
+
+      return deferred.promise;
+    }]
+  };
+
 })();
+
+(function() {
+  'use strict';
+
+  angular
+  .module('n3twork')
+  .run(['$rootScope', '$location', routeChange]);
+
+
+  function routeChange($rootScope, $location) {
+    $rootScope.$on('$routeChangeSuccess', function(loggedIn) {
+      // ...
+    });
+
+    $rootScope.$on('$routeChangeError', function(event, current, previous, eventObj) {
+      if (eventObj.authenticated === false) {
+        $location.path('/register');
+      }
+
+      if (eventObj.redirectTo) {
+        $location.path(eventObj.redirectTo);
+      }
+    });
+  }
+
+})();
+
+(function() {
+  'use strict';
+
+  angular
+    .module('n3twork')
+    .controller('NavCtrl', NavCtrl);
+
+  NavCtrl.$inject = ['$location'];
+
+  function NavCtrl($location) {
+    var vm = this;
+    vm.isActive = isActive;
+
+    function isActive (viewLocation) {
+      return viewLocation === $location.path();
+    };
+  }
+})();
+

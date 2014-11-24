@@ -3,17 +3,19 @@
 
   angular
     .module('n3twork.register')
-    .controller('RegisterController', RegisterController);
+    .controller('RegisterCtrl', RegisterCtrl);
 
-  RegisterController.$inject = ['APISvc', '$q', '$rootScope'];
+  RegisterCtrl.$inject = ['APISvc', '$q', '$rootScope'];
 
-  function RegisterController(APISvc, $q, $rootScope) {
+  function RegisterCtrl(APISvc, $q, $rootScope) {
     var vm = this;
     var deferred = $q.defer();
 
     vm.loggedin = $rootScope.loggedin;
     vm.submitted = false;
     vm.signedup = false;
+
+    vm.submit = submit;
 
     vm.user = {
       username: "",
@@ -22,18 +24,20 @@
     };
 
 
-    vm.submit = function(isValid) {
+    function submit(isValid) {
       if (isValid) {
+        vm.loading = true;
         APISvc.request({
           method: 'POST',
           url: '/register',
           data: {
             'username': vm.user.username,
             'email': vm.user.mail,
-            'password': APISvc.hashpw(vm.user)
+            'password': vm.user.pw
           }
         })
         .then(function(response) {
+          vm.loading = false;
           deferred.resolve(true);
           if (response.data.successful) {
             vm.submitted = true;

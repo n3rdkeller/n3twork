@@ -1,8 +1,54 @@
-.container#register {
-  background: #58ACFA; /* 58ACFA FF8000 */
-  color: white;
+nav {
+  #brandimg {
+    height: 50px;
+    margin-top: -16px;
+  }
+
+  #loginFailedText {
+    color: #a94442;
+    margin-right: 0;
+  }
+}
+
+.container-fluid {
+  tabset {
+    margin-bottom: 10px;
+  }
+  #register {
+    background: rgb(34, 34, 34); /* #58ACFA #FF8000 */
+    color: white;
+    border-radius: 4px;
+    a {
+      color: red;
+    }
+  }
 }
 
 .page-header {
   color: white;
+}
+
+
+@screen-sm: 768px;
+@media (max-width: @screen-sm) {
+  #loginFailedText {
+    padding-left: 14px;
+  }
+  .navbar-collapse {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    ul {
+      margin: 0;
+      #loginForm {
+        .input-group {
+          padding: 4px 6px;
+        }
+      }
+      .navbar-form {
+        border: 0;
+        margin: 0;
+      }
+    }
+  }
 }
