@@ -35,7 +35,7 @@ public class User {
   private Map<String,String> otherProperties = new HashMap<String,String>();
   // date of birth, education, gender
   private List<User> friends = new ArrayList<User>();
-  private List<User> friendRequests = new ArrayList<User>();
+//  private List<User> friendRequests = new ArrayList<User>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
   private List<Message> messages = new ArrayList<Message>();
@@ -167,13 +167,13 @@ public class User {
     }
     
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
-    List<ArrayList<String>> friendsTable = DBConnector.selectQuery(conn, "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Friends JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Friends.userID2 WHERE Friends.userID1=" + this.id);
-    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".FriendRequests JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Friends.userID2 WHERE FriendRequests.requestedID=" + this.id);
+    List<ArrayList<String>> friendsTable = DBConnector.selectQuery(conn, "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Friends JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Friends.friendID WHERE Friends.userID=" + this.id);
+//    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".FriendRequests JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Friends.userID2 WHERE FriendRequests.requestedID=" + this.id);
     conn.close();
     if (userList.size() == 1) return false;
     Map<String,String> userMap = new HashMap<String,String>();
     List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
-    List<HashMap<String, String>> friendRequestsList = new ArrayList<HashMap<String,String>>();
+//    List<HashMap<String, String>> friendRequestsList = new ArrayList<HashMap<String,String>>();
 
     ArrayList<String> keyRow = userList.get(0);
     ArrayList<String> dataRow = userList.get(1);
@@ -192,16 +192,16 @@ public class User {
       friendsList.add(userHelperMap);
     }
     
-    // fill up friendRequestsList
-    keyRow = friendRequestsTable.get(0);
-    friendRequestsTable.remove(0);
-    for (ArrayList<String> data : friendRequestsTable){
-      HashMap<String,String> userHelperMap = new HashMap<String,String>();
-      for (int i = 0; i < keyRow.size(); i++){
-        userHelperMap.put(keyRow.get(i), data.get(i));
-      }
-      friendRequestsList.add(userHelperMap);
-    }
+//    // fill up friendRequestsList
+//    keyRow = friendRequestsTable.get(0);
+//    friendRequestsTable.remove(0);
+//    for (ArrayList<String> data : friendRequestsTable){
+//      HashMap<String,String> userHelperMap = new HashMap<String,String>();
+//      for (int i = 0; i < keyRow.size(); i++){
+//        userHelperMap.put(keyRow.get(i), data.get(i));
+//      }
+//      friendRequestsList.add(userHelperMap);
+//    }
     
     //setting attributes
     this.name = userMap.get("name");
@@ -212,10 +212,10 @@ public class User {
       // adding every User in friendsList with the User(id, username, email, name, firstName) constructor
       this.friends.add(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")));
     }
-    for (HashMap<String, String> user : friendRequestsList){
-      // adding every User in friendsList with the User(id, username, email, name, firstName) constructor
-      this.friendRequests.add(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")));
-    }
+//    for (HashMap<String, String> user : friendRequestsList){
+//      // adding every User in friendsList with the User(id, username, email, name, firstName) constructor
+//      this.friendRequests.add(new User(Integer.parseInt(user.get("id")), user.get("username"), user.get("email"), user.get("name"), user.get("firstName")));
+//    }
     return true;
 
   }
