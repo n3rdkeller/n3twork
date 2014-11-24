@@ -168,8 +168,6 @@ public class User {
       }
     }
 
-
-
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
         "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     
@@ -227,7 +225,7 @@ public class User {
     friendsTable.next();
     while (friendsTable.next()){
     /* adding every User in friendsList with the User(id, username, email, name, firstName) constructor
-     * and saving the date, the friend request was made aswell as the boolean value of being a true friend
+     * and saving the date, the friend request was made as well as the boolean value of being a true friend
      */
       if (bothWayFriendsList.contains(friendsTable.getString("id"))) {
         this.friends.put(new User(
@@ -436,6 +434,7 @@ public class User {
     usernameList.remove(0);
     return usernameList;
   }
+  
   /**
    * Simple getter for the attribute id
    * @return id
@@ -557,6 +556,16 @@ public class User {
     this.otherProperties = otherProperties;
   }
   
+  /**
+   * Creates a sessionID as an md5 of the username and the current time and saves it in the db
+   * @return sessionID
+   * @throws UnsupportedEncodingException
+   * @throws NoSuchAlgorithmException
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public String createSessionID() throws UnsupportedEncodingException, NoSuchAlgorithmException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
     String seed = this.username + System.currentTimeMillis();
     this.sessionID = md5(seed);
@@ -574,22 +583,31 @@ public class User {
     return this.sessionID;
   }
   
+  /**
+   * Simple getter for sessionID
+   * @return sessionID
+   */
   public String getSessionID() {
     return this.sessionID;
   }
 
-  public Boolean checkSessionID() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
-    if(userList.size() == 1) {
-      return false;
-    } else {
-      this.id = Integer.parseInt(userList.get(1).get(0));
-      return true;
-    }
-  }
+//  not used
+//  public Boolean checkSessionID() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+//    Connection conn = DBConnector.getConnection();
+//    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
+//        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+//    if(userList.size() == 1) {
+//      return false;
+//    } else {
+//      this.id = Integer.parseInt(userList.get(1).get(0));
+//      return true;
+//    }
+//  }
 
+  /**
+   * Puts the friends attribute in a nice Json String
+   * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'
+   */
   public String getFriendsAsJson() {
     JsonArrayBuilder friendList = Json.createArrayBuilder();
     for (Entry<User, SimpleEntry<Long,Boolean>> friend : this.friends.entrySet()) {
@@ -611,7 +629,15 @@ public class User {
     return jsonString;
   }
 
-  
+  /**
+   * Inserts a user with given userID into the Friends table on the db. 
+   * There is no need to also put them in the friends attribute, because every time the friends list is requested getFromDB() is called, which does the same.
+   * @param friendID id of the added friend
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public void addFriendToDB(int friendID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
