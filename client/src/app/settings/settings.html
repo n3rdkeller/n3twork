@@ -1,0 +1,34 @@
+<div ng-controller="SettingsCtrl as settings" class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+  <h3>These are your settings, <span ng-bind="userdata.name"></span>.</h3>
+  <br>
+
+  <form role="form" name="settingsForm" ng-submit="settings.submit(settingsForm.$valid)" novalidate>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input disabled type="username" class="form-control" id="username" value="{{ userdata.name }}">
+    </div>
+    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
+      <label for="email">Email address</label>
+      <input required type="email" class="form-control" name="email" id="email" ng-model="settings.user.email" ng-bind="{{ userdata.email }}" placeholder="Enter new email">
+      <div ng-show="settingsForm.email.$dirty && settingsForm.email.$invalid" class="help-block" ng-messages="settingsForm.email.$error" ng-messages-include="app/views/messages.html"></div>
+    </div>
+    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
+      <label for="pw">New password</label>
+      <input required type="password" class="form-control" name="pw" id="pw" ng-model="settings.user.pw" placeholder="Enter new password">
+      <div ng-show="settingsForm.pw.$dirty && settingsForm.pw.$invalid" class="help-block" ng-messages="settingsForm.pw.$error" ng-messages-include="app/views/messages.html"></div>
+    </div>
+    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
+      <label for="pw">Password confirmation</label>
+      <input required type="password" class="form-control" name="pwconfirm" id="pwconfirm" ng-model="settings.user.pwconfirm" compare-to="settings.user.pw" placeholder="Confirm your password">
+      <div ng-show="settingsForm.pwconfirm.$dirty && settingsForm.pwconfirm.$invalid" class="help-block" ng-messages="settingsForm.pwconfirm.$error" ng-messages-include="app/views/messages.html"></div>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" disabled> I'm awesome. </label>
+      </label>
+    </div>
+    <button type="submit" class="btn btn-default"><i class="fa fa-wrench"></i> Save</button>
+  </form>
+  <br>
+
+</div>
