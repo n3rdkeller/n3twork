@@ -135,7 +135,7 @@ public class UserResource {
   
   @POST @Path("/friend/add")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response AddFriend(String jsonInput){
+  public Response addFriend(String jsonInput){
     try{
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject inputAsJson = jsonReader.readObject();
