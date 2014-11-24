@@ -3,11 +3,11 @@
 
   angular
     .module('n3twork.register')
-    .controller('RegisterController', RegisterController);
+    .controller('RegisterCtrl', RegisterCtrl);
 
-  RegisterController.$inject = ['APISvc', '$q', '$rootScope'];
+  RegisterCtrl.$inject = ['APISvc', '$q', '$rootScope'];
 
-  function RegisterController(APISvc, $q, $rootScope) {
+  function RegisterCtrl(APISvc, $q, $rootScope) {
     var vm = this;
     var deferred = $q.defer();
 
