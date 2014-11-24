@@ -266,6 +266,7 @@ public class User {
       .add("email", this.email)
       .add("session", this.sessionID)
       .add("otherProperties", otherProperties)
+      .add("successful", true)
       .build();
     String jsonString = String.valueOf(userJson);
     return jsonString;
