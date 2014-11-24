@@ -84,3 +84,23 @@
   }
 
 })();
+
+(function() {
+  'use strict';
+
+  angular
+    .module('n3twork')
+    .controller('NavCtrl', NavCtrl);
+
+  NavCtrl.$inject = ['$location'];
+
+  function NavCtrl($location) {
+    var vm = this;
+    vm.isActive = isActive;
+
+    function isActive (viewLocation) {
+      return viewLocation === $location.path();
+    };
+  }
+})();
+
