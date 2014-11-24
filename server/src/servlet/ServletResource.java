@@ -45,6 +45,7 @@ public class ServletResource {
     		.header(Helper.ACCESSHEADER, "*")
     		.build();
   }
+  
   /**
    * Options request for login
    * @return Response with all the needed headers
@@ -111,7 +112,7 @@ public class ServletResource {
   /**
    * Post request for logout
    * @param jsonInput '{ "session" : "sessionID" }'
-   * @return '{ "successful" : false }' with html error code 200 or any exception with html error code 500
+   * @return Response with the entity '{ "successful" : true }' with html error code 200 or any exception and html error code 500
    */
   @POST @Path("/logout")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -153,7 +154,7 @@ public class ServletResource {
   /**
    * Post request for register
    * @param jsonInput '{"email":"email@text","password":"pw as plain text","username":"usernametext"}'
-   * @return '{"successful": true/false}' with html error code 200 or any exception with html error code 500
+   * @return Response with the entity '{"successful": true/false}' with html error code 200 or any exception and html error code 500
    */
   @POST @Path("/register")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -192,7 +193,7 @@ public class ServletResource {
   /**
    * Post request for checkuser. Gets a List of all usernames and then checks if the user in in that list
    * @param jsonInput '{"username":"usernametext"}'
-   * @return {"username":"usernametext", "taken":true/false} with html error code 200 or any exception with html error code 500
+   * @return Response with the entity {"username":"usernametext", "taken":true/false} and html error code 200 or any exception and html error code 500
    */
   @POST @Path("/register/checkuser")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)

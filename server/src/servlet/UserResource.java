@@ -29,6 +29,10 @@ import classes.User;
 public class UserResource {
   final static Logger log = LogManager.getLogger(UserResource.class);
   
+  /**
+   * Options request for settings
+   * @return Response with all the needed headers
+   */
   @OPTIONS @Path("/settings")
   public Response corsUpdateUserSettings() {
      return Response.ok()
@@ -38,6 +42,11 @@ public class UserResource {
          .build();
   }
   
+  /**
+   * Post Request to apply settings
+   * @param jsonInput {"session":"sessionID","changedSetting":"newValue",...}
+   * @return Response with the entity {"successful", true/false} and html error code 200
+   */
   @POST @Path("/settings")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response updateUserSettings(String jsonInput){
@@ -87,6 +96,10 @@ public class UserResource {
     }
   }
   
+  /**
+   * Options request for friends
+   * @return Response with all the needed headers
+   */
   @OPTIONS @Path("/friends")
   public Response corsGetFriends() {
      return Response.ok()
@@ -96,13 +109,18 @@ public class UserResource {
          .build();
   }
   
+  /**
+   * Post Request to get all friends
+   * @param jsonInput {"session":"sessionID"}
+   * @return Response with the entity {"friends":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
+   */
   @POST @Path("/friends")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getFriends(String jsonInput){
     try{
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
-      JsonObject settingsAsJson = jsonReader.readObject();
-      User user = Helper.checkSessionID(settingsAsJson.getString("session"));
+      JsonObject jsonSession = jsonReader.readObject();
+      User user = Helper.checkSessionID(jsonSession.getString("session"));
       if (user == null) {
         return Response.ok()
             .entity(String.valueOf(Json.createObjectBuilder()
@@ -123,7 +141,11 @@ public class UserResource {
           .build();
     }
   }
-
+  
+  /**
+   * Options request for friend/add
+   * @return Response with all the needed headers
+   */
   @OPTIONS @Path("/friend/add")
   public Response corsAddFriend() {
      return Response.ok()
@@ -133,6 +155,11 @@ public class UserResource {
          .build();
   }
   
+  /**
+   * Post Request to add a friend
+   * @param jsonInput {"session":"sessionID"}
+   * @return Response with the entity {"successful":true/false} and html error code 200
+   */
   @POST @Path("/friend/add")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response addFriend(String jsonInput){

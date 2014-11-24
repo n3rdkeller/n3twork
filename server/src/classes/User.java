@@ -600,12 +600,12 @@ public class User {
           .add("name", friend.getKey().getName())
           .add("firstName", friend.getKey().getFirstName())
           .add("trueFriend", friend.getValue().getValue())
-          .add("date", friend.getValue().getKey())
-          .add("successful", true));
+          .add("date", friend.getValue().getKey()));
     }
     
     JsonObject friendsObject = Json.createObjectBuilder()
       .add("friends", friendList)
+      .add("successful", true)
       .build();
     String jsonString = String.valueOf(friendsObject);
     return jsonString;
