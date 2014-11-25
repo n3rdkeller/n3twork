@@ -255,7 +255,7 @@ public class User {
   
   
   /**
-   * Gets only name, firstName, username and email from db with little SQL queries
+   * Gets only name, firstName, username, email and otherProperties from db with little SQL queries
    * @return true if successful / user exists
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -299,10 +299,11 @@ public class User {
     }
     
     //setting attributes
-    this.name = userMap.get("name");
-    this.firstName = userMap.get("firstName");
-    this.username = userMap.get("username");
-    this.email = userMap.get("email");
+    this.name = userMap.remove("name");
+    this.firstName = userMap.remove("firstName");
+    this.username = userMap.remove("username");
+    this.email = userMap.remove("email");
+    this.otherProperties.putAll(userMap); 
     return true;
 
   }
@@ -555,17 +556,57 @@ public class User {
     return this.otherProperties.get(key);
   }
   
-  
-  public void getOtherPropertiesFromDB(Map<String,String> properties) {
-    // copy from Group class
-  }
-  
   /**
    * Setter for otherProperties. Set the whole Map at once. TODO Also sets values in db.
    * @param otherProperties
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public void setOtherProperties(HashMap<String,String> otherProperties) {
-    this.otherProperties = otherProperties;
+  public void setOtherProperties(HashMap<String,String> properties) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    this.otherProperties.putAll(properties);
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
+        "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
+    String insertQueryHead = "INSERT INTO " + DBConnector.DATABASE + ".Users(";
+    String insertQueryTail = ") VALUES(";
+    List<String> toBeAdded = new ArrayList<String>();
+    
+    for (Entry<String,String> prop: this.otherProperties.entrySet()) {
+      // check if key is a column
+      if (!userList.get(0).contains(prop.getKey())) {
+        toBeAdded.add(prop.getKey());
+      }
+      
+      // prepare insert statement
+      if (insertQueryHead.endsWith(".Users(")) {
+        insertQueryHead = insertQueryHead + prop.getKey();
+      } else {
+        insertQueryHead = insertQueryHead + "," + prop.getKey();
+      }
+      
+      if (insertQueryTail.endsWith("VALUES(")) {
+        insertQueryTail = insertQueryTail + "'" + prop.getValue() + "'";
+      } else {
+        insertQueryTail = insertQueryTail + ",'" + prop.getValue() + "'";
+      }
+    }
+    
+    if (toBeAdded.size() > 0) {
+      // prepare alter table statement
+      String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Users ADD COLUMN ";
+      for (int i = 0; i < toBeAdded.size(); i++) {
+        if (i == 0) {
+          alterTable = toBeAdded.get(i) + " VARCHAR(45) NULL DEFAULT NULL";
+        } else {
+          alterTable = "," + toBeAdded.get(i) + " VARCHAR(45) NULL DEFAULT NULL";
+        }
+      }
+      DBConnector.executeUpdate(conn, alterTable);
+    }
+    
+    DBConnector.executeUpdate(conn, insertQueryHead + insertQueryTail + ")");
   }
   
   /**
