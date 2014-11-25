@@ -13,19 +13,7 @@ public class Helper {
     log.debug("checkSessionID: " + sessionID);
     User user = new User(sessionID.toCharArray());
     try {
-      if (user.getFromDB()) return user;
-      else return null;
-    } catch (Exception e) {
-      log.error(e);
-      return null;
-    }
-  }
-  
-  public static User checkSessionIDMin(String sessionID){
-    log.debug("checkSessionID: " + sessionID);
-    User user = new User(sessionID.toCharArray());
-    try {
-      if (user.getFromDBMin()) return user;
+      if (user.getBasicsFromDB()) return user;
       else return null;
     } catch (Exception e) {
       log.error(e);
