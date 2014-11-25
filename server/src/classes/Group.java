@@ -62,6 +62,39 @@ public class Group {
     // empty
   }
   
+  public static List<Group> findGroup(String searchString) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<Group> groupList = new ArrayList<Group>();
+    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, "SELECT id,name FROM " + DBConnector.DATABASE + ".Groups");
+    groupTable.remove(0); // remove column names
+    for (ArrayList<String> groupTableRow : groupTable) {
+      if (groupTableRow.get(1).toLowerCase().contains(searchString.toLowerCase())) {
+        Group group = new Group(Integer.parseInt(groupTableRow.get(0)));
+        group.getBasicsFromDB();
+        groupList.add(group);
+      }
+    }
+    return groupList;
+  }
+  
+  public static String convertGroupListToJson(List<Group> groupList) {
+    JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
+    for (Group group : groupList) {
+      JsonObjectBuilder otherProperties = Json.createObjectBuilder();
+      for (Entry<String, String> e : group.getOtherProperties().entrySet()) {
+        otherProperties.add(e.getKey(), e.getValue());
+      }
+      groupJsonList.add(Json.createObjectBuilder()
+          .add("groupID", group.getId())
+          .add("groupName", group.getName())
+          .add("groupDescr", group.getDescr()));
+    }
+    
+    return String.valueOf(Json.createObjectBuilder()
+        .add("groups",groupJsonList)
+        .add("successful", true)
+        .build());
+  }
   /**
    * Gets description and name from db
    * @return true if successful / group exists
@@ -169,6 +202,10 @@ public class Group {
         .add("groups",groupJsonList)
         .add("successful", true)
         .build());
+  }
+  
+  public int getId() {
+    return this.id;
   }
   
   public String getName() {
@@ -298,6 +335,10 @@ public class Group {
 
   public String getOtherProperty(String key) {
     return this.otherProperties.get(key);
+  }
+  
+  public Map<String,String> getOtherProperties() {
+    return this.otherProperties;
   }
 
   public void setOtherProperty(String key, String value) {

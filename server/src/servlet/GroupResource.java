@@ -33,8 +33,60 @@ public class GroupResource {
    * Options request for join
    * @return Response with all needed headers
    */
+  @OPTIONS @Path("/find")
+  public Response corsFindGroup() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post request to find groups
+   * @param jsonInput '{ "session" : "sessionID", "groupID":"groupID" }'
+   * @return '{ "successful" : true/false }' with html error code 200 or any exception with html error code 500
+   */
+  @POST @Path("/find")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response findGroup(String jsonInput){
+    log.debug("find input: " + jsonInput);
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        return Response.ok()
+            .entity(Json.createObjectBuilder()
+                .add("successful", false)
+                .add("reason", "SessionID invalid")
+                .build())
+            .header(Helper.ACCESSHEADER, "*")
+            .build();
+      } 
+      return Response.ok()
+          .entity(Group.convertGroupListToJson(
+              Group.findGroup(
+                  input.getString("search"))))
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+      
+    } catch (Exception e){
+      // internal server error
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  /**
+   * Options request for join
+   * @return Response with all needed headers
+   */
   @OPTIONS @Path("/join")
-  public Response corsJoin() {
+  public Response corsJoinGroup() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -49,7 +101,7 @@ public class GroupResource {
    */
   @POST @Path("/join")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response join(String jsonInput){
+  public Response joinGroup(String jsonInput){
     log.debug("join input: " + jsonInput);
     try {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
@@ -104,7 +156,7 @@ public class GroupResource {
    * @return Response with all needed headers
    */
   @OPTIONS @Path("/found")
-  public Response corsFound() {
+  public Response corsFoundGroup() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -119,7 +171,7 @@ public class GroupResource {
    */
   @POST @Path("/found")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response found(String jsonInput){
+  public Response foundGroup(String jsonInput){
     log.debug("found input: " + jsonInput);
     try {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
@@ -166,7 +218,7 @@ public class GroupResource {
    * @return Response with all needed headers
    */
   @OPTIONS @Path("/show")
-  public Response corsShow() {
+  public Response corsShowGroup() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -181,7 +233,7 @@ public class GroupResource {
    */
   @POST @Path("/show")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response show(String jsonInput){
+  public Response showGroup(String jsonInput){
     log.debug("show input: " + jsonInput);
     try {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
@@ -233,7 +285,7 @@ public class GroupResource {
    * @return Response with all needed headers
    */
   @OPTIONS @Path("/show/all")
-  public Response corsShowAll() {
+  public Response corsShowAllGroups() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -248,7 +300,7 @@ public class GroupResource {
    */
   @POST @Path("/show/all")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response showAll(String jsonInput){
+  public Response showAllGroups(String jsonInput){
     log.debug("showAll input: " + jsonInput);
     try {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
@@ -283,8 +335,8 @@ public class GroupResource {
    * Options request for show/member
    * @return Response with all needed headers
    */
-  @OPTIONS @Path("/show/member")
-  public Response corsShowMember() {
+  @OPTIONS @Path("/show/members")
+  public Response corsShowGroupMembers() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")
@@ -297,9 +349,9 @@ public class GroupResource {
    * @param jsonInput '{ "session" : "sessionID", "groupID",groupID}'
    * @return '{ "successful" : false }' or member as json with html error code 200 or any exception with html error code 500
    */
-  @POST @Path("/show/member")
+  @POST @Path("/show/members")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response showMember(String jsonInput){
+  public Response showGroupMembers(String jsonInput){
     log.debug("showAll input: " + jsonInput);
     try {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
