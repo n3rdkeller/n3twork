@@ -44,7 +44,7 @@ public class UserResource {
   
   /**
    * Post Request to apply settings
-   * @param jsonInput {"session":"sessionID","changedSetting":"newValue",...}
+   * @param jsonInput {"session":"sessionID","changedSetting1":"newValue1",...}
    * @return Response with the entity {"successful", true/false} and html error code 200
    */
   @POST @Path("/settings")
@@ -211,7 +211,7 @@ public class UserResource {
   
   /**
    * Post Request to add a friend
-   * @param jsonInput {"session":"sessionID"}
+   * @param jsonInput {"session":"sessionID","friendID":userID}
    * @return Response with the entity {"successful":true/false} and html error code 200
    */
   @POST @Path("/friend/add")
@@ -252,7 +252,7 @@ public class UserResource {
    * @return Response with all the needed headers
    */
   @OPTIONS @Path("/friend/remove")
-  public Response corsremoveFriend() {
+  public Response corsRemoveFriend() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
          .header("Access-Control-Allow-Methods", "POST, OPTIONS")

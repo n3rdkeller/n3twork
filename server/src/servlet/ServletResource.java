@@ -201,7 +201,7 @@ public class ServletResource {
     log.debug(jsonInput);
     try {
       if (this.userList.size() == 0){
-        this.userList = User.getUserList();
+        this.userList = User.getUsernameList();
       } 
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject userAsJsonObject = jsonReader.readObject();

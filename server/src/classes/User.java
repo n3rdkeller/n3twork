@@ -118,6 +118,96 @@ public class User {
   public User() {
     // empty on purpose
   }
+  /**
+   * Produces a list of all usernames. Should not be accessible directly in the api!
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
+   * @return list of all users
+   */
+  public static List<String> getUsernameList() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
+        "SELECT username FROM " + DBConnector.DATABASE + ".Users");
+    List<String> usernameList = new ArrayList<String>();
+    for(ArrayList<String> list : userList){
+      usernameList.add(list.get(0));
+    }
+    usernameList.remove(0);
+    return usernameList;
+  }
+  
+  /**
+   * Returns a list of all users, which match the search string in name, firstName, username or email
+   * @param searchString
+   * @return List of matched users
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public static List<User> findUsers(String searchString) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> userTable = new ArrayList<ArrayList<String>>();
+      userTable = DBConnector.selectQuery(conn, 
+          "SELECT * FROM " + DBConnector.DATABASE + ".Users "
+              + "WHERE name='" + searchString + "' "
+              + "OR firstName='" + searchString + "' "
+              + "OR username='" + searchString + "' "
+              + "OR email ='" + searchString + "' ");
+    conn.close();
+    List<HashMap<String,String>> userMapList = new ArrayList<HashMap<String,String>>();
+    
+    ArrayList<String> keyRow = userTable.remove(0);
+    for (ArrayList<String> dataRow : userTable) {
+      HashMap<String,String> userMap = new HashMap<String,String>();
+      for (int i = 0; i < keyRow.size(); i++) {
+        userMap.put(keyRow.get(i), dataRow.get(i));
+      }
+      userMapList.add(userMap);
+    }
+    List<User> userList = new ArrayList<User>();
+    for (HashMap<String,String> userMap: userMapList) {
+      User user = new User();
+      //setting attributes
+      user.id = Integer.parseInt(userMap.remove("id"));
+      user.name = userMap.remove("name");
+      user.firstName = userMap.remove("firstName");
+      user.username = userMap.remove("username");
+      user.email = userMap.remove("email");
+      user.otherProperties.putAll(userMap); 
+      userList.add(user);
+    }
+    return userList;
+  }
+  
+  /**
+   * Converts any list of users to a json string
+   * @param users
+   * @return {"userList":[{"id":userID,...},...],"successful":true}
+   */
+  public static String convertUserListToJson(List<User> users) {
+    JsonArrayBuilder userList = Json.createArrayBuilder();
+    for (User user : users) {
+      JsonObjectBuilder otherProperties = Json.createObjectBuilder();
+      for (Entry<String, String> e : user.otherProperties.entrySet()) {
+        otherProperties.add(e.getKey(), e.getValue());
+      }
+      userList.add(Json.createObjectBuilder()
+        .add("id", user.id)
+        .add("username", user.username)
+        .add("email", user.email)
+        .add("name", user.name)
+        .add("firstName", user.firstName)
+        .add("session", user.sessionID)
+        .add("otherProperties", otherProperties));
+    }
+    return String.valueOf(Json.createObjectBuilder()
+        .add("userList", userList)
+        .add("successful", true)
+        .build());
+  }
   
 /**
  * Hashes the seed with md5
@@ -435,26 +525,6 @@ public class User {
           "DELETE FROM " + DBConnector.DATABASE + ".SessionIDs "
               + "WHERE sessionID='" + this.sessionID + "'");
     }
-  }
-  
-  /**
-   * Produces a list of all usernames. Should not be accessible directly in the api!
-   * @throws SQLException 
-   * @throws ClassNotFoundException 
-   * @throws IllegalAccessException 
-   * @throws InstantiationException 
-   * @return list of all users
-   */
-  public static List<String> getUserList() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
-        "SELECT username FROM " + DBConnector.DATABASE + ".Users");
-    List<String> usernameList = new ArrayList<String>();
-    for(ArrayList<String> list : userList){
-      usernameList.add(list.get(0));
-    }
-    usernameList.remove(0);
-    return usernameList;
   }
   
   /**
