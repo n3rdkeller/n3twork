@@ -591,7 +591,7 @@ public class User {
     return this.sessionID;
   }
 
-//  not used
+//  not used TODO: use this method to modulize getFromDB
 //  public Boolean checkSessionID() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
 //    Connection conn = DBConnector.getConnection();
 //    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
@@ -642,6 +642,11 @@ public class User {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
         "INSERT INTO " + DBConnector.DATABASE + ".Friends(userID,friendID) VALUES (" + this.id + "," + friendID + ")");
+  }
+  
+  public void removeFriend(int friendID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Friends WHERE userID=" + this.id + " AND friendID=" + friendID);
   }
 
   public List<Group> getGroups() {
