@@ -253,6 +253,7 @@ public class User {
 
   }
   
+  
   /**
    * Minimalist method to get only name, firstName, username and email from db with less SQL queries
    * @return true if successful / user exists
@@ -261,7 +262,7 @@ public class User {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public Boolean getFromDBMin() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Boolean getBasicsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     // get id from sessionID if only sessionID is given
     if (sessionID != null && this.id == 0) {
@@ -383,7 +384,7 @@ public class User {
       if(userList.get(1).get(1).equals(this.password)) {
 
         this.id = Integer.parseInt(userList.get(1).get(0));
-        getFromDBMin();
+        getBasicsFromDB();
         log.debug("login successful");
         return true;
 
@@ -628,6 +629,82 @@ public class User {
     String jsonString = String.valueOf(friendsObject);
     return jsonString;
   }
+  
+  /**
+   * Gets friends list from db
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public void getFriendsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    
+    /* friends are a pain in the butt, because you can't return a result set. 
+     * That's why I use the whole preparedStatement and ResultSet stuff which is normally hidden behind the selectQuery function
+     */
+    String sqlQuery = "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Friends JOIN " 
+        + DBConnector.DATABASE + ".Users ON Users.id=Friends.friendID WHERE Friends.userID=" + this.id;
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet friendsTable = pStmt.executeQuery();
+    ResultSetMetaData friendsTableMD = friendsTable.getMetaData();
+    int columnsNumber = friendsTableMD.getColumnCount();
+    log.debug(sqlQuery);
+    
+    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, 
+        "SELECT userID FROM " + DBConnector.DATABASE + ".Friends WHERE Friends.friendID=" + this.id);
+    
+    //  fill up bothWayFriendsList
+    List<String> bothWayFriendsList = new ArrayList<String>();
+    friendRequestsTable.remove(0);
+    for (ArrayList<String> smallList : friendRequestsTable) {
+      bothWayFriendsList.add(smallList.get(0));
+    }
+    
+    // fill up friendsList
+    List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
+    List<String> keyRow = new ArrayList<String>();
+    for (int i = 1;i <= columnsNumber; i++) {
+      keyRow.add(friendsTable.getString(i));
+    }
+    while (friendsTable.next()){
+      HashMap<String,String> userHelperMap = new HashMap<String,String>();
+      for (int i = 1;i <= columnsNumber; i++) {
+        userHelperMap.put(keyRow.get(i),friendsTable.getString(i));
+      }
+      friendsList.add(userHelperMap);
+    }
+    
+    friendsTable.next();
+    while (friendsTable.next()){
+    /* adding every User in friendsList with the User(id, username, email, name, firstName) constructor
+     * and saving the date, the friend request was made as well as the boolean value of being a true friend
+     */
+      if (bothWayFriendsList.contains(friendsTable.getString("id"))) {
+        this.friends.put(new User(
+            friendsTable.getInt("id"), 
+            friendsTable.getString("username"), 
+            friendsTable.getString("email"), 
+            friendsTable.getString("name"), 
+            friendsTable.getString("firstName")),
+            new SimpleEntry<Long,Boolean>(friendsTable.getTimestamp("date").getTime(), true));
+        
+      } else {
+        this.friends.put(new User(
+            friendsTable.getInt("id"), 
+            friendsTable.getString("username"), 
+            friendsTable.getString("email"), 
+            friendsTable.getString("name"), 
+            friendsTable.getString("firstName")),
+            new SimpleEntry<Long,Boolean>(friendsTable.getTimestamp("date").getTime(), false));
+      }
+    }
+    
+    conn.close();
+    friendsTable.close();
+    pStmt.close();
+  }
+  
 
   /**
    * Inserts a user with given userID into the Friends table on the db. 
