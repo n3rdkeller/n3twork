@@ -63,61 +63,6 @@ public class Group {
   }
   
   /**
-   * Gets all data from db
-   * @return true if successful / group exists
-   * @throws InstantiationException
-   * @throws IllegalAccessException
-   * @throws ClassNotFoundException
-   * @throws SQLException
-   */
-  public Boolean getFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();    
-    List<ArrayList<String>> groupList = DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
-    if (groupList.size() == 1) return false;
-    
-    List<ArrayList<String>> membersTable = DBConnector.selectQuery(conn, 
-        "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Members JOIN " 
-            + DBConnector.DATABASE + ".Users ON Users.id=Members.memberID WHERE Members.groupID=" + this.id);
-    conn.close();
-    
-    //fill up groupMap
-    Map<String,String> groupMap = new HashMap<String,String>();
-    ArrayList<String> keyRow = groupList.get(0);
-    ArrayList<String> dataRow = groupList.get(1);
-    for (int i = 0; i < keyRow.size(); i++) {
-      groupMap.put(keyRow.get(i), dataRow.get(i));
-    }
-    
-    // fill up friendsList
-    List<HashMap<String, String>> membersList = new ArrayList<HashMap<String,String>>();
-    keyRow = membersTable.get(0);
-    membersTable.remove(0);
-    for (ArrayList<String> data : membersTable){
-      HashMap<String,String> userHelperMap = new HashMap<String,String>();
-      for (int i = 0; i < keyRow.size(); i++){
-        userHelperMap.put(keyRow.get(i), data.get(i));
-      }
-      membersList.add(userHelperMap);
-    }
-    
-    // set attributes
-    this.name = groupMap.get("name");
-    this.descr = groupMap.get("descr");
-    
-    for (HashMap<String, String> user : membersList){
-      // add every User in membersList with the User(id, username, email, name, firstName) constructor
-      this.members.add(new User(
-          Integer.parseInt(user.get("id")), 
-          user.get("username"), 
-          user.get("email"), 
-          user.get("name"), 
-          user.get("firstName")));
-    }
-    return true;  
-  }
-  
-  /**
    * Gets description and name from db
    * @return true if successful / group exists
    * @throws InstantiationException
@@ -125,14 +70,15 @@ public class Group {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public Boolean getFromDBMin() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Boolean getBasicsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();    
     List<ArrayList<String>> groupList = DBConnector.selectQuery(conn, 
         "SELECT * FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
     conn.close();
     if (groupList.size() == 1) return false;
-    Map<String,String> groupMap = new HashMap<String,String>();
     
+    //fill up groupMap
+    Map<String,String> groupMap = new HashMap<String,String>();
     ArrayList<String> keyRow = groupList.get(0);
     ArrayList<String> dataRow = groupList.get(1);
     for (int i = 0; i < keyRow.size(); i++) {
@@ -145,6 +91,14 @@ public class Group {
     return true;
   }
   
+  /**
+   * Register the group in the db by writing name and description
+   * @return true if successful
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> groupList = new ArrayList<ArrayList<String>>();
@@ -170,6 +124,10 @@ public class Group {
     }
   }
   
+  /**
+   * Gets group object as json object
+   * @return {"id":"groupID",...,"otherProperties":{...}}
+   */
   public String getAsJson(){
     JsonObjectBuilder otherProperties = Json.createObjectBuilder();
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
@@ -195,9 +153,50 @@ public class Group {
   }
 
   public void setDescr(String descr) {
-
+    this.descr = descr;
   }
 
+  /**
+   * Gets all members from db
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public void getMembersFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> membersTable = DBConnector.selectQuery(conn, 
+        "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Members JOIN " 
+            + DBConnector.DATABASE + ".Users ON Users.id=Members.memberID WHERE Members.groupID=" + this.id);
+    conn.close();
+    
+    // fill up membersList
+    List<HashMap<String, String>> membersList = new ArrayList<HashMap<String,String>>();
+    ArrayList<String> keyRow = membersTable.get(0);
+    membersTable.remove(0);
+    for (ArrayList<String> data : membersTable){
+      HashMap<String,String> userHelperMap = new HashMap<String,String>();
+      for (int i = 0; i < keyRow.size(); i++){
+        userHelperMap.put(keyRow.get(i), data.get(i));
+      }
+      membersList.add(userHelperMap);
+    }
+    
+    for (HashMap<String, String> user : membersList){
+      // add every User in membersList with the User(id, username, email, name, firstName) constructor
+      this.members.add(new User(
+          Integer.parseInt(user.get("id")), 
+          user.get("username"), 
+          user.get("email"), 
+          user.get("name"), 
+          user.get("firstName")));
+    }
+  }
+
+  /**
+   * Gets members as Json list
+   * @return {"members":[{"id":"userID",...},...]}
+   */
   public String getMembersAsJson() {
     JsonArrayBuilder memberList = Json.createArrayBuilder();
     for (User member : this.members) {
@@ -215,7 +214,15 @@ public class Group {
     String jsonString = String.valueOf(membersObject);
     return jsonString;
   }
-
+  
+  /**
+   * Inserts the members userID into the Members table
+   * @param user
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public void addMember(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.members.add(user);
     Connection conn = DBConnector.getConnection();
@@ -223,6 +230,14 @@ public class Group {
         "INSERT INTO " + DBConnector.DATABASE + ".Members(groupID,userID) VALUES(" + this.id + "," + user.getId() +")"); 
   }
 
+  /**
+   * Deletes a member from the Members table
+   * @param user
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public void removeMember(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     if (DBConnector.selectQuery(conn, 
@@ -233,11 +248,64 @@ public class Group {
   }
 
   public String getOtherProperty(String key) {
-    return null;
+    return this.otherProperties.get(key);
   }
 
   public void setOtherProperty(String key, String value) {
     this.otherProperties.put(key, value);
+  }
+  
+  /**
+   * Sets otherProperties and inserts them into db. If there is no column for a property, the method will create it.
+   * @param properties
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public void setOtherProperties(Map<String,String> properties) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    this.otherProperties.putAll(properties);
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> groupList = DBConnector.selectQuery(conn, 
+        "SELECT * FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
+    String insertQueryHead = "INSERT INTO " + DBConnector.DATABASE + ".Groups(";
+    String insertQueryTail = ") VALUES(";
+    List<String> toBeAdded = new ArrayList<String>();
+    
+    for (Entry<String,String> prop: this.otherProperties.entrySet()) {
+      // check if key is a column
+      if (!groupList.get(0).contains(prop.getKey())) {
+        toBeAdded.add(prop.getKey());
+      }
+      
+      // prepare insert statement
+      if (insertQueryHead.endsWith(".Groups(")) {
+        insertQueryHead = insertQueryHead + prop.getKey();
+      } else {
+        insertQueryHead = insertQueryHead + "," + prop.getKey();
+      }
+      
+      if (insertQueryTail.endsWith("VALUES(")) {
+        insertQueryTail = insertQueryTail + "'" + prop.getValue() + "'";
+      } else {
+        insertQueryTail = insertQueryTail + ",'" + prop.getValue() + "'";
+      }
+    }
+    
+    if (toBeAdded.size() > 0) {
+      // prepare alter table statement
+      String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Groups ADD COLUMN ";
+      for (int i = 0; i < toBeAdded.size(); i++) {
+        if (i == 0) {
+          alterTable = toBeAdded.get(i) + " VARCHAR(45) NULL DEFAULT NULL";
+        } else {
+          alterTable = "," + toBeAdded.get(i) + " VARCHAR(45) NULL DEFAULT NULL";
+        }
+      }
+      DBConnector.executeUpdate(conn, alterTable);
+    }
+    
+    DBConnector.executeUpdate(conn, insertQueryHead + insertQueryTail + ")");
   }
 
 }
