@@ -53,7 +53,7 @@ public class UserResource {
     try{
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject settingsAsJson = jsonReader.readObject();
-      User user = Helper.checkSessionIDMin(settingsAsJson.getString("session"));
+      User user = Helper.checkSessionID(settingsAsJson.getString("session"));
       if (user == null) {
         return Response.ok()
             .entity(String.valueOf(Json.createObjectBuilder()
@@ -97,6 +97,8 @@ public class UserResource {
     }
   }
   
+  //TODO: remove user
+  
   /**
    * Options request for friends
    * @return Response with all the needed headers
@@ -131,6 +133,7 @@ public class UserResource {
             .header(Helper.ACCESSHEADER, "*")
             .build();
       }
+      user.getFriendsFromDB();
       return Response.ok()
           .entity(user.getFriendsAsJson())
           .header(Helper.ACCESSHEADER, "*")

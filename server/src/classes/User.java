@@ -139,123 +139,123 @@ public class User {
     return hashtext;
   }
   
-  /**
-   * Gets all data except password from the database if userid or sessionid is given.
-   * TODO: otherProperties, groups, posts, messages
-   * @return true if successful / user exists
-   * @throws NoSuchAlgorithmException 
-   * @throws UnsupportedEncodingException 
-   * @throws SQLException
-   * @throws ClassNotFoundException
-   * @throws IllegalAccessException
-   * @throws InstantiationException
-   */
-  public Boolean getFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    // get id from sessionID if only sessionID is given
-    if (sessionID != null && this.id == 0) {
-      log.debug("getFromDB with SessionID " + this.sessionID);
-      List<ArrayList<String>> idList = DBConnector.selectQuery(conn, 
-          "SELECT userID FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
-      if (idList.size() == 2) {
-        this.id = Integer.parseInt(idList.get(1).get(0));
-      } else if (idList.size() == 1) {
-        log.debug("SessionID doesnt exist");
-        return false;
-      } else {
-        log.debug("This SessionID exists more than once");
-        return false;
-      }
-    }
-
-    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
-    
-    /* friends are a pain in the butt, because you can't return a result set. 
-     * That's why I use the whole preparedStatement and ResultSet stuff which is normally hidden behind the selectQuery function
-     */
-    String sqlQuery = "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Friends JOIN " 
-        + DBConnector.DATABASE + ".Users ON Users.id=Friends.friendID WHERE Friends.userID=" + this.id;
-    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    ResultSet friendsTable = pStmt.executeQuery();
-    ResultSetMetaData friendsTableMD = friendsTable.getMetaData();
-    int columnsNumber = friendsTableMD.getColumnCount();
-    log.debug(sqlQuery);
-    
-    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, 
-        "SELECT userID FROM " + DBConnector.DATABASE + ".Friends WHERE Friends.friendID=" + this.id);
-    if (userList.size() == 1) return false;
-    Map<String,String> userMap = new HashMap<String,String>();
-    List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
-
-
-    // fill up userMap
-    ArrayList<String> keyRow = userList.get(0);
-    ArrayList<String> dataRow = userList.get(1);
-    for (int i = 0; i < keyRow.size(); i++) {
-      userMap.put(keyRow.get(i), dataRow.get(i));
-    }
-    
-    //  fill up bothWayFriendsList
-    List<String> bothWayFriendsList = new ArrayList<String>();
-    friendRequestsTable.remove(0);
-    for (ArrayList<String> smallList : friendRequestsTable) {
-      bothWayFriendsList.add(smallList.get(0));
-    }
-    
-    // fill up friendsList
-    keyRow = new ArrayList<String>();
-    for (int i = 1;i <= columnsNumber; i++) {
-      keyRow.add(friendsTable.getString(i));
-    }
-    while (friendsTable.next()){
-      HashMap<String,String> userHelperMap = new HashMap<String,String>();
-      for (int i = 1;i <= columnsNumber; i++) {
-        userHelperMap.put(keyRow.get(i),friendsTable.getString(i));
-      }
-      friendsList.add(userHelperMap);
-    }
-
-    //setting attributes
-    this.name = userMap.get("name");
-    this.firstName = userMap.get("firstName");
-    this.username = userMap.get("username");
-    this.email = userMap.get("email");
-
-    friendsTable.next();
-    while (friendsTable.next()){
-    /* adding every User in friendsList with the User(id, username, email, name, firstName) constructor
-     * and saving the date, the friend request was made as well as the boolean value of being a true friend
-     */
-      if (bothWayFriendsList.contains(friendsTable.getString("id"))) {
-        this.friends.put(new User(
-            friendsTable.getInt("id"), 
-            friendsTable.getString("username"), 
-            friendsTable.getString("email"), 
-            friendsTable.getString("name"), 
-            friendsTable.getString("firstName")),
-            new SimpleEntry<Long,Boolean>(friendsTable.getTimestamp("date").getTime(), true));
-        
-      } else {
-        this.friends.put(new User(
-            friendsTable.getInt("id"), 
-            friendsTable.getString("username"), 
-            friendsTable.getString("email"), 
-            friendsTable.getString("name"), 
-            friendsTable.getString("firstName")),
-            new SimpleEntry<Long,Boolean>(friendsTable.getTimestamp("date").getTime(), false));
-      }
-    }
-    conn.close();
-    friendsTable.close();
-    pStmt.close();
-    return true;
-
-  }
+//  /**
+//   * Gets all data except password from the database if userid or sessionid is given.
+//   * TODO: otherProperties, groups, posts, messages
+//   * @return true if successful / user exists
+//   * @throws NoSuchAlgorithmException 
+//   * @throws UnsupportedEncodingException 
+//   * @throws SQLException
+//   * @throws ClassNotFoundException
+//   * @throws IllegalAccessException
+//   * @throws InstantiationException
+//   */
+//  public Boolean getFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+//    Connection conn = DBConnector.getConnection();
+//    // get id from sessionID if only sessionID is given
+//    if (sessionID != null && this.id == 0) {
+//      log.debug("getFromDB with SessionID " + this.sessionID);
+//      List<ArrayList<String>> idList = DBConnector.selectQuery(conn, 
+//          "SELECT userID FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+//      if (idList.size() == 2) {
+//        this.id = Integer.parseInt(idList.get(1).get(0));
+//      } else if (idList.size() == 1) {
+//        log.debug("SessionID doesnt exist");
+//        return false;
+//      } else {
+//        log.debug("This SessionID exists more than once");
+//        return false;
+//      }
+//    }
+//
+//    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
+//        "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
+//    
+//    /* friends are a pain in the butt, because you can't return a result set. 
+//     * That's why I use the whole preparedStatement and ResultSet stuff which is normally hidden behind the selectQuery function
+//     */
+//    String sqlQuery = "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Friends JOIN " 
+//        + DBConnector.DATABASE + ".Users ON Users.id=Friends.friendID WHERE Friends.userID=" + this.id;
+//    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+//    ResultSet friendsTable = pStmt.executeQuery();
+//    ResultSetMetaData friendsTableMD = friendsTable.getMetaData();
+//    int columnsNumber = friendsTableMD.getColumnCount();
+//    log.debug(sqlQuery);
+//    
+//    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, 
+//        "SELECT userID FROM " + DBConnector.DATABASE + ".Friends WHERE Friends.friendID=" + this.id);
+//    if (userList.size() == 1) return false;
+//    Map<String,String> userMap = new HashMap<String,String>();
+//    List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
+//
+//
+//    // fill up userMap
+//    ArrayList<String> keyRow = userList.get(0);
+//    ArrayList<String> dataRow = userList.get(1);
+//    for (int i = 0; i < keyRow.size(); i++) {
+//      userMap.put(keyRow.get(i), dataRow.get(i));
+//    }
+//    
+//    //  fill up bothWayFriendsList
+//    List<String> bothWayFriendsList = new ArrayList<String>();
+//    friendRequestsTable.remove(0);
+//    for (ArrayList<String> smallList : friendRequestsTable) {
+//      bothWayFriendsList.add(smallList.get(0));
+//    }
+//    
+//    // fill up friendsList
+//    keyRow = new ArrayList<String>();
+//    for (int i = 1;i <= columnsNumber; i++) {
+//      keyRow.add(friendsTable.getString(i));
+//    }
+//    while (friendsTable.next()){
+//      HashMap<String,String> userHelperMap = new HashMap<String,String>();
+//      for (int i = 1;i <= columnsNumber; i++) {
+//        userHelperMap.put(keyRow.get(i),friendsTable.getString(i));
+//      }
+//      friendsList.add(userHelperMap);
+//    }
+//
+//    //setting attributes
+//    this.name = userMap.get("name");
+//    this.firstName = userMap.get("firstName");
+//    this.username = userMap.get("username");
+//    this.email = userMap.get("email");
+//
+//    friendsTable.next();
+//    while (friendsTable.next()){
+//    /* adding every User in friendsList with the User(id, username, email, name, firstName) constructor
+//     * and saving the date, the friend request was made as well as the boolean value of being a true friend
+//     */
+//      if (bothWayFriendsList.contains(friendsTable.getString("id"))) {
+//        this.friends.put(new User(
+//            friendsTable.getInt("id"), 
+//            friendsTable.getString("username"), 
+//            friendsTable.getString("email"), 
+//            friendsTable.getString("name"), 
+//            friendsTable.getString("firstName")),
+//            new SimpleEntry<Long,Boolean>(friendsTable.getTimestamp("date").getTime(), true));
+//        
+//      } else {
+//        this.friends.put(new User(
+//            friendsTable.getInt("id"), 
+//            friendsTable.getString("username"), 
+//            friendsTable.getString("email"), 
+//            friendsTable.getString("name"), 
+//            friendsTable.getString("firstName")),
+//            new SimpleEntry<Long,Boolean>(friendsTable.getTimestamp("date").getTime(), false));
+//      }
+//    }
+//    conn.close();
+//    friendsTable.close();
+//    pStmt.close();
+//    return true;
+//
+//  }
   
   
   /**
-   * Minimalist method to get only name, firstName, username and email from db with less SQL queries
+   * Gets only name, firstName, username and email from db with little SQL queries
    * @return true if successful / user exists
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -264,24 +264,30 @@ public class User {
    */
   public Boolean getBasicsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    // get id from sessionID if only sessionID is given
-    if (sessionID != null && this.id == 0) {
-      log.debug("getFromDB with SessionID " + this.sessionID);
-      List<ArrayList<String>> idList = DBConnector.selectQuery(conn, 
-          "SELECT userID FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
-      if (idList.size() == 2) {
-        this.id = Integer.parseInt(idList.get(1).get(0));
-      } else if (idList.size() == 1) {
-        log.debug("SessionID doesnt exist");
-        return false;
-      } else {
-        log.debug("This SessionID exists more than once");
-        return false;
-      }
+//    // get id from sessionID if only sessionID is given
+//    if (sessionID != null && this.id == 0) {
+//      log.debug("getFromDB with SessionID " + this.sessionID);
+//      List<ArrayList<String>> idList = DBConnector.selectQuery(conn, 
+//          "SELECT userID FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
+//      if (idList.size() == 2) {
+//        this.id = Integer.parseInt(idList.get(1).get(0));
+//      } else if (idList.size() == 1) {
+//        log.debug("SessionID doesnt exist");
+//        return false;
+//      } else {
+//        log.debug("This SessionID exists more than once");
+//        return false;
+//      }
+//    }
+    List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
+    if (sessionID != null) {
+      userList = DBConnector.selectQuery(conn,
+          "SELECT Users.* FROM " + DBConnector.DATABASE + ".SessionIDs JOIN " + DBConnector.DATABASE 
+            + ".Users ON Users.id = SessionIDs.userID WHERE SessionIDs.sessionID='" + this.sessionID + "'");
+    } else {
+      userList = DBConnector.selectQuery(conn, 
+          "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     }
-    
-    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     conn.close();
     if (userList.size() == 1) return false;
     Map<String,String> userMap = new HashMap<String,String>();
@@ -547,6 +553,11 @@ public class User {
    */
   public String getOtherProperty(String key) {
     return this.otherProperties.get(key);
+  }
+  
+  
+  public void getOtherPropertiesFromDB(Map<String,String> properties) {
+    // copy from Group class
   }
   
   /**
