@@ -97,7 +97,55 @@ public class UserResource {
     }
   }
   
-  //TODO: remove user
+  /**
+   * Options request for find
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/find")
+  public Response corsFindUser() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post Request to search for users who match the search string
+   * @param jsonInput {"session":"sessionID", "search":"searchString"}
+   * @return Response with the entity {"successful":false} or json list of found users and html error code 200
+   */
+  @POST @Path("/find")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response findUser(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject jsonObject = jsonReader.readObject();
+      User user = Helper.checkSessionID(jsonObject.getString("session"));
+      if (user == null) {
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", false)
+                .add("reason", "SessionID invalid")
+                .build()))
+            .header(Helper.ACCESSHEADER, "*")
+            .build();
+      }
+      return Response.ok()
+          .entity(User.convertUserListToJson(
+              User.findUsers(
+                  jsonObject.getString("search"))))
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
   /**
    * Options request for remove
    * @return Response with all the needed headers
@@ -116,7 +164,7 @@ public class UserResource {
    * @param jsonInput {"session":"sessionID"}
    * @return Response with the entity {"successful":true / false} and html error code 200
    */
-  @POST @Path("/friends")
+  @POST @Path("/remove")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response removeUser(String jsonInput){
     try{

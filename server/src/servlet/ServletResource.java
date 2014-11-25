@@ -1,9 +1,7 @@
 package servlet;
 
 import java.io.StringReader;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.json.Json;
