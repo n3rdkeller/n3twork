@@ -139,6 +139,11 @@ public class User {
     return hashtext;
   }
   
+  public void removeFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
+  }
+  
 //  /**
 //   * Gets all data except password from the database if userid or sessionid is given.
 //   * TODO: otherProperties, groups, posts, messages
@@ -557,7 +562,7 @@ public class User {
   }
   
   /**
-   * Setter for otherProperties. Set the whole Map at once. TODO Also sets values in db.
+   * Setter for otherProperties. Also sets values in db. If a column doesn't exist the method creates it
    * @param otherProperties
    * @throws SQLException 
    * @throws ClassNotFoundException 

@@ -64,7 +64,7 @@ public class UserResource {
             .build();
       }
       if (settingsAsJson.containsKey("firstName")) {
-        user.setFirstName(settingsAsJson.getString("firstName")); //TODO change all these setters from void to Boolean?
+        user.setFirstName(settingsAsJson.getString("firstName"));
       }
       if (settingsAsJson.containsKey("name")) {
         user.setName(settingsAsJson.getString("name"));
@@ -98,6 +98,55 @@ public class UserResource {
   }
   
   //TODO: remove user
+  /**
+   * Options request for remove
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/remove")
+  public Response corsRemoveUser() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post Request to remove current user
+   * @param jsonInput {"session":"sessionID"}
+   * @return Response with the entity {"successful":true / false} and html error code 200
+   */
+  @POST @Path("/friends")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response removeUser(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject jsonSession = jsonReader.readObject();
+      User user = Helper.checkSessionID(jsonSession.getString("session"));
+      if (user == null) {
+        return Response.ok()
+            .entity(String.valueOf(Json.createObjectBuilder()
+                .add("successful", false)
+                .add("reason", "SessionID invalid")
+                .build()))
+            .header(Helper.ACCESSHEADER, "*")
+            .build();
+      }
+      user.removeFromDB();
+      return Response.ok()
+          .entity(Json.createObjectBuilder()
+              .add("successful", true)
+              .build())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
   
   /**
    * Options request for friends
