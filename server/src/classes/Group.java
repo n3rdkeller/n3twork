@@ -133,15 +133,42 @@ public class Group {
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
       otherProperties.add(e.getKey(), e.getValue());
     }
-    JsonObject userJson = Json.createObjectBuilder()
+    JsonObject groupJson = Json.createObjectBuilder()
       .add("id", this.id)
       .add("name", this.name)
       .add("descr", this.descr)
       .add("otherProperties", otherProperties)
       .add("successful", true)
       .build();
-    String jsonString = String.valueOf(userJson);
+    String jsonString = String.valueOf(groupJson);
     return jsonString;
+  }
+  
+  /**
+   * Gets all groups in a Json list
+   * @return {"groups":[{"groupID":"groupID",...},...]}
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public static String getAllAsJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
+        "SELECT id,name,descr FROM " + DBConnector.DATABASE + ".Groups");
+    groupTable.remove(0);
+    JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
+    for (ArrayList<String> row : groupTable) {
+      groupJsonList.add(Json.createObjectBuilder()
+          .add("groupID", row.get(0))
+          .add("groupName", row.get(1))
+          .add("groupDescr", row.get(2)));
+    }
+    
+    return String.valueOf(Json.createObjectBuilder()
+        .add("groups",groupJsonList)
+        .add("successful", true)
+        .build());
   }
   
   public String getName() {
@@ -210,9 +237,31 @@ public class Group {
     
     JsonObject membersObject = Json.createObjectBuilder()
       .add("members", memberList)
+      .add("successful", true)
       .build();
     String jsonString = String.valueOf(membersObject);
     return jsonString;
+  }
+  
+  /**
+   * Check if a user is in the group
+   * @param user
+   * @return true if true (duh)
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public Boolean isMember(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    ArrayList<String> listWithUserId = new ArrayList<String>();
+    listWithUserId.add(String.valueOf(user.getId()));
+    if (DBConnector.selectQuery(conn, 
+        "SELECT memberID FROM " + DBConnector.DATABASE + ".Members WHERE groupID=" + this.id).contains(listWithUserId)) {
+      return true;
+    } else {
+      return false;
+    }
   }
   
   /**
