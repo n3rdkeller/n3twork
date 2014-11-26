@@ -5,14 +5,18 @@
     .module('n3twork')
     .service('UserSvc', UserSvc);
 
-  UserSvc.$inject = ['$window', '$rootScope'];
+  UserSvc.$inject = ['$q', '$window', '$rootScope', '$location'];
 
-  function UserSvc($window, $rootScope) {
+  function UserSvc($q, $window, $rootScope, $location) {
     var userdata = {};
+    var deferred = $q.defer();
 
     var service = {
       isLoggedIn: isLoggedIn,
-      getUserData: getUserData
+      getUserData: getUserData,
+      setUserData: setUserData,
+      logout: logout,
+      localLogout: localLogout
     };
     return service;
 
@@ -31,6 +35,9 @@
           name: parseddata.name,
           email: parseddata.email
         }
+        if (parseddata.firstname) { userdata.firstname = parseddata.firstname };
+        if (parseddata.lastname) { userdata.lastname = parseddata.lastname };
+
         // TODO: check session id at serverside (maybe check later)
         //        when actually doing a request
         userdata.loggedin = true;
@@ -42,5 +49,34 @@
         return false;
       }
     }
+
+    function setUserData() {
+      if ($rootScope.userdata) {
+        $window.localStorage.setItem('n3twork', JSON.stringify($rootScope.userdata));
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+
+    function logout() {
+      localLogout();
+      APISvc.request({
+        method: 'POST',
+        url: '/logout',
+        data: {}
+      })
+      .then(function(response) {
+        deferred.resolve(true);
+      });
+    }
+
+    function localLogout() {
+      $window.localStorage.removeItem('n3twork');
+      $rootScope.loggedin = false;
+      $location.path('/login');
+    }
+
   }
 })();
