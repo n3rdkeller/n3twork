@@ -1,5 +1,7 @@
 package servlet;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -31,5 +33,12 @@ public class Helper {
       log.error(e);
       return null;
     }
+  }
+  
+  public static Response okResponse(String entity){
+    return Response.ok()
+        .entity(entity)
+        .header(Helper.ACCESSHEADER, "*")
+        .build();
   }
 }
