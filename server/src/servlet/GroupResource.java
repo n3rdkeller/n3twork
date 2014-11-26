@@ -56,20 +56,18 @@ public class GroupResource {
       JsonObject input = jsonReader.readObject();
       User user = Helper.checkSessionID(input.getString("session"));
       if (user == null){
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/group/find returns:" + entity);
+        return Helper.okResponse(entity);
       } 
-      return Response.ok()
-          .entity(Group.convertGroupListToJson(
+      String entity = String.valueOf(Group.convertGroupListToJson(
               Group.findGroup(
-                  input.getString("search"))))
-          .header(Helper.ACCESSHEADER, "*")
-          .build();
+                  input.getString("search"))));
+      log.debug("/group/find returns:" + entity);
+      return Helper.okResponse(entity);
       
     } catch (Exception e){
       // internal server error
@@ -109,37 +107,33 @@ public class GroupResource {
       User user = Helper.checkSessionID(input.getString("session"));
       Group group = new Group(input.getInt("groupID"));
       if (user == null){
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/group/join returns:" + entity);
+        return Helper.okResponse(entity);
       } else if (!group.getBasicsFromDB()) {
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "Group doesn't exist")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "Group doesn't exist")
+            .build());
+        log.debug("/group/join returns:" + entity);
+        return Helper.okResponse(entity);
       } else if (!group.isMember(user)){
         group.addMember(user);
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", true)
-                .build()))
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", true)
+            .build());
+        log.debug("/group/join returns:" + entity);
+        return Helper.okResponse(entity);
       } else {
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "User is already in the group")
-                .build()))
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "User is already in the group")
+            .build());
+        log.debug("/group/join returns:" + entity);
+        return Helper.okResponse(entity);
       }
     } catch (Exception e){
       // internal server error
@@ -179,29 +173,26 @@ public class GroupResource {
       User user = Helper.checkSessionID(input.getString("session"));
       Group group = new Group(input.getString("groupName"), input.getString("groupDescr"));
       if (user == null) {
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/group/found returns:" + entity);
+        return Helper.okResponse(entity);
       } else if (group.registerInDB()) {
         group.addMember(user);
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", true)
-                .build()))
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", true)
+            .build());
+        log.debug("/group/found returns:" + entity);
+        return Helper.okResponse(entity);
       } else {
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "Group with that name already exists or no name is given")
-                .build()))
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "Group with that name already exists or no name is given")
+            .build());
+        log.debug("/group/found returns:" + entity);
+        return Helper.okResponse(entity);
       }
     } catch (Exception e){
       // internal server error
@@ -241,34 +232,31 @@ public class GroupResource {
       User user = Helper.checkSessionID(input.getString("session"));
       Group group = new Group(input.getInt("groupID"));
       if (user == null) {
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/group/show returns:" + entity);
+        return Helper.okResponse(entity);
       } else if (!group.getBasicsFromDB()) {
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "Group doesn't exist")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "Group doesn't exist")
+            .build());
+        log.debug("/group/show returns:" + entity);
+        return Helper.okResponse(entity);
       } else if (group.isMember(user)){
         return Response.ok()
             .entity(group.getAsJson())
             .header(Helper.ACCESSHEADER, "*")
             .build();
       } else {
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "User may not be member of group")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "User may not be member of group")
+            .build());
+        log.debug("/group/show returns:" + entity);
+        return Helper.okResponse(entity);
       }
     } catch (Exception e){
       // internal server error
@@ -307,18 +295,16 @@ public class GroupResource {
       JsonObject input = jsonReader.readObject();
       User user = Helper.checkSessionID(input.getString("session"));
       if (user == null) {
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/group/show/all returns:" + entity);
+        return Helper.okResponse(entity);
       } else {
-        return Response.ok()
-            .entity(Group.getAllAsJson())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = Group.getAllAsJson();
+        log.debug("/group/show/all returns:" + entity);
+        return Helper.okResponse(entity);
       }
     } catch (Exception e){
       // internal server error
@@ -359,21 +345,19 @@ public class GroupResource {
       User user = Helper.checkSessionID(input.getString("session"));
       Group group = new Group(input.getInt("groupID"));
       if (user == null) {
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/group/show/members returns:" + entity);
+        return Helper.okResponse(entity);
       } else if (!group.getBasicsFromDB()) {
-        return Response.ok()
-            .entity(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "Group doesn't exist")
-                .build())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "Group doesn't exist")
+            .build());
+        log.debug("/group/show/members returns:" + entity);
+        return Helper.okResponse(entity);
       } else {
         return Response.ok()
             .entity(group.getMembersAsJson())
