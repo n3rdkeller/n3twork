@@ -69,8 +69,7 @@ public class Group {
     groupTable.remove(0); // remove column names
     for (ArrayList<String> groupTableRow : groupTable) {
       if (groupTableRow.get(1).toLowerCase().contains(searchString.toLowerCase())) {
-        Group group = new Group(Integer.parseInt(groupTableRow.get(0)));
-        group.getBasicsFromDB();
+        Group group = new Group(Integer.parseInt(groupTableRow.get(0))).setName(groupTableRow.get(1));
         groupList.add(group);
       }
     }
@@ -211,13 +210,19 @@ public class Group {
   public String getName() {
     return this.name;
   }
+  
+  public Group setName(String name) {
+    this.name = name;
+    return this;
+  }
 
   public String getDescr() {
     return this.descr;
   }
 
-  public void setDescr(String descr) {
+  public Group setDescr(String descr) {
     this.descr = descr;
+    return this;
   }
 
   /**

@@ -585,13 +585,38 @@ public class User {
   public void addFriend(User friend) {
     
   }
-
+  
+  /**
+   * Gets all groups the user is in from the db.
+   * @return current user object
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public User getGroupsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
+        "SELECT Groups.id, Groups.name, Groups.descr FROM " + DBConnector.DATABASE + ".Groups "
+            + "JOIN "+ DBConnector.DATABASE + ".Members "
+            + "ON Groups.id=Members.groupID "
+            + "WHERE Members.userID=" + this.id);
+    groupTable.remove(0); // remove column names
+    for (ArrayList<String> groupTableRow : groupTable) {
+      Group group = new Group(Integer.parseInt(groupTableRow.get(0)))
+                          .setName(groupTableRow.get(1))
+                          .setDescr(groupTableRow.get(2));
+      this.groups.add(group);
+    }
+    return this;
+  }
+  
   public List<Group> getGroups() {
-    return null;
+    return this.groups;
   }
 
-  public void addGroup(Group group) {
-
+  public User addGroup(Group group) {
+    return this;
   }
 
   public List<Post> getPosts() {
