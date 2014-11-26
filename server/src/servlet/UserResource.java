@@ -318,7 +318,7 @@ public class UserResource {
    */
   @POST @Path("/friends")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response findUser(String jsonInput){
+  public Response getFriends(String jsonInput){
     try{
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject jsonSession = jsonReader.readObject();
@@ -331,7 +331,6 @@ public class UserResource {
         log.debug("/user/friends returns: " + entity);
         return Helper.okResponse(entity);
       }
-
       user.getFriendsFromDB();
       String entity = user.getFriendsAsJson();
       log.debug("/user/friends returns: " + entity);
@@ -434,8 +433,6 @@ public class UserResource {
         log.debug("/user/friend/remove returns: " + entity);
         return Helper.okResponse(entity);
       }
-<<<<<<< HEAD
-=======
     } catch(Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
@@ -581,7 +578,6 @@ public class UserResource {
           .build());
       log.debug("/user/group/leave returns: " + entity);
       return Helper.okResponse(entity);
->>>>>>> feature/groups
     } catch(Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
