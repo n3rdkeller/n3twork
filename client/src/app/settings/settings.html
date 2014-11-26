@@ -1,34 +1,94 @@
 <div ng-controller="SettingsCtrl as settings" class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
-  <h3>These are your settings, <span ng-bind="userdata.name"></span>.</h3>
+  <br>
+  <h3 class="text-center">These are your settings, <span ng-bind="userdata.name"></span>.</h3>
   <br>
 
   <form role="form" name="settingsForm" ng-submit="settings.submit(settingsForm.$valid)" novalidate>
     <div class="form-group">
-      <label for="username">Username</label>
-      <input disabled type="username" class="form-control" id="username" value="{{ userdata.name }}">
+      <label for="username">Username (cannot be changed)</label>
+      <input readonly type="username" class="form-control" id="username" value="{{ userdata.name }}">
     </div>
-    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
-      <label for="email">Email address</label>
-      <input required type="email" class="form-control" name="email" id="email" ng-model="settings.user.email" ng-bind="{{ userdata.email }}" placeholder="Enter new email">
+    <div class="form-group">
+      <label for="firstname">First name (optional)</label>
+      <input type="text" class="form-control" name="firstname" id="firstname" ng-model="settings.user.firstname" ng-init="settings.user.firstname = userdata.firstname" placeholder="Enter your first name">
+    </div>
+    <div class="form-group">
+      <label for="lastname">Family name (optional, but requires first name)</label>
+      <input ng-disabled="!settings.user.firstname" type="text" class="form-control" name="lastname" id="lastname" ng-model="settings.user.lastname" ng-init="settings.user.lastname = userdata.lastname" placeholder="Enter your family name">
+    </div>
+    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress default paste' }">
+      <label for="email">Email address (required)</label>
+      <input required type="email" class="form-control" name="email" id="email" ng-model="settings.user.email" ng-init="settings.user.email = userdata.email" placeholder="Enter new email">
       <div ng-show="settingsForm.email.$dirty && settingsForm.email.$invalid" class="help-block" ng-messages="settingsForm.email.$error" ng-messages-include="app/views/messages.html"></div>
     </div>
-    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
+    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress default paste' }">
       <label for="pw">New password</label>
-      <input required type="password" class="form-control" name="pw" id="pw" ng-model="settings.user.pw" placeholder="Enter new password">
+      <input ng-minlength=8 type="password" class="form-control" name="pw" id="pw" ng-model="settings.user.pw" placeholder="Enter new password">
       <div ng-show="settingsForm.pw.$dirty && settingsForm.pw.$invalid" class="help-block" ng-messages="settingsForm.pw.$error" ng-messages-include="app/views/messages.html"></div>
     </div>
-    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress' }">
+    <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress default paste' }">
       <label for="pw">Password confirmation</label>
-      <input required type="password" class="form-control" name="pwconfirm" id="pwconfirm" ng-model="settings.user.pwconfirm" compare-to="settings.user.pw" placeholder="Confirm your password">
+      <input type="password" class="form-control" name="pwconfirm" id="pwconfirm" ng-model="settings.user.pwconfirm" compare-to="settings.user.pw" placeholder="Confirm your password">
       <div ng-show="settingsForm.pwconfirm.$dirty && settingsForm.pwconfirm.$invalid" class="help-block" ng-messages="settingsForm.pwconfirm.$error" ng-messages-include="app/views/messages.html"></div>
     </div>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" disabled> I'm awesome. </label>
-      </label>
+    <div class="form-group clearfix">
+      <div class="btn-block">
+      <button type="submit" class="btn btn-info" ng-disabled="settingsForm.$invalid || !settings.somethingChanged() || settings.loading">
+        <span ng-hide="settings.loading">
+          <i class="fa fa-wrench"></i> Save
+        </span>
+        <span ng-show="settings.loading">
+          <i class="fa fa-spinner fa-spin"></i> Saving
+        </span>
+      </button>
+      <button type="reset" class="btn btn-warning pull-right" ng-click="settings.resetForm(settingsForm)" ng-disabled="settingsForm.$pristine">
+        <i class="fa fa-bolt"></i> Reset
+      </button>
+      </div>
     </div>
-    <button type="submit" class="btn btn-default"><i class="fa fa-wrench"></i> Save</button>
   </form>
+  <div ng-show="settings.successful" class="alert alert-success alert-dismissible" role="alert">
+    <strong>Well done!</strong> Successfully updated your settings.
+  </div>
+  <div ng-show="settings.successfullyDeleted" class="alert alert-warning" role="alert">
+    <strong>Too bad, but it worked!</strong> We deleted your account, and you will be <a href="/" class="alert-link">directed</a> shortly.
+  </div>
   <br>
-
+  <div class="panel-group" role="tablist">
+    <div class="panel panel-danger">
+      <div class="panel-heading" role="tab" id="headingOne">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" href="" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            Dangerous Stuff <span class="caret"></span>
+          </a>
+        </h4>
+      </div>
+      <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+        <div class="panel-body">
+          <form role="form" name="deleteUserForm" ng-submit="settings.deleteUser(settings.deleteUserConfirmation && settings.deleteUserSecondConfirmation)" novalidate>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-model="settings.deleteUserConfirmation">I am sure I want to delete my account, forever and not recoverable. Although you guys did a fucking great job developing n3twork, I unfortunately have other reasons for going.
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-disabled="!settings.deleteUserConfirmation" ng-model="settings.deleteUserSecondConfirmation">I am really really sure and I understand the consequences and I know I hurt you by doing this.
+              </label>
+            </div><br>
+            <div class="form-group">
+              <button type="submit" class="btn btn-danger btn-block" ng-disabled="!settings.deleteUserConfirmation || !settings.deleteUserSecondConfirmation">
+                <span ng-hide="settings.deleteLoading">
+                  <i class="fa fa-warning"></i> Delete my account
+                </span>
+                <span ng-show="settings.deleteLoading">
+                  <i class="fa fa-spinner fa-spin"></i> Deleting
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
