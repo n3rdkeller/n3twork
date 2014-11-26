@@ -20,6 +20,7 @@ public class OurServlet extends Application {
         // register resources
         classes.add(ServletResource.class);
         classes.add(UserResource.class);
+        classes.add(GroupResource.class);
         
         return classes;
     }

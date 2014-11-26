@@ -856,12 +856,53 @@ public class User {
     DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Friends WHERE userID=" + this.id + " AND friendID=" + friendID);
     return this;
   }
-
+  
+  /**
+   * Gets all groups the user is in from the db.
+   * @return current user object
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public User getGroupsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
+        "SELECT Groups.id, Groups.name, Groups.descr FROM " + DBConnector.DATABASE + ".Groups "
+            + "JOIN "+ DBConnector.DATABASE + ".Members "
+            + "ON Groups.id=Members.groupID "
+            + "WHERE Members.memberID=" + this.id);
+    groupTable.remove(0); // remove column names
+    for (ArrayList<String> groupTableRow : groupTable) {
+      Group group = new Group(Integer.parseInt(groupTableRow.get(0)))
+                          .setName(groupTableRow.get(1))
+                          .setDescr(groupTableRow.get(2));
+      this.groups.add(group);
+    }
+    return this;
+  }
+  
   public List<Group> getGroups() {
-    return null;
+    return this.groups;
+  }
+  
+  public String getGroupsAsJson() {
+    return Group.convertGroupListToJson(this.groups);
   }
 
-  public User addGroup(Group group) {
+  public User addGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    this.groups.add(group);
+    group.addMember(this);
+    return this;
+  }
+  
+  public User removeGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    for (Group groupEle : this.groups) {
+      if (groupEle.getId() == group.getId()) {
+        this.groups.remove(groupEle);
+      }
+    }
+    group.removeMember(this);
     return this;
   }
 

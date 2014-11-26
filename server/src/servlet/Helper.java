@@ -29,4 +29,11 @@ public class Helper {
         .header(Helper.ACCESSHEADER, "*")
         .build();
   }
+  
+  public static Response okResponse(String entity){
+    return Response.ok()
+        .entity(entity)
+        .header(Helper.ACCESSHEADER, "*")
+        .build();
+  }
 }
