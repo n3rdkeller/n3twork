@@ -55,19 +55,21 @@ public class UserResource {
       JsonObject settingsAsJson = jsonReader.readObject();
       User user = Helper.checkSessionID(settingsAsJson.getString("session"));
       if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/settings returns: " + entity);
         return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build()))
+            .entity(entity)
             .header(Helper.ACCESSHEADER, "*")
             .build();
       }
-      if (settingsAsJson.containsKey("firstName")) {
-        user.setFirstName(settingsAsJson.getString("firstName"));
+      if (settingsAsJson.containsKey("firstname")) {
+        user.setFirstName(settingsAsJson.getString("firstname"));
       }
-      if (settingsAsJson.containsKey("name")) {
-        user.setName(settingsAsJson.getString("name"));
+      if (settingsAsJson.containsKey("lastname")) {
+        user.setName(settingsAsJson.getString("lastname"));
       }
       if (settingsAsJson.containsKey("email")) {
         user.setEmail(settingsAsJson.getString("email"));
@@ -82,10 +84,12 @@ public class UserResource {
         otherProperties.put(key, otherPropertiesAsJson.getString(key));
       }
       user.setOtherProperties(otherProperties);
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      log.debug("/user/settings returns: " + entity);
       return Response.ok()
-          .entity(String.valueOf(Json.createObjectBuilder()
-              .add("successful", true)
-              .build()))
+          .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch (Exception e){
@@ -123,6 +127,11 @@ public class UserResource {
       JsonObject jsonObject = jsonReader.readObject();
       User user = Helper.checkSessionID(jsonObject.getString("session"));
       if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/find returns: " + entity);
         return Response.ok()
             .entity(String.valueOf(Json.createObjectBuilder()
                 .add("successful", false)
@@ -131,10 +140,12 @@ public class UserResource {
             .header(Helper.ACCESSHEADER, "*")
             .build();
       }
+      String entity = User.convertUserListToJson(
+          User.findUsers(
+              jsonObject.getString("search")));
+      log.debug("/user/find returns: " + entity);
       return Response.ok()
-          .entity(User.convertUserListToJson(
-              User.findUsers(
-                  jsonObject.getString("search"))))
+          .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch(Exception e){
@@ -172,19 +183,23 @@ public class UserResource {
       JsonObject jsonSession = jsonReader.readObject();
       User user = Helper.checkSessionID(jsonSession.getString("session"));
       if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/remove returns: " + entity);
         return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build()))
+            .entity(entity)
             .header(Helper.ACCESSHEADER, "*")
             .build();
       }
       user.removeFromDB();
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      log.debug("/user/remove returns: " + entity);
       return Response.ok()
-          .entity(Json.createObjectBuilder()
-              .add("successful", true)
-              .build())
+          .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch(Exception e){
@@ -210,7 +225,7 @@ public class UserResource {
   }
   
   /**
-   * Post Request to get all friends
+   * Post Request to get all friends of current user
    * @param jsonInput {"session":"sessionID"}
    * @return Response with the entity {"friends":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
    */
@@ -222,17 +237,21 @@ public class UserResource {
       JsonObject jsonSession = jsonReader.readObject();
       User user = Helper.checkSessionID(jsonSession.getString("session"));
       if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/friends returns: " + entity);
         return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build()))
+            .entity(entity)
             .header(Helper.ACCESSHEADER, "*")
             .build();
       }
       user.getFriendsFromDB();
+      String entity = user.getFriendsAsJson();
+      log.debug("/user/friends returns: " + entity);
       return Response.ok()
-          .entity(user.getFriendsAsJson())
+          .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch(Exception e){
@@ -270,19 +289,23 @@ public class UserResource {
       JsonObject inputAsJson = jsonReader.readObject();
       User user = Helper.checkSessionID(inputAsJson.getString("session"));
       if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/friend/add returns: " + entity);
         return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build()))
+            .entity(entity)
             .header(Helper.ACCESSHEADER, "*")
             .build();
       } else {
         user.addFriendToDB(inputAsJson.getInt("friendID"));
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", true)
+            .build());
+        log.debug("/user/friend/add returns: " + entity);
         return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", true)
-                .build()))
+            .entity(entity)
             .header(Helper.ACCESSHEADER, "*")
             .build();
       }
@@ -321,19 +344,23 @@ public class UserResource {
       JsonObject inputAsJson = jsonReader.readObject();
       User user = Helper.checkSessionID(inputAsJson.getString("session"));
       if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/friend/remove returns: " + entity);
         return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build()))
+            .entity(entity)
             .header(Helper.ACCESSHEADER, "*")
             .build();
       } else {
         user.removeFriend(inputAsJson.getInt("friendID"));
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", true)
+            .build());
+        log.debug("/user/friend/remove returns: " + entity);
         return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", true)
-                .build()))
+            .entity(entity)
             .header(Helper.ACCESSHEADER, "*")
             .build();
       }

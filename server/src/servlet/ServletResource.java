@@ -71,16 +71,20 @@ public class ServletResource {
       if (user.login()){
         // login successful
         user.createSessionID();
+        String entity = user.getAsJson();
+        log.debug("/login returns: " + entity);
     		return Response.ok()
-    		    .entity(user.getAsJson())
+    		    .entity(entity)
     				.header(Helper.ACCESSHEADER, "*")
     				.build();
     	} else {
     	  // login not successful
+    	  String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .build());
+    	  log.debug("/login returns: " + entity);
     		return Response.ok()
-    		    .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .build()))
+    		    .entity(entity)
     				.header(Helper.ACCESSHEADER, "*")
     				.build();
     	}
@@ -121,10 +125,12 @@ public class ServletResource {
       JsonObject sessionID = jsonReader.readObject();
       User user = new User(sessionID.getString("session").toCharArray());
       user.logout();
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      log.debug("/logout returns: " + entity);
       return Response.ok()
-          .entity(String.valueOf(Json.createObjectBuilder()
-              .add("successful", true)
-              .build()))
+          .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch (Exception e){
@@ -160,10 +166,12 @@ public class ServletResource {
     log.debug("register input: " + jsonInput);
     try {
       User user = new User(jsonInput);
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", user.registerInDB())
+          .build());
+      log.debug("/register returns: " + entity);
       return Response.ok()
-          .entity(String.valueOf(Json.createObjectBuilder()
-              .add("successful", user.registerInDB())
-              .build()))
+          .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch (Exception e){
@@ -204,11 +212,13 @@ public class ServletResource {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject userAsJsonObject = jsonReader.readObject();
       String user = userAsJsonObject.getString("username");
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("username", user)
+          .add("taken", userList.contains(user))
+          .build());
+      log.debug("/register/checkuser returns: " + entity);
       return Response.ok()
-          .entity(String.valueOf(Json.createObjectBuilder()
-              .add("username", user)
-              .add("taken", userList.contains(user))
-              .build()))
+          .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
           .build();
     } catch (Exception e){

@@ -198,8 +198,8 @@ public class User {
         .add("id", user.id)
         .add("username", user.username)
         .add("email", user.email)
-        .add("name", user.name)
-        .add("firstName", user.firstName)
+        .add("lastname", user.name)
+        .add("firstname", user.firstName)
         .add("session", user.sessionID)
         .add("otherProperties", otherProperties));
     }
@@ -451,12 +451,14 @@ public class User {
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
       otherProperties.add(e.getKey(), e.getValue());
     }
+    if (this.name == null) this.name="";
+    if (this.firstName ==  null) this.firstName="";
     JsonObject userJson = Json.createObjectBuilder()
       .add("id", this.id)
       .add("username", this.username)
       .add("email", this.email)
-      .add("name", this.name)
-      .add("firstName", this.firstName)
+      .add("lastname", this.name)
+      .add("firstname", this.firstName)
       .add("session", this.sessionID)
       .add("otherProperties", otherProperties)
       .add("successful", true)
@@ -752,8 +754,8 @@ public class User {
           .add("id", friend.getKey().getId())
           .add("username", friend.getKey().getUsername())
           .add("email", friend.getKey().getEmail())
-          .add("name", friend.getKey().getName())
-          .add("firstName", friend.getKey().getFirstName())
+          .add("lastname", friend.getKey().getName())
+          .add("firstname", friend.getKey().getFirstName())
           .add("trueFriend", friend.getValue().getValue())
           .add("date", friend.getValue().getKey()));
     }
