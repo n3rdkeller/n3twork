@@ -126,17 +126,114 @@ public class UserResource {
             .add("reason", "SessionID invalid")
             .build());
         log.debug("/user/find returns: " + entity);
-        return Response.ok()
-            .entity(String.valueOf(Json.createObjectBuilder()
-                .add("successful", false)
-                .add("reason", "SessionID invalid")
-                .build()))
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        return Helper.okResponse(entity);
       }
       String entity = User.convertUserListToJson(
           User.getAllUsers());
       log.debug("/user/find returns: " + entity);
+      return Helper.okResponse(entity);
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  /**
+   * Options request for show
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/show")
+  public Response corsShowUser() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post Request to show user by id
+   * @param jsonInput {"session":"sessionID" , "id":userID}
+   * @return Response with the entity {"successful":true / false} and html error code 200
+   */
+  @POST @Path("/show")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response showUser(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/show returns: " + entity);
+        return Helper.okResponse(entity);
+      }
+      User requestedUser = new User(input.getInt("userID"));
+      if (!requestedUser.getBasicsFromDB()) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "Requested user doesn't exist")
+            .build());
+        log.debug("/user/show returns: " + entity);
+        return Helper.okResponse(entity);
+      }
+      String entity = requestedUser.getAsJson();
+      log.debug("/user/show returns: " + entity);
+      return Response.ok()
+          .entity(entity)
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  /**
+   * Options request for show/friends
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/show/friends")
+  public Response corsShowUserFriends() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post Request to show user's friends by id
+   * @param jsonInput {"session":"sessionID" , "id":userID}
+   * @return Response with the entity {"successful":true / false} and html error code 200
+   */
+  @POST @Path("/show/friends")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response showUserFriends(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/show/friends returns: " + entity);
+        return Helper.okResponse(entity);
+      }
+      User requestedUser = new User(input.getInt("userID"));
+      String entity = requestedUser.getFriendsFromDB().getFriendsAsJson();
+      log.debug("/user/show/friends returns: " + entity);
       return Response.ok()
           .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
