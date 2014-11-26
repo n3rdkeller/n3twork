@@ -147,15 +147,11 @@ public class User {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public static List<User> findUsers(String searchString) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public static List<User> getAllUsers() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userTable = new ArrayList<ArrayList<String>>();
       userTable = DBConnector.selectQuery(conn, 
-          "SELECT * FROM " + DBConnector.DATABASE + ".Users "
-              + "WHERE name='" + searchString + "' "
-              + "OR firstName='" + searchString + "' "
-              + "OR username='" + searchString + "' "
-              + "OR email ='" + searchString + "' ");
+          "SELECT * FROM " + DBConnector.DATABASE + ".Users ");
     conn.close();
     List<HashMap<String,String>> userMapList = new ArrayList<HashMap<String,String>>();
     
@@ -556,7 +552,7 @@ public class User {
   public void setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET name=" + name + " WHERE id=" + this.id);
+        "UPDATE " + DBConnector.DATABASE + ".Users SET name='" + name + "' WHERE id=" + this.id);
     conn.close();
     this.name = name;
   }
@@ -580,7 +576,7 @@ public class User {
   public void setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET firstName=" + firstName + " WHERE id=" + this.id);
+        "UPDATE " + DBConnector.DATABASE + ".Users SET firstName='" + firstName + "' WHERE id=" + this.id);
     conn.close();
     this.firstName = firstName;
   }

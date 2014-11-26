@@ -115,9 +115,9 @@ public class UserResource {
   }
   
   /**
-   * Post Request to search for users who match the search string
-   * @param jsonInput {"session":"sessionID", "search":"searchString"}
-   * @return Response with the entity {"successful":false} or json list of found users and html error code 200
+   * Post Request to get a json all users
+   * @param jsonInput {"session":"sessionID"}
+   * @return Response with the entity {"successful":false} or json list of all users and html error code 200
    */
   @POST @Path("/find")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -141,8 +141,7 @@ public class UserResource {
             .build();
       }
       String entity = User.convertUserListToJson(
-          User.findUsers(
-              jsonObject.getString("search")));
+          User.getAllUsers());
       log.debug("/user/find returns: " + entity);
       return Response.ok()
           .entity(entity)
