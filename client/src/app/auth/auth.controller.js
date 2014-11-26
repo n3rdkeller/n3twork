@@ -39,18 +39,27 @@
         vm.loading = false;
         deferred.resolve(true);
         if (response.data.successful) {
-          $rootScope.loggedin = true;
-          vm.loginFailed = false;
+          // set data to $rootScope
           var userdata = {
             session: response.data.session,
             name: response.data.username,
-            email: response.data.email
+            email: response.data.email,
           }
+          if (response.data.firstname) { userdata.firstname = response.data.firstname };
+          if (response.data.lastname) { userdata.lastname = response.data.lastname };
           $rootScope.userdata = userdata;
-          $window.localStorage.setItem('n3twork', JSON.stringify(userdata));
-          $location.path('/');
+
+          // set data to localstorage
+          if (UserSvc.setUserData()) {
+            $location.path('/');
+            vm.loginFailed = false;
+            $rootScope.loggedin = true;
+          } else {
+            vm.loginFailed = true;
+          }
+          vm.loading = false;
         } else {
-          $location.path('/login');
+          vm.loading = false;
           vm.loginFailed = true;
         }
       });
@@ -58,11 +67,8 @@
     }
 
     function logout() {
-      // TODO: API-Request
-      $window.localStorage.removeItem('n3twork');
-      $rootScope.loggedin = false;
-      $location.path('/login');
+      UserSvc.logout();
     }
+  }
 
-}
 })();
