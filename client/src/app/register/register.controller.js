@@ -46,7 +46,7 @@
           } else {
             vm.submitted = true;
             vm.signedup = false;
-            vm.message = "Error signing up. Try again using another username.";
+            vm.message = "Error signing up. Either your email or username is already in use.";
           }
         });
       } else {
