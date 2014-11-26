@@ -331,11 +331,8 @@ public class Group {
    */
   public void removeMember(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    if (DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".Members WHERE memberID=" + user.getId() + " AND groupID=" + this.id).size() != 1) {
-      DBConnector.executeUpdate(conn, 
-          "DELETE FROM " + DBConnector.DATABASE + ".Members WHERE memberID=" + user.getId() + " AND groupID=" + this.id);
-    }
+    DBConnector.executeUpdate(conn, 
+        "DELETE FROM " + DBConnector.DATABASE + ".Members WHERE memberID=" + user.getId() + " AND groupID=" + this.id);
   }
 
   public String getOtherProperty(String key) {

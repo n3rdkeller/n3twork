@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import classes.Group;
 import classes.User;
 
 /**
@@ -309,6 +310,151 @@ public class UserResource {
         log.debug("/user/friend/remove returns: " + entity);
         return Helper.okResponse(entity);
       }
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  /**
+   * Options request for groups
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/groups")
+  public Response corsGetGroups() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post request to get all groups of a user
+   * @param jsonInput {"session":"sessionID","userID":userID} userID is optional. If it's not given, the method will use current user by sessionID
+   * @return {"groups":[{"groupID":groupID,...},...], "successful":true}
+   */
+  @POST @Path("/groups")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response getGroups(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/groups returns: " + entity);
+        return Helper.okResponse(entity);
+      }
+      if (input.containsKey("userID")) {
+        user = new User(input.getInt("userID"));
+      }
+      String entity = user.getGroupsFromDB().getGroupsAsJson();
+      log.debug("/user/groups returns: " + entity);
+      return Helper.okResponse(entity);
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+    
+  }
+  
+  /**
+   * Options request for group/join
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/group/join")
+  public Response corsJoinGroup() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post request to allow the current user to join a group
+   * @param jsonInput {"session":"sessionID","groupID":groupID}
+   * @return {"successful":true / false}
+   */
+  @POST @Path("/group/join")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response joinGroup(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/group/join returns: " + entity);
+        return Helper.okResponse(entity);
+      }
+      user.addGroup(new Group(input.getInt("groupID")));
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      log.debug("/user/group/join returns: " + entity);
+      return Helper.okResponse(entity);
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  /**
+   * Options request for group/leave
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/group/leave")
+  public Response corsLeaveGroup() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post request to allow the current user to leave a group
+   * @param jsonInput {"session":"sessionID","groupID":groupID}
+   * @return {"successful":true / false}
+   */
+  @POST @Path("/group/leave")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response leaveGroup(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/group/leave returns: " + entity);
+        return Helper.okResponse(entity);
+      }
+      user.removeGroup(new Group(input.getInt("groupID")));
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      log.debug("/user/group/leave returns: " + entity);
+      return Helper.okResponse(entity);
     } catch(Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)

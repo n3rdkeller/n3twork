@@ -621,10 +621,7 @@ public class User {
 
   public User addGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.groups.add(group);
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "INSERT INTO " + DBConnector.DATABASE + ".Members(memberID,groupID) "
-            + "VALUES (" + this.id + "," + group.getId() + ")");
+    group.addMember(this);
     return this;
   }
   
@@ -634,10 +631,7 @@ public class User {
         this.groups.remove(groupEle);
       }
     }
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "DELETE FROM " + DBConnector.DATABASE + ".Members "
-            + "WHERE memberID=" + this.id + " AND groupID=" + group.getId());
+    group.removeMember(this);
     return this;
   }
 
