@@ -614,6 +614,10 @@ public class User {
   public List<Group> getGroups() {
     return this.groups;
   }
+  
+  public String getGroupsAsJson() {
+    return Group.convertGroupListToJson(this.groups);
+  }
 
   public User addGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.groups.add(group);

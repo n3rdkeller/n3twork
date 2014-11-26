@@ -19,8 +19,8 @@ public class Group {
   final static Logger log = LogManager.getLogger(Group.class);
   
   private int id;
-  private String name;
-  private String descr;
+  private String name = "";
+  private String descr = "";
   private List<User> members = new ArrayList<User>();
   private Map<String,String> otherProperties = new HashMap<String,String>();
 
