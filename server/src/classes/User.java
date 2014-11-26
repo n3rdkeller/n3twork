@@ -600,7 +600,7 @@ public class User {
         "SELECT Groups.id, Groups.name, Groups.descr FROM " + DBConnector.DATABASE + ".Groups "
             + "JOIN "+ DBConnector.DATABASE + ".Members "
             + "ON Groups.id=Members.groupID "
-            + "WHERE Members.userID=" + this.id);
+            + "WHERE Members.memberID=" + this.id);
     groupTable.remove(0); // remove column names
     for (ArrayList<String> groupTableRow : groupTable) {
       Group group = new Group(Integer.parseInt(groupTableRow.get(0)))
@@ -615,7 +615,25 @@ public class User {
     return this.groups;
   }
 
-  public User addGroup(Group group) {
+  public User addGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    this.groups.add(group);
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, 
+        "INSERT INTO " + DBConnector.DATABASE + ".Members(memberID,groupID) "
+            + "VALUES (" + this.id + "," + group.getId() + ")");
+    return this;
+  }
+  
+  public User removeGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    for (Group groupEle : this.groups) {
+      if (groupEle.getId() == group.getId()) {
+        this.groups.remove(groupEle);
+      }
+    }
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, 
+        "DELETE FROM " + DBConnector.DATABASE + ".Members "
+            + "WHERE memberID=" + this.id + " AND groupID=" + group.getId());
     return this;
   }
 
