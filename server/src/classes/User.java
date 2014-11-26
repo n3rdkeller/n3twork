@@ -355,21 +355,6 @@ public class User {
    */
   public Boolean getBasicsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-//    // get id from sessionID if only sessionID is given
-//    if (sessionID != null && this.id == 0) {
-//      log.debug("getFromDB with SessionID " + this.sessionID);
-//      List<ArrayList<String>> idList = DBConnector.selectQuery(conn, 
-//          "SELECT userID FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
-//      if (idList.size() == 2) {
-//        this.id = Integer.parseInt(idList.get(1).get(0));
-//      } else if (idList.size() == 1) {
-//        log.debug("SessionID doesnt exist");
-//        return false;
-//      } else {
-//        log.debug("This SessionID exists more than once");
-//        return false;
-//      }
-//    }
     List<ArrayList<String>> userTable = new ArrayList<ArrayList<String>>();
     // use sessionID or id to get userTable
     if (sessionID != null) {
@@ -449,6 +434,7 @@ public class User {
     }
     if (this.name == null) this.name="";
     if (this.firstName ==  null) this.firstName="";
+    if (this.sessionID == null) this.sessionID="";
     JsonObject userJson = Json.createObjectBuilder()
       .add("id", this.id)
       .add("username", this.username)
@@ -462,7 +448,7 @@ public class User {
     String jsonString = String.valueOf(userJson);
     return jsonString;
   }
-
+  
   /**
    * Gets all data out of the database if the password is correct
    * @return Boolean - true if login was successful; false if not
@@ -549,12 +535,13 @@ public class User {
    * @throws IllegalAccessException
    * @throws InstantiationException 
    */
-  public void setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public User setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
         "UPDATE " + DBConnector.DATABASE + ".Users SET name='" + name + "' WHERE id=" + this.id);
     conn.close();
     this.name = name;
+    return this;
   }
 
   /**
@@ -573,12 +560,13 @@ public class User {
    * @throws IllegalAccessException
    * @throws InstantiationException
    */
-  public void setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public User setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
         "UPDATE " + DBConnector.DATABASE + ".Users SET firstName='" + firstName + "' WHERE id=" + this.id);
     conn.close();
     this.firstName = firstName;
+    return this;
   }
 
   /**
@@ -605,11 +593,12 @@ public class User {
    * @throws IllegalAccessException
    * @throws InstantiationException
    */
-  public void setEmail(String email) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public User setEmail(String email) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
         "UPDATE " + DBConnector.DATABASE + ".Users SET email='" + email + "' WHERE id=" + this.id);
     this.email = email;
+    return this;
   }
 
   /**
@@ -622,11 +611,12 @@ public class User {
    * @throws IllegalAccessException 
    * @throws InstantiationException 
    */
-  public void setPassword(String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public User setPassword(String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.password = md5(pw);
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
         "UPDATE " + DBConnector.DATABASE + ".Users SET password='" + this.password + "' WHERE id=" + this.id);
+    return this;
   }
 
   /**
@@ -646,7 +636,7 @@ public class User {
    * @throws IllegalAccessException 
    * @throws InstantiationException 
    */
-  public void setOtherProperties(HashMap<String,String> properties) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public User setOtherProperties(HashMap<String,String> properties) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.otherProperties.putAll(properties);
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
@@ -689,6 +679,7 @@ public class User {
     }
     
     DBConnector.executeUpdate(conn, insertQueryHead + insertQueryTail + ")");
+    return this;
   }
   
   /**
@@ -771,7 +762,7 @@ public class User {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public void getFriendsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public User getFriendsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     
     /* friends are a pain in the butt, because you can't return a ResultSet in DBConnector.selectQuery and I need it to extract the timestamp. 
@@ -840,6 +831,7 @@ public class User {
     conn.close();
     friendsTable.close();
     pStmt.close();
+    return this;
   }
   
 
@@ -852,43 +844,45 @@ public class User {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public void addFriendToDB(int friendID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public User addFriendToDB(int friendID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
         "INSERT INTO " + DBConnector.DATABASE + ".Friends(userID,friendID) VALUES (" + this.id + "," + friendID + ")");
+    return this;
   }
   
-  public void removeFriend(int friendID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public User removeFriend(int friendID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Friends WHERE userID=" + this.id + " AND friendID=" + friendID);
+    return this;
   }
 
   public List<Group> getGroups() {
     return null;
   }
 
-  public void addGroup(Group group) {
-
+  public User addGroup(Group group) {
+    return this;
   }
 
   public List<Post> getPosts() {
     return null;
   }
 
-  public void addPost(Post post) {
-
+  public User addPost(Post post) {
+    return this;
   }
 
-  public void votePost(Post post) {
-
+  public User votePost(Post post) {
+    return this;
   }
 
   public List<Message> getMessages() {
     return null;
   }
 
-  public void sendMessage(Message Message) {
-
+  public User sendMessage(Message Message) {
+    return this;
   }
 
   public void deleteMessage(Message Message) {
