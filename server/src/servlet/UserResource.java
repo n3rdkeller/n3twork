@@ -60,10 +60,7 @@ public class UserResource {
             .add("reason", "SessionID invalid")
             .build());
         log.debug("/user/settings returns: " + entity);
-        return Response.ok()
-            .entity(entity)
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        return Helper.okResponse(entity);
       }
       if (settingsAsJson.containsKey("firstname")) {
         user.setFirstName(settingsAsJson.getString("firstname"));
@@ -88,10 +85,7 @@ public class UserResource {
           .add("successful", true)
           .build());
       log.debug("/user/settings returns: " + entity);
-      return Response.ok()
-          .entity(entity)
-          .header(Helper.ACCESSHEADER, "*")
-          .build();
+      return Helper.okResponse(entity);
     } catch (Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
@@ -187,20 +181,14 @@ public class UserResource {
             .add("reason", "SessionID invalid")
             .build());
         log.debug("/user/remove returns: " + entity);
-        return Response.ok()
-            .entity(entity)
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        return Helper.okResponse(entity);
       }
       user.removeFromDB();
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());
       log.debug("/user/remove returns: " + entity);
-      return Response.ok()
-          .entity(entity)
-          .header(Helper.ACCESSHEADER, "*")
-          .build();
+      return Helper.okResponse(entity);
     } catch(Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
@@ -241,18 +229,12 @@ public class UserResource {
             .add("reason", "SessionID invalid")
             .build());
         log.debug("/user/friends returns: " + entity);
-        return Response.ok()
-            .entity(entity)
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        return Helper.okResponse(entity);
       }
       user.getFriendsFromDB();
       String entity = user.getFriendsAsJson();
       log.debug("/user/friends returns: " + entity);
-      return Response.ok()
-          .entity(entity)
-          .header(Helper.ACCESSHEADER, "*")
-          .build();
+      return Helper.okResponse(entity);
     } catch(Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
@@ -293,20 +275,14 @@ public class UserResource {
             .add("reason", "SessionID invalid")
             .build());
         log.debug("/user/friend/add returns: " + entity);
-        return Response.ok()
-            .entity(entity)
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        return Helper.okResponse(entity);
       } else {
         user.addFriendToDB(inputAsJson.getInt("friendID"));
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", true)
             .build());
         log.debug("/user/friend/add returns: " + entity);
-        return Response.ok()
-            .entity(entity)
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        return Helper.okResponse(entity);
       }
     } catch(Exception e){
       log.error(e);
@@ -348,20 +324,14 @@ public class UserResource {
             .add("reason", "SessionID invalid")
             .build());
         log.debug("/user/friend/remove returns: " + entity);
-        return Response.ok()
-            .entity(entity)
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        return Helper.okResponse(entity);
       } else {
         user.removeFriend(inputAsJson.getInt("friendID"));
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", true)
             .build());
         log.debug("/user/friend/remove returns: " + entity);
-        return Response.ok()
-            .entity(entity)
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        return Helper.okResponse(entity);
       }
     } catch(Exception e){
       log.error(e);

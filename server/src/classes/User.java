@@ -355,21 +355,6 @@ public class User {
    */
   public Boolean getBasicsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-//    // get id from sessionID if only sessionID is given
-//    if (sessionID != null && this.id == 0) {
-//      log.debug("getFromDB with SessionID " + this.sessionID);
-//      List<ArrayList<String>> idList = DBConnector.selectQuery(conn, 
-//          "SELECT userID FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
-//      if (idList.size() == 2) {
-//        this.id = Integer.parseInt(idList.get(1).get(0));
-//      } else if (idList.size() == 1) {
-//        log.debug("SessionID doesnt exist");
-//        return false;
-//      } else {
-//        log.debug("This SessionID exists more than once");
-//        return false;
-//      }
-//    }
     List<ArrayList<String>> userTable = new ArrayList<ArrayList<String>>();
     // use sessionID or id to get userTable
     if (sessionID != null) {
@@ -449,6 +434,7 @@ public class User {
     }
     if (this.name == null) this.name="";
     if (this.firstName ==  null) this.firstName="";
+    if (this.sessionID == null) this.sessionID="";
     JsonObject userJson = Json.createObjectBuilder()
       .add("id", this.id)
       .add("username", this.username)
@@ -462,7 +448,7 @@ public class User {
     String jsonString = String.valueOf(userJson);
     return jsonString;
   }
-
+  
   /**
    * Gets all data out of the database if the password is correct
    * @return Boolean - true if login was successful; false if not
