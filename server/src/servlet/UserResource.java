@@ -77,13 +77,14 @@ public class UserResource {
       if (settingsAsJson.containsKey("password")) {
         user.setPassword(settingsAsJson.getString("password"));        
       }
-      
-      JsonObject otherPropertiesAsJson = settingsAsJson.getJsonObject("otherProperties");
-      HashMap<String,String> otherProperties = new HashMap<String,String>();
-      for(String key : otherPropertiesAsJson.keySet()){
-        otherProperties.put(key, otherPropertiesAsJson.getString(key));
+      if (settingsAsJson.containsKey("otherProperties")) {
+        JsonObject otherPropertiesAsJson = settingsAsJson.getJsonObject("otherProperties");
+        HashMap<String,String> otherProperties = new HashMap<String,String>();
+        for(String key : otherPropertiesAsJson.keySet()){
+          otherProperties.put(key, otherPropertiesAsJson.getString(key));
+        }
+        user.setOtherProperties(otherProperties);
       }
-      user.setOtherProperties(otherProperties);
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());
