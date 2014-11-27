@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 public class User {
   final static Logger log = LogManager.getLogger(User.class);
   
-  private int id="";
+  private int id;
   private String name="";
   private String firstName="";
   private String username = ""; //TODO change login and register methods, so these don't have to be initialized
