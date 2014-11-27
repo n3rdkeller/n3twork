@@ -774,7 +774,7 @@ public class User {
      * That's why I use the whole preparedStatement and ResultSet stuff which is normally hidden behind the selectQuery function
      */
     String sqlQuery = 
-        "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Friends "
+        "SELECT Users.id,username,email,name,firstName,Friends.date FROM " + DBConnector.DATABASE + ".Friends "
         + "JOIN " + DBConnector.DATABASE + ".Users "
         + "ON Users.id=Friends.friendID "
         + "WHERE Friends.userID=" + this.id;
@@ -794,22 +794,6 @@ public class User {
       bothWayFriendsList.add(smallList.get(0));
     }
     
-    // fill up friendsList
-    List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
-    List<String> keyRow = new ArrayList<String>();
-    for (int i = 1;i <= columnsNumber; i++) {
-      keyRow.add(friendsTableMD.getColumnName(i));
-    }
-    
-    while (friendsTable.next()){
-      HashMap<String,String> userHelperMap = new HashMap<String,String>();
-      for (int i = 1;i <= columnsNumber; i++) {
-        userHelperMap.put(keyRow.get(i),friendsTable.getString(i));
-      }
-      friendsList.add(userHelperMap);
-    }
-    
-    friendsTable.next();
     while (friendsTable.next()){
     /* adding every User in friendsList with the User(id, username, email, name, firstName) constructor
      * and saving the date, the friend request was made as well as the boolean value of being a true friend
@@ -833,7 +817,7 @@ public class User {
             new SimpleEntry<Long,Boolean>(friendsTable.getTimestamp("date").getTime(), false));
       }
     }
-    
+    log.debug(this.friends);
     conn.close();
     friendsTable.close();
     pStmt.close();

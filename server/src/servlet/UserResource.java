@@ -363,7 +363,7 @@ public class UserResource {
   
   /**
    * Post Request to remove a friend
-   * @param jsonInput {"session":"sessionID", "friendID":"friendID"}
+   * @param jsonInput {"session":"sessionID", "friend":friendID}
    * @return Response with the entity {"successful":true/false} and html error code 200
    */
   @POST @Path("/friend/remove")
@@ -381,7 +381,7 @@ public class UserResource {
         log.debug("/user/friend/remove returns: " + entity);
         return Helper.okResponse(entity);
       } else {
-        user.removeFriend(inputAsJson.getInt("friendID"));
+        user.removeFriend(inputAsJson.getInt("friend"));
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", true)
             .build());
