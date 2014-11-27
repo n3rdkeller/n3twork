@@ -5,11 +5,10 @@
     .module('n3twork')
     .service('UserSvc', UserSvc);
 
-  UserSvc.$inject = ['$q', '$window', '$rootScope', '$location'];
+  UserSvc.$inject = ['APISvc', '$window', '$rootScope', '$location'];
 
-  function UserSvc($q, $window, $rootScope, $location) {
+  function UserSvc(APISvc, $window, $rootScope, $location) {
     var userdata = {};
-    var deferred = $q.defer();
 
     var service = {
       isLoggedIn: isLoggedIn,
@@ -61,15 +60,15 @@
 
 
     function logout() {
-      localLogout();
       APISvc.request({
         method: 'POST',
         url: '/logout',
         data: {}
       })
       .then(function(response) {
-        deferred.resolve(true);
+        console.log('Successfully logged out.');
       });
+      localLogout();
     }
 
     function localLogout() {

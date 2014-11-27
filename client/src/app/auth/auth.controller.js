@@ -5,11 +5,10 @@
     .module('n3twork.auth')
     .controller('AuthCtrl', AuthCtrl);
 
-  AuthCtrl.$inject = ['APISvc', 'UserSvc', '$q', '$window', '$location', '$rootScope'];
+  AuthCtrl.$inject = ['APISvc', 'UserSvc', '$window', '$location', '$rootScope'];
 
-  function AuthCtrl(APISvc, UserSvc, $q, $window, $location, $rootScope) {
+  function AuthCtrl(APISvc, UserSvc, $window, $location, $rootScope) {
     var vm = this;
-    var deferred = $q.defer();
 
     // methods
     vm.submit = submit;
@@ -37,7 +36,6 @@
       })
       .then(function(response) {
         vm.loading = false;
-        deferred.resolve(true);
         if (response.data.successful) {
           // set data to $rootScope
           var userdata = {

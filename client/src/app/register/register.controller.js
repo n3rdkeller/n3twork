@@ -5,11 +5,10 @@
     .module('n3twork.register')
     .controller('RegisterCtrl', RegisterCtrl);
 
-  RegisterCtrl.$inject = ['APISvc', '$q', '$rootScope'];
+  RegisterCtrl.$inject = ['APISvc', '$rootScope'];
 
-  function RegisterCtrl(APISvc, $q, $rootScope) {
+  function RegisterCtrl(APISvc, $rootScope) {
     var vm = this;
-    var deferred = $q.defer();
 
     vm.loggedin = $rootScope.loggedin;
     vm.submitted = false;
@@ -38,7 +37,6 @@
         })
         .then(function(response) {
           vm.loading = false;
-          deferred.resolve(true);
           if (response.data.successful) {
             vm.submitted = true;
             vm.signedup = true;

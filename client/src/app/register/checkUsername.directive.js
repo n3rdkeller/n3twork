@@ -5,10 +5,9 @@
     .module('n3twork.register')
     .directive('ngTaken', ngTaken);
 
-  ngTaken.$inject = ['APISvc', '$q', '$timeout'];
+  ngTaken.$inject = ['APISvc', '$timeout'];
 
-  function ngTaken (APISvc, $q, $timeout) {
-    var deferred = $q.defer();
+  function ngTaken (APISvc, $timeout) {
     var directive = {
       link: link,
     };
@@ -30,7 +29,6 @@
             }
           }).then(function(response) {
             console.log(ctrl);
-            deferred.resolve(true);
             var taken = response.data.taken;
             var testedname = response.data.username;
             if (taken && testedname === name) {

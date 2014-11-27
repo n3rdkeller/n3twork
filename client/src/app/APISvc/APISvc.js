@@ -5,9 +5,9 @@
     .module('n3twork')
     .factory('APISvc', APISvc);
 
-  APISvc.$inject = ['$http', '$q', '$rootScope'];
+  APISvc.$inject = ['$http', '$rootScope'];
 
-  function APISvc($http, $q, $rootScope) {
+  function APISvc($http, $rootScope) {
     var service = {
       request: request
     };
@@ -37,6 +37,7 @@
 
     function failed(error) {
       console.log(error);
+      return error;
     }
 
   }

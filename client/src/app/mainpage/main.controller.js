@@ -5,10 +5,11 @@
     .module('n3twork.main')
     .controller('MainCtrl', MainCtrl);
 
-  MainCtrl.$inject = ['APISvc', '$q', '$rootScope'];
+  MainCtrl.$inject = ['APISvc', '$rootScope'];
 
-  function MainCtrl(APISvc, $q, $rootScope) {
+  function MainCtrl(APISvc, $rootScope) {
     var vm = this;
-    var deferred = $q.defer();
+
+
   }
 })();

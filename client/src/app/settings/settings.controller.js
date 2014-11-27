@@ -5,10 +5,9 @@
     .module('n3twork.settings')
     .controller('SettingsCtrl', SettingsCtrl);
 
-  SettingsCtrl.$inject = ['APISvc', 'UserSvc', '$rootScope', '$q'];
-  function SettingsCtrl(APISvc, UserSvc, $rootScope, $q) {
+  SettingsCtrl.$inject = ['APISvc', 'UserSvc', '$rootScope'];
+  function SettingsCtrl(APISvc, UserSvc, $rootScope) {
     var vm = this;
-    var deferred = $q.defer();
 
     // methods
     vm.submit = submit;
@@ -29,7 +28,6 @@
           data: changedData()
         })
         .then(function(response) {
-          deferred.resolve(true);
           if (response.data.successful) {
             $rootScope.userdata = merge($rootScope.userdata, changedData());
             if (UserSvc.setUserData()) {
@@ -106,7 +104,6 @@
           data: {}
         })
         .then(function(response) {
-          deferred.resolve(true);
           if (response.data.successful) {
             vm.deleteLoading = false;
             vm.successfullyDeleted = true;
