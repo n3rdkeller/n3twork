@@ -26,9 +26,9 @@ import org.apache.log4j.Logger;
 public class User {
   final static Logger log = LogManager.getLogger(User.class);
   
-  private int id;
-  private String name;
-  private String firstName;
+  private int id="";
+  private String name="";
+  private String firstName="";
   private String username = ""; //TODO change login and register methods, so these don't have to be initialized
   private String email = "";
   private String password = "";
@@ -196,7 +196,6 @@ public class User {
         .add("email", user.email)
         .add("lastname", user.name)
         .add("firstname", user.firstName)
-        .add("session", user.sessionID)
         .add("otherProperties", otherProperties));
     }
     return String.valueOf(Json.createObjectBuilder()
