@@ -147,7 +147,7 @@ public class UserResource {
    * Options request for show
    * @return Response with all the needed headers
    */
-  @OPTIONS @Path("/show")
+  @OPTIONS @Path("/")
   public Response corsShowUser() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
@@ -158,10 +158,10 @@ public class UserResource {
   
   /**
    * Post Request to show user by id
-   * @param jsonInput {"session":"sessionID" , "id":userID}
+   * @param jsonInput {"session":"sessionID" , "id":userID} with userID being optional
    * @return Response with the entity {"successful":true / false} and html error code 200
    */
-  @POST @Path("/show")
+  @POST @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showUser(String jsonInput){
     try{
@@ -173,20 +173,22 @@ public class UserResource {
             .add("successful", false)
             .add("reason", "SessionID invalid")
             .build());
-        log.debug("/user/show returns: " + entity);
+        log.debug("/user returns: " + entity);
         return Helper.okResponse(entity);
       }
-      User requestedUser = new User(input.getInt("userID"));
-      if (!requestedUser.getBasicsFromDB()) {
-        String entity = String.valueOf(Json.createObjectBuilder()
-            .add("successful", false)
-            .add("reason", "Requested user doesn't exist")
-            .build());
-        log.debug("/user/show returns: " + entity);
-        return Helper.okResponse(entity);
+      if (input.containsKey("id")) {
+        user = new User(input.getInt("id"));
+        if (!user.getBasicsFromDB()) {
+          String entity = String.valueOf(Json.createObjectBuilder()
+              .add("successful", false)
+              .add("reason", "Requested user doesn't exist")
+              .build());
+          log.debug("/user returns: " + entity);
+          return Helper.okResponse(entity);
+        }      
       }
-      String entity = requestedUser.getAsJson();
-      log.debug("/user/show returns: " + entity);
+      String entity = user.getAsJson();
+      log.debug("/user returns: " + entity);
       return Response.ok()
           .entity(entity)
           .header(Helper.ACCESSHEADER, "*")
@@ -312,8 +314,8 @@ public class UserResource {
   }
   
   /**
-   * Post Request to get all friends of current user
-   * @param jsonInput {"session":"sessionID"}
+   * Post Request to get all friends of a user
+   * @param jsonInput {"session":"sessionID", "id":userID} with userID being optional
    * @return Response with the entity {"friends":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
    */
   @POST @Path("/friends")
@@ -321,8 +323,8 @@ public class UserResource {
   public Response getFriends(String jsonInput){
     try{
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
-      JsonObject jsonSession = jsonReader.readObject();
-      User user = Helper.checkSessionID(jsonSession.getString("session"));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
       if (user == null) {
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", false)
@@ -330,6 +332,9 @@ public class UserResource {
             .build());
         log.debug("/user/friends returns: " + entity);
         return Helper.okResponse(entity);
+      }
+      if (input.containsKey("id")) {
+        user = new User(input.getInt("id"));
       }
       user.getFriendsFromDB();
       String entity = user.getFriendsAsJson();
@@ -457,7 +462,7 @@ public class UserResource {
   
   /**
    * Post request to get all groups of a user
-   * @param jsonInput {"session":"sessionID","userID":userID} userID is optional. If it's not given, the method will use current user by sessionID
+   * @param jsonInput {"session":"sessionID","id":userID} userID is optional. If it's not given, the method will use current user by sessionID
    * @return {"groups":[{"groupID":groupID,...},...], "successful":true}
    */
   @POST @Path("/groups")
@@ -475,8 +480,8 @@ public class UserResource {
         log.debug("/user/groups returns: " + entity);
         return Helper.okResponse(entity);
       }
-      if (input.containsKey("userID")) {
-        user = new User(input.getInt("userID"));
+      if (input.containsKey("id")) {
+        user = new User(input.getInt("id"));
       }
       String entity = user.getGroupsFromDB().getGroupsAsJson();
       log.debug("/user/groups returns: " + entity);
