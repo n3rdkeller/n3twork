@@ -172,6 +172,7 @@ public class User {
       user.firstName = userMap.remove("firstName");
       user.username = userMap.remove("username");
       user.email = userMap.remove("email");
+      userMap.remove("password");
       user.otherProperties.putAll(userMap); 
       userList.add(user);
     }
@@ -191,11 +192,11 @@ public class User {
         otherProperties.add(e.getKey(), e.getValue());
       }
       userList.add(Json.createObjectBuilder()
-        .add("id", user.id)
-        .add("username", user.username)
-        .add("email", user.email)
-        .add("lastname", user.name)
-        .add("firstname", user.firstName)
+        .add("id", user.getId())
+        .add("username", user.getUsername())
+        .add("email", user.getEmail())
+        .add("lastname", user.getName())
+        .add("firstname", user.getFirstName())
         .add("otherProperties", otherProperties));
     }
     return String.valueOf(Json.createObjectBuilder()
@@ -382,6 +383,7 @@ public class User {
     this.firstName = userMap.remove("firstName");
     this.username = userMap.remove("username");
     this.email = userMap.remove("email");
+    userMap.remove("password");
     this.otherProperties.putAll(userMap); 
     return true;
 
@@ -523,6 +525,7 @@ public class User {
    * @return name
    */
   public String getName() {
+    if (this.name == null) return "";
     return this.name;
   }
   
@@ -548,6 +551,7 @@ public class User {
    * @return firstName
    */
   public String getFirstName() {
+    if (this.firstName == null) return "";
     return this.firstName;
   }
   
@@ -573,6 +577,7 @@ public class User {
    * @return username
    */
   public String getUsername() {
+    if (this.username == null) return "";
     return this.username;
   }
 
@@ -581,6 +586,7 @@ public class User {
    * @return email
    */
   public String getEmail() {
+    if (this.email == null) return "";
     return this.email;
   }
 
