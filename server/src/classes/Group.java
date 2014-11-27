@@ -94,6 +94,12 @@ public class Group {
         .add("successful", true)
         .build());
   }
+  
+  public void removeFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
+  }
+  
   /**
    * Gets description and name from db
    * @return true if successful / group exists
@@ -318,7 +324,7 @@ public class Group {
     this.members.add(user);
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
-        "INSERT INTO " + DBConnector.DATABASE + ".Members(groupID,userID) VALUES(" + this.id + "," + user.getId() +")"); 
+        "INSERT INTO " + DBConnector.DATABASE + ".Members(groupID,memberID) VALUES(" + this.id + "," + user.getId() +")"); 
   }
 
   /**
@@ -333,6 +339,12 @@ public class Group {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
         "DELETE FROM " + DBConnector.DATABASE + ".Members WHERE memberID=" + user.getId() + " AND groupID=" + this.id);
+    if (this.members.size() == 0) {
+      this.getMembersFromDB();
+    }
+    if (this.members.size() == 0) {
+      this.removeFromDB();
+    }
   }
 
   public String getOtherProperty(String key) {

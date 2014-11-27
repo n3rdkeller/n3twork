@@ -94,7 +94,7 @@ public class DBConnector {
     for (int value : ids){
         idsPrintString = idsPrintString + value + " ";
     }
-
+    
     return ids;
 
   }

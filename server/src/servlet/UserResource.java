@@ -461,7 +461,7 @@ public class UserResource {
   
   /**
    * Post request to allow the current user to join a group
-   * @param jsonInput {"session":"sessionID","groupID":groupID}
+   * @param jsonInput {"session":"sessionID","group":groupID}
    * @return {"successful":true / false}
    */
   @POST @Path("/group/join")
@@ -479,7 +479,10 @@ public class UserResource {
         log.debug("/user/group/join returns: " + entity);
         return Helper.okResponse(entity);
       }
-      user.addGroup(new Group(input.getInt("groupID")));
+      Group group = new Group(input.getInt("group"));
+      if (!group.isMember(user)) {
+        user.addGroup(group);
+      }
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());
@@ -509,7 +512,7 @@ public class UserResource {
   
   /**
    * Post request to allow the current user to leave a group
-   * @param jsonInput {"session":"sessionID","groupID":groupID}
+   * @param jsonInput {"session":"sessionID","group":groupID}
    * @return {"successful":true / false}
    */
   @POST @Path("/group/leave")
@@ -527,7 +530,7 @@ public class UserResource {
         log.debug("/user/group/leave returns: " + entity);
         return Helper.okResponse(entity);
       }
-      user.removeGroup(new Group(input.getInt("groupID")));
+      user.removeGroup(new Group(input.getInt("group")));
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());

@@ -33,7 +33,7 @@ public class GroupResource {
    * Options request for join
    * @return Response with all needed headers
    */
-  @OPTIONS @Path("/find")
+  @OPTIONS @Path("/find/old")
   public Response corsFindGroup() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
@@ -47,7 +47,7 @@ public class GroupResource {
    * @param jsonInput '{ "session" : "sessionID", "groupID":"groupID" }'
    * @return '{ "successful" : true/false }' with html error code 200 or any exception with html error code 500
    */
-  @POST @Path("/find")
+  @POST @Path("/find/old")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response findGroup(String jsonInput){
     log.debug("find input: " + jsonInput);
@@ -79,71 +79,6 @@ public class GroupResource {
     }
   }
   
-  /**
-   * Options request for join
-   * @return Response with all needed headers
-   */
-  @OPTIONS @Path("/join")
-  public Response corsJoinGroup() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
-  /**
-   * Post request to join an existing group
-   * @param jsonInput '{ "session" : "sessionID", "groupID":"groupID" }'
-   * @return '{ "successful" : true/false }' with html error code 200 or any exception with html error code 500
-   */
-  @POST @Path("/join")
-  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response joinGroup(String jsonInput){
-    log.debug("join input: " + jsonInput);
-    try {
-      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
-      JsonObject input = jsonReader.readObject();
-      User user = Helper.checkSessionID(input.getString("session"));
-      Group group = new Group(input.getInt("groupID"));
-      if (user == null){
-        String entity = String.valueOf(Json.createObjectBuilder()
-            .add("successful", false)
-            .add("reason", "SessionID invalid")
-            .build());
-        log.debug("/group/join returns:" + entity);
-        return Helper.okResponse(entity);
-      } else if (!group.getBasicsFromDB()) {
-        String entity = String.valueOf(Json.createObjectBuilder()
-            .add("successful", false)
-            .add("reason", "Group doesn't exist")
-            .build());
-        log.debug("/group/join returns:" + entity);
-        return Helper.okResponse(entity);
-      } else if (!group.isMember(user)){
-        group.addMember(user);
-        String entity = String.valueOf(Json.createObjectBuilder()
-            .add("successful", true)
-            .build());
-        log.debug("/group/join returns:" + entity);
-        return Helper.okResponse(entity);
-      } else {
-        String entity = String.valueOf(Json.createObjectBuilder()
-            .add("successful", false)
-            .add("reason", "User is already in the group")
-            .build());
-        log.debug("/group/join returns:" + entity);
-        return Helper.okResponse(entity);
-      }
-    } catch (Exception e){
-      // internal server error
-      log.error(e);
-      return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(e.toString())
-          .header(Helper.ACCESSHEADER, "*")
-          .build();
-    }
-  }
   
   /**
    * Options request for found
@@ -219,7 +154,7 @@ public class GroupResource {
   
   /**
    * Post request to get a group if the user is a member
-   * @param jsonInput '{ "session" : "sessionID", "groupID":"groupID"}'
+   * @param jsonInput '{ "session" : "sessionID", "group":"groupID"}'
    * @return '{ "successful" : true/false }' or group with html error code 200 or any exception with html error code 500
    */
   @POST @Path("/show")
@@ -230,7 +165,7 @@ public class GroupResource {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject input = jsonReader.readObject();
       User user = Helper.checkSessionID(input.getString("session"));
-      Group group = new Group(input.getInt("groupID"));
+      Group group = new Group(input.getInt("group"));
       if (user == null) {
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", false)
@@ -269,10 +204,10 @@ public class GroupResource {
   }
   
   /**
-   * Options request for show/all
+   * Options request for find
    * @return Response with all needed headers
    */
-  @OPTIONS @Path("/show/all")
+  @OPTIONS @Path("/find")
   public Response corsShowAllGroups() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
@@ -286,7 +221,7 @@ public class GroupResource {
    * @param jsonInput '{ "session" : "sessionID"}'
    * @return '{ "successful" : true/false }' with html error code 200 or any exception with html error code 500
    */
-  @POST @Path("/show/all")
+  @POST @Path("/find")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showAllGroups(String jsonInput){
     log.debug("showAll input: " + jsonInput);
@@ -299,11 +234,11 @@ public class GroupResource {
             .add("successful", false)
             .add("reason", "SessionID invalid")
             .build());
-        log.debug("/group/show/all returns:" + entity);
+        log.debug("/group/find returns:" + entity);
         return Helper.okResponse(entity);
       } else {
         String entity = Group.getAllAsJson();
-        log.debug("/group/show/all returns:" + entity);
+        log.debug("/group/find returns:" + entity);
         return Helper.okResponse(entity);
       }
     } catch (Exception e){
@@ -318,10 +253,10 @@ public class GroupResource {
   
   
   /**
-   * Options request for show/member
+   * Options request for members
    * @return Response with all needed headers
    */
-  @OPTIONS @Path("/show/members")
+  @OPTIONS @Path("/members")
   public Response corsShowGroupMembers() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
@@ -332,10 +267,10 @@ public class GroupResource {
   
   /**
    * Post request to get a list of all members in the group
-   * @param jsonInput '{ "session" : "sessionID", "groupID",groupID}'
+   * @param jsonInput '{ "session" : "sessionID", "group",groupID}'
    * @return '{ "successful" : false }' or member as json with html error code 200 or any exception with html error code 500
    */
-  @POST @Path("/show/members")
+  @POST @Path("/members")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showGroupMembers(String jsonInput){
     log.debug("showAll input: " + jsonInput);
@@ -343,7 +278,7 @@ public class GroupResource {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject input = jsonReader.readObject();
       User user = Helper.checkSessionID(input.getString("session"));
-      Group group = new Group(input.getInt("groupID"));
+      Group group = new Group(input.getInt("group"));
       if (user == null) {
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", false)
@@ -359,6 +294,7 @@ public class GroupResource {
         log.debug("/group/show/members returns:" + entity);
         return Helper.okResponse(entity);
       } else {
+        group.getMembersFromDB();
         return Response.ok()
             .entity(group.getMembersAsJson())
             .header(Helper.ACCESSHEADER, "*")
