@@ -798,8 +798,9 @@ public class User {
     List<HashMap<String, String>> friendsList = new ArrayList<HashMap<String,String>>();
     List<String> keyRow = new ArrayList<String>();
     for (int i = 1;i <= columnsNumber; i++) {
-      keyRow.add(friendsTable.getString(i));
+      keyRow.add(friendsTableMD.getColumnName(i));
     }
+    
     while (friendsTable.next()){
       HashMap<String,String> userHelperMap = new HashMap<String,String>();
       for (int i = 1;i <= columnsNumber; i++) {

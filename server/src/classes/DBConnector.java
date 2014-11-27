@@ -46,7 +46,6 @@ public class DBConnector {
     ResultSet rs = pStmt.executeQuery();
     ResultSetMetaData rsmd = rs.getMetaData();
     int columnsNumber = rsmd.getColumnCount();
-    log.debug("executed");
 
     List<ArrayList<String>> output  = new ArrayList<ArrayList<String>>();
     ArrayList<String> row = new ArrayList<String>();
@@ -66,8 +65,7 @@ public class DBConnector {
 
     pStmt.close();
     rs.close();
-
-    log.debug("selectQuery: done");
+    
     return output;
 
   }
@@ -85,7 +83,6 @@ public class DBConnector {
     stmt.executeUpdate(sqlQuery, Statement.RETURN_GENERATED_KEYS);
 
     ResultSet rs = stmt.getGeneratedKeys();
-    log.debug("executed");
 
     List<Integer> ids = new ArrayList<Integer>();
     while (rs.next()) {
@@ -98,8 +95,6 @@ public class DBConnector {
         idsPrintString = idsPrintString + value + " ";
     }
 
-    log.debug("retun ids: " + idsPrintString);
-    log.debug("executeUpdate: done");
     return ids;
 
   }

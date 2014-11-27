@@ -314,7 +314,7 @@ public class UserResource {
   
   /**
    * Post Request to add a friend
-   * @param jsonInput {"session":"sessionID","friendID":userID}
+   * @param jsonInput {"session":"sessionID","friend":userID}
    * @return Response with the entity {"successful":true/false} and html error code 200
    */
   @POST @Path("/friend/add")
@@ -332,7 +332,7 @@ public class UserResource {
         log.debug("/user/friend/add returns: " + entity);
         return Helper.okResponse(entity);
       } else {
-        user.addFriendToDB(inputAsJson.getInt("friendID"));
+        user.addFriendToDB(inputAsJson.getInt("friend"));
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", true)
             .build());
