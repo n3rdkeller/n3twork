@@ -8,7 +8,8 @@
       'n3twork.register',
       'n3twork.auth',
       'n3twork.main',
-      'n3twork.settings'
+      'n3twork.settings',
+      'n3twork.search'
     ])
     .config(config);
 

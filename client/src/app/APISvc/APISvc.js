@@ -3,10 +3,9 @@
 
   angular
     .module('n3twork')
-    .factory('APISvc', APISvc);
+    .service('APISvc', APISvc);
 
   APISvc.$inject = ['$http', '$rootScope'];
-
   function APISvc($http, $rootScope) {
     var service = {
       request: request
