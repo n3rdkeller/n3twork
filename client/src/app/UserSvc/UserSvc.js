@@ -39,7 +39,6 @@
 
         // TODO: check session id at serverside (maybe check later)
         //        when actually doing a request
-        userdata.loggedin = true;
         $rootScope.loggedin = true;
         $rootScope.userdata = userdata;
         return true;

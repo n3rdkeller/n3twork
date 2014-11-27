@@ -35,14 +35,14 @@
       <div class="btn-block">
       <button type="submit" class="btn btn-info" ng-disabled="settingsForm.$invalid || !settings.somethingChanged() || settings.loading">
         <span ng-hide="settings.loading">
-          <i class="fa fa-wrench"></i> Save
+          <i class="fa fa-wrench fa-fw"></i> Save
         </span>
         <span ng-show="settings.loading">
-          <i class="fa fa-spinner fa-spin"></i> Saving
+          <i class="fa fa-spinner fa-spin fa-fw"></i> Saving
         </span>
       </button>
       <button type="reset" class="btn btn-warning pull-right" ng-click="settings.resetForm(settingsForm)" ng-disabled="settingsForm.$pristine">
-        <i class="fa fa-bolt"></i> Reset
+        <i class="fa fa-bolt fa-fw"></i> Reset
       </button>
       </div>
     </div>
