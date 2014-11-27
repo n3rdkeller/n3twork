@@ -11,4 +11,7 @@
   <li class="disabled" role="presentation" ng-class="{ active: nav.isActive('/messages')}">
     <a href="">Messages<!--  <span class="badge">42</span> --></a>
   </li>
+  <li ng-show="activeSearch" role="presentation" ng-class="{ active: nav.isActive('/search')}">
+    <a href="#/search">Search</a>
+  </li>
 </ul>
