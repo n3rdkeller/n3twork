@@ -183,6 +183,34 @@ public class User {
     return userList;
   }
   
+  public static String getSimpleUserStats() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> counterTable = DBConnector.selectQuery(conn, 
+        "SELECT Users.id,SessionIDs.sessionID FROM " + DBConnector.DATABASE + ".Users "
+        + "LEFT JOIN SessionIDs "
+        + "ON Users.id=SessionIDs.userID");
+    counterTable.remove(0); //remove column titles
+    int usersOnline = 0;
+    String lastID = "";
+    for (ArrayList<String> row : counterTable) {
+      String currentID = row.get(0);
+      if (lastID == currentID){
+        counterTable.remove(row);
+      } else {
+        if (row.get(1) != null) {
+          usersOnline++;
+        }
+      }
+      lastID = currentID;
+    }
+    int users = counterTable.size();
+    String returnString = String.valueOf(Json.createObjectBuilder()
+        .add("users", users)
+        .add("usersOnline", usersOnline)
+        .build());
+    return returnString;
+  }
+  
   /**
    * Converts any list of users to a json string
    * @param users
@@ -193,6 +221,7 @@ public class User {
     for (User user : users) {
       JsonObjectBuilder otherProperties = Json.createObjectBuilder();
       for (Entry<String, String> e : user.otherProperties.entrySet()) {
+        if (e.getValue() == null) e.setValue("");
         otherProperties.add(e.getKey(), e.getValue());
       }
       userList.add(Json.createObjectBuilder()
@@ -436,6 +465,7 @@ public class User {
     JsonObjectBuilder userJson = Json.createObjectBuilder();
     JsonObjectBuilder otherProperties = Json.createObjectBuilder();
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
+      if (e.getValue() == null) e.setValue("");
       otherProperties.add(e.getKey(), e.getValue());
     }
     if (this.name == null) this.name="";
@@ -640,6 +670,7 @@ public class User {
    * @return property
    */
   public String getOtherProperty(String key) {
+    if (this.otherProperties.get(key) == null) return "";
     return this.otherProperties.get(key);
   }
   
@@ -656,8 +687,7 @@ public class User {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
         "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
-    String insertQueryHead = "INSERT INTO " + DBConnector.DATABASE + ".Users(";
-    String insertQueryTail = ") VALUES(";
+    String updateQueryHead = "UPDATE " + DBConnector.DATABASE + ".Users SET ";
     List<String> toBeAdded = new ArrayList<String>();
     
     for (Entry<String,String> prop: this.otherProperties.entrySet()) {
@@ -667,16 +697,10 @@ public class User {
       }
       
       // prepare insert statement
-      if (insertQueryHead.endsWith(".Users(")) {
-        insertQueryHead = insertQueryHead + prop.getKey();
+      if (updateQueryHead.endsWith("SET ")) {
+        updateQueryHead = updateQueryHead + prop.getKey() + "='" + prop.getValue() + "'";
       } else {
-        insertQueryHead = insertQueryHead + "," + prop.getKey();
-      }
-      
-      if (insertQueryTail.endsWith("VALUES(")) {
-        insertQueryTail = insertQueryTail + "'" + prop.getValue() + "'";
-      } else {
-        insertQueryTail = insertQueryTail + ",'" + prop.getValue() + "'";
+        updateQueryHead = updateQueryHead + "," + prop.getKey() + "='" + prop.getValue() + "'";
       }
     }
     
@@ -685,15 +709,16 @@ public class User {
       String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Users ADD COLUMN ";
       for (int i = 0; i < toBeAdded.size(); i++) {
         if (i == 0) {
-          alterTable = toBeAdded.get(i) + " VARCHAR(45) NULL DEFAULT NULL";
+          alterTable = alterTable + "`" +  toBeAdded.get(i) + "` VARCHAR(45) NULL DEFAULT NULL";
         } else {
-          alterTable = "," + toBeAdded.get(i) + " VARCHAR(45) NULL DEFAULT NULL";
+          alterTable = alterTable + ",`" + toBeAdded.get(i) + "` VARCHAR(45) NULL DEFAULT NULL";
         }
       }
       DBConnector.executeUpdate(conn, alterTable);
     }
-    
-    DBConnector.executeUpdate(conn, insertQueryHead + insertQueryTail + ")");
+    String insertQuery = updateQueryHead + " WHERE id=" + this.id;
+    log.debug(insertQuery);
+    DBConnector.executeUpdate(conn, insertQuery);
     return this;
   }
   
@@ -790,8 +815,6 @@ public class User {
         + "WHERE Friends.userID=" + this.id;
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     ResultSet friendsTable = pStmt.executeQuery();
-    ResultSetMetaData friendsTableMD = friendsTable.getMetaData();
-    int columnsNumber = friendsTableMD.getColumnCount();
     log.debug(sqlQuery);
     
     List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, 

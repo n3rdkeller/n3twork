@@ -76,11 +76,24 @@ public class Group {
     return groupList;
   }
   
+  public static String getSimpleGroupStats() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> counterTable = DBConnector.selectQuery(conn, 
+        "SELECT id FROM " + DBConnector.DATABASE + ".Groups");
+    counterTable.remove(0); //remove column titles
+    int groups = counterTable.size();
+    String returnString = String.valueOf(Json.createObjectBuilder()
+        .add("groups", groups)
+        .build());
+    return returnString;
+  }
+  
   public static String convertGroupListToJson(List<Group> groupList) {
     JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
     for (Group group : groupList) {
       JsonObjectBuilder otherProperties = Json.createObjectBuilder();
       for (Entry<String, String> e : group.getOtherProperties().entrySet()) {
+        if (e.getValue() == null) e.setValue("");
         otherProperties.add(e.getKey(), e.getValue());
       }
       groupJsonList.add(Json.createObjectBuilder()
@@ -169,6 +182,7 @@ public class Group {
   public String getAsJson(){
     JsonObjectBuilder otherProperties = Json.createObjectBuilder();
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
+      if (e.getValue() == null) e.setValue("");
       otherProperties.add(e.getKey(), e.getValue());
     }
     JsonObject groupJson = Json.createObjectBuilder()

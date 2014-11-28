@@ -144,6 +144,54 @@ public class UserResource {
   }
   
   /**
+   * Options request for count
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/count")
+  public Response corsCountUser() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post Request to count user in db
+   * @param jsonInput {"session":"sessionID"} with userID being optional
+   * @return Response with the entity {"successful":true, "count":somenumber} and html error code 200
+   */
+  @POST @Path("/count")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response countUser(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user returns: " + entity);
+        return Helper.okResponse(entity);
+      }
+      String entity = User.getSimpleUserStats();
+      log.debug("/user returns: " + entity);
+      return Response.ok()
+          .entity(entity)
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  /**
    * Options request for show
    * @return Response with all the needed headers
    */
