@@ -81,10 +81,10 @@ public class GroupResource {
   
   
   /**
-   * Options request for found
+   * Options request for create
    * @return Response with all needed headers
    */
-  @OPTIONS @Path("/found")
+  @OPTIONS @Path("/create")
   public Response corsFoundGroup() {
      return Response.ok()
          .header(Helper.ACCESSHEADER, "*")
@@ -94,11 +94,11 @@ public class GroupResource {
   }
   
   /**
-   * Post request to found a group
+   * Post request to create a group
    * @param jsonInput '{ "session" : "sessionID", "groupName":"groupName", "groupDescr":"groupDescr" }'
    * @return '{ "successful" : true/false }' with html error code 200 or any exception with html error code 500
    */
-  @POST @Path("/found")
+  @POST @Path("/create")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response foundGroup(String jsonInput){
     log.debug("found input: " + jsonInput);
@@ -112,14 +112,14 @@ public class GroupResource {
             .add("successful", false)
             .add("reason", "SessionID invalid")
             .build());
-        log.debug("/group/found returns:" + entity);
+        log.debug("/group/create returns:" + entity);
         return Helper.okResponse(entity);
       } else if (group.registerInDB()) {
         group.addMember(user);
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", true)
             .build());
-        log.debug("/group/found returns:" + entity);
+        log.debug("/group/create returns:" + entity);
         return Helper.okResponse(entity);
       } else {
         String entity = String.valueOf(Json.createObjectBuilder()
