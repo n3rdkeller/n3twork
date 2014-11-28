@@ -268,7 +268,7 @@ public class UserResource {
   /**
    * Post Request to get all friends of a user
    * @param jsonInput {"session":"sessionID", "id":userID} with userID being optional
-   * @return Response with the entity {"friends":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
+   * @return Response with the entity {"friendList":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
    */
   @POST @Path("/friends")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -415,7 +415,7 @@ public class UserResource {
   /**
    * Post request to get all groups of a user
    * @param jsonInput {"session":"sessionID","id":userID} userID is optional. If it's not given, the method will use current user by sessionID
-   * @return {"groups":[{"groupID":groupID,...},...], "successful":true}
+   * @return {"groupList":[{"groupID":groupID,...},...], "successful":true}
    */
   @POST @Path("/groups")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)

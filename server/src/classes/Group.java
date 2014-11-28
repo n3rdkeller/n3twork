@@ -90,7 +90,7 @@ public class Group {
     }
     
     return String.valueOf(Json.createObjectBuilder()
-        .add("groups",groupJsonList)
+        .add("groupList",groupJsonList)
         .add("successful", true)
         .build());
   }
@@ -184,7 +184,7 @@ public class Group {
   
   /**
    * Gets all groups in a Json list
-   * @return {"groups":[{"groupID":"groupID",...},...]}
+   * @return {"groupList":[{"groupID":"groupID",...},...]}
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -204,7 +204,7 @@ public class Group {
     }
     
     return String.valueOf(Json.createObjectBuilder()
-        .add("groups",groupJsonList)
+        .add("groupList",groupJsonList)
         .add("successful", true)
         .build());
   }
@@ -270,7 +270,7 @@ public class Group {
 
   /**
    * Gets members as Json list
-   * @return {"members":[{"id":"userID",...},...]}
+   * @return {"memberList":[{"id":"userID",...},...]}
    */
   public String getMembersAsJson() {
     JsonArrayBuilder memberList = Json.createArrayBuilder();
@@ -284,7 +284,7 @@ public class Group {
     }
     
     JsonObject membersObject = Json.createObjectBuilder()
-      .add("members", memberList)
+      .add("memberList", memberList)
       .add("successful", true)
       .build();
     String jsonString = String.valueOf(membersObject);

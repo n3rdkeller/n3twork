@@ -204,7 +204,7 @@ public class User {
         .add("otherProperties", otherProperties));
     }
     return String.valueOf(Json.createObjectBuilder()
-        .add("user", userList)
+        .add("userList", userList)
         .add("successful", true)
         .build());
   }
@@ -763,7 +763,7 @@ public class User {
     }
     
     JsonObject friendsObject = Json.createObjectBuilder()
-      .add("friends", friendList)
+      .add("friendList", friendList)
       .add("successful", true)
       .build();
     String jsonString = String.valueOf(friendsObject);
