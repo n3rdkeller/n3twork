@@ -30,10 +30,10 @@
     }
 
     function getUserData(parseddata) {
-      if (parseddata.session && parseddata.name) {
+      if (parseddata.session && parseddata.username) {
         var userdata = {
           session: parseddata.session,
-          name: parseddata.name,
+          username: parseddata.username,
           email: parseddata.email,
           id: parseddata.id
         }
@@ -55,6 +55,7 @@
     function setUserData(userdata) {
       if (userdata) {
         $rootScope.userdata = userdata;
+        $rootScope.loggedin = true;
         $window.localStorage.setItem('n3twork', JSON.stringify($rootScope.userdata));
         return true;
       } else {
@@ -71,23 +72,31 @@
           'password': password
         }
       }).then(function (response) {
-        // set userdata from response
-        var userdata = {
-          session: response.data.session,
-          name: response.data.username,
-          email: response.data.email,
-          id: response.data.id
-        }
-        if (response.data.firstname) { userdata.firstname = response.data.firstname };
-        if (response.data.lastname) { userdata.lastname = response.data.lastname };
-        if (response.data.city) { userdata.city = response.data.city };
+        console.log(response);
+        if (response.data.successful) {
+          // set userdata from response
+          var userdata = {
+            session: response.data.session,
+            username: response.data.username,
+            email: response.data.email,
+            id: response.data.id
+          }
+          if (response.data.firstname) { userdata.firstname = response.data.firstname };
+          if (response.data.lastname) { userdata.lastname = response.data.lastname };
+          if (response.data.city) { userdata.city = response.data.city };
 
-        // set data rootScope and localstorage
-        if (setUserData(userdata)) {
-          $location.path('/');
-          $rootScope.loggedin = true;
+          // set data rootScope and localstorage
+          if (setUserData(userdata)) {
+            $rootScope.loggedin = true;
+          }
+          deferred.resolve(response.data);
+        } else {
+          deferred.reject(response);
         }
+      }, function (error) {
+        deferred.reject(error);
       });
+
       return deferred.promise;
     }
 

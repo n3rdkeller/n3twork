@@ -53,9 +53,6 @@
       var deferred = $q.defer();
       var loggedIn = UserSvc.isLoggedIn();
 
-      // only for debugging
-      // var loggedIn = true;
-
       if(loggedIn){
         deferred.resolve(loggedIn);
       }else{
@@ -109,7 +106,7 @@
 
     function isActive (viewLocation) {
       return viewLocation === $location.path();
-    };
+    }
   }
 })();
 
