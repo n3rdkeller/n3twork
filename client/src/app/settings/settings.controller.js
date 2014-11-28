@@ -38,11 +38,10 @@
           } else {
             vm.successful = false;
             vm.loading = false;
-            console.log('Damn idiot, you did something terribly wrong.');
           }
         });
       } else {
-        console.log('Something in the settings form is still invalid.');
+        vm.successful = false;
       }
     }
 
@@ -68,6 +67,8 @@
       if (vm.user.firstname && (vm.user.firstname != $rootScope.userdata.firstname)) { dataThatHasChanged.firstname = vm.user.firstname };
       // are first- and lastname given?
       if (vm.user.lastname && vm.user.firstname && (vm.user.lastname != $rootScope.userdata.lastname)) { dataThatHasChanged.lastname = vm.user.lastname };
+      // is city given?
+      if (vm.user.city && (vm.user.city != $rootScope.userdata.city)) { dataThatHasChanged.city = vm.user.city };
       // is email given?
       if (vm.user.email && (vm.user.email != $rootScope.userdata.email)) { dataThatHasChanged.email = vm.user.email };
       // is password given?

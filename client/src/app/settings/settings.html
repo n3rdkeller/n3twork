@@ -21,6 +21,10 @@
       <input required type="email" class="form-control" name="email" id="email" ng-model="settings.user.email" ng-init="settings.user.email = userdata.email" placeholder="Enter new email">
       <div ng-show="settingsForm.email.$dirty && settingsForm.email.$invalid" class="help-block" ng-messages="settingsForm.email.$error" ng-messages-include="app/views/messages.html"></div>
     </div>
+    <div class="form-group">
+      <label for="city">City (optional)</label>
+      <input type="text" class="form-control" name="city" id="city" ng-model="settings.user.city" ng-init="settings.user.city = userdata.city" placeholder="Enter your city">
+    </div>
     <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress default paste' }">
       <label for="pw">New password</label>
       <input ng-minlength=8 type="password" class="form-control" name="pw" id="pw" ng-model="settings.user.pw" placeholder="Enter new password">

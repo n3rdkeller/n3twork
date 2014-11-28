@@ -34,10 +34,12 @@
         var userdata = {
           session: parseddata.session,
           name: parseddata.name,
-          email: parseddata.email
+          email: parseddata.email,
+          id: parseddata.id
         }
         if (parseddata.firstname) { userdata.firstname = parseddata.firstname };
         if (parseddata.lastname) { userdata.lastname = parseddata.lastname };
+        if (parseddata.city) { userdata.city = parseddata.city };
 
         // TODO: check session id at serverside (maybe check later)
         //        when actually doing a request
