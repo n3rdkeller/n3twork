@@ -39,6 +39,9 @@
             vm.doesntexist = true;
           });
         }
+      } else {
+        // it's my own profile
+        vm.userdata = $rootScope.userdata;
       }
     }
   }
