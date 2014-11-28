@@ -350,6 +350,55 @@ public class UserResource {
   }
   
   /**
+   * Options request for friend requests
+   * @return Response with all the needed headers
+   */
+  @OPTIONS @Path("/friendrequests")
+  public Response corsGetFriendRequests() {
+     return Response.ok()
+         .header(Helper.ACCESSHEADER, "*")
+         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+         .header("Access-Control-Allow-Headers", "Content-Type")
+         .build();
+  }
+  
+  /**
+   * Post Request to get all friend requests of a user
+   * @param jsonInput {"session":"sessionID", "id":userID} with userID being optional
+   * @return Response with the entity {"friendRequests":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
+   */
+  @POST @Path("/friendrequests")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response getFriendRequests(String jsonInput){
+    try{
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null) {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/user/friendrequests returns: " + entity);
+        return Helper.okResponse(entity);
+      }
+      if (input.containsKey("id")) {
+        user = new User(input.getInt("id"));
+      }
+      user.getFriendRequestsFromDB();
+      String entity = user.getFriendRequestsAsJson();
+      log.debug("/user/friendrequests returns: " + entity);
+      return Helper.okResponse(entity);
+    } catch(Exception e){
+      log.error(e);
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.toString())
+          .header(Helper.ACCESSHEADER, "*")
+          .build();
+    }
+  }
+  
+  /**
    * Options request for friend/add
    * @return Response with all the needed headers
    */

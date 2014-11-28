@@ -36,7 +36,7 @@ public class User {
   private Map<String,String> otherProperties = new HashMap<String,String>();
   // date of birth, education, gender
   private Map<User,SimpleEntry<Long,Boolean>> friends = new HashMap<User,SimpleEntry<Long,Boolean>>();
-  //  private List<User> friendRequests = new ArrayList<User>();
+  private Map<User,SimpleEntry<Long,Boolean>> friendRequests = new HashMap<User,SimpleEntry<Long,Boolean>>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
   private List<Message> messages = new ArrayList<Message>();
@@ -857,6 +857,83 @@ public class User {
     return this;
   }
   
+  /**
+   * Puts the friends attribute in a nice Json String
+   * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'
+   */
+  public String getFriendRequestsAsJson() {
+    JsonArrayBuilder friendRequestList = Json.createArrayBuilder();
+    for (Entry<User, SimpleEntry<Long,Boolean>> friendRequest : this.friendRequests.entrySet()) {
+      friendRequestList.add(Json.createObjectBuilder()
+          .add("id", friendRequest.getKey().getId())
+          .add("username", friendRequest.getKey().getUsername())
+          .add("email", friendRequest.getKey().getEmail())
+          .add("lastname", friendRequest.getKey().getName())
+          .add("firstname", friendRequest.getKey().getFirstName())
+          .add("trueFriend", friendRequest.getValue().getValue())
+          .add("date", friendRequest.getValue().getKey()));
+    }
+    
+    JsonObject friendRequestsObject = Json.createObjectBuilder()
+      .add("friendRequests", friendRequestList)
+      .add("successful", true)
+      .build();
+    String jsonString = String.valueOf(friendRequestsObject);
+    return jsonString;
+  }
+  
+  /**
+   * Gets friends list from db using 2 select queries
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public User getFriendRequestsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    
+    /* friends are a pain in the butt, because you can't return a ResultSet in DBConnector.selectQuery and I need it to extract the timestamp. 
+     * That's why I use the whole preparedStatement and ResultSet stuff which is normally hidden behind the selectQuery function
+     */
+    String sqlQuery = 
+        "SELECT Users.id,username,email,name,firstName,Friends.date FROM " + DBConnector.DATABASE + ".Friends "
+        + "JOIN " + DBConnector.DATABASE + ".Users "
+        + "ON Users.id=Friends.userID "
+        + "WHERE Friends.friendID=" + this.id;
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet friendRequestsTable = pStmt.executeQuery();
+    log.debug(sqlQuery);
+    
+    List<ArrayList<String>> friendRequestsTable1 = DBConnector.selectQuery(conn, 
+        "SELECT friendID FROM " + DBConnector.DATABASE + ".Friends WHERE Friends.userID=" + this.id);
+    
+    //  fill up bothWayFriendsList
+    List<String> bothWayFriendsList = new ArrayList<String>();
+    friendRequestsTable1.remove(0);
+    for (ArrayList<String> smallList : friendRequestsTable1) {
+      bothWayFriendsList.add(smallList.get(0));
+    }
+    
+    while (friendRequestsTable.next()){
+    /* adding every User in friendsList with the User(id, username, email, name, firstName) constructor
+     * and saving the date, the friend request was made as well as the boolean value of being a true friend
+     */
+      if (!bothWayFriendsList.contains(friendRequestsTable.getString("id"))) {
+        this.friendRequests.put(new User(
+            friendRequestsTable.getInt("id"), 
+            friendRequestsTable.getString("username"), 
+            friendRequestsTable.getString("email"), 
+            friendRequestsTable.getString("name"), 
+            friendRequestsTable.getString("firstName")),
+            new SimpleEntry<Long,Boolean>(friendRequestsTable.getTimestamp("date").getTime(), false));
+      }
+    }
+    log.debug(this.friendRequests);
+    conn.close();
+    friendRequestsTable.close();
+    pStmt.close();
+    return this;
+  }
 
   /**
    * Inserts a user with given userID into the Friends table on the db. 
