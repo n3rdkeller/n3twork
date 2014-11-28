@@ -27,7 +27,7 @@
             data: {
               'username': name
             }
-          }).then(function(response) {
+          }).then(function (response) {
             console.log(ctrl);
             var taken = response.data.taken;
             var testedname = response.data.username;

@@ -27,7 +27,7 @@
           url: '/user/settings',
           data: changedData()
         })
-        .then(function(response) {
+        .then(function (response) {
           if (response.data.successful) {
             $rootScope.userdata = merge($rootScope.userdata, changedData());
             if (UserSvc.setUserData()) {
@@ -103,7 +103,7 @@
           url: '/user/remove',
           data: {}
         })
-        .then(function(response) {
+        .then(function (response) {
           if (response.data.successful) {
             vm.deleteLoading = false;
             vm.successfullyDeleted = true;

@@ -9,8 +9,6 @@
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <!-- BootstrapValidator -->
-    <link rel="stylesheet" href="css/bootstrapValidator.min.css"/>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <!-- Stylesheet, created with LESS -->
@@ -34,7 +32,8 @@
         </div>
 
         <div class="collapse navbar-collapse" id="navbar-collapse-1">
-          <ng-include src="'app/views/navbar.login.html'"></ng-include>
+          <!-- <ng-include src="'app/search/search.navbar.html'"></ng-include> -->
+          <ng-include src="'app/views/login.navbar.html'"></ng-include>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
@@ -48,13 +47,13 @@
     <!-- Angular-App and Dependencies -->
     <script type="text/javascript" src="js/angular.min.js"></script>
     <script type="text/javascript" src="js/angular-route.min.js"></script>
-    <script type="text/javascript" src="js/angular-resource.min.js"></script>
     <script type="text/javascript" src="js/angular-messages.min.js"></script>
     <script type="text/javascript" src="js/ui-bootstrap-tpls.min.js"></script>
     <script type="text/javascript" src="js/showErrors.min.js"></script>
     <script type="text/javascript" src="app/app.js"></script>
     <script type="text/javascript" src="app/APISvc/APISvc.js"></script>
     <script type="text/javascript" src="app/UserSvc/UserSvc.js"></script>
+    <script type="text/javascript" src="app/SearchSvc/SearchSvc.js"></script>
     <script type="text/javascript" src="app/register/register.js"></script>
     <script type="text/javascript" src="app/register/register.controller.js"></script>
     <script type="text/javascript" src="app/register/compareTo.directive.js"></script>
@@ -65,6 +64,8 @@
     <script type="text/javascript" src="app/mainpage/main.controller.js"></script>
     <script type="text/javascript" src="app/settings/settings.js"></script>
     <script type="text/javascript" src="app/settings/settings.controller.js"></script>
+    <script type="text/javascript" src="app/search/search.js"></script>
+    <script type="text/javascript" src="app/search/search.controller.js"></script>
 
     <!-- jQuery -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
