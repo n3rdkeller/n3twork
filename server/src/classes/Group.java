@@ -198,7 +198,7 @@ public class Group {
     JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
     for (ArrayList<String> row : groupTable) {
       groupJsonList.add(Json.createObjectBuilder()
-          .add("groupID", row.get(0))
+          .add("groupID", Integer.parseInt(row.get(0)))
           .add("groupName", row.get(1))
           .add("groupDescr", row.get(2)));
     }
