@@ -7,7 +7,7 @@
       'ui.bootstrap.showErrors',
       'n3twork.register',
       'n3twork.auth',
-      'n3twork.main',
+      'n3twork.profile',
       'n3twork.settings',
       'n3twork.search'
     ])
@@ -16,8 +16,8 @@
   function config($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'app/mainpage/main.html',
-        controller: 'MainCtrl',
+        templateUrl: 'app/profile/profile.html',
+        controller: 'ProfileCtrl',
         resolve: authResolver
       })
       .when('/register', {
@@ -37,6 +37,11 @@
         controller: 'SearchCtrl',
         resolve: authResolver
       })
+      .when('/user/:username', {
+        templateUrl: 'app/profile/profile.html',
+        controller: 'ProfileCtrl',
+        resolve: authResolver
+      })
       .otherwise({
         redirectTo: '/'
       });
@@ -47,9 +52,6 @@
 
       var deferred = $q.defer();
       var loggedIn = UserSvc.isLoggedIn();
-
-      // only for debugging
-      // var loggedIn = true;
 
       if(loggedIn){
         deferred.resolve(loggedIn);
@@ -104,7 +106,7 @@
 
     function isActive (viewLocation) {
       return viewLocation === $location.path();
-    };
+    }
   }
 })();
 

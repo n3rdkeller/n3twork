@@ -1,6 +1,6 @@
 <!-- TODO: nicer mobile view -->
 <ul ng-show="loggedin" class="nav nav-tabs" ng-controller="NavCtrl as nav">
-  <li role="presentation" ng-class="{ active: nav.isActive('/')}">
+  <li role="presentation" ng-class="{ active: (nav.isActive('/') || nav.isActive ('/user/' + userdata.username))}">
     <a href="#/">Profile</a>
   </li>
   <li role="presentation" ng-class="{ active: nav.isActive('/friends')}">

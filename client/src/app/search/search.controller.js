@@ -5,8 +5,8 @@
     .module('n3twork.search')
     .controller('SearchCtrl', SearchCtrl);
 
-  SearchCtrl.$inject = ['SearchSvc'];
-  function SearchCtrl(SearchSvc) {
+  SearchCtrl.$inject = ['CacheSvc'];
+  function SearchCtrl(CacheSvc) {
     var vm = this;
 
     // functions
@@ -29,7 +29,7 @@
       vm.submittedSearchString = searchString;
       if (searchString) {
         if (searchString.length > 2) {
-          SearchSvc.getUserList().then(function (response) {
+          CacheSvc.getUserList().then(function (response) {
             vm.userlist = response.userList;
             vm.firstLoading = false;
           });
@@ -45,7 +45,7 @@
 
     function loadGroupList(searchString) {
       vm.submittedSearchString = searchString;
-      SearchSvc.getGroupList().then(function (response) {
+      CacheSvc.getGroupList().then(function (response) {
         vm.grouplist = response.groupList;
         vm.secondLoading = false;
       });

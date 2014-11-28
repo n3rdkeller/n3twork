@@ -28,8 +28,9 @@
       vm.loading = true;
       UserSvc.login(logindata, password).then(function (response) {
         vm.loading = false;
-        if (response.data.successful) {
+        if (response.successful) {
           vm.loginFailed = false;
+          $location.path('/');
         } else {
           vm.loginFailed = true;
         }
