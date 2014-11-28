@@ -35,7 +35,7 @@
             'password': vm.user.pw
           }
         })
-        .then(function(response) {
+        .then(function (response) {
           vm.loading = false;
           if (response.data.successful) {
             vm.submitted = true;

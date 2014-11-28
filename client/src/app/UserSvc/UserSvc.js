@@ -64,7 +64,7 @@
         url: '/logout',
         data: {}
       })
-      .then(function(response) {
+      .then(function (response) {
         console.log('Successfully logged out.');
       });
       localLogout();

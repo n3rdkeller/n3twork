@@ -34,7 +34,7 @@
           'password': password
         }
       })
-      .then(function(response) {
+      .then(function (response) {
         vm.loading = false;
         if (response.data.successful) {
           // set data to $rootScope
