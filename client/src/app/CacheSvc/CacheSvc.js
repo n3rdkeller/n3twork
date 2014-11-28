@@ -3,10 +3,10 @@
 
   angular
     .module('n3twork')
-    .service('SearchSvc', SearchSvc);
+    .service('CacheSvc', CacheSvc);
 
-  SearchSvc.$inject = ['APISvc', '$window', '$q'];
-  function SearchSvc(APISvc, $window, $q) {
+  CacheSvc.$inject = ['APISvc', '$window', '$q'];
+  function CacheSvc(APISvc, $window, $q) {
     var service = {
       getUserList: getUserList,
       getGroupList: getGroupList
@@ -45,7 +45,7 @@
           data: {}
         }).then(function (response) {
           setSessionData(response.data);
-          deferred.resolve({ groupList: response.data.groups });
+          deferred.resolve({ groupList: response.data.groupList });
         }, function (error) {
           deferred.reject(error);
         });
@@ -97,10 +97,10 @@
           expirationTime: expirationTime(),
           userList: data.userList
         }));
-      } else if (data.groups) {
+      } else if (data.groupList) {
         $window.sessionStorage.setItem('groupList', JSON.stringify({
           expirationTime: expirationTime(),
-          groupList: data.groups
+          groupList: data.groupList
         }));
       }
     }
