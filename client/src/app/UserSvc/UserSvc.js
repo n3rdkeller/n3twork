@@ -35,11 +35,11 @@
           session: parseddata.session,
           username: parseddata.username,
           email: parseddata.email,
-          id: parseddata.id
+          id: parseddata.id,
+          otherProperties: parseddata.otherProperties
         }
         if (parseddata.firstname) { userdata.firstname = parseddata.firstname };
         if (parseddata.lastname) { userdata.lastname = parseddata.lastname };
-        if (parseddata.city) { userdata.city = parseddata.city };
 
         // TODO: check session id at serverside (maybe check later)
         //        when actually doing a request
@@ -72,18 +72,17 @@
           'password': password
         }
       }).then(function (response) {
-        console.log(response);
         if (response.data.successful) {
           // set userdata from response
           var userdata = {
             session: response.data.session,
             username: response.data.username,
             email: response.data.email,
-            id: response.data.id
+            id: response.data.id,
+            otherProperties: response.data.otherProperties
           }
           if (response.data.firstname) { userdata.firstname = response.data.firstname };
           if (response.data.lastname) { userdata.lastname = response.data.lastname };
-          if (response.data.city) { userdata.city = response.data.city };
 
           // set data rootScope and localstorage
           if (setUserData(userdata)) {

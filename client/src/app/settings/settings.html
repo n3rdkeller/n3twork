@@ -1,12 +1,12 @@
 <div ng-controller="SettingsCtrl as settings" class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
   <br>
-  <h3 class="text-center">These are your settings, <span ng-bind="userdata.name"></span>.</h3>
+  <h3 class="text-center">These are your settings, <span ng-bind="userdata.username"></span>.</h3>
   <br>
 
   <form role="form" name="settingsForm" ng-submit="settings.submit(settingsForm.$valid)" novalidate>
     <div class="form-group">
       <label for="username">Username (cannot be changed)</label>
-      <input readonly type="username" class="form-control" id="username" value="{{ userdata.name }}">
+      <input readonly type="username" class="form-control" id="username" value="{{ userdata.username }}">
     </div>
     <div class="form-group">
       <label for="firstname">First name (optional)</label>
@@ -23,7 +23,7 @@
     </div>
     <div class="form-group">
       <label for="city">City (optional)</label>
-      <input type="text" class="form-control" name="city" id="city" ng-model="settings.user.city" ng-init="settings.user.city = userdata.city" placeholder="Enter your city">
+      <input type="text" class="form-control" name="city" id="city" ng-model="settings.user.city" ng-init="settings.user.city = userdata.otherProperties.city" placeholder="Enter your city">
     </div>
     <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress default paste' }">
       <label for="pw">New password</label>

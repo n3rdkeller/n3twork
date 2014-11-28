@@ -39,6 +39,9 @@
             vm.successful = false;
             vm.loading = false;
           }
+        }, function (error) {
+          vm.successful = false;
+          vm.loading = false;
         });
       } else {
         vm.successful = false;
@@ -67,12 +70,16 @@
       if (vm.user.firstname && (vm.user.firstname != $rootScope.userdata.firstname)) { dataThatHasChanged.firstname = vm.user.firstname };
       // are first- and lastname given?
       if (vm.user.lastname && vm.user.firstname && (vm.user.lastname != $rootScope.userdata.lastname)) { dataThatHasChanged.lastname = vm.user.lastname };
-      // is city given?
-      if (vm.user.city && (vm.user.city != $rootScope.userdata.city)) { dataThatHasChanged.city = vm.user.city };
       // is email given?
       if (vm.user.email && (vm.user.email != $rootScope.userdata.email)) { dataThatHasChanged.email = vm.user.email };
       // is password given?
       if (vm.user.pw && (vm.user.pw == vm.user.pwconfirm)) { dataThatHasChanged.pw = vm.user.pw };
+
+      // otherProperties
+      dataThatHasChanged.otherProperties = {};
+      // city
+      if (vm.user.city && (vm.user.city != $rootScope.userdata.otherProperties.city)) { dataThatHasChanged.otherProperties.city = vm.user.city };
+
       // return object with the data that has changed
       return dataThatHasChanged;
     }
@@ -81,6 +88,13 @@
       if (theForm) { theForm.$setPristine(); };
       $rootScope.$broadcast('show-errors-reset');
 
+      // required fields
+      vm.user.pw = "";
+      vm.user.pwconfirm = "";
+      vm.user.email = $rootScope.userdata.email;
+
+
+      // optional fields
       if ($rootScope.userdata.firstname) {
         vm.user.firstname = $rootScope.userdata.firstname
       } else {
@@ -91,9 +105,13 @@
       } else {
         vm.user.lastname = "";
       }
-      vm.user.pw = "";
-      vm.user.pwconfirm = "";
-      vm.user.email = $rootScope.userdata.email;
+
+      // otherProperties
+      if ($rootScope.userdata.otherProperties.city) {
+        vm.user.city = $rootScope.userdata.otherProperties.city
+      } else {
+        vm.user.city = "";
+      }
     }
 
     function deleteUser(doubleChecked) {
@@ -110,6 +128,9 @@
             vm.successfullyDeleted = true;
             UserSvc.localLogout();
           }
+        }, function (error) {
+          vm.deleteLoading = false;
+          vm.successfullyDeleted = false;
         });
       } else {
         console.log('You didn\'t double check. Nasty boy.');
