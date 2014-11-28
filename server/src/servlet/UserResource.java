@@ -158,7 +158,7 @@ public class UserResource {
   
   /**
    * Post Request to show user by id
-   * @param jsonInput {"session":"sessionID" , "id":userID} with userID being optional
+   * @param jsonInput {"session":"sessionID" , "username":"username"} with userID being optional
    * @return Response with the entity {"successful":true / false} and html error code 200
    */
   @POST @Path("/")
@@ -176,8 +176,8 @@ public class UserResource {
         log.debug("/user returns: " + entity);
         return Helper.okResponse(entity);
       }
-      if (input.containsKey("id")) {
-        user = new User(input.getInt("id"));
+      if (input.containsKey("username")) {
+        user = new User(jsonInput);
         if (!user.getBasicsFromDB()) {
           String entity = String.valueOf(Json.createObjectBuilder()
               .add("successful", false)
@@ -186,6 +186,8 @@ public class UserResource {
           log.debug("/user returns: " + entity);
           return Helper.okResponse(entity);
         }      
+      } else {
+        user.setSessionID(null);
       }
       String entity = user.getAsJson();
       log.debug("/user returns: " + entity);

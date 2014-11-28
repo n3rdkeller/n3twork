@@ -91,9 +91,13 @@ public class User {
       }
     } else {
       this.username = userAsJsonObject.getString("username");
-      this.email = userAsJsonObject.getString("email");
+      if (userAsJsonObject.containsKey("email")) {
+        this.email = userAsJsonObject.getString("email");
+      }
     }
-    this.password = md5(userAsJsonObject.getString("password"));
+    if (userAsJsonObject.containsKey("password")) {
+      this.password = md5(userAsJsonObject.getString("password"));
+    }
   }
   
   /**
@@ -200,7 +204,7 @@ public class User {
         .add("otherProperties", otherProperties));
     }
     return String.valueOf(Json.createObjectBuilder()
-        .add("userList", userList)
+        .add("user", userList)
         .add("successful", true)
         .build());
   }
@@ -365,7 +369,7 @@ public class User {
               + "WHERE SessionIDs.sessionID='" + this.sessionID + "'");
     } else {
       userTable = DBConnector.selectQuery(conn, 
-          "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
+          "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id + " OR username='" + this.username + "'");
     }
     conn.close();
     if (userTable.size() == 1) return false;
@@ -429,24 +433,25 @@ public class User {
    * @return JsonObject converted to String
    */
   public String getAsJson() {
+    JsonObjectBuilder userJson = Json.createObjectBuilder();
     JsonObjectBuilder otherProperties = Json.createObjectBuilder();
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
       otherProperties.add(e.getKey(), e.getValue());
     }
     if (this.name == null) this.name="";
     if (this.firstName ==  null) this.firstName="";
-    if (this.sessionID == null) this.sessionID="";
-    JsonObject userJson = Json.createObjectBuilder()
+    if (this.sessionID != null && this.sessionID != "") {
+      userJson.add("session", this.sessionID);
+    }
+    userJson
       .add("id", this.id)
       .add("username", this.username)
       .add("email", this.email)
       .add("lastname", this.name)
       .add("firstname", this.firstName)
-      .add("session", this.sessionID)
       .add("otherProperties", otherProperties)
-      .add("successful", true)
-      .build();
-    String jsonString = String.valueOf(userJson);
+      .add("successful", true);
+    String jsonString = String.valueOf(userJson.build());
     return jsonString;
   }
   
@@ -624,6 +629,11 @@ public class User {
     return this;
   }
 
+  public User setSessionID(String session) {
+    this.sessionID = session;
+    return this;
+  }
+  
   /**
    * Gets property by name. e.g. getOtherProperty("gender")
    * @param key
