@@ -76,7 +76,7 @@ out:
             "username": "asdddddd"
         },
         {
-            "email": "theresareifschneider@gmail.com",
+            "email": "theres...neider@gmail.com",
             "firstname": "",
             "id": 30,
             "lastname": "",
@@ -85,6 +85,7 @@ out:
         }, 
     ]
 }
+```
 #### /user/count
 in:
 ``` json
