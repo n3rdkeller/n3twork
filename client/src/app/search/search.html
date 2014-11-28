@@ -1,20 +1,26 @@
 <br><br>
 <div ng-controller="SearchCtrl as search">
-<!--   <pre>Model: {{search.selectedUser | json}}</pre>
-  <input autofocus type="text" ng-model="search.selectedUser" typeahead="user.username for user in search.userlist | filter:{ firstname: user.firstname, lastname: user.lastname, username: user.username} | limitTo:4" typeahead-min-length=3 class="form-control">
-   -->
   <div class="row">
     <form novalidate name="searchForm" ng-submit="search.loadSearchList(searchForm.$valid, search.searchString)" class="col-md-offset-3 col-md-6">
       <div class="form-group">
-        <input required autofocus ng-minlength=3 ng-readonly="search.firstLoading || search.secondLoading" type="search" ng-model="search.searchString" class="form-control input-lg" placeholder="Type search string and press enter">
+        <input autofocus ng-readonly="search.firstLoading || search.secondLoading" type="search" ng-model="search.searchString" class="form-control input-lg" placeholder="Type search string and press enter">
+        <div class="help-block" ng-hide="search.firstLoading || search.secondLoading">
+          <span ng-hide="(search.submittedSearchString.length > 2) || search.firstSearch">
+            You only searched for groups. Enter more than 3 characters to search also for users.
+          </span>
+          <span ng-show="search.submittedSearchString.length > 2">
+            Your search <span ng-show="search.submittedSearchString.length > 0">for "{{ search.submittedSearchString }}"</span> returned
+            <ng-pluralize count="filteredUserSearch.length" when="{ '0': 'no Users', 'one': 'one User', 'other': ' {} Users' }"></ng-pluralize> and <ng-pluralize count="filteredGroupSearch.length" when="{ '0': 'no Groups', 'one': 'one Group', 'other': '{} Groups' }"></ng-pluralize>.
+          </span>
+        </div>
       </div>
     </form>
-  </div><br>
+  </div>
   <div class="row">
     <ul class="media-list" ng-class="{ 'col-sm-offset-1 col-sm-5 col-md-offset-3 col-md-4': filteredUserSearch.length > 0 }">
       <li class="media" ng-repeat="user in filteredUserSearch = (search.userlist | filter: search.submittedSearchString) | orderBy: 'user.username' | limitTo:8">
-        <span class="media-left media-middle">
-          <i class="fa fa-user fa-fw fa-3x"></i>
+        <span class="media-left">
+          <i class="fa fa-user fa-fw fa-3x" ng-class="{ 'user-is-me' : user.id == userdata.id }"></i>
         </span>
         <div class="media-body">
           <h4 class="media-heading">
@@ -34,7 +40,7 @@
     </ul>
     <ul class="media-list" ng-class="{ 'col-sm-5 col-md-4': filteredUserSearch.length > 0, 'col-md-offset-3 col-md-6': filteredUserSearch.length == 0 }">
       <li class="media" ng-repeat="group in filteredGroupSearch = (search.grouplist | filter: search.submittedSearchString) | orderBy: 'group.groupName' | limitTo:8">
-        <span class="media-left media-middle">
+        <span class="media-left">
           <i class="fa fa-users fa-fw fa-3x"></i>
         </span>
         <div class="media-body">
