@@ -5,15 +5,17 @@
     .module('n3twork')
     .service('UserSvc', UserSvc);
 
-  UserSvc.$inject = ['APISvc', '$window', '$rootScope', '$location'];
+  UserSvc.$inject = ['APISvc', '$window', '$rootScope', '$location', '$q'];
 
-  function UserSvc(APISvc, $window, $rootScope, $location) {
+  function UserSvc(APISvc, $window, $rootScope, $location, $q) {
     var userdata = {};
+    var deferred = $q.defer();
 
     var service = {
       isLoggedIn: isLoggedIn,
       getUserData: getUserData,
       setUserData: setUserData,
+      login: login,
       logout: logout,
       localLogout: localLogout
     };
@@ -48,8 +50,9 @@
       }
     }
 
-    function setUserData() {
-      if ($rootScope.userdata) {
+    function setUserData(userdata) {
+      if (userdata) {
+        $rootScope.userdata = userdata;
         $window.localStorage.setItem('n3twork', JSON.stringify($rootScope.userdata));
         return true;
       } else {
@@ -57,6 +60,34 @@
       }
     }
 
+    function login(logindata, password) {
+      APISvc.request({
+        method: 'POST',
+        url: '/login',
+        data: {
+          'login': logindata,
+          'password': password
+        }
+      }).then(function (response) {
+        // set userdata from response
+        var userdata = {
+          session: response.data.session,
+          name: response.data.username,
+          email: response.data.email,
+          id: response.data.id
+        }
+        if (response.data.firstname) { userdata.firstname = response.data.firstname };
+        if (response.data.lastname) { userdata.lastname = response.data.lastname };
+        if (response.data.city) { userdata.city = response.data.city };
+
+        // set data rootScope and localstorage
+        if (setUserData(userdata)) {
+          $location.path('/');
+          $rootScope.loggedin = true;
+        }
+      });
+      return deferred.promise;
+    }
 
     function logout() {
       APISvc.request({
