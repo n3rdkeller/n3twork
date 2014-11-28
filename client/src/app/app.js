@@ -7,7 +7,7 @@
       'ui.bootstrap.showErrors',
       'n3twork.register',
       'n3twork.auth',
-      'n3twork.main',
+      'n3twork.profile',
       'n3twork.settings',
       'n3twork.search'
     ])
@@ -16,8 +16,8 @@
   function config($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'app/mainpage/main.html',
-        controller: 'MainCtrl',
+        templateUrl: 'app/profile/profile.html',
+        controller: 'ProfileCtrl',
         resolve: authResolver
       })
       .when('/register', {
@@ -35,6 +35,11 @@
       .when('/search', {
         templateUrl: 'app/search/search.html',
         controller: 'SearchCtrl',
+        resolve: authResolver
+      })
+      .when('/user/:username', {
+        templateUrl: 'app/profile/profile.html',
+        controller: 'ProfileCtrl',
         resolve: authResolver
       })
       .otherwise({
