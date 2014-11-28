@@ -18,7 +18,6 @@
       .when('/', {
         templateUrl: 'app/mainpage/main.html',
         controller: 'MainCtrl',
-        activetab: 'main',
         resolve: authResolver
       })
       .when('/register', {
@@ -31,7 +30,11 @@
       .when('/settings', {
         templateUrl: 'app/settings/settings.html',
         controller: 'SettingsCtrl',
-        activetab: 'settings',
+        resolve: authResolver
+      })
+      .when('/search', {
+        templateUrl: 'app/search/search.html',
+        controller: 'SearchCtrl',
         resolve: authResolver
       })
       .otherwise({
