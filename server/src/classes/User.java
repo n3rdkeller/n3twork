@@ -187,21 +187,26 @@ public class User {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> counterTable = DBConnector.selectQuery(conn, 
         "SELECT Users.id,SessionIDs.sessionID FROM " + DBConnector.DATABASE + ".Users "
-        + "LEFT JOIN SessionIDs "
+        + "LEFT JOIN " + DBConnector.DATABASE + ".SessionIDs "
         + "ON Users.id=SessionIDs.userID");
     counterTable.remove(0); //remove column titles
     int usersOnline = 0;
     String lastID = "";
+    List<Integer> toBeRemoved = new ArrayList<Integer>();
     for (ArrayList<String> row : counterTable) {
       String currentID = row.get(0);
-      if (lastID == currentID){
-        counterTable.remove(row);
+      log.debug(lastID + " " + currentID);
+      if (lastID.equals(currentID)){
+        toBeRemoved.add(counterTable.indexOf(row));
       } else {
         if (row.get(1) != null) {
           usersOnline++;
         }
       }
       lastID = currentID;
+    }
+    for (int rowIndex : toBeRemoved) {
+      counterTable.remove(rowIndex);
     }
     int users = counterTable.size();
     String returnString = String.valueOf(Json.createObjectBuilder()
