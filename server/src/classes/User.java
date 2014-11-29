@@ -183,6 +183,14 @@ public class User {
     return userList;
   }
   
+  /**
+   * Gets total number of users and number of users currently online
+   * @return { "users":x, "usersOnline" }
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public static String getSimpleUserStats() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> counterTable = DBConnector.selectQuery(conn, 
@@ -263,6 +271,13 @@ public class User {
     return hashtext;
   }
   
+  /**
+   * Removes the current user from db
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public void removeFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
@@ -956,6 +971,15 @@ public class User {
     return this;
   }
   
+  /**
+   * Deletes given friend
+   * @param friendID to be deleted friend
+   * @return this
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public User removeFriend(int friendID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Friends WHERE userID=" + this.id + " AND friendID=" + friendID);
@@ -964,7 +988,7 @@ public class User {
   
   /**
    * Gets all groups the user is in from the db.
-   * @return current user object
+   * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -987,20 +1011,46 @@ public class User {
     return this;
   }
   
+  /**
+   * Get the list of groups of the current user
+   * @return list of groups of the current user
+   */
   public List<Group> getGroups() {
     return this.groups;
   }
   
+  /**
+   * Get the list of groups of the current user as Json
+   * @return jsonString
+   */
   public String getGroupsAsJson() {
     return Group.convertGroupListToJson(this.groups);
   }
 
+  /**
+   * Add a group to the group list of the current user to the db
+   * @param group
+   * @return this
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public User addGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.groups.add(group);
     group.addMember(this);
     return this;
   }
   
+  /**
+   * removes mapping of a group to the current user
+   * @param group
+   * @return this
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public User removeGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     for (Group groupEle : this.groups) {
       if (groupEle.getId() == group.getId()) {

@@ -62,6 +62,15 @@ public class Group {
     // empty
   }
   
+  /**
+   * Get a list of all groups
+   * @param searchString
+   * @return list of all groups
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public static List<Group> findGroup(String searchString) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<Group> groupList = new ArrayList<Group>();
@@ -76,6 +85,14 @@ public class Group {
     return groupList;
   }
   
+  /**
+   * Gets simple group stats as json
+   * @return jsonString
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public static String getSimpleGroupStats() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> counterTable = DBConnector.selectQuery(conn, 
@@ -88,6 +105,11 @@ public class Group {
     return returnString;
   }
   
+  /**
+   * Converts any list of groups to json String
+   * @param groupList any list of groups
+   * @return jsonString
+   */
   public static String convertGroupListToJson(List<Group> groupList) {
     JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
     for (Group group : groupList) {
@@ -108,6 +130,13 @@ public class Group {
         .build());
   }
   
+  /**
+   * Removes current user from DB
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public void removeFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
@@ -223,23 +252,45 @@ public class Group {
         .build());
   }
   
+  /**
+   * Simple getter for id
+   * @return id
+   */
   public int getId() {
     return this.id;
   }
   
+  /**
+   * Simple getter for name
+   * @return
+   */
   public String getName() {
     return this.name;
   }
   
+  /**
+   * Simple setter for name
+   * @param name
+   * @return this
+   */
   public Group setName(String name) {
     this.name = name;
     return this;
   }
-
+  
+  /**
+   * Simple getter for descr
+   * @return descr
+   */
   public String getDescr() {
     return this.descr;
   }
 
+  /**
+   * Simple setter for descr
+   * @param descr
+   * @return this
+   */
   public Group setDescr(String descr) {
     this.descr = descr;
     return this;
@@ -361,14 +412,28 @@ public class Group {
     }
   }
 
+  /**
+   * Simple getter for one Property of otherProperties
+   * @param key
+   * @return value
+   */
   public String getOtherProperty(String key) {
     return this.otherProperties.get(key);
   }
   
+  /**
+   * Simple getter for otherProperties
+   * @return  otherProperties
+   */
   public Map<String,String> getOtherProperties() {
     return this.otherProperties;
   }
 
+  /**
+   * Simple setter for one Property of otherProperties
+   * @param key
+   * @param value
+   */
   public void setOtherProperty(String key, String value) {
     this.otherProperties.put(key, value);
   }
