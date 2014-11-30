@@ -12,53 +12,131 @@ public class Post {
   private Boolean visibility;
   private Map<User,Date> upVotes = new HashMap<User,Date>();
 
+  /**
+   * Simple constructor
+   * @param owner Value for this.owner
+   * @param title Value for this.title
+   * @param visibility Value for this.visibility
+   */
   public Post(User owner, String title, Boolean visibility) {
     this.owner = owner;
     this.title = title;
     this.visibility = visibility;
   }
+  
+  /**
+   * Empty constructor
+   */
+  public Post(){
+    //empty
+  }
 
+  /**
+   * Sets standard values in db
+   * @return true if successful
+   */
+  public Boolean createInDB() {
+    return true;
+  }
+  
+  /**
+   * Simple getter for id
+   * @return this.id
+   */
+  public int getId() {
+    return this.id;
+  }
+  
+  /**
+   * Simple getter for owner
+   * @return this.owner
+   */
   public User getOwner() {
-    return null;
+    return this.owner;
   }
 
+  /**
+   * Simple getter for title
+   * @return this.title
+   */
   public String getTitle() {
-    return null;
+    return this.title;
   }
 
-  public void setTitle(String tile) {
-
+  /**
+   * Simple setter for title
+   * @param tile New value for this.title
+   * @return this
+   */
+  public Post setTitle(String tile) {
+    return this;
   }
 
+  /**
+   * Simple getter for content
+   * @return this.content
+   */
   public String getContent() {
-    return null;
+    return this.content;
   }
 
-  public void setContent(String content) {
-
+  /**
+   * Simple setter for content
+   * @param content New value for this.content
+   * @return this
+   */
+  public Post setContent(String content) {
+    return this;
   }
 
+  /**
+   * Simple getter for postDate
+   * @return this.postDate
+   */
   public Date getPostDate() {
-    return null;
+    return this.postDate;
   }
 
-  private void setPostDate() {
-
+  /**
+   * Simple setter for postDate
+   * @param postDate New value for this.postDate
+   * @return this
+   */
+  public Post setPostDate(Date postDate) {
+    return this;
   }
 
+  /**
+   * Simple getter for visibility
+   * @return this.visibility
+   */
   public Boolean getVisibility() {
-    return null;
+    return this.visibility;
   }
 
-  public void setVisibility(Boolean visi) {
-
+  /**
+   * Simple setter for visibility
+   * @param visi New value for this.visibility
+   * @return this
+   */
+  public Post setVisibility(Boolean visi) {
+    return this;
   }
 
+  /**
+   * Simple getter for upVotes
+   * @return this.upVotes
+   */
   public Map<User,Date> getUpVotes() {
-    return null;
+    return this.upVotes;
   }
 
-  public void addUpVote(User voter) {
-
+  /**
+   * Add a new up vote to upVotes
+   * @param voter User for new upVote
+   * @return this
+   */
+  public Post addUpVote(User voter) {
+    return this;
   }
 }
