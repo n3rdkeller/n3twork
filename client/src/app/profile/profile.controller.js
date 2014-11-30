@@ -5,9 +5,9 @@
     .module('n3twork.profile')
     .controller('ProfileCtrl', ProfileCtrl);
 
-  ProfileCtrl.$inject = ['$rootScope', '$routeParams'];
+  ProfileCtrl.$inject = ['APISvc', '$rootScope', '$routeParams'];
 
-  function ProfileCtrl($rootScope, $routeParams) {
+  function ProfileCtrl(APISvc, $rootScope, $routeParams) {
     var vm = this;
 
     init();
@@ -24,12 +24,13 @@
           APISvc.request({
             method: 'POST',
             url: '/user',
-            data: { 'username': username }
+            data: { 'username': $routeParams.username }
           }).then(function (response) {
             vm.loading = false;
             if (response.data.successful) {
               delete response.data.successful;
               vm.userdata = response.data;
+              getDisplayName();
             } else {
               // user doesn't exist, or whatever
               vm.doesntexist = true;
@@ -44,5 +45,16 @@
         vm.userdata = $rootScope.userdata;
       }
     }
+
+    function getDisplayName () {
+      var displayName = '';
+      displayName += (vm.userdata.firstname ? vm.userdata.firstname + ' ' : '')
+                    + (vm.userdata.lastname ? vm.userdata.lastname + ' ' : '')
+                    + ((vm.userdata.firstname || vm.userdata.lastname) ? '( ' : '')
+                    + vm.userdata.username
+                    + ((vm.userdata.firstname || vm.userdata.lastname) ? ' )' : '');
+      vm.displayName = displayName;
+    }
+
   }
 })();
