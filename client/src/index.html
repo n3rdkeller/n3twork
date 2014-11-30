@@ -8,9 +8,9 @@
     <title>n3twork</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <!-- FontAwesome -->
-    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
     <!-- Stylesheet, created with LESS -->
     <link rel="stylesheet" type="text/css" href="css/main.css">
   </head>
@@ -44,34 +44,8 @@
       <div ng-view class="container-fluid"></div><br>
     </div>
 
-    <!-- Angular-App and Dependencies -->
-    <script type="text/javascript" src="js/angular.min.js"></script>
-    <script type="text/javascript" src="js/angular-route.min.js"></script>
-    <script type="text/javascript" src="js/angular-messages.min.js"></script>
-    <script type="text/javascript" src="js/ui-bootstrap-tpls.min.js"></script>
-    <script type="text/javascript" src="js/showErrors.min.js"></script>
-    <script type="text/javascript" src="app/app.js"></script>
-    <script type="text/javascript" src="app/APISvc/APISvc.js"></script>
-    <script type="text/javascript" src="app/UserSvc/UserSvc.js"></script>
-    <script type="text/javascript" src="app/CacheSvc/CacheSvc.js"></script>
-    <script type="text/javascript" src="app/register/register.js"></script>
-    <script type="text/javascript" src="app/register/register.controller.js"></script>
-    <script type="text/javascript" src="app/register/compareTo.directive.js"></script>
-    <script type="text/javascript" src="app/register/checkUsername.directive.js"></script>
-    <script type="text/javascript" src="app/auth/auth.js"></script>
-    <script type="text/javascript" src="app/auth/auth.controller.js"></script>
-    <script type="text/javascript" src="app/profile/profile.js"></script>
-    <script type="text/javascript" src="app/profile/profile.controller.js"></script>
-    <script type="text/javascript" src="app/settings/settings.js"></script>
-    <script type="text/javascript" src="app/settings/settings.controller.js"></script>
-    <script type="text/javascript" src="app/search/search.js"></script>
-    <script type="text/javascript" src="app/search/search.controller.js"></script>
-
-    <!-- jQuery -->
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <!-- Collection of own scripts -->
-    <!-- <script type="text/javascript" src="js/stuff.min.js"></script> -->
+    <!-- All scripts concatted (and maybe also minified) -->
+    <!-- In here are also all frameworks and libraries -->
+    <script type="text/javascript" src="js/n3twork.min.js"></script>
   </body>
 </html>
