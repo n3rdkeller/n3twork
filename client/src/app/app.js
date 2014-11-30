@@ -19,6 +19,8 @@
         templateUrl: 'app/profile/profile.html',
         controller: 'ProfileCtrl',
         resolve: authResolver
+
+        // TODO: Here comes News Feed
       })
       .when('/register', {
         templateUrl: 'app/register/register.html',
@@ -91,22 +93,21 @@
 
 })();
 
+
 (function() {
   'use strict';
 
   angular
     .module('n3twork')
-    .controller('NavCtrl', NavCtrl);
+    .run(['$rootScope', '$location', NavCtrl]);
 
-  NavCtrl.$inject = ['$location'];
-
-  function NavCtrl($location) {
-    var vm = this;
-    vm.isActive = isActive;
+  function NavCtrl($rootScope, $location) {
+    $rootScope.isActive = isActive;
 
     function isActive (viewLocation) {
       return viewLocation === $location.path();
     }
   }
+
 })();
 

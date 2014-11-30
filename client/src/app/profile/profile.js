@@ -51,6 +51,7 @@
         // it's my own profile
         vm.userdata = $rootScope.userdata;
       }
+      getDisplayName();
     }
 
     function getDisplayName () {

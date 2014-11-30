@@ -106,7 +106,11 @@
         data: {}
       })
       .then(function (response) {
-        console.log('Successfully logged out.');
+        if (response.data.successful) {
+          console.log('Successfully logged out.');
+        } else {
+          console.log('Error logging out at server.')
+        }
       });
       localLogout();
     }
