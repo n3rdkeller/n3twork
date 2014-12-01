@@ -12,16 +12,15 @@
     .module('n3twork.auth')
     .controller('AuthCtrl', AuthCtrl);
 
-  AuthCtrl.$inject = ['APISvc', 'UserSvc', '$window', '$location', '$rootScope'];
+  AuthCtrl.$inject = ['UserSvc', '$location'];
 
-  function AuthCtrl(APISvc, UserSvc, $window, $location, $rootScope) {
+  function AuthCtrl(UserSvc, $location) {
     var vm = this;
 
     // methods
     vm.submit = submit;
     vm.logout = logout;
 
-    $rootScope.loggedin = false;
     vm.loginFailed = false;
 
     UserSvc.isLoggedIn();
