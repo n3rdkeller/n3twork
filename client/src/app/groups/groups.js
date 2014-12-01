@@ -69,28 +69,6 @@
       return deferred.promise;
     }
 
-    function getGroupList() {
-      var deferred = $q.defer();
-      // get groupList from API
-      APISvc.request({
-        method: 'POST',
-        url: '/user/groups',
-        data: { 'username': vm.userdata.username }
-      }).then(function (response) {
-        vm.loadingGroups = false;
-        if (response.data.successful) {
-          deferred.resolve(response.data.groupList);
-        } else {
-          deferred.reject(response.data.successful);
-        }
-      }, function (error) {
-        deferred.reject(error);
-      });
-
-      return deferred.promise;
-    }
-
-
   }
 
 
