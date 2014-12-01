@@ -24,17 +24,14 @@
   </li>
   <li ng-show="loggedin" id="userButton" class="dropdown">
     <a role="button" href="" class="dropdown-toggle" data-toggle="dropdown">
-      <span class="fa fa-user fa-fw"></span>
+      <i class="fa fa-user fa-fw"></i>
       <span ng-bind="userdata.username"></span>
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" role="menu">
-      <li>
-        <a href="#/profile"><span class="fa fa-user fa-fw"></span> Profile</a>
-      </li>
-      <li><a href="#/settings"><span class="fa fa-cog fa-fw"></span> Settings</a></li>
+      <li><a href="#/settings"><i class="fa fa-cog fa-fw"></i> Settings</a></li>
       <li class="divider"></li>
-      <li><a ng-click="auth.logout()" href="#"><span class="fa fa-sign-out fa-fw"></span> Logout</a></li>
+      <li><a ng-click="auth.logout()" href="#"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
     </ul>
   </li>
 </ul>

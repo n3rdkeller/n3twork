@@ -12,55 +12,182 @@
     .module('n3twork.profile')
     .controller('ProfileCtrl', ProfileCtrl);
 
-  ProfileCtrl.$inject = ['APISvc', '$rootScope', '$routeParams'];
+  ProfileCtrl.$inject = ['APISvc', '$q', '$rootScope', '$routeParams'];
 
-  function ProfileCtrl(APISvc, $rootScope, $routeParams) {
+  function ProfileCtrl(APISvc, $q, $rootScope, $routeParams) {
     var vm = this;
+
+    vm.friendAction = friendAction;
 
     init();
 
-    function init () {
+    function init() {
+      getUserData().then(function (userdata) {
+        vm.userdata = userdata;
+        checkIfFriend().then(function (isFriend) {
+          vm.isFriend = isFriend;
+        }, function (error) {
+          // error
+        });
+        getGroupList().then(function (groupList) {
+          vm.grouplist = groupList;
+        }, function (error) {
+          vm.grouplist = [];
+        });
+        getFriendList().then(function (friendList) {
+          vm.friendlist = friendList;
+        }, function (error) {
+          vm.friendlist = [];
+        });
+      }, function (error) {
+        vm.doesntexist = true;
+      });
+    }
+
+    function getUserData() {
+      var deferred = $q.defer();
       if ($routeParams.username) {
         // if it's my username
         if ($routeParams.username == $rootScope.userdata.username) {
           // it's my own profile
-          vm.userdata = $rootScope.userdata;
+          deferred.resolve($rootScope.userdata);
+          vm.itsMe = true;
         } else {
-          vm.loading = true;
-          // get userdata from API
-          APISvc.request({
-            method: 'POST',
-            url: '/user',
-            data: { 'username': $routeParams.username }
-          }).then(function (response) {
-            vm.loading = false;
-            if (response.data.successful) {
-              delete response.data.successful;
-              vm.userdata = response.data;
-              getDisplayName();
-            } else {
-              // user doesn't exist, or whatever
-              vm.doesntexist = true;
-            }
+          getUserDataFromAPI().then(function (userdata) {
+            deferred.resolve(userdata);
           }, function (error) {
-            // user doesn't exist, or whatever
-            vm.doesntexist = true;
+            deferred.reject(error);
           });
         }
       } else {
         // it's my own profile
-        vm.userdata = $rootScope.userdata;
+        deferred.resolve($rootScope.userdata);
+        vm.itsMe = true;
       }
+
+      return deferred.promise;
     }
 
-    function getDisplayName () {
-      var displayName = '';
-      displayName += (vm.userdata.firstname ? vm.userdata.firstname + ' ' : '')
-                    + (vm.userdata.lastname ? vm.userdata.lastname + ' ' : '')
-                    + ((vm.userdata.firstname || vm.userdata.lastname) ? '( ' : '')
-                    + vm.userdata.username
-                    + ((vm.userdata.firstname || vm.userdata.lastname) ? ' )' : '');
-      vm.displayName = displayName;
+    function getUserDataFromAPI() {
+      var deferred = $q.defer();
+      vm.loadingUserData = true;
+      // get userdata from API
+      APISvc.request({
+        method: 'POST',
+        url: '/user',
+        data: { 'username': $routeParams.username }
+      }).then(function (response) {
+        vm.loadingUserData = false;
+        if (response.data.successful) {
+          deferred.resolve(response.data);
+        } else {
+          deferred.reject(response.data.successful);
+        }
+      }, function (error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function getGroupList() {
+      var deferred = $q.defer();
+      vm.loadingGroups = true;
+      // get groupList from API
+      APISvc.request({
+        method: 'POST',
+        url: '/user/groups',
+        data: { 'username': vm.userdata.username }
+      }).then(function (response) {
+        vm.loadingGroups = false;
+        if (response.data.successful) {
+          deferred.resolve(response.data.groupList);
+        } else {
+          deferred.reject(response.data.successful);
+        }
+      }, function (error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function getFriendList() {
+      var deferred = $q.defer();
+      vm.loadingFriends = true;
+      // get friendList from API
+      APISvc.request({
+        method: 'POST',
+        url: '/user/friends',
+        data: { 'id': vm.userdata.id }
+      }).then(function (response) {
+        vm.loadingFriends = false;
+        if (response.data.successful) {
+          deferred.resolve(response.data.friendList);
+        } else {
+          deferred.reject(response.data.successful);
+        }
+      }, function (error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function checkIfFriend() {
+      var deferred = $q.defer();
+      vm.checkingFriend = true;
+      // get OWN friendList from API
+      APISvc.request({
+        method: 'POST',
+        url: '/user/friends',
+        data: { }
+      }).then(function (response) {
+        vm.checkingFriend = false;
+        if (response.data.successful) {
+          for (var i = 0; i < response.data.friendList.length; i++) {
+            if (response.data.friendList[i].id == vm.userdata.id) {
+              vm.trueFriend = response.data.friendList[i].trueFriend;
+              deferred.resolve(true);
+            }
+          }
+          deferred.resolve(false);
+        } else {
+          deferred.reject(response.data.successful);
+        }
+      }, function (error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+    }
+
+    function friendAction() {
+      vm.friendButtonLoading = true;
+      APISvc.request({
+        method: 'POST',
+        url: '/user/friend/' + (vm.isFriend ? 'remove' : 'add'),
+        data: { 'friend': vm.userdata.id }
+      }).then(function (response) {
+        vm.friendButtonLoading = false;
+        if (response.data.successful) {
+          // change friend status
+          vm.isFriend = !vm.isFriend;
+          if (!vm.isFriend) {
+            vm.trueFriend = false;
+          } else {
+            checkIfFriend().then(function (isFriend) {
+              vm.isFriend = isFriend;
+            }, function (error) {
+              // error
+            });
+          }
+        } else {
+          // error changing friend status
+        }
+      }, function (error) {
+        // error changing friend status
+      });
     }
 
   }

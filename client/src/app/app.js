@@ -18,11 +18,15 @@
       .when('/', {
         templateUrl: 'app/profile/profile.html',
         controller: 'ProfileCtrl',
+        controllerAs: 'profile',
         resolve: authResolver
+
+        // TODO: Here comes News Feed
       })
       .when('/register', {
         templateUrl: 'app/register/register.html',
-        controller: 'RegisterCtrl'
+        controller: 'RegisterCtrl',
+        controllerAs: 'register'
       })
       .when('/login', {
         redirectTo: '/register'
@@ -30,16 +34,19 @@
       .when('/settings', {
         templateUrl: 'app/settings/settings.html',
         controller: 'SettingsCtrl',
+        controllerAs: 'settings',
         resolve: authResolver
       })
       .when('/search', {
         templateUrl: 'app/search/search.html',
         controller: 'SearchCtrl',
+        controllerAs: 'search',
         resolve: authResolver
       })
       .when('/user/:username', {
         templateUrl: 'app/profile/profile.html',
         controller: 'ProfileCtrl',
+        controllerAs: 'profile',
         resolve: authResolver
       })
       .otherwise({
@@ -91,22 +98,21 @@
 
 })();
 
+
 (function() {
   'use strict';
 
   angular
     .module('n3twork')
-    .controller('NavCtrl', NavCtrl);
+    .run(['$rootScope', '$location', NavCtrl]);
 
-  NavCtrl.$inject = ['$location'];
-
-  function NavCtrl($location) {
-    var vm = this;
-    vm.isActive = isActive;
+  function NavCtrl($rootScope, $location) {
+    $rootScope.isActive = isActive;
 
     function isActive (viewLocation) {
       return viewLocation === $location.path();
     }
   }
+
 })();
 
