@@ -1,0 +1,28 @@
+<div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6" ng-hide="group.loadingGroup || group.doesntexist || group.errorOccured">
+  <!-- Names -->
+  <div class="row">
+    <div class="col-xs-3">
+      <h3><i class="fa fa-users fa-3x"></i></h3>
+    </div>
+    <div class="col-xs-9">
+      <h3 ng-bind="group.groupName">Group-Name</h3>
+    </div>
+  </div>
+  <button type="button" ng-hide="group.checkingStatus" ng-disabled="group.statusButtonLoading" class="btn btn-block group-text margin-top" ng-class="{ 'btn-success': !group.isMember, 'btn-danger': group.isMember }" ng-click="group.friendAction()">
+    <span ng-show="!group.statusButtonLoading && !group.isMember"><i class="fa fa-plus fa-fw"></i> Join Group</span>
+    <span ng-show="!group.statusButtonLoading && group.isMember"><i class="fa fa-minus fa-fw"></i> Leave Group</span>
+    <span ng-show="group.statusButtonLoading"><i class="fa fa-spinner fa-spin"></i> Loading</span>
+  </button>
+</div>
+
+<div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6" ng-show="group.loadingGroup">
+  <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
+</div>
+
+<div class="text-center" ng-show="group.doesntexist && !group.errorOccured">
+  <h1><i class="fa fa-frown-o fa-4x"></i><br><br>Sorry, that group does not exist.</h1>
+</div>
+
+<div class="text-center" ng-show="group.errorOccured">
+  <h1><i class="fa fa-frown-o fa-4x"></i><br><br>Something went wrong. No further information available.</h1>
+</div>

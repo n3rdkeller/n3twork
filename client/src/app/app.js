@@ -56,6 +56,12 @@
         controllerAs: 'friends',
         resolve: authResolver
       })
+      .when('/group/:id', {
+        templateUrl: 'app/groups/group.html',
+        controller: 'GroupCtrl',
+        controllerAs: 'group',
+        resolve: authResolver
+      })
       .otherwise({
         redirectTo: '/'
       });
