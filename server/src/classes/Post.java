@@ -1,4 +1,6 @@
 package classes;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,11 +19,12 @@ public class Post {
   final static Logger log = LogManager.getLogger(Post.class);
   
   private int id;
-  private User owner;
+  private int ownerID;
   private String content;
   private String title;
   private Date postDate;
   private Boolean visibility;
+  private Boolean type;
   private Map<User,Date> upVotes = new HashMap<User,Date>();
 
   /**
@@ -30,8 +33,8 @@ public class Post {
    * @param title Value for this.title
    * @param visibility Value for this.visibility
    */
-  public Post(User owner, String title, Boolean visibility) {
-    this.owner = owner;
+  public Post(int ownerID, String title, Boolean visibility) {
+    this.ownerID = ownerID;
     this.title = title;
     this.visibility = visibility;
   }
@@ -46,7 +49,7 @@ public class Post {
   /**
    * Converts any list of posts to a json string
    * @param postList any list of posts
-   * @return <pre><code>{
+   * @return <pre><code> {
    *   "postList": [
    *     {
    *       "content":"content text",
@@ -75,9 +78,11 @@ public class Post {
             .add("voter", upVote.getKey().getId())
             .add("date", upVote.getValue().getTime()));
       }
+      if (post.getTitle() == null) post.setTitle("");
+      if (post.getContent() == null) post.setContent("");
       jsonPostList.add(Json.createObjectBuilder()
           .add("id", post.getId())
-          .add("owner", post.getOwner().getId())
+          .add("owner", post.getOwner())
           .add("title", post.getTitle())
           .add("content", post.getContent())
           .add("postDate", post.getPostDate().getTime())
@@ -94,8 +99,21 @@ public class Post {
   /**
    * Sets standard values in db
    * @return true if successful
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public Boolean createInDB() {
+  public Boolean createInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    // int myInt = (myBoolean) ? 1 : 0
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, 
+        "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,type,title,content,visibility) "
+            + "VALUES(" + this.ownerID + "," 
+            + (this.type) != null ? "1" : "0" + ",'" 
+            + this.title + "','"
+            + this.content + "',"
+            + (this.visibility) != null ? "1" : "0");
     return true;
   }
   
@@ -108,13 +126,32 @@ public class Post {
   }
   
   /**
+   * Simple setter for id
+   * @param id New Value for this.id
+   * @return this
+   */
+  public Post setId(int id) {
+    this.id = id;
+    return this;
+  }
+  
+  /**
    * Simple getter for owner
    * @return this.owner
    */
-  public User getOwner() {
-    return this.owner;
+  public int getOwner() {
+    return this.ownerID;
   }
 
+  /**
+   * Simple setter for owner
+   * @param owner New Value for this.owner
+   * @return this
+   */
+  public Post setOwner(int ownerID) {
+    this.ownerID = ownerID;
+    return this;
+  }
   /**
    * Simple getter for title
    * @return this.title
@@ -182,7 +219,15 @@ public class Post {
   public Post setVisibility(Boolean visibility) {
     return this;
   }
-
+  
+  public Boolean getType() {
+    return this.type;
+  }
+  
+  public Post setType(Boolean type) {
+    this.type = type;
+    return this;    
+  }
   /**
    * Simple getter for upVotes
    * @return this.upVotes
@@ -199,4 +244,5 @@ public class Post {
   public Post addUpVote(User voter) {
     return this;
   }
+
 }

@@ -1,5 +1,6 @@
 package classes;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Group {
   private String descr = "";
   private List<User> members = new ArrayList<User>();
   private Map<String,String> otherProperties = new HashMap<String,String>();
+  private List<Post> posts;
 
   /**
    * Basic Constructor
@@ -489,6 +491,29 @@ public class Group {
     }
     
     DBConnector.executeUpdate(conn, insertQueryHead + insertQueryTail + ")");
+  }
+
+  public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> postTable = DBConnector.selectQuery(conn, 
+        "SELECT id, title, content, visibility, date " + DBConnector.DATABASE + ".Posts "
+        + "WHERE ownerID="+ this.id + " AND type = 1");
+    postTable.remove(0);
+    for(ArrayList<String> row : postTable) {
+      this.posts.add(new Post()
+        .setId(Integer.parseInt(row.get(0)))
+        .setTitle(row.get(1))
+        .setContent(row.get(2))
+        .setVisibility(Integer.parseInt(row.get(3)) != 0)
+        .setOwner(this.id)
+        .setPostDate(new Date(Long.parseLong(row.get(4)))));
+    }
+    return this.posts;
+  }
+
+  public void addPost() {
+    // TODO Auto-generated method stub
+    
   }
 
 }
