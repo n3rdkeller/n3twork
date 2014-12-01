@@ -9,7 +9,8 @@
       'n3twork.auth',
       'n3twork.profile',
       'n3twork.settings',
-      'n3twork.search'
+      'n3twork.search',
+      'n3twork.friends'
     ])
     .config(config);
 
