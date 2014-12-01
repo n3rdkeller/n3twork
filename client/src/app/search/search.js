@@ -36,8 +36,8 @@
       vm.submittedSearchString = searchString;
       if (searchString) {
         if (searchString.length > 2) {
-          CacheSvc.getUserList().then(function (response) {
-            vm.userlist = response.userList;
+          CacheSvc.getUserList().then(function (userList) {
+            vm.userlist = userList;
             vm.firstLoading = false;
           });
         } else {
@@ -52,8 +52,8 @@
 
     function loadGroupList(searchString) {
       vm.submittedSearchString = searchString;
-      CacheSvc.getGroupList().then(function (response) {
-        vm.grouplist = response.groupList;
+      CacheSvc.getGroupList().then(function (groupList) {
+        vm.grouplist = groupList;
         vm.secondLoading = false;
       });
     }

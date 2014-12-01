@@ -3,7 +3,7 @@
   <h3 class="text-center">These are your settings, <span ng-bind="userdata.username"></span>.</h3>
   <br>
 
-  <form role="form" name="settingsForm" ng-submit="settings.submit(settingsForm.$valid)" novalidate>
+  <form role="form" name="settingsForm" ng-model="settings.settingsForm" ng-submit="settings.submit(settingsForm.$valid)" novalidate>
     <div class="form-group">
       <label for="username">Username (cannot be changed)</label>
       <input disabled type="username" class="form-control" id="username" value="{{ userdata.username }}">
@@ -45,7 +45,7 @@
           <i class="fa fa-spinner fa-spin fa-fw"></i> Saving
         </span>
       </button>
-      <button type="reset" class="btn btn-warning pull-right" ng-click="settings.resetForm(settingsForm)" ng-disabled="settingsForm.$pristine">
+      <button type="button" class="btn btn-warning pull-right" ng-click="settings.resetForm()" ng-disabled="!settings.somethingChanged()">
         <i class="fa fa-bolt fa-fw"></i> Reset
       </button>
       </div>

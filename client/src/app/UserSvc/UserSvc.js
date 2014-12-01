@@ -56,7 +56,7 @@
       if (userdata) {
         $rootScope.userdata = userdata;
         $rootScope.loggedin = true;
-        $window.localStorage.setItem('n3twork', JSON.stringify($rootScope.userdata));
+        $window.localStorage.setItem('n3twork', JSON.stringify(userdata));
         return true;
       } else {
         return false;

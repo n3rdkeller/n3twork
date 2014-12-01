@@ -37,9 +37,9 @@
         .then(function (response) {
           if (response.data.successful) {
             $rootScope.userdata = merge($rootScope.userdata, changedData());
-            if (UserSvc.setUserData()) {
-              resetForm();
+            if (UserSvc.setUserData($rootScope.userdata)) {
               vm.loading = false;
+              resetForm();
             }
             vm.successful = true;
           } else {
@@ -65,18 +65,15 @@
     function somethingChanged() {
       // if something changed (means there's data in the object)
       // return true, else return false
-      for (var data in changedData()) {
-        return true;
-      }
-      return false;
+      return !isEmpty(changedData());
     }
 
     function changedData() {
       var dataThatHasChanged = {};
       // is firstname given?
-      if (vm.user.firstname && (vm.user.firstname != $rootScope.userdata.firstname)) { dataThatHasChanged.firstname = vm.user.firstname };
+      if (vm.user.firstname != $rootScope.userdata.firstname) { dataThatHasChanged.firstname = vm.user.firstname };
       // are first- and lastname given?
-      if (vm.user.lastname && vm.user.firstname && (vm.user.lastname != $rootScope.userdata.lastname)) { dataThatHasChanged.lastname = vm.user.lastname };
+      if (vm.user.firstname && (vm.user.lastname != $rootScope.userdata.lastname)) { dataThatHasChanged.lastname = vm.user.lastname };
       // is email given?
       if (vm.user.email && (vm.user.email != $rootScope.userdata.email)) { dataThatHasChanged.email = vm.user.email };
       // is password given?
@@ -87,12 +84,24 @@
       // city
       if (vm.user.city && (vm.user.city != $rootScope.userdata.otherProperties.city)) { dataThatHasChanged.otherProperties.city = vm.user.city };
 
+      if (isEmpty(dataThatHasChanged.otherProperties)) {
+        delete dataThatHasChanged.otherProperties;
+      }
+
       // return object with the data that has changed
       return dataThatHasChanged;
     }
 
-    function resetForm(theForm) {
-      if (theForm) { theForm.$setPristine(); };
+    function isEmpty (obj) {
+      for (var data in obj) {
+        return false;
+      }
+      return true;
+    }
+
+
+    function resetForm() {
+      //vm.settingsForm.$setPristine();
       $rootScope.$broadcast('show-errors-reset');
 
       // required fields
@@ -107,7 +116,7 @@
       } else {
         vm.user.firstname = "";
       }
-      if ($rootScope.userdata.lastname) {
+      if ($rootScope.userdata.lastname && $rootScope.userdata.firstname) {
         vm.user.lastname = $rootScope.userdata.lastname
       } else {
         vm.user.lastname = "";

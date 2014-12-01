@@ -10,7 +10,8 @@
       'n3twork.profile',
       'n3twork.settings',
       'n3twork.search',
-      'n3twork.friends'
+      'n3twork.friends',
+      'n3twork.groups'
     ])
     .config(config);
 
@@ -54,6 +55,18 @@
         templateUrl: 'app/friends/friends.html',
         controller: 'FriendsCtrl',
         controllerAs: 'friends',
+        resolve: authResolver
+      })
+      .when('/user/:username/groups', {
+        templateUrl: 'app/groups/groups.html',
+        controller: 'GroupsCtrl',
+        controllerAs: 'groups',
+        resolve: authResolver
+      })
+      .when('/group/:id', {
+        templateUrl: 'app/groups/group.html',
+        controller: 'GroupCtrl',
+        controllerAs: 'group',
         resolve: authResolver
       })
       .otherwise({

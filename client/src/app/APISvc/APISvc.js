@@ -24,18 +24,16 @@
         }
       }
 
-      var promise = $http(req).then(complete).catch(failed);
+      var promise = $http(req); //.then(complete).catch(failed);
       // console.log(req);
       return promise;
     }
 
     function complete(response) {
-      // console.log(response);
       return response;
     }
 
     function failed(error) {
-      console.log(error);
       return error;
     }
 
