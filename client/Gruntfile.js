@@ -48,7 +48,7 @@ module.exports = function(grunt) {
         options: {
           sourceMap: false
         },
-        src: ['src/js/angular.js', 'src/js/jquery.js', 'src/js/*.js', 'src/app/app.js', 'src/app/*/*.js'],
+        src: ['src/js/angular.js', 'src/js/jquery.js', 'src/js/*.js', 'src/app/app.js', 'src/app/app.*.js', 'src/app/*/*.js'],
         dest: 'dist/js/n3twork.min.js'
       }
     },
