@@ -164,7 +164,6 @@
 
     function friendAction() {
       vm.friendButtonLoading = true;
-
       APISvc.request({
         method: 'POST',
         url: '/user/friend/' + (vm.isFriend ? 'remove' : 'add'),
