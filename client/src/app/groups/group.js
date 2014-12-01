@@ -35,7 +35,7 @@
       APISvc.request({
         method: 'POST',
         url: '/group/show',
-        data: { 'id': $routeParams.id }
+        data: { 'group': parseInt($routeParams.id) }
       }).then(function (response) {
         vm.loadingGroup = false;
         if (response.data.successful) {

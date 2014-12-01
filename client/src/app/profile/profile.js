@@ -33,7 +33,7 @@
           vm.checkingFriend = false;
         });
         vm.loadingGroups = true;
-        CacheSvc.getGroupListOfUser($routeParams.username).then(function (groupList) {
+        CacheSvc.getGroupListOfUser(vm.userdata.username).then(function (groupList) {
           vm.grouplist = groupList;
           vm.loadingGroups = false;
         }, function (error) {
