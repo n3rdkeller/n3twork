@@ -5,11 +5,15 @@
     .module('n3twork')
     .service('CacheSvc', CacheSvc);
 
-  CacheSvc.$inject = ['APISvc', '$window', '$q'];
-  function CacheSvc(APISvc, $window, $q) {
+  CacheSvc.$inject = ['APISvc', '$window', '$rootScope', '$q'];
+  function CacheSvc(APISvc, $window, $rootScope, $q) {
     var service = {
+      getUserData: getUserData,
       getUserList: getUserList,
-      getGroupList: getGroupList
+      getGroupList: getGroupList,
+      getGroupListOfUser: getGroupListOfUser,
+      getFriendListOfUser: getFriendListOfUser,
+      checkIfFriend: checkIfFriend
     };
     return service;
 
@@ -60,7 +64,7 @@
       var deferred = $q.defer();
       var sessionData = getSessionData('global', 'userList');
       if (sessionData) {
-        deferred.resolve({ userList: sessionData.userList });
+        deferred.resolve(sessionData);
       } else {
         APISvc.request({
           method: 'POST',
@@ -68,7 +72,7 @@
           data: {}
         }).then(function (response) {
           setSessionData('global', 'userList', response.data.userList);
-          deferred.resolve({ userList: response.data.userList });
+          deferred.resolve(response.data.userList);
         }, function (error) {
           deferred.reject(error);
         });
@@ -80,7 +84,7 @@
       var deferred = $q.defer();
       var sessionData = getSessionData('global', 'groupList');
       if (sessionData) {
-        deferred.resolve({ groupList: sessionData.groupList });
+        deferred.resolve(sessionData);
       } else {
         APISvc.request({
           method: 'POST',
@@ -88,7 +92,7 @@
           data: {}
         }).then(function (response) {
           setSessionData('global', 'groupList', response.data.groupList);
-          deferred.resolve({ 'groupList': response.data.groupList });
+          deferred.resolve(response.data.groupList);
         }, function (error) {
           deferred.reject(error);
         });
@@ -98,14 +102,75 @@
 
     function getGroupListOfUser(username) {
       var deferred = $q.defer();
-      // get groupList from API
+      var sessionData = getSessionData(username, 'groupList');
+      if (sessionData) {
+        deferred.resolve(sessionData);
+      } else {
+        // get groupList from API
+        APISvc.request({
+          method: 'POST',
+          url: '/user/groups',
+          data: { 'username': username }
+        }).then(function (response) {
+          if (response.data.successful) {
+            setSessionData(username, 'groupList', response.data.groupList);
+            deferred.resolve(response.data.groupList);
+          } else {
+            deferred.reject(response.data.successful);
+          }
+        }, function (error) {
+          deferred.reject(error);
+        });
+      }
+
+      return deferred.promise;
+    }
+
+
+    function getFriendListOfUser(id) {
+      var deferred = $q.defer();
+      var sessionData = getSessionData(id, 'friendList');
+
+      if (sessionData) {
+        deferred.resolve(sessionData);
+      } else {
+        // get friendList from API
+        APISvc.request({
+          method: 'POST',
+          url: '/user/friends',
+          data: { 'id': id }
+        }).then(function (response) {
+          if (response.data.successful) {
+            setSessionData(id, 'friendList', response.data.friendList);
+            deferred.resolve(response.data.friendList);
+          } else {
+            deferred.reject(response.data.successful);
+          }
+        }, function (error) {
+          deferred.reject(error);
+        });
+      }
+
+      return deferred.promise;
+    }
+
+    function checkIfFriend(id) {
+      var deferred = $q.defer();
+      // get OWN friendList from API
       APISvc.request({
         method: 'POST',
-        url: '/user/groups',
-        data: { 'username': username }
+        url: '/user/friends',
+        data: { }
       }).then(function (response) {
         if (response.data.successful) {
-          deferred.resolve(response.data.groupList);
+          var trueFriend, isFriend;
+          for (var i = 0; i < response.data.friendList.length; i++) {
+            if (response.data.friendList[i].id == id) {
+              isFriend = true;
+              trueFriend = response.data.friendList[i].trueFriend;
+            }
+          }
+          deferred.resolve(isFriend, trueFriend);
         } else {
           deferred.reject(response.data.successful);
         }
@@ -117,8 +182,6 @@
     }
 
 
-
-    // true if userList, false if groupList
     function getSessionData(key, whichData) {
       var sessionData = $window.sessionStorage.getItem(JSON.stringify({
         'key': key,
@@ -135,7 +198,7 @@
         if (expired(parsed.expirationTime)) {
           return false;
         } else {
-          return parsed;
+          return parsed[whichData];
         }
       }
     }

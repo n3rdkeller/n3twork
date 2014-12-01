@@ -12,24 +12,28 @@
     .module('n3twork.friends')
     .controller('FriendsCtrl', FriendsCtrl);
 
-  FriendsCtrl.$inject = ['APISvc', '$routeParams', '$q', '$rootScope'];
-  function FriendsCtrl(APISvc, $routeParams, $q, $rootScope) {
+  FriendsCtrl.$inject = ['APISvc', 'CacheSvc', '$routeParams', '$q', '$rootScope'];
+  function FriendsCtrl(APISvc, CacheSvc, $routeParams, $q, $rootScope) {
     var vm = this;
 
     init();
 
     function init() {
+      vm.loadingFriends = true;
+      vm.loadingFriendRequests = true;
       getUserData().then(function (userdata) {
         vm.userdata = userdata;
-        getFriendList().then(function (friendList) {
+        CacheSvc.getFriendListOfUser(vm.userdata.id).then(function (friendList) {
           vm.friendList = friendList;
+          vm.loadingFriends = false;
         }, function (error) {
-          vm.friendList = [];
+          vm.loadingFriends = false;
         });
         getFriendRequests().then(function (friendRequestList) {
           vm.friendRequestList = friendRequestList;
+          vm.loadingFriendRequests = false;
         }, function (error) {
-          vm.friendRequestList = [];
+          vm.loadingFriendRequests = false;
         });
       }, function (error) {
         vm.doesntexist = true;
@@ -73,28 +77,6 @@
       }).then(function (response) {
         if (response.data.successful) {
           deferred.resolve(response.data);
-        } else {
-          deferred.reject(response.data.successful);
-        }
-      }, function (error) {
-        deferred.reject(error);
-      });
-
-      return deferred.promise;
-    }
-
-
-    function getFriendList() {
-      var deferred = $q.defer();
-      // get friendList from API
-      APISvc.request({
-        method: 'POST',
-        url: '/user/friends',
-        data: { 'id': vm.userdata.id }
-      }).then(function (response) {
-        vm.loadingFriends = false;
-        if (response.data.successful) {
-          deferred.resolve(response.data.friendList);
         } else {
           deferred.reject(response.data.successful);
         }

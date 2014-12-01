@@ -34,22 +34,18 @@
         <div class="media-body">
           <h4 class="media-heading">
             <a class="media-left media-middle" ng-href="#/user/{{ friend.username }}">
-              <span ng-show="friend.firstname">
-                <span ng-bind="::friend.firstname"></span>
-                <span ng-show="friend.lastname" ng-bind="::friend.lastname"></span> (
-              </span>
-              <span ng-bind="::friend.username"></span>
-              <span ng-show="friend.firstname">)</span>
+              <span ng-bind="friend.firstname + ' ' + friend.lastname"></span><br ng-show="friend.firstname">
+              <span ng-bind="friend.username"></span>
             </a>
           </h4>
           <span ng-bind="::friend.email"></span>
-          <span ng-bind="::friend.city"></span>
+          <span ng-bind="::friend.otherProperties.city"></span>
         </div>
       </li>
     </ul>
   </div>
 
-  <div class="col-sm-5 col-md-4" ng-show="friends.loadingFriendRequests">
+  <div class="col-sm-5 col-md-4" ng-show="friends.loadingFriendRequests && friends.itsMe">
     <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
   </div>
 
