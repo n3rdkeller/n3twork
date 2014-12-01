@@ -25,19 +25,20 @@
       getUserData().then(function (userdata) {
         vm.userdata = userdata;
         vm.checkingFriend = true;
-        CacheSvc.checkIfFriend(vm.userdata.id).then(function (isFriend, trueFriend) {
-          vm.isFriend = isFriend;
-          vm.trueFriend = trueFriend;
-          vm.checkingFriend = false;
-        }, function (error) {
-          vm.checkingFriend = false;
-        });
+        if (!vm.itsMe) {
+          CacheSvc.checkIfFriend(vm.userdata.id).then(function (isFriend, trueFriend) {
+            vm.isFriend = isFriend;
+            vm.trueFriend = trueFriend;
+            vm.checkingFriend = false;
+          }, function (error) {
+            vm.checkingFriend = false;
+          });
+        }
         vm.loadingGroups = true;
         CacheSvc.getGroupListOfUser(vm.userdata.username).then(function (groupList) {
           vm.grouplist = groupList;
           vm.loadingGroups = false;
         }, function (error) {
-          vm.grouplist = [];
           vm.loadingGroups = false;
         });
         vm.loadingFriends = true;
@@ -45,7 +46,6 @@
           vm.friendlist = friendList;
           vm.loadingFriends = false;
         }, function (error) {
-          vm.friendlist = [];
           vm.loadingFriends = false;
         });
       }, function (error) {
