@@ -49,6 +49,12 @@
         controllerAs: 'profile',
         resolve: authResolver
       })
+      .when('/user/:username/friends', {
+        templateUrl: 'app/friends/friends.html',
+        controller: 'FriendsCtrl',
+        controllerAs: 'friends',
+        resolve: authResolver
+      })
       .otherwise({
         redirectTo: '/'
       });
