@@ -1005,7 +1005,7 @@ public class User {
         "SELECT Groups.id, Groups.name, Groups.descr FROM " + DBConnector.DATABASE + ".Members "
             + "JOIN "+ DBConnector.DATABASE + ".Groups "
             + "ON Groups.id=Members.groupID "
-            + "JOIN" + DBConnector.DATABASE + ".Users"
+            + "JOIN " + DBConnector.DATABASE + ".Users"
             + "ON Members.memberID=Users.id"
             + "WHERE Users.id=" + this.id
             + "OR Users.username='" + this.username + "'");
