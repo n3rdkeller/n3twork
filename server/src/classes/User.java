@@ -836,8 +836,7 @@ public class User {
         "SELECT Users.id,username,email,name,firstName,Friends.date FROM " + DBConnector.DATABASE + ".Friends "
         + "JOIN " + DBConnector.DATABASE + ".Users "
         + "ON Users.id=Friends.friendID "
-        + "WHERE Users.id=" + this.id
-        + "OR Users.username='" + this.username + "'";
+        + "WHERE Friends.userID=" + this.id;
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     ResultSet friendsTable = pStmt.executeQuery();
     log.debug(sqlQuery);
