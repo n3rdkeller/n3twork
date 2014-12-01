@@ -1070,7 +1070,7 @@ public class User {
   }
 
   public List<Post> getPosts() {
-    return null;
+    return this.posts;
   }
 
   public User addPost(Post post) {

@@ -1,6 +1,7 @@
 package servlet;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -62,6 +63,13 @@ public class Helper {
         .header(Helper.ACCESSHEADER, "*")
         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
         .header("Access-Control-Allow-Headers", "Content-Type")
+        .build();
+  }
+  
+  public static Response errorResponse(Exception e) {
+    return Response.status(Status.INTERNAL_SERVER_ERROR)
+        .entity(e.toString())
+        .header(Helper.ACCESSHEADER, "*")
         .build();
   }
 }
