@@ -39,11 +39,11 @@
     function getUserData() {
       var deferred = $q.defer();
       vm.loadingFriends = true;
-      vm.loadingFriendRequests = true;
       if ($routeParams.username) {
         // if it's my username
         if ($routeParams.username == $rootScope.userdata.username) {
           // it's my own profile
+          vm.loadingFriendRequests = true;
           deferred.resolve($rootScope.userdata);
           vm.itsMe = true;
         } else {
@@ -55,6 +55,7 @@
         }
       } else {
         // it's my own profile
+        vm.loadingFriendRequests = true;
         deferred.resolve($rootScope.userdata);
         vm.itsMe = true;
       }

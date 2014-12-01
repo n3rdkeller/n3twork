@@ -1,6 +1,6 @@
 <div class="row">
-  <div class="col-sm-offset-1 col-sm-5 col-md-offset-1 col-md-5" ng-hide="friends.loadingFriends">
-    <h2><span ng-hide="friends.itsMe"><span ng-bind="friends.userdata.username"></span> </span>Friends</h2>
+  <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-1 col-md-5' : friends.itsMe }" ng-hide="friends.loadingFriends">
+    <h2 ng-class="{ 'text-center' : !friends.itsMe }"><span ng-hide="friends.itsMe"><span ng-bind="friends.userdata.username"></span> </span>Friends</h2>
     <ul class="media-list big-margin-top">
       <li class="media" ng-repeat="friend in friends.friendList">
         <span class="media-left">
@@ -20,7 +20,7 @@
     </ul>
   </div>
 
-  <div class="col-sm-offset-1 col-sm-5 col-md-offset-1 col-md-5" ng-class="{ }" ng-show="friends.loadingFriends && friends.itsMe">
+  <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-1 col-md-5' : friends.itsMe }" ng-show="friends.loadingFriends">
     <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
   </div>
 
