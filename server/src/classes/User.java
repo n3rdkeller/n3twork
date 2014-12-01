@@ -203,7 +203,6 @@ public class User {
     List<Integer> toBeRemoved = new ArrayList<Integer>();
     for (ArrayList<String> row : counterTable) {
       String currentID = row.get(0);
-      log.debug(lastID + " " + currentID);
       if (lastID.equals(currentID)){
         toBeRemoved.add(counterTable.indexOf(row));
       } else {
@@ -213,9 +212,10 @@ public class User {
       }
       lastID = currentID;
     }
-    for (int rowIndex : toBeRemoved) {
-      counterTable.remove(rowIndex);
+    for (int i=0; i < toBeRemoved.size(); i++) {
+      counterTable.remove(toBeRemoved.size() - i);
     }
+    
     int users = counterTable.size();
     String returnString = String.valueOf(Json.createObjectBuilder()
         .add("users", users)
