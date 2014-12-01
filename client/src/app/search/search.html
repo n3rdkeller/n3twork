@@ -23,12 +23,8 @@
       <div class="media-body">
         <h4 class="media-heading">
           <a class="media-left media-middle" ng-href="#/user/{{ user.username }}">
-            <span ng-show="user.firstname">
-              <span ng-bind="::user.firstname"></span>
-              <span ng-show="user.lastname" ng-bind="::user.lastname"></span> (
-            </span>
-            <span ng-bind="::user.username"></span>
-            <span ng-show="user.firstname">)</span>
+            <span ng-bind="user.firstname + ' ' + user.lastname"></span><br ng-show="user.firstname">
+            <span ng-bind="user.username"></span>
           </a>
         </h4>
         <span ng-bind="::user.email"></span>
