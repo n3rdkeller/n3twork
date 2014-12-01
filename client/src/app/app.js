@@ -9,7 +9,8 @@
       'n3twork.auth',
       'n3twork.profile',
       'n3twork.settings',
-      'n3twork.search'
+      'n3twork.search',
+      'n3twork.friends'
     ])
     .config(config);
 
@@ -47,6 +48,12 @@
         templateUrl: 'app/profile/profile.html',
         controller: 'ProfileCtrl',
         controllerAs: 'profile',
+        resolve: authResolver
+      })
+      .when('/user/:username/friends', {
+        templateUrl: 'app/friends/friends.html',
+        controller: 'FriendsCtrl',
+        controllerAs: 'friends',
         resolve: authResolver
       })
       .otherwise({
