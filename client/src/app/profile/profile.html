@@ -33,7 +33,7 @@
     <ul class="fa-ul profile-text" ng-hide="profile.loadingFriends">
       <li ng-repeat="friend in profile.friendlist | limitTo: 5"><strong><i class="fa-li fa fa-user"></i></strong><a ng-href="#/user/{{ ::friend.username }}">{{ ::friend.username }}</a></li>
       <li ng-show="profile.itsMe && (profile.friendlist | isEmpty)"><strong><i class="fa-li fa fa-frown-o"></i></strong>You don't have any friends.</li>
-      <li ng-hide="profile.friendlist | isEmpty" class="margin-top"><i class="fa-li fa fa-sort-down fa-rotate-270"></i><a href="">Details</a></li>
+      <li ng-hide="profile.friendlist | isEmpty" class="margin-top"><i class="fa-li fa fa-sort-down fa-rotate-270"></i><a href="#/user/{{ ::profile.userdata.username }}/friends">Details</a></li>
     </ul>
     <h3 class="text-center" ng-show="profile.loadingFriends"><i class="fa fa-spinner fa-spin"></i></h3>
   </div>
