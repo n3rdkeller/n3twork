@@ -1,9 +1,21 @@
 package classes;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class Post {
+  final static Logger log = LogManager.getLogger(Post.class);
+  
   private int id;
   private User owner;
   private String content;
@@ -30,7 +42,55 @@ public class Post {
   public Post(){
     //empty
   }
-
+  
+  /**
+   * Converts any list of posts to a json string
+   * @param postList any list of posts
+   * @return <pre><code>{
+   *   "postList": [
+   *     {
+   *       "content":"content text",
+   *       "id":postID number,
+   *       "owner":owenerID number,
+   *       "postDate":timestamp number,
+   *       "title":"title text",
+   *       "upVotes": [
+   *         {
+   *           "date":timestamp number,
+   *           "voter":voterID number
+   *         },
+   *       ],
+   *       "visibility":true/false
+   *     },
+   *   ],
+   *   "successful":true
+   * } </code></pre>
+   */
+  public static String convertPostListToJson(List<Post> postList) {
+    JsonArrayBuilder jsonPostList = Json.createArrayBuilder();
+    for(Post post: postList) {
+      JsonArrayBuilder jsonUpVotes = Json.createArrayBuilder();
+      for(Entry<User,Date> upVote : post.getUpVotes().entrySet()) {
+        jsonUpVotes.add(Json.createObjectBuilder()
+            .add("voter", upVote.getKey().getId())
+            .add("date", upVote.getValue().getTime()));
+      }
+      jsonPostList.add(Json.createObjectBuilder()
+          .add("id", post.getId())
+          .add("owner", post.getOwner().getId())
+          .add("title", post.getTitle())
+          .add("content", post.getContent())
+          .add("postDate", post.getPostDate().getTime())
+          .add("visibility", post.getVisibility())
+          .add("upVotes", jsonUpVotes));
+    }
+    JsonObject output = Json.createObjectBuilder()
+        .add("postList", jsonPostList)
+        .add("successful", true)
+        .build();
+    return String.valueOf(output);
+  }
+  
   /**
    * Sets standard values in db
    * @return true if successful
@@ -68,7 +128,7 @@ public class Post {
    * @param tile New value for this.title
    * @return this
    */
-  public Post setTitle(String tile) {
+  public Post setTitle(String title) {
     return this;
   }
 
@@ -116,10 +176,10 @@ public class Post {
 
   /**
    * Simple setter for visibility
-   * @param visi New value for this.visibility
+   * @param visibility New value for this.visibility
    * @return this
    */
-  public Post setVisibility(Boolean visi) {
+  public Post setVisibility(Boolean visibility) {
     return this;
   }
 
@@ -133,7 +193,7 @@ public class Post {
 
   /**
    * Add a new up vote to upVotes
-   * @param voter User for new upVote
+   * @param voter The voter only needs the User.id value
    * @return this
    */
   public Post addUpVote(User voter) {
