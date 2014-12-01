@@ -235,7 +235,7 @@ public class User {
       JsonObjectBuilder otherProperties = Json.createObjectBuilder();
       for (Entry<String, String> e : user.otherProperties.entrySet()) {
         if (e.getValue() == null) e.setValue("");
-        otherProperties.add(e.getKey(), e.getValue());
+        if (e.getValue() != "") otherProperties.add(e.getKey(), e.getValue());
       }
       userList.add(Json.createObjectBuilder()
         .add("id", user.getId())
@@ -486,7 +486,7 @@ public class User {
     JsonObjectBuilder otherProperties = Json.createObjectBuilder();
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
       if (e.getValue() == null) e.setValue("");
-      otherProperties.add(e.getKey(), e.getValue());
+      if (e.getValue() != "") otherProperties.add(e.getKey(), e.getValue());
     }
     if (this.name == null) this.name="";
     if (this.firstName ==  null) this.firstName="";
@@ -636,6 +636,10 @@ public class User {
     return this.username;
   }
 
+  public User setUsername(String username) {
+    this.username = username;
+    return this;
+  }
   /**
    * Simple getter for the attribute email
    * @return email
@@ -832,7 +836,8 @@ public class User {
         "SELECT Users.id,username,email,name,firstName,Friends.date FROM " + DBConnector.DATABASE + ".Friends "
         + "JOIN " + DBConnector.DATABASE + ".Users "
         + "ON Users.id=Friends.friendID "
-        + "WHERE Friends.userID=" + this.id;
+        + "WHERE Users.id=" + this.id
+        + "OR Users.username='" + this.username + "'";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     ResultSet friendsTable = pStmt.executeQuery();
     log.debug(sqlQuery);
@@ -997,10 +1002,13 @@ public class User {
   public User getGroupsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
-        "SELECT Groups.id, Groups.name, Groups.descr FROM " + DBConnector.DATABASE + ".Groups "
-            + "JOIN "+ DBConnector.DATABASE + ".Members "
+        "SELECT Groups.id, Groups.name, Groups.descr FROM " + DBConnector.DATABASE + ".Members "
+            + "JOIN "+ DBConnector.DATABASE + ".Groups "
             + "ON Groups.id=Members.groupID "
-            + "WHERE Members.memberID=" + this.id);
+            + "JOIN" + DBConnector.DATABASE + ".Users"
+            + "ON Members.memberID=Users.id"
+            + "WHERE Users.id=" + this.id
+            + "OR Users.username='" + this.username + "'");
     groupTable.remove(0); // remove column names
     for (ArrayList<String> groupTableRow : groupTable) {
       Group group = new Group(Integer.parseInt(groupTableRow.get(0)))

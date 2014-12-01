@@ -315,7 +315,7 @@ public class UserResource {
   
   /**
    * Post Request to get all friends of a user
-   * @param jsonInput {"session":"sessionID", "id":userID} with userID being optional
+   * @param jsonInput {"session":"sessionID", "username":username} with userID being optional
    * @return Response with the entity {"friendList":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
    */
   @POST @Path("/friends")
@@ -333,8 +333,8 @@ public class UserResource {
         log.debug("/user/friends returns: " + entity);
         return Helper.okResponse(entity);
       }
-      if (input.containsKey("id")) {
-        user = new User(input.getInt("id"));
+      if (input.containsKey("username")) {
+        user = new User().setUsername(input.getString("username"));
       }
       user.getFriendsFromDB();
       String entity = user.getFriendsAsJson();
@@ -511,7 +511,7 @@ public class UserResource {
   
   /**
    * Post request to get all groups of a user
-   * @param jsonInput {"session":"sessionID","id":userID} userID is optional. If it's not given, the method will use current user by sessionID
+   * @param jsonInput {"session":"sessionID","username":username} userID is optional. If it's not given, the method will use current user by sessionID
    * @return {"groupList":[{"groupID":groupID,...},...], "successful":true}
    */
   @POST @Path("/groups")
@@ -529,8 +529,8 @@ public class UserResource {
         log.debug("/user/groups returns: " + entity);
         return Helper.okResponse(entity);
       }
-      if (input.containsKey("id")) {
-        user = new User(input.getInt("id"));
+      if (input.containsKey("username")) {
+        user = new User().setUsername(input.getString("username"));
       }
       String entity = user.getGroupsFromDB().getGroupsAsJson();
       log.debug("/user/groups returns: " + entity);
