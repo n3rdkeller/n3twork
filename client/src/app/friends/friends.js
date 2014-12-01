@@ -29,7 +29,7 @@
         }, function (error) {
           vm.loadingFriends = false;
         });
-        getFriendRequests().then(function (friendRequestList) {
+        CacheSvc.getFriendRequests().then(function (friendRequestList) {
           vm.friendRequestList = friendRequestList;
           vm.loadingFriendRequests = false;
         }, function (error) {
@@ -77,27 +77,6 @@
       }).then(function (response) {
         if (response.data.successful) {
           deferred.resolve(response.data);
-        } else {
-          deferred.reject(response.data.successful);
-        }
-      }, function (error) {
-        deferred.reject(error);
-      });
-
-      return deferred.promise;
-    }
-
-    function getFriendRequests() {
-      var deferred = $q.defer();
-      // get friendList from API
-      APISvc.request({
-        method: 'POST',
-        url: '/user/friendrequests',
-        data: { 'id': vm.userdata.id }
-      }).then(function (response) {
-        vm.loadingFriendRequests = false;
-        if (response.data.successful) {
-          deferred.resolve(response.data.friendRequests);
         } else {
           deferred.reject(response.data.successful);
         }

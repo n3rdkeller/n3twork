@@ -13,7 +13,8 @@
       getGroupList: getGroupList,
       getGroupListOfUser: getGroupListOfUser,
       getFriendListOfUser: getFriendListOfUser,
-      checkIfFriend: checkIfFriend
+      checkIfFriend: checkIfFriend,
+      getFriendRequests: getFriendRequests
     };
     return service;
 
@@ -163,7 +164,8 @@
         data: { }
       }).then(function (response) {
         if (response.data.successful) {
-          var trueFriend, isFriend;
+          var trueFriend = false;
+          var isFriend = false;
           for (var i = 0; i < response.data.friendList.length; i++) {
             if (response.data.friendList[i].id == id) {
               isFriend = true;
@@ -177,6 +179,34 @@
       }, function (error) {
         deferred.reject(error);
       });
+
+      return deferred.promise;
+    }
+
+
+    function getFriendRequests() {
+      var deferred = $q.defer();
+      var sessionData = getSessionData('my', 'friendRequestList');
+
+      if (sessionData) {
+        deferred.resolve(sessionData);
+      } else {
+        // get friendList from API
+        APISvc.request({
+          method: 'POST',
+          url: '/user/friendrequests',
+          data: { }
+        }).then(function (response) {
+          if (response.data.successful) {
+            setSessionData('my', 'friendRequestList', response.data.friendRequests);
+            deferred.resolve(response.data.friendRequests);
+          } else {
+            deferred.reject(response.data.successful);
+          }
+        }, function (error) {
+          deferred.reject(error);
+        });
+      }
 
       return deferred.promise;
     }
