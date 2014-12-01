@@ -874,7 +874,6 @@ public class User {
             new SimpleEntry<Long,Boolean>(friendsTable.getTimestamp("date").getTime(), false));
       }
     }
-    log.debug(this.friends);
     conn.close();
     friendsTable.close();
     pStmt.close();
