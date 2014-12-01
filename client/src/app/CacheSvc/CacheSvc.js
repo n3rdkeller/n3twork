@@ -14,40 +14,45 @@
       getGroupListOfUser: getGroupListOfUser,
       getFriendListOfUser: getFriendListOfUser,
       checkIfFriend: checkIfFriend,
-      getFriendRequests: getFriendRequests
+      getFriendRequests: getFriendRequests,
+      removeFriendCache: removeFriendCache
     };
     return service;
 
     function getUserData(username) {
       var deferred = $q.defer();
       var sessionData = getSessionData(username, 'userData');
-      if (username) {
-        // if it's my username
-        if (username == $rootScope.userdata.username) {
+      if (sessionData) {
+        deferred.resolve(sessionData, username == $rootScope.userdata.username);
+      } else {
+        if (username) {
+          // if it's my username
+          if (username == $rootScope.userdata.username) {
+            // it's my own profile
+            deferred.resolve($rootScope.userdata);
+          } else {
+            getUserDataFromAPI(username).then(function (userdata) {
+              setSessionData(username, 'userData', userdata);
+              deferred.resolve(userdata);
+            }, function (error) {
+              deferred.reject(error);
+            });
+          }
+        } else {
           // it's my own profile
           deferred.resolve($rootScope.userdata);
-        } else {
-          getUserDataFromAPI().then(function (userdata) {
-            deferred.resolve(userdata);
-          }, function (error) {
-            deferred.reject(error);
-          });
         }
-      } else {
-        // it's my own profile
-        deferred.resolve($rootScope.userdata);
       }
-
       return deferred.promise;
     }
 
-    function getUserDataFromAPI() {
+    function getUserDataFromAPI(username) {
       var deferred = $q.defer();
       // get userdata from API
       APISvc.request({
         method: 'POST',
         url: '/user',
-        data: { 'username': $routeParams.username }
+        data: { 'username': username }
       }).then(function (response) {
         if (response.data.successful) {
           deferred.resolve(response.data);
@@ -211,6 +216,10 @@
       return deferred.promise;
     }
 
+    function removeFriendCache() {
+      removeSessionData($rootScope.userdata.id, 'friendList');
+      removeSessionData('my', 'friendRequestList');
+    }
 
     function getSessionData(key, whichData) {
       var sessionData = $window.sessionStorage.getItem(JSON.stringify({
@@ -233,6 +242,16 @@
       }
     }
 
+    function removeSessionData(key, whichData) {
+      if (!key && !whichData) {
+        $window.sessionStorage.clear();
+      } else {
+        $window.sessionStorage.removeItem(JSON.stringify({
+          'key': key,
+          'whichData': whichData
+        }));
+      }
+    }
 
     function setSessionData(key, whichData, data) {
       var dataObj = {};
