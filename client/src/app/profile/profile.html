@@ -7,7 +7,7 @@
       </div>
       <div class="col-xs-9">
         <h3 ng-bind="profile.userdata.firstname + ' ' + profile.userdata.lastname"></h3>
-        <h3 ng-bind="profile.userdata.username"></h3>
+        <h3><span ng-bind="profile.userdata.username"></span><abbr ng-show="profile.trueFriend" class="pull-right color-green" title="You are true friends."> <i class="fa fa-check fa-fw"></i></abbr></h3>
       </div>
     </div>
     <button type="button" ng-hide="profile.checkingFriend || profile.itsMe" ng-disabled="profile.friendButtonLoading" class="btn btn-block profile-text margin-top" ng-class="{ 'btn-success': !profile.isFriend, 'btn-danger': profile.isFriend }" ng-click="profile.friendAction()">

@@ -147,6 +147,7 @@
         if (response.data.successful) {
           for (var i = 0; i < response.data.friendList.length; i++) {
             if (response.data.friendList[i].id == vm.userdata.id) {
+              vm.trueFriend = response.data.friendList[i].trueFriend;
               deferred.resolve(true);
             }
           }
@@ -173,6 +174,15 @@
         if (response.data.successful) {
           // change friend status
           vm.isFriend = !vm.isFriend;
+          if (!vm.isFriend) {
+            vm.trueFriend = false;
+          } else {
+            checkIfFriend().then(function (isFriend) {
+              vm.isFriend = isFriend;
+            }, function (error) {
+              // error
+            });
+          }
         } else {
           // error changing friend status
         }
