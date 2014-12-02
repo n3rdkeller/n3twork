@@ -880,6 +880,10 @@ public class User {
     return this;
   }
   
+  public Map<User,SimpleEntry<Long,Boolean>> getFriends() {
+    return this.friends;
+  }
+  
   /**
    * Puts the friends attribute in a nice Json String
    * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'

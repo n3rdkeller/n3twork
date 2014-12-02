@@ -1,6 +1,10 @@
 package servlet;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -76,12 +80,38 @@ public class PostResource {
         return Helper.okResponse(entity);
       } 
       if (input.containsKey("userID")) {
-        user = new User (input.getInt("userID"));
+        // specific User
+        User otherUser = new User (input.getInt("userID"));
+        user.getFriendsFromDB();
+        Boolean trueFriend = false;
+        // check if trueFriend
+        for (Entry<User,SimpleEntry<Long,Boolean>> friend : user.getFriends().entrySet()) {
+          if (friend.getKey().getId() == otherUser.getId()) {
+            trueFriend=friend.getValue().getValue();
+          }
+        }
+        // not trueFriend
+        if (!trueFriend) {
+          List<Post> postToPrint = new ArrayList<Post>();
+          for (Post post: otherUser.getPosts()) {
+            if(!post.getVisibility()) {
+              postToPrint.add(post);
+            }
+          }
+          String entity = Post.convertPostListToJson(postToPrint);
+          return Helper.okResponse(entity);
+        }
+        // trueFriend
+        String entity = Post.convertPostListToJson(otherUser.getPosts());
+        return Helper.okResponse(entity);
+        
       } else if (input.containsKey("groupID")) {
+        // group
         Group group = new Group(input.getInt("groupID"));
         String entity = Post.convertPostListToJson(group.getPosts());
         return Helper.okResponse(entity);
       }
+      // own user
       String entity = Post.convertPostListToJson(user.getPosts());
       return Helper.okResponse(entity);
     } catch(Exception e) {
