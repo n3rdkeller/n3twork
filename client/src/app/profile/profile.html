@@ -3,7 +3,8 @@
     <!-- Names -->
     <div class="row">
       <div class="col-xs-3">
-        <h3><i class="fa fa-user fa-3x" ng-class="{ 'user-is-me': profile.itsMe }"></i></h3>
+        <!-- <h3><i class="fa fa-user fa-3x" ng-class="{ 'user-is-me': profile.itsMe }"></i></h3> -->
+        <img width="57px" class="big-margin-top" ng-src="http://www.gravatar.com/avatar/{{ profile.userdata.email | lowercase | md5Hash }}?d=mm&s=200" />
       </div>
       <div class="col-xs-9">
         <h3 ng-bind="profile.userdata.firstname + ' ' + profile.userdata.lastname"></h3>

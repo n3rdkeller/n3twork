@@ -4,7 +4,8 @@
     <ul class="media-list big-margin-top">
       <li class="media" ng-repeat="friend in friends.friendList">
         <span class="media-left">
-          <i class="fa fa-user fa-fw fa-3x"></i>
+          <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=200" />
         </span>
         <div class="media-body">
           <h4 class="media-heading">
@@ -13,8 +14,7 @@
               <span ng-bind="friend.username"></span>
             </a><abbr ng-show="friend.trueFriend" class="media-right color-green no-padding-left" title="You are true friends."><br ng-show="friend.firstname"><i class="fa fa-check fa-fw"></i></abbr>
           </h4>
-          <span ng-bind="::friend.email"></span>
-          <span ng-bind="::friend.otherProperties.city"></span>
+          <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::friend.email }}<br>
         </div>
       </li>
     </ul>
@@ -29,7 +29,8 @@
     <ul class="media-list big-margin-top">
       <li class="media" ng-repeat="friend in friends.friendRequestList">
         <span class="media-left">
-          <i class="fa fa-user fa-fw fa-3x"></i>
+          <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=200" />
         </span>
         <div class="media-body">
           <h4 class="media-heading">
@@ -38,8 +39,7 @@
               <span ng-bind="friend.username"></span>
             </a>
           </h4>
-          <span ng-bind="::friend.email"></span>
-          <span ng-bind="::friend.otherProperties.city"></span>
+          <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::friend.email }}<br>
         </div>
       </li>
     </ul>

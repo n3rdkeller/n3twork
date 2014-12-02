@@ -17,19 +17,20 @@
 <div class="row">
   <ul class="media-list" ng-class="{ 'col-sm-offset-1 col-sm-5 col-md-offset-3 col-md-4': filteredUserSearch.length > 0 }">
     <li class="media" ng-repeat="user in filteredUserSearch = (search.userlist | filter: search.submittedSearchString) | orderBy: 'user.username' | limitTo:8">
-      <span class="media-left">
-        <i class="fa fa-user fa-fw fa-3x" ng-class="{ 'user-is-me' : user.id == userdata.id }"></i>
-      </span>
-      <div class="media-body">
-        <h4 class="media-heading">
-          <a class="media-left media-middle" ng-href="#/user/{{ user.username }}">
-            <span ng-bind="user.firstname + ' ' + user.lastname"></span><br ng-show="user.firstname">
-            <span ng-bind="user.username"></span>
-          </a>
-        </h4>
-        <span ng-bind="::user.email"></span>
-        <span ng-bind="::user.otherProperties.city"></span>
-      </div>
+    <span class="media-left">
+      <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
+      <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ user.email | lowercase | md5Hash }}?d=mm&s=200" />
+    </span>
+    <div class="media-body">
+      <h4 class="media-heading">
+        <a class="media-left media-middle" ng-href="#/user/{{ user.username }}">
+          <span ng-bind="user.firstname + ' ' + user.lastname"></span><br ng-show="user.firstname">
+          <span ng-bind="user.username"></span>
+        </a>
+      </h4>
+      <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::user.email }}<br>
+      <span ng-show="::user.otherProperties.city"><strong><i class="fa fa-fw fa-location-arrow"></i></strong> {{ ::user.otherProperties.city }}</span>
+    </div>
     </li>
   </ul>
   <ul class="media-list" ng-class="{ 'col-sm-5 col-md-4': filteredUserSearch.length > 0, 'col-md-offset-3 col-md-6': filteredUserSearch.length == 0 }">
