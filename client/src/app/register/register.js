@@ -13,9 +13,9 @@
     .module('n3twork.register')
     .controller('RegisterCtrl', RegisterCtrl);
 
-  RegisterCtrl.$inject = ['APISvc', 'UserSvc', '$rootScope'];
+  RegisterCtrl.$inject = ['APISvc', 'UserSvc', '$rootScope', '$timeout', '$location'];
 
-  function RegisterCtrl(APISvc, UserSvc, $rootScope) {
+  function RegisterCtrl(APISvc, UserSvc, $rootScope, $timeout, $location) {
     var vm = this;
 
     vm.loggedin = $rootScope.loggedin;
@@ -49,7 +49,13 @@
             vm.submitted = true;
             vm.signedup = true;
             vm.message = "Congratz! Successfully signed up. You will shortly be logged in.";
-            setTimeout(UserSvc.login(vm.user.username, vm.user.pw), 3000);
+            $timeout(function () {
+              UserSvc.login(vm.user.username, vm.user.pw).then(function (success) {
+                if (success) {
+                 $location.path('/');
+                }
+              })
+            }, 3000);
           } else {
             vm.submitted = true;
             vm.signedup = false;

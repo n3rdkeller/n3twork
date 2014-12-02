@@ -34,7 +34,7 @@
       vm.loading = true;
       UserSvc.login(logindata, password).then(function (response) {
         vm.loading = false;
-        if (response.successful) {
+        if (response) {
           vm.loginFailed = false;
           $location.path('/');
         } else {

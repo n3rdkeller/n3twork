@@ -88,9 +88,9 @@
           if (setUserData(userdata)) {
             $rootScope.loggedin = true;
           }
-          deferred.resolve(response.data);
+          deferred.resolve(response.data.successful);
         } else {
-          deferred.reject(response);
+          deferred.reject(response.data.successful);
         }
       }, function (error) {
         deferred.reject(error);
