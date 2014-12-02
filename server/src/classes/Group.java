@@ -511,7 +511,7 @@ public class Group {
     return this.posts;
   }
 
-  public void addPost() {
+  public void addPost(Post post) {
     // TODO Auto-generated method stub
     
   }

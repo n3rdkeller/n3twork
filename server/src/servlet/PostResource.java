@@ -160,15 +160,15 @@ public class PostResource {
       } else if (input.containsKey("groupID")) {
         Group group = new Group(input.getInt("groupID"));
         group.addPost(new Post()
-        .setContent(input.getJsonObject("post").getString("content"))
-        .setTitle(input.getJsonObject("post").getString("title"))
-        .setVisibility(input.getJsonObject("post").getBoolean("visibility")));
+              .setContent(input.getJsonObject("post").getString("content"))
+              .setTitle(input.getJsonObject("post").getString("title"))
+              .setVisibility(input.getJsonObject("post").getBoolean("visibility")));
         return Helper.okResponse(entity);
       }
       user.addPost(new Post()
-          .setContent(input.getJsonObject("post").getString("content"))
-          .setTitle(input.getJsonObject("post").getString("title"))
-          .setVisibility(input.getJsonObject("post").getBoolean("visibility")));
+            .setContent(input.getJsonObject("post").getString("content"))
+            .setTitle(input.getJsonObject("post").getString("title"))
+            .setVisibility(input.getJsonObject("post").getBoolean("visibility")));
       return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);

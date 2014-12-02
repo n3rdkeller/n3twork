@@ -1085,7 +1085,7 @@ public class User {
     return this.posts;
   }
 
-  public User addPost(Post post) {
+  public User addPost(Post post) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     post.setOwner(this.id);
     post.setType(false);
     post.createInDB();
