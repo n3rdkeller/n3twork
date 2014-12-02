@@ -35,10 +35,7 @@ module.exports = function(grunt) {
           'src/**/*.html',
           'src/**/*.js'
           ],
-        tasks: ['concat', /*'uglify',*/ 'copy'],
-        options: {
-          spawn: false,
-        }
+        tasks: ['concat', /*'uglify',*/ 'copy']
       }
     },
 
@@ -57,8 +54,10 @@ module.exports = function(grunt) {
     uglify: {
       dist: {
         options: {
-          beautify: true,
-          sourceMap: true
+          beautify: false,
+          sourceMap: false,
+          report: 'gzip',
+          mangle: false
         },
         files:{
           'dist/js/n3twork.min.js' : 'dist/js/n3twork.min.js', //'src/js/*.js'],
@@ -96,12 +95,18 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Register Other Tasks
-  grunt.registerTask('default', ['dist', 'watch']);
+  grunt.registerTask('default', ['dev', 'watch']);
+    grunt.registerTask('dev', [
+    'clean',
+    'less',
+    'concat',
+    'copy'
+  ]);
   grunt.registerTask('dist', [
     'clean',
     'less',
     'concat',
-    //'uglify',
+    'uglify',
     'copy'
   ]);
 
