@@ -1,6 +1,6 @@
 <div class="row">
   <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-2 col-md-4' : friends.itsMe }" ng-hide="friends.loadingFriends">
-    <h2 ng-class="{ 'text-center' : !friends.itsMe }"><span ng-hide="friends.itsMe"><span ng-bind="friends.userdata.username"></span> </span>Friends</h2>
+    <h2 ng-class="{ 'text-center' : !friends.itsMe }"><span ng-hide="friends.itsMe"><span ng-bind="friends.userdata.username"></span>'s </span>Friends <i ng-show="friends.friendList | isEmpty" class="fa fa-fw fa-frown-o"></i></h2>
     <ul class="media-list big-margin-top">
       <li class="media" ng-repeat="friend in friends.friendList">
         <span class="media-left">
@@ -18,6 +18,7 @@
         </div>
       </li>
     </ul>
+    <h4 ng-show="friends.friendList | isEmpty">There are no friends to display here.</h4>
   </div>
 
   <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-2 col-md-4' : friends.itsMe }" ng-show="friends.loadingFriends">
@@ -25,7 +26,7 @@
   </div>
 
   <div class="col-sm-5 col-md-4" ng-hide="friends.loadingFriendRequests || !friends.itsMe">
-    <h2>Friend Requests</h2>
+    <h2>Friend Requests <i ng-show="friends.friendRequestList | isEmpty" class="fa fa-fw fa-smile-o"></i></h2>
     <ul class="media-list big-margin-top">
       <li class="media" ng-repeat="friend in friends.friendRequestList">
         <span class="media-left">
@@ -43,6 +44,7 @@
         </div>
       </li>
     </ul>
+    <h4 ng-show="friends.friendRequestList | isEmpty">You have no pending friend requests.</h4>
   </div>
 
   <div class="col-sm-5 col-md-4" ng-show="friends.loadingFriendRequests && friends.itsMe">
