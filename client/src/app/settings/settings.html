@@ -17,7 +17,7 @@
       <input ng-disabled="!settings.user.firstname" type="text" class="form-control" name="lastname" id="lastname" ng-model="settings.user.lastname" ng-init="settings.user.lastname = userdata.lastname" placeholder="Enter your family name">
     </div>
     <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress default paste' }">
-      <label for="email">Email address (required)</label>
+      <label for="email">Email address (required), is also used for <a href="http://gravatar.com" target="_blank">Gravatar</a></label>
       <input required type="email" class="form-control" name="email" id="email" ng-model="settings.user.email" ng-init="settings.user.email = userdata.email" placeholder="Enter new email">
       <div ng-show="settingsForm.email.$dirty && settingsForm.email.$invalid" class="help-block" ng-messages="settingsForm.email.$error" ng-messages-include="app/views/messages.html"></div>
     </div>
