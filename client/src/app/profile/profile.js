@@ -29,9 +29,9 @@
         vm.itsMe = (vm.userdata.id == $rootScope.userdata.id);
         vm.checkingFriend = true;
         if (!vm.itsMe) {
-          CacheSvc.checkIfFriend(vm.userdata.id).then(function (isFriend, trueFriend) {
-            vm.isFriend = isFriend;
-            vm.trueFriend = trueFriend;
+          CacheSvc.checkIfFriend(vm.userdata.id).then(function (friendInfoArray) {
+            vm.isFriend = friendInfoArray[0];
+            vm.trueFriend = friendInfoArray[0];
             vm.checkingFriend = false;
           }, function (error) {
             vm.checkingFriend = false;

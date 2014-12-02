@@ -177,9 +177,9 @@
               trueFriend = response.data.friendList[i].trueFriend;
             }
           }
-          deferred.resolve(isFriend, trueFriend);
+          deferred.resolve([isFriend, trueFriend]);
         } else {
-          deferred.reject(response.data.successful);
+          deferred.reject([response.data.successful]);
         }
       }, function (error) {
         deferred.reject(error);
