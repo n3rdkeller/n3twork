@@ -28,6 +28,7 @@ public class Post {
   private Boolean privatePost;
   private Boolean groupPost;
   private Map<User,Date> upVotes = new HashMap<User,Date>();
+  private int numberOfUpVotes;
 
   /**
    * Empty constructor
@@ -78,7 +79,8 @@ public class Post {
           .add("content", post.getContent())
           .add("postDate", post.getPostDate().getTime())
           .add("private", post.getPrivatePost())
-          .add("upVotes", jsonUpVotes));
+          .add("upVotes", jsonUpVotes)
+          .add("numberOfVotes", post.getNumberOfUpVotes()));
     }
     JsonObject output = Json.createObjectBuilder()
         .add("postList", jsonPostList)
@@ -231,6 +233,15 @@ public class Post {
   
   public Post setAuthor(User author) {
     this.author = author;
+    return this;
+  }
+  
+  public int getNumberOfUpVotes() {
+    return this.numberOfUpVotes;
+  }
+  
+  public Post setNumberOfUpVotes(int votesNum) {
+    this.numberOfUpVotes = votesNum;
     return this;
   }
   /**

@@ -998,19 +998,99 @@ public class User {
   
   public List<Post> getNewsFeedFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "SELECT Users.id, Users.username, Users.email, Users.name, Users.firstName, Posts.title, Posts.content, Posts.visibility, Posts.date FROM " + DBConnector.DATABASE + ".Friends" 
-         + "JOIN Posts"
-         + "ON Friends.friendID = Posts.ownerID"
-         + "JOIN Users"
-         + "ON Users.id = Posts.ownerID"
-         + "WHERE Friends.userID =" + this.id;
+    String sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
+          + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
+          + "Posts.id as postid, Posts.title, Posts.content, Posts.visibility, Posts.date,"
+          + "(SELECT count(*) FROM Votes WHERE Votes.postID = Posts.id) as votes FROM Posts"
+          + "JOIN Friends ON Friends.friendID = Posts.authorID"
+          + "JOIN Users ON Users.id = Posts.authorID"
+          + "JOIN Groups ON Posts.ownerID = Groups.id"
+          + "WHERE Friends.userID = " + this.id + " AND Posts.ownerID = 0";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    ResultSet postsTable = pStmt.executeQuery();
-    if(this.friends.size() == 0) {
+    ResultSet UserPostsTable = pStmt.executeQuery();
+    sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
+          + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
+          + "Posts.id as postid, Posts.title, Posts.content, Posts.visibility, Posts.date,"
+          + "(SELECT count(*) FROM Votes WHERE Votes.postID = Posts.id) as votes FROM Posts"
+          + "JOIN Users ON Users.id = Posts.authorID"
+          + "JOIN Groups ON Posts.ownerID = Groups.id"
+          + "JOIN Members ON Members.groupID = Posts.ownerID"
+          + "WHERE Members.memberID = " + this.id;
+    pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet GroupPostsTable = pStmt.executeQuery();
+    
+    if(this.friendRequests.size() == 0) {
       this.getFriendRequestsFromDB();
     }
+    List<Integer> friendRequestIds = new ArrayList<Integer>();
+    for (Entry<User, SimpleEntry<Long,Boolean>> friend : this.friendRequests.entrySet()){
+      friendRequestIds.add(friend.getKey().getId());
+    }
+    List<Post> postList = new ArrayList<Post>();
+    // read UserPostsTable
+    while (UserPostsTable.next()) {
+      if(friendRequestIds.contains(UserPostsTable.getInt("id")) && UserPostsTable.getBoolean("visibility")) {
+        // private posts of trueFriends™
+        postList.add(new Post()
+            .setId(UserPostsTable.getInt("postid"))
+            .setTitle(UserPostsTable.getString("title"))
+            .setContent(UserPostsTable.getString("content"))
+            .setPrivatePost(true)
+            .setPostDate(UserPostsTable.getDate("date"))
+            .setOwner(new Group(UserPostsTable.getInt("groupid"))
+                .setName(UserPostsTable.getString("groupname"))
+                .setDescr(UserPostsTable.getString("desrc")))
+            .setAuthor(new User(
+                UserPostsTable.getInt("userid"),
+                UserPostsTable.getString("username"),
+                UserPostsTable.getString("email"),
+                UserPostsTable.getString("name"),
+                UserPostsTable.getString("firstName")))
+            .setNumberOfUpVotes(UserPostsTable.getInt("votes")));
+      } else if (!UserPostsTable.getBoolean("visibility")){
+        // all public posts
+        postList.add(new Post()
+            .setId(UserPostsTable.getInt("postid"))
+            .setTitle(UserPostsTable.getString("title"))
+            .setContent(UserPostsTable.getString("content"))
+            .setPrivatePost(false)
+            .setPostDate(UserPostsTable.getDate("date"))
+            .setOwner(new Group(UserPostsTable.getInt("groupid"))
+                .setName(UserPostsTable.getString("groupname"))
+                .setDescr(UserPostsTable.getString("desrc")))
+            .setAuthor(new User(
+                UserPostsTable.getInt("userid"),
+                UserPostsTable.getString("username"),
+                UserPostsTable.getString("email"),
+                UserPostsTable.getString("name"),
+                UserPostsTable.getString("firstName")))
+            .setNumberOfUpVotes(UserPostsTable.getInt("votes")));
+      }
+    }
+      
+    // read GroupPostsTable
+    while (GroupPostsTable.next()) {
+      postList.add(new Post()
+      .setId(GroupPostsTable.getInt("postid"))
+      .setTitle(GroupPostsTable.getString("title"))
+      .setContent(GroupPostsTable.getString("content"))
+      .setPrivatePost(GroupPostsTable.getBoolean("visibility"))
+      .setPostDate(GroupPostsTable.getDate("date"))
+      .setOwner(new Group(GroupPostsTable.getInt("groupid"))
+          .setName(GroupPostsTable.getString("groupname"))
+          .setDescr(GroupPostsTable.getString("desrc")))
+      .setAuthor(new User(
+          GroupPostsTable.getInt("userid"),
+          GroupPostsTable.getString("username"),
+          GroupPostsTable.getString("email"),
+          GroupPostsTable.getString("name"),
+          GroupPostsTable.getString("firstName")))
+      .setNumberOfUpVotes(GroupPostsTable.getInt("votes")));
+    }
     
-    return null;
+    // sort List by postDate
+    postList.sort(new PostComparator());
+    return postList;
   }
 
   public List<Message> getMessages() {

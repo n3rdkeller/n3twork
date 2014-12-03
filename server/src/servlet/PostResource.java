@@ -142,8 +142,8 @@ public class PostResource {
         log.debug("/post/newsfeed returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      
-      return null;
+      String entity = String.valueOf(Post.convertPostListToJson(user.getNewsFeedFromDB()));
+      return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
       return Helper.errorResponse(e);
