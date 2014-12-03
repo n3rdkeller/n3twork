@@ -1,8 +1,8 @@
 <ul ng-controller="AuthCtrl as auth" class="nav navbar-nav navbar-right">
-  <li ng-show="auth.loginFailed" id="loginFailedText" class="navbar-text">Login failed. Try again.</li>
+  <li ng-show="auth.loginFailed && !auth.loadingLogin" id="loginFailedText" class="navbar-text">Login failed. Try again.</li>
   <li ng-hide="loggedin" id="loginForm">
-    <form name="loginForm" class="navbar-form" method="post" role="form" ng-submit="auth.submit()">
-      <div class="input-group" ng-class="{ 'has-error': auth.loginFailed }">
+    <form name="loginForm" class="navbar-form" ng-submit="auth.login()" role="form" novalidate>
+      <div class="input-group" ng-class="{ 'has-error': auth.loginFailed && !auth.loadingLogin}">
         <span class="input-group-addon">
           <i class="fa fa-user fa-fw"></i>
         </span>
@@ -15,9 +15,9 @@
         <input required ng-minlength=8 class="form-control" type="password" ng-model="auth.user.pw" name="pw" placeholder="Password">
       </div>
       <div class="input-group">
-        <button type="submit" class="btn btn-warning" ng-disabled="loginForm.$invalid || auth.loading" value="Login">
-          <span ng-hide="auth.loading"><i class="fa fa-sign-in"></i> Login</span>
-          <span ng-show="auth.loading"><i class="fa fa-spinner fa-spin"></i> Logging in</span>
+        <button type="submit" class="btn btn-warning" ng-disabled="auth.loadingLogin || loginForm.$invalid">
+          <span ng-hide="auth.loadingLogin"><i class="fa fa-sign-in"></i> Login</span>
+          <span ng-hide="!auth.loadingLogin"><i class="fa fa-spinner fa-spin"></i> Logging in</span>
         </button>
       </div>
     </form>

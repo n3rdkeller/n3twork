@@ -25,15 +25,15 @@
       </div>
     </div>
     <button type="button" ng-hide="profile.itsMe" ng-disabled="profile.friendButtonLoading || profile.checkingFriend" class="btn btn-block margin-top" ng-class="{ 'btn-success': (!profile.friendButtonLoading && !profile.isFriend && !profile.checkingFriend), 'btn-default': (profile.checkingFriend || profile.friendButtonLoading), 'btn-danger': (profile.isFriend && !profile.checkingFriend && !profile.friendButtonLoading) }" ng-click="profile.friendAction()">
-      <span ng-show="!profile.friendButtonLoading && !profile.isFriend && !profile.checkingFriend"><i class="fa fa-plus fa-fw"></i> Add as friend</span>
-      <span ng-show="!profile.friendButtonLoading && profile.isFriend && !profile.checkingFriend"><i class="fa fa-minus fa-fw"></i> Remove from friends</span>
-      <span ng-show="profile.friendButtonLoading || profile.checkingFriend"><i class="fa fa-spinner fa-spin"></i> Loading</span>
+      <span ng-show="!profile.friendButtonLoading && !profile.isFriend && !profile.checkingFriend"><i class="fa fa-fw fa-plus"></i> Add as friend</span>
+      <span ng-show="!profile.friendButtonLoading && profile.isFriend && !profile.checkingFriend"><i class="fa fa-fw fa-minus"></i> Remove from friends</span>
+      <span ng-show="profile.friendButtonLoading || profile.checkingFriend"><i class="fa fa-fw fa-spinner fa-spin"></i> Loading</span>
     </button>
     <!-- otherProperties -->
     <hr>
-    <ul class="fa-ul bigger-text">
-      <li><strong><i class="fa-li fa fa-{{ 'mail' | symbolForKey }}"></i></strong> {{ ::profile.userdata.email }}</li>
-      <li ng-repeat="(key, property) in profile.userdata.otherProperties"><strong><i class="fa-li fa fa-{{ ::key | symbolForKey }}"></i></strong> {{ property }}</li>
+    <ul class="fa-ul">
+      <li class="bigger-text"><strong><i class="fa-li fa fa-{{ 'mail' | symbolForKey }}"></i></strong> {{ ::profile.userdata.email }}</li>
+      <li ng-repeat="(key, property) in profile.userdata.otherProperties" class="bigger-text"><strong><i class="fa-li fa fa-{{ ::key | symbolForKey }}"></i></strong> {{ property }}</li>
     </ul>
     <!-- Groups -->
     <hr ng-show="(profile.itsMe && (profile.grouplist.length == 0)) || !(profile.grouplist.length == 0)">
@@ -42,7 +42,7 @@
       <li ng-show="profile.itsMe && (profile.grouplist.length == 0)" class="bigger-text"><strong><i class="fa-li fa fa-frown-o"></i></strong>You are in no groups yet.</li>
     </ul>
     <p ng-hide="profile.grouplist.length == 0" class="margin-top">
-      <span ng-bind="::profile.grouplist.length" class="label label-warning"></span> <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/groups">More</a>
+      <span ng-bind="::profile.grouplist.length" class="label label-warning"></span><i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/groups">More</a>
     </p>
     <h3 class="text-center" ng-show="profile.loadingGroups"><i class="fa fa-spinner fa-spin"></i></h3>
     <!-- Friends -->
@@ -52,7 +52,7 @@
       <li ng-show="profile.itsMe && (profile.friendlist.length == 0)" class="bigger-text"><strong><i class="fa-li fa fa-frown-o"></i></strong>You don't have any friends.</li>
     </ul>
     <p ng-hide="profile.friendlist | isEmpty" class="margin-top">
-      <span ng-bind="::profile.friendlist.length" class="label label-warning"></span> <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/friends">More</a>
+      <span ng-bind="::profile.friendlist.length" class="label label-warning"></span><i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/friends">More</a>
     </p>
     <h3 class="text-center" ng-show="profile.loadingFriends"><i class="fa fa-spinner fa-spin"></i></h3>
   </div>

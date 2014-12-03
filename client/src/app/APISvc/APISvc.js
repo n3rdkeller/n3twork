@@ -3,15 +3,15 @@
 
   angular
     .module('n3twork')
-    .service('APISvc', APISvc);
+    .factory('APISvc', APISvc);
 
   APISvc.$inject = ['$http', '$rootScope'];
   function APISvc($http, $rootScope) {
-    var service = {
+    var factory = {
       request: request
     };
 
-    return service;
+    return factory;
 
     function request(req) {
       var APIUrl = 'http://178.62.239.25:8080/n3';
@@ -24,17 +24,17 @@
         }
       }
 
-      var promise = $http(req); //.then(complete).catch(failed);
+      var promise = $http(req).success(complete).error(failed);
       // console.log(req);
       return promise;
     }
 
-    function complete(response) {
-      return response;
+    function complete(data, status, headers, config) {
+      return data;
     }
 
-    function failed(error) {
-      return error;
+    function failed(data, status, headers, config) {
+      return data;
     }
 
   }

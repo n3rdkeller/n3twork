@@ -18,31 +18,25 @@
     var vm = this;
 
     // methods
-    vm.submit = submit;
+    vm.login = login;
     vm.logout = logout;
-
-    vm.loginFailed = false;
 
     UserSvc.isLoggedIn();
 
-    function submit() {
-      login(vm.user.login, vm.user.pw);
-    }
-
-    function login(logindata, password) {
+    function login() {
       vm.loginFailed = false;
-      vm.loading = true;
-      UserSvc.login(logindata, password).then(function (response) {
-        vm.loading = false;
-        if (response) {
+      vm.loadingLogin = true;
+      UserSvc.login(vm.user.login, vm.user.pw).then(function (successful) {
+        vm.loadingLogin = false;
+        if (successful) {
           vm.loginFailed = false;
           $location.path('/');
         } else {
           vm.loginFailed = true;
         }
-        }, function (error) {
-          vm.loading = false;
-          vm.loginFailed = true;
+      }, function (error) {
+        vm.loadingLogin = false;
+        vm.loginFailed = true;
       });
     }
 
