@@ -1,5 +1,7 @@
 package classes;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -244,6 +246,7 @@ public class Post {
     this.numberOfUpVotes = votesNum;
     return this;
   }
+  
   /**
    * Simple getter for upVotes
    * @return this.upVotes
@@ -252,6 +255,58 @@ public class Post {
     return this.upVotes;
   }
 
+  /**
+   * Gets all upVotes of this from the db
+   * @return this
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
+   */
+  public Post getUpVotesFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "Select Users.username, Users.name, Users.firstName, Votes.date From " + DBConnector.DATABASE + ".Votes"
+          + "join " + DBConnector.DATABASE + ".Posts on Posts.id = Votes.postID"
+          + "join " + DBConnector.DATABASE + ".Users on Users.id = Votes.voterID"
+          + "WHERE Posts.id = " + this.id;
+    log.debug(sqlQuery);
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet votesTable = pStmt.executeQuery();
+    while (votesTable.next()) {
+      this.upVotes.put(new User()
+        .setUsername(votesTable.getString("username"))
+        .setName(votesTable.getString("name"))
+        .setFirstName(votesTable.getString("firstName")), 
+        votesTable.getTime("date"));
+    }
+    pStmt.close();
+    votesTable.close();
+    conn.close();
+    return this;
+  }
+  
+  /**
+   * Gets upVotes as Json
+   * @return 
+   */
+  public JsonValue getUpVotesAsJson() {
+    JsonArrayBuilder voteList = Json.createArrayBuilder();
+    for (Entry<User,Date> upVote : this.upVotes.entrySet()) {
+      voteList.add(Json.createObjectBuilder()
+          .add("date", upVote.getValue().getTime())
+          .add("voter", Json.createObjectBuilder()
+              .add("username", upVote.getKey().getUsername())
+              .add("name", upVote.getKey().getName())
+              .add("firstName", upVote.getKey().getFirstName()))
+          );
+    }
+    JsonObject voteUps = Json.createObjectBuilder()
+        .add("voteList", voteList)
+        .add("successful", true)
+        .build();
+    return voteUps;
+  }
+  
   /**
    * Add a new up vote to upVotes
    * @param voter The voter only needs the User.id value
