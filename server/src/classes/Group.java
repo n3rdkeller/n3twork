@@ -75,26 +75,52 @@ public class Group {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public static List<Group> findGroup(String searchString) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public static List<Group> findGroup() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<Group> groupList = new ArrayList<Group>();
     List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
-        "SELECT id,name, (" 
-            + "SELECT COUNT(*) FROM Members "
+        "SELECT Groups.id,name,descr, (" 
+            + "SELECT COUNT(*) FROM " + DBConnector.DATABASE + ".Members "
             + "WHERE Members.groupID = Groups.id) as membercount "
-            + "FROM " + DBConnector.DATABASE + ".Groups"
-            + "WHERE id != 0");
+            + "FROM " + DBConnector.DATABASE + ".Groups "
+            + "WHERE Groups.id != 0");
     groupTable.remove(0); // remove column names
     for (ArrayList<String> groupTableRow : groupTable) {
-      if (groupTableRow.get(1).toLowerCase().contains(searchString.toLowerCase())) {
         Group group = new Group(
-            Integer.parseInt(groupTableRow.get(0)))
-            .setName(groupTableRow.get(1))
-            .setMemberCount(Integer.parseInt(groupTableRow.get(3)));
+          Integer.parseInt(groupTableRow.get(0)))
+          .setName(groupTableRow.get(1))
+          .setDescr(groupTableRow.get(2))
+          .setMemberCount(Integer.parseInt(groupTableRow.get(3)));
         groupList.add(group);
-      }
     }
     return groupList;
+  }
+  
+  /**
+   * Gets all groups in a Json list
+   * @return {"groupList":[{"groupID":"groupID",...},...]}
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public static String getAllAsJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
+        "SELECT id,name,descr FROM " + DBConnector.DATABASE + ".Groups");
+    groupTable.remove(0);
+    JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
+    for (ArrayList<String> row : groupTable) {
+      groupJsonList.add(Json.createObjectBuilder()
+          .add("groupID", Integer.parseInt(row.get(0)))
+          .add("groupName", row.get(1))
+          .add("groupDescr", row.get(2)));
+    }
+    
+    return String.valueOf(Json.createObjectBuilder()
+        .add("groupList",groupJsonList)
+        .add("successful", true)
+        .build());
   }
   
   /**
@@ -245,33 +271,6 @@ public class Group {
       .add("memberCount", this.memberCount)
       .build();
     return groupJson;
-  }
-  
-  /**
-   * Gets all groups in a Json list
-   * @return {"groupList":[{"groupID":"groupID",...},...]}
-   * @throws InstantiationException
-   * @throws IllegalAccessException
-   * @throws ClassNotFoundException
-   * @throws SQLException
-   */
-  public static String getAllAsJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
-        "SELECT id,name,descr FROM " + DBConnector.DATABASE + ".Groups");
-    groupTable.remove(0);
-    JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
-    for (ArrayList<String> row : groupTable) {
-      groupJsonList.add(Json.createObjectBuilder()
-          .add("groupID", Integer.parseInt(row.get(0)))
-          .add("groupName", row.get(1))
-          .add("groupDescr", row.get(2)));
-    }
-    
-    return String.valueOf(Json.createObjectBuilder()
-        .add("groupList",groupJsonList)
-        .add("successful", true)
-        .build());
   }
   
   /**
