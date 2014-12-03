@@ -237,7 +237,7 @@ public class UserResource {
       } else {
         user.setSessionID(null);
       }
-      String entity = user.getAsJson();
+      String entity = String.valueOf(user.getAsJson());
       log.debug("/user returns: " + entity);
       return Response.ok()
           .entity(entity)

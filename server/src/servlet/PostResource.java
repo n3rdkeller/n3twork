@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -38,7 +39,7 @@ public class PostResource {
   }
   
   /**
-   * Post request to get post
+   * Post request to get posts. Only public post if user is no true friend.
    * @param jsonInput <pre><code> {
    *   "groupID":0, //optional if given uses group
    *   "userID":0, //optional if given uses user
@@ -47,9 +48,10 @@ public class PostResource {
    * @return <pre><code> {
    *   "postList": [
    *     {
+   *       "author":authorID number,
    *       "content":"content text",
    *       "id":postID number,
-   *       "owner":owenerID number,
+   *       "owner":ownerID number,
    *       "postDate":timestamp number,
    *       "title":"title text",
    *       "upVotes": [
@@ -58,7 +60,7 @@ public class PostResource {
    *           "voter":voterID number
    *         },
    *       ],
-   *       "visibility":true/false
+   *       "private":true/false
    *     },
    *   ],
    *   "successful":true
@@ -94,25 +96,25 @@ public class PostResource {
         if (!trueFriend) {
           List<Post> postToPrint = new ArrayList<Post>();
           for (Post post: otherUser.getPosts()) {
-            if(!post.getVisibility()) {
+            if(!post.getPrivatePost()) {
               postToPrint.add(post);
             }
           }
-          String entity = Post.convertPostListToJson(postToPrint);
+          String entity = String.valueOf(Post.convertPostListToJson(postToPrint));
           return Helper.okResponse(entity);
         }
         // trueFriend
-        String entity = Post.convertPostListToJson(otherUser.getPosts());
+        String entity = String.valueOf(Post.convertPostListToJson(otherUser.getPosts()));
         return Helper.okResponse(entity);
         
       } else if (input.containsKey("groupID")) {
         // group
         Group group = new Group(input.getInt("groupID"));
-        String entity = Post.convertPostListToJson(group.getPosts());
+        String entity = String.valueOf(Post.convertPostListToJson(group.getPosts()));
         return Helper.okResponse(entity);
       }
       // own user
-      String entity = Post.convertPostListToJson(user.getPosts());
+      String entity = String.valueOf(Post.convertPostListToJson(user.getPosts()));
       return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
@@ -162,7 +164,7 @@ public class PostResource {
    *   "post": {
    *     "title":"",
    *     "content":"",
-   *     "visibility":true/false
+   *     "private":true/false
    *   }
    * }
    * @return
@@ -189,16 +191,23 @@ public class PostResource {
         user = new User (input.getInt("userID"));
       } else if (input.containsKey("groupID")) {
         Group group = new Group(input.getInt("groupID"));
+        //hacking!!
+        if (((user.getId() != 45 && user.getId() != 47) && group.getId() == 1)) {
+          entity = String.valueOf(Json.createObjectBuilder()
+              .add("successful", false)
+              .add("reason", "You are not allowed to post in this group.")
+              .build());
+          return Helper.okResponse(entity);
+        }
         group.addPost(new Post()
               .setContent(input.getJsonObject("post").getString("content"))
-              .setTitle(input.getJsonObject("post").getString("title"))
-              .setVisibility(input.getJsonObject("post").getBoolean("visibility")));
+              .setTitle(input.getJsonObject("post").getString("title")), user);
         return Helper.okResponse(entity);
       }
       user.addPost(new Post()
             .setContent(input.getJsonObject("post").getString("content"))
             .setTitle(input.getJsonObject("post").getString("title"))
-            .setVisibility(input.getJsonObject("post").getBoolean("visibility")));
+            .setPrivatePost(input.getJsonObject("post").getBoolean("private")));
       return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);

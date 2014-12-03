@@ -71,7 +71,7 @@ public class ServletResource {
       if (user.login()){
         // login successful
         user.createSessionID();
-        String entity = user.getAsJson();
+        String entity = String.valueOf(user.getAsJson());
         log.debug("/login returns: " + entity);
     		return Response.ok()
     		    .entity(entity)
