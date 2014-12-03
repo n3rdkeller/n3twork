@@ -31,7 +31,7 @@
         if (!vm.itsMe) {
           CacheSvc.checkIfFriend(vm.userdata.id).then(function (friendInfoArray) {
             vm.isFriend = friendInfoArray[0];
-            vm.trueFriend = friendInfoArray[0];
+            vm.trueFriend = friendInfoArray[1];
             vm.checkingFriend = false;
           }, function (error) {
             vm.checkingFriend = false;
@@ -46,6 +46,7 @@
         });
         vm.loadingFriends = true;
         CacheSvc.getFriendListOfUser(vm.userdata.id).then(function (friendList) {
+          console.log(friendList);
           vm.friendlist = friendList;
           vm.loadingFriends = false;
         }, function (error) {
@@ -70,17 +71,13 @@
           vm.isFriend = !vm.isFriend;
           // remove cache
           CacheSvc.removeFriendCache();
-          if (!vm.isFriend) {
-            vm.trueFriend = false;
+          CacheSvc.checkIfFriend(vm.userdata.id).then(function (friendInfoArray) {
             vm.friendButtonLoading = false;
-          } else {
-            CacheSvc.checkIfFriend(vm.userdata.id).then(function (isFriend, trueFriend) {
-              vm.friendButtonLoading = false;
-              vm.trueFriend = trueFriend;
-            }, function (error) {
-              // error
-            });
-          }
+            vm.isFriend = friendInfoArray[0];
+            vm.trueFriend = friendInfoArray[1];
+          }, function (error) {
+            // error
+          });
         } else {
           // error changing friend status
         }

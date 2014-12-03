@@ -21,21 +21,26 @@
     function init() {
       vm.loadingFriends = true;
       vm.loadingFriendRequests = true;
-      getUserData().then(function (userdata) {
+      var username = $routeParams.username;
+      vm.itsMe = (username == $rootScope.userdata.username);
+      CacheSvc.getUserData(username).then(function (userdata) {
         vm.userdata = userdata;
+        if (vm.itsMe) {
+          CacheSvc.getFriendRequests().then(function (friendRequestList) {
+            vm.friendRequestList = friendRequestList;
+            vm.loadingFriendRequests = false;
+          }, function (error) {
+            vm.loadingFriendRequests = false;
+          });
+        }
         CacheSvc.getFriendListOfUser(vm.userdata.id).then(function (friendList) {
           vm.friendList = friendList;
           vm.loadingFriends = false;
         }, function (error) {
           vm.loadingFriends = false;
         });
-        CacheSvc.getFriendRequests().then(function (friendRequestList) {
-          vm.friendRequestList = friendRequestList;
-          vm.loadingFriendRequests = false;
-        }, function (error) {
-          vm.loadingFriendRequests = false;
-        });
       }, function (error) {
+        vm.loadingFriends = false;
         vm.doesntexist = true;
       });
     }

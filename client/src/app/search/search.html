@@ -44,7 +44,7 @@
             <span ng-bind="::group.groupName"></span>
           </a>
         </h4>
-        <span ng-bind="::group.groupDescr"></span>
+        <p ng-bind-html="group.groupDescr | shortenDescription"></p>
       </div>
     </li>
   </ul>

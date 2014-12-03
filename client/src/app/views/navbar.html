@@ -1,6 +1,6 @@
 <ul class="nav navbar-nav">
   <li ng-class="{ active: isActive('/user/' + userdata.username )}"><a ng-href="#/user/{{ userdata.username }}"><i class="fa fa-user fa-fw"></i> Profile</a></li>
-  <li ng-class="{ active: isActive('/user/' + userdata.username + '/friends')}"><a ng-href="#/user/{{ userdata.username }}/friends"><i class="fa fa-heart-o fa-fw"></i> Friends</a></li>
+  <li ng-class="{ active: isActive('/user/' + userdata.username + '/friends')}"><a ng-href="#/user/{{ userdata.username }}/friends"><i class="fa fa-heart fa-fw"></i> Friends</a></li>
   <li ng-class="{ active: isActive('/user/' + userdata.username + '/groups')}"><a ng-href="#/user/{{ userdata.username }}/groups"><i class="fa fa-users fa-fw"></i> Groups</a></li>
   <li ng-class="{ active: isActive('/search')}"><a href="#/search"><i class="fa fa-search fa-fw"></i> Search</a></li>
 </ul>

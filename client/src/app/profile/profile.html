@@ -1,54 +1,72 @@
 <div ng-hide="profile.doesntexist">
-  <div class="col-sm-offset-1 col-sm-3" ng-hide="profile.loadingUserData">
+  <div class="col-sm-4" ng-hide="profile.loadingUserData">
     <!-- Names -->
-    <div class="row">
+<!--     <div class="row">
       <div class="col-xs-3">
-        <!-- <h3><i class="fa fa-user fa-3x" ng-class="{ 'user-is-me': profile.itsMe }"></i></h3> -->
-        <img width="57px" class="big-margin-top" ng-src="http://www.gravatar.com/avatar/{{ profile.userdata.email | lowercase | md5Hash }}?d=mm&s=200" />
+        <!-- <h3><i class="fa fa-user fa-3x" ng-class="{ 'user-is-me': profile.itsMe }"></i></h3>
+        <img class="img-responsive big-margin-top" ng-src="http://www.gravatar.com/avatar/{{ profile.userdata.email | lowercase | md5Hash }}?d=mm&s=200" />
       </div>
       <div class="col-xs-9">
         <h3 ng-bind="profile.userdata.firstname + ' ' + profile.userdata.lastname"></h3>
         <h3><span ng-bind="profile.userdata.username"></span><abbr ng-show="profile.trueFriend" class="pull-right color-green" title="You are true friends."> <i class="fa fa-check fa-fw"></i></abbr></h3>
       </div>
+    </div> -->
+    <div class="media">
+      <div class="media-left">
+        <img width="100px" ng-src="http://www.gravatar.com/avatar/{{ profile.userdata.email | lowercase | md5Hash }}?d=mm&s=200" />
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading">
+          <abbr ng-show="profile.trueFriend" class="pull-right media-right color-green no-padding-left" title="You are true friends."><i class="fa fa-check fa-fw"></i></abbr>
+          <span ng-bind="profile.userdata.firstname + ' ' + profile.userdata.lastname"></span>
+          <br ng-show="profile.userdata.firstname"><br ng-show="profile.userdata.firstname">
+          <span ng-bind="profile.userdata.username"></span>
+        </h3>
+      </div>
     </div>
-    <button type="button" ng-hide="profile.itsMe" ng-disabled="profile.friendButtonLoading || profile.checkingFriend" class="btn btn-block profile-text margin-top" ng-class="{ 'btn-success': (!profile.friendButtonLoading && !profile.isFriend && !profile.checkingFriend), 'btn-default': (profile.checkingFriend || profile.friendButtonLoading), 'btn-danger': (profile.isFriend && !profile.checkingFriend && !profile.friendButtonLoading) }" ng-click="profile.friendAction()">
+    <button type="button" ng-hide="profile.itsMe" ng-disabled="profile.friendButtonLoading || profile.checkingFriend" class="btn btn-block margin-top" ng-class="{ 'btn-success': (!profile.friendButtonLoading && !profile.isFriend && !profile.checkingFriend), 'btn-default': (profile.checkingFriend || profile.friendButtonLoading), 'btn-danger': (profile.isFriend && !profile.checkingFriend && !profile.friendButtonLoading) }" ng-click="profile.friendAction()">
       <span ng-show="!profile.friendButtonLoading && !profile.isFriend && !profile.checkingFriend"><i class="fa fa-plus fa-fw"></i> Add as friend</span>
       <span ng-show="!profile.friendButtonLoading && profile.isFriend && !profile.checkingFriend"><i class="fa fa-minus fa-fw"></i> Remove from friends</span>
       <span ng-show="profile.friendButtonLoading || profile.checkingFriend"><i class="fa fa-spinner fa-spin"></i> Loading</span>
     </button>
     <!-- otherProperties -->
-    <hr ng-hide="profile.userdata.otherProperties | isEmpty">
-    <ul class="fa-ul profile-text">
+    <hr>
+    <ul class="fa-ul bigger-text">
+      <li><strong><i class="fa-li fa fa-{{ 'mail' | symbolForKey }}"></i></strong> {{ ::profile.userdata.email }}</li>
       <li ng-repeat="(key, property) in profile.userdata.otherProperties"><strong><i class="fa-li fa fa-{{ ::key | symbolForKey }}"></i></strong> {{ property }}</li>
     </ul>
     <!-- Groups -->
-    <hr ng-show="(profile.itsMe && (profile.grouplist | isEmpty)) || !(profile.grouplist | isEmpty)">
-    <ul class="fa-ul profile-text" ng-hide="profile.loadingGroups">
-      <li ng-repeat="group in profile.grouplist"><strong><i class="fa-li fa fa-users"></i></strong><a ng-href="#/group/{{ ::group.groupID }}">{{ ::group.groupName }}</a></li>
-      <li ng-show="profile.itsMe && (profile.grouplist | isEmpty)"><strong><i class="fa-li fa fa-frown-o"></i></strong>You are in no groups yet.</li>
-      <li ng-hide="profile.grouplist | isEmpty" class="margin-top"><i class="fa-li fa fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/groups">Details</a></li>
+    <hr ng-show="(profile.itsMe && (profile.grouplist.length == 0)) || !(profile.grouplist.length == 0)">
+    <ul class="fa-ul" ng-hide="profile.loadingGroups">
+      <li ng-repeat="group in profile.grouplist | limitTo: 5" class="bigger-text"><strong><i class="fa-li fa fa-users"></i></strong><a ng-href="#/group/{{ ::group.groupID }}">{{ ::group.groupName }}</a></li>
+      <li ng-show="profile.itsMe && (profile.grouplist.length == 0)" class="bigger-text"><strong><i class="fa-li fa fa-frown-o"></i></strong>You are in no groups yet.</li>
     </ul>
+    <p ng-hide="profile.grouplist.length == 0" class="margin-top">
+      <span ng-bind="::profile.grouplist.length" class="label label-warning"></span> <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/groups">More</a>
+    </p>
     <h3 class="text-center" ng-show="profile.loadingGroups"><i class="fa fa-spinner fa-spin"></i></h3>
     <!-- Friends -->
-    <hr ng-show="(profile.itsMe && (profile.friendlist | isEmpty)) || !(profile.friendlist | isEmpty)">
-    <ul class="fa-ul profile-text" ng-hide="profile.loadingFriends">
-      <li ng-repeat="friend in profile.friendlist | limitTo: 5"><strong><i class="fa-li fa fa-user"></i></strong><a ng-href="#/user/{{ ::friend.username }}">{{ ::friend.username }}</a></li>
-      <li ng-show="profile.itsMe && (profile.friendlist | isEmpty)"><strong><i class="fa-li fa fa-frown-o"></i></strong>You don't have any friends.</li>
-      <li ng-hide="profile.friendlist | isEmpty" class="margin-top"><i class="fa-li fa fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/friends">Details</a></li>
+    <hr ng-show="(profile.itsMe && (profile.friendlist.length == 0)) || !(profile.friendlist.length == 0)">
+    <ul class="fa-ul" ng-hide="profile.loadingFriends">
+      <li ng-repeat="friend in profile.friendlist | limitTo: 5" class="bigger-text"><strong><i class="fa-li fa fa-user"></i></strong><a ng-href="#/user/{{ ::friend.username }}">{{ ::friend.username }}</a></li>
+      <li ng-show="profile.itsMe && (profile.friendlist.length == 0)" class="bigger-text"><strong><i class="fa-li fa fa-frown-o"></i></strong>You don't have any friends.</li>
     </ul>
+    <p ng-hide="profile.friendlist | isEmpty" class="margin-top">
+      <span ng-bind="::profile.friendlist.length" class="label label-warning"></span> <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/friends">More</a>
+    </p>
     <h3 class="text-center" ng-show="profile.loadingFriends"><i class="fa fa-spinner fa-spin"></i></h3>
   </div>
 
-  <div class="col-sm-3" ng-show="profile.loadingUserData">
+  <div class="col-sm-4" ng-show="profile.loadingUserData">
     <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
   </div>
 
-  <div class="col-sm-7" ng-hide="profile.loadingPosts || profile.loadingUserData">
+  <div class="col-sm-8" ng-hide="profile.loadingPosts || profile.loadingUserData">
     <br><br>
     <h4 class="text-center">Here will soon be some posts.</h4>
   </div>
 
-  <div class="col-sm-7" ng-show="profile.loadingPosts">
+  <div class="col-sm-8" ng-show="profile.loadingPosts">
     <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
   </div>
 </div>

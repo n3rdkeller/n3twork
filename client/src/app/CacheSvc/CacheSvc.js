@@ -15,7 +15,8 @@
       getFriendListOfUser: getFriendListOfUser,
       checkIfFriend: checkIfFriend,
       getFriendRequests: getFriendRequests,
-      removeFriendCache: removeFriendCache
+      removeFriendCache: removeFriendCache,
+      removeGroupCache: removeGroupCache
     };
     return service;
 
@@ -23,7 +24,7 @@
       var deferred = $q.defer();
       var sessionData = getSessionData(username, 'userData');
       if (sessionData) {
-        deferred.resolve(sessionData, username == $rootScope.userdata.username);
+        deferred.resolve(sessionData);
       } else {
         if (username) {
           // if it's my username
@@ -57,7 +58,7 @@
         if (response.data.successful) {
           deferred.resolve(response.data);
         } else {
-          deferred.reject(response.data.successful);
+          deferred.reject(response.data);
         }
       }, function (error) {
         deferred.reject(error);
