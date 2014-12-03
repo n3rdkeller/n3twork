@@ -181,10 +181,8 @@ public class GroupResource {
         log.debug("/group/show returns:" + entity);
         return Helper.okResponse(entity);
       } else {
-        return Response.ok()
-            .entity(group.getAsJson())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(group.getAsJson());
+        return Helper.okResponse(entity);
       }
     } catch (Exception e){
       // internal server error

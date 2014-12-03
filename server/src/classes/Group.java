@@ -234,6 +234,8 @@ public class Group {
       if (e.getValue() == null) e.setValue("");
       otherProperties.add(e.getKey(), e.getValue());
     }
+    if(this.descr == null) this.descr = "";
+    if(this.name == null) this.name = "";
     JsonObject groupJson = Json.createObjectBuilder()
       .add("id", this.id)
       .add("name", this.name)
@@ -370,6 +372,7 @@ public class Group {
     
     JsonObject membersObject = Json.createObjectBuilder()
       .add("memberList", memberList)
+      .add("name", this.name)
       .add("successful", true)
       .build();
     String jsonString = String.valueOf(membersObject);
