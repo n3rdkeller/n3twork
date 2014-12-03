@@ -516,7 +516,8 @@ public class Group {
   public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> postTable = DBConnector.selectQuery(conn, 
-        "SELECT GroupPosts.id, title, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName " + DBConnector.DATABASE + ".GroupPosts "
+        "SELECT GroupPosts.id, title, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
+        + "(SELECT count(*) FROM Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".GroupPosts "
         + "JOIN " + DBConnector.DATABASE + ".Users ON GroupPosts."
         + "WHERE ownerID="+ this.id);
     postTable.remove(0);
