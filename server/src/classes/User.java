@@ -1099,6 +1099,23 @@ public class User {
   public User votePost(Post post) {
     return this;
   }
+  
+  public List<Post> getNewsFeedFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "SELECT Users.id, Users.username, Users.email, Users.name, Users.firstName, Posts.title, Posts.content, Posts.visibility, Posts.date FROM " + DBConnector.DATABASE + ".Friends" 
+         + "JOIN Posts"
+         + "ON Friends.friendID = Posts.ownerID"
+         + "JOIN Users"
+         + "ON Users.id = Posts.ownerID"
+         + "WHERE Friends.userID =" + this.id;
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet postsTable = pStmt.executeQuery();
+    if(this.friends.size() == 0) {
+      this.getFriendRequestsFromDB();
+    }
+    
+    return null;
+  }
 
   public List<Message> getMessages() {
     return null;
