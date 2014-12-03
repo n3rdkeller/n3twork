@@ -9,7 +9,6 @@
 
   function UserSvc(APISvc, $window, $rootScope, $location, $q) {
     var userdata = {};
-    var deferred = $q.defer();
 
     var service = {
       isLoggedIn: isLoggedIn,
@@ -64,6 +63,7 @@
     }
 
     function login(logindata, password) {
+      var deferred = $q.defer();
       APISvc.request({
         method: 'POST',
         url: '/login',
