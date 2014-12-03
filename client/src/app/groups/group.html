@@ -1,18 +1,54 @@
-<div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6" ng-hide="group.loadingGroup || group.doesntexist || group.errorOccured">
-  <!-- Names -->
-  <div class="row">
-    <div class="col-xs-3">
-      <h3><i class="fa fa-users fa-3x"></i></h3>
+<div ng-hide="group.loadingGroup || group.doesntexist || group.errorOccured">
+  <div class="col-sm-4">
+    <!-- Group Name -->
+    <!-- <div class="row">
+      <div class="col-xs-4">
+        <h3><i class="fa fa-users fa-3x"></i></h3>
+      </div>
+      <div class="col-xs-8">
+        <h3 ng-bind="group.groupData.name"></h3>
+      </div>
+    </div> -->
+    <div class="media">
+      <div class="media-left">
+        <i class="fa fa-users fa-4x"></i>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading" ng-bind="group.groupData.name"></h3>
+      </div>
     </div>
-    <div class="col-xs-9">
-      <h3 ng-bind="group.groupName">Group-Name</h3>
+    <!-- Join Button -->
+    <button type="button" ng-hide="group.checkingStatus" ng-disabled="group.statusButtonLoading" class="btn btn-block margin-top" ng-class="{ 'btn-success': !group.isMember && !group.statusButtonLoading, 'btn-danger': group.isMember && !group.statusButtonLoading, 'btn-default': group.statusButtonLoading }" ng-click="group.groupAction()">
+      <span ng-show="!group.statusButtonLoading && !group.isMember"><i class="fa fa-plus fa-fw"></i> Join Group</span>
+      <span ng-show="!group.statusButtonLoading && group.isMember"><i class="fa fa-minus fa-fw"></i> Leave Group</span>
+      <span ng-show="group.statusButtonLoading"><i class="fa fa-spinner fa-spin"></i> Loading</span>
+    </button>
+    <!-- Group Description -->
+    <div ng-show="group.groupData.descr != ''">
+      <hr>
+      <span ng-bind-html="group.groupData.descr | parseDescription" class="bigger-text"></span>
     </div>
+    <!-- Group Members -->
+    <hr>
+    <ul class="fa-ul" ng-hide="group.loadingMembers">
+      <li ng-repeat="member in group.memberList | limitTo: 5" class="bigger-text"><strong><i class="fa-li fa fa-user"></i></strong><a ng-href="#/user/{{ ::member.username }}">{{ ::member.username }}</a></li>
+    </ul>
+    <p ng-hide="group.loadingMembers || (group.memberCount < 6)" class="margin-top">
+      <span ng-bind="::group.memberList.length" class="label label-warning"></span>
+      <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/group/{{ ::group.groupData.id }}/members">More</a>
+    </p>
+    <h3 class="text-center" ng-show="group.loadingMembers"><i class="fa fa-spinner fa-spin"></i></h3>
   </div>
-  <button type="button" ng-hide="group.checkingStatus" ng-disabled="group.statusButtonLoading" class="btn btn-block group-text margin-top" ng-class="{ 'btn-success': !group.isMember, 'btn-danger': group.isMember }" ng-click="group.groupAction()">
-    <span ng-show="!group.statusButtonLoading && !group.isMember"><i class="fa fa-plus fa-fw"></i> Join Group</span>
-    <span ng-show="!group.statusButtonLoading && group.isMember"><i class="fa fa-minus fa-fw"></i> Leave Group</span>
-    <span ng-show="group.statusButtonLoading"><i class="fa fa-spinner fa-spin"></i> Loading</span>
-  </button>
+
+
+  <div class="col-sm-8" ng-hide="group.loadingPosts">
+    <br><br>
+    <h4 class="text-center">Here will soon be some posts.</h4>
+  </div>
+
+  <div class="col-sm-8" ng-show="profile.loadingPosts">
+    <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
+  </div>
 </div>
 
 <div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6" ng-show="group.loadingGroup">

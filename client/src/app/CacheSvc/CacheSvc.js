@@ -222,6 +222,10 @@
       removeSessionData('my', 'friendRequestList');
     }
 
+    function removeGroupCache() {
+      removeSessionData($rootScope.userdata.username, 'groupList');
+    }
+
     function getSessionData(key, whichData) {
       var sessionData = $window.sessionStorage.getItem(JSON.stringify({
         'key': key,
