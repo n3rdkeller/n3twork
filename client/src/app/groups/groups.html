@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-offset-3 col-md-6" ng-hide="groups.loadingGroups">
-    <h2 class="text-center"><span ng-hide="groups.itsMe"><span ng-bind="groups.userdata.username"></span>' </span>Groups</h2>
+    <h2 class="text-center">Groups of <a ng-bind="::groups.userdata.username" ng-href="#/user/{{ ::groups.userdata.username }}"></a> <span ng-hide="groups.groupList.length == 0" ng-bind="::groups.groupList.length" class="label label-warning"></span></h2>
     <ul class="media-list big-margin-top">
       <li class="media" ng-repeat="group in groups.groupList | filter: groups.submittedSearchString | orderBy: 'group.groupName' | limitTo:8">
         <span class="media-left">
@@ -8,11 +8,12 @@
         </span>
         <div class="media-body">
           <h4 class="media-heading">
-            <a class="media-left media-middle" ng-href="#/group/{{ group.groupID }}">
-              <span ng-bind="::group.groupName"></span>
-            </a>
+            <p class="media-left media-middle">
+              <a ng-bind="::group.groupName" ng-href="#/group/{{ ::group.groupID }}"></a>
+              <span class="label label-warning" ng-bind="group.memberCount"></span>
+            </p>
           </h4>
-          <span ng-bind="::group.groupDescr"></span>
+          <span ng-bind-html="::group.groupDescr | shortenDescription"></span>
         </div>
       </li>
     </ul>
