@@ -81,7 +81,7 @@ public class PostResource {
         log.debug("/post returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      if (input.containsKey("userID")) {
+      if (input.containsKey("userID") && input.getInt("userID") != user.getId()) {
         // specific User
         User otherUser = new User (input.getInt("userID"));
         user.getFriendsFromDB();

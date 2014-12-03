@@ -110,15 +110,15 @@ public class Post {
    */
   public Boolean createInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     // int myInt = (myBoolean) ? 1 : 0
+    int privatePost = (this.privatePost) != null ? 1 : 0;
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
-        "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,type,title,content,visibility) "
+        "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,title,content,visibility) "
             + "VALUES(" + this.owner.getId() + "," 
-            + this.author.getId() + ","
-            + (this.groupPost) != null ? "1" : "0" + ",'" 
+            + this.author.getId() + ",'"
             + this.title + "','"
             + this.content + "',"
-            + (this.privatePost) != null ? "1" : "0");
+            + privatePost + ")");
     return true;
   }
   
