@@ -180,18 +180,11 @@ public class GroupResource {
             .build());
         log.debug("/group/show returns:" + entity);
         return Helper.okResponse(entity);
-      } else if (group.isMember(user)){
+      } else {
         return Response.ok()
             .entity(group.getAsJson())
             .header(Helper.ACCESSHEADER, "*")
             .build();
-      } else {
-        String entity = String.valueOf(Json.createObjectBuilder()
-            .add("successful", false)
-            .add("reason", "User may not be member of group")
-            .build());
-        log.debug("/group/show returns:" + entity);
-        return Helper.okResponse(entity);
       }
     } catch (Exception e){
       // internal server error
