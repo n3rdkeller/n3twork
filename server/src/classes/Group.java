@@ -1,6 +1,8 @@
 package classes;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ public class Group {
   private String descr = "";
   private List<User> members = new ArrayList<User>();
   private Map<String,String> otherProperties = new HashMap<String,String>();
-  private List<Post> posts;
+  private List<Post> posts = new ArrayList<Post>();
   private int memberCount;
 
   /**
@@ -515,27 +517,30 @@ public class Group {
 
   public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> postTable = DBConnector.selectQuery(conn, 
-        "SELECT GroupPosts.id, title, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
-        + "(SELECT count(*) FROM Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".GroupPosts "
-        + "JOIN " + DBConnector.DATABASE + ".Users ON GroupPosts."
-        + "WHERE ownerID="+ this.id);
-    postTable.remove(0);
-    for(ArrayList<String> row : postTable) {
+    String sqlQuery = "SELECT Posts.id as postid, title, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+        + "JOIN " + DBConnector.DATABASE + ".Users ON Posts.authorID = Users.id "
+        + "WHERE ownerID="+ this.id;
+    log.debug(sqlQuery);
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet postsTable = pStmt.executeQuery();
+    while (postsTable.next()) {
       this.posts.add(new Post()
-        .setId(Integer.parseInt(row.get(0)))
-        .setTitle(row.get(1))
-        .setContent(row.get(2))
-        .setPrivatePost(Integer.parseInt(row.get(3)) != 0)
+        .setId(postsTable.getInt("postid"))
+        .setTitle(postsTable.getString("title"))
+        .setContent(postsTable.getString("content"))
+        .setPrivatePost(postsTable.getBoolean("visibility"))
         .setOwner(this)
-        .setPostDate(new Date(Long.parseLong(row.get(4)))) 
+        .setPostDate(postsTable.getTimestamp("date")) 
         .setAuthor(new User(
-            Integer.parseInt(row.get(5)),
-            row.get(6),
-            row.get(7),
-            row.get(8),
-            row.get(9))));
-    }
+            postsTable.getInt("id"),
+            postsTable.getString("username"),
+            postsTable.getString("email"),
+            postsTable.getString("name"),
+            postsTable.getString("firstName")))
+        .setNumberOfUpVotes(postsTable.getInt("votes"))
+        );
+    };
     return this.posts;
   }
 

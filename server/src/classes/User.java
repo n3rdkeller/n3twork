@@ -959,8 +959,8 @@ public class User {
   public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT id, title, content, visibility, date, "
-        + "(SELECT count(*) FROM Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
-        + "WHERE ownerID="+ this.id;
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+        + "WHERE authorID="+ this.id + " AND ownerID=0";
     log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     ResultSet postsTable = pStmt.executeQuery();
@@ -969,7 +969,7 @@ public class User {
         .setId(postsTable.getInt("id"))
         .setTitle(postsTable.getString("title"))
         .setContent(postsTable.getString("content"))
-        .setPrivatePost(postsTable.getBoolean("private"))
+        .setPrivatePost(postsTable.getBoolean("visibility"))
         .setOwner(new Group(0))
         .setAuthor(this)
         .setPostDate(postsTable.getTimestamp("date"))

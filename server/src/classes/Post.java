@@ -73,6 +73,15 @@ public class Post {
       }
       if (post.getTitle() == null) post.setTitle("");
       if (post.getContent() == null) post.setContent("");
+      log.debug("id " + post.getId());
+      log.debug("owner "+ post.getOwner().getAsJson());
+      log.debug("author "+ post.getAuthor().getAsJson());
+      log.debug("title "+ post.getTitle());
+      log.debug("content "+ post.getContent());
+      log.debug("postDate "+ post.getPostDate().getTime());
+      log.debug("private "+ post.getPrivatePost());
+      log.debug("upVotes "+ jsonUpVotes);
+      log.debug("numberOfVotes "+ post.getNumberOfUpVotes());
       jsonPostList.add(Json.createObjectBuilder()
           .add("id", post.getId())
           .add("owner", post.getOwner().getAsJson())
