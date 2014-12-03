@@ -1,5 +1,5 @@
-<div class="well col-md-offset-3 col-md-6">
-  <form novalidate name="searchForm" ng-submit="search.loadSearchList(searchForm.$valid, search.searchString)" >
+<div class="col-md-offset-3 col-md-6">
+  <form novalidate class="margin-top" name="searchForm" ng-submit="search.loadSearchList(searchForm.$valid, search.searchString)" >
     <div class="form-group">
       <input autofocus ng-readonly="search.firstLoading || search.secondLoading" type="search" ng-model="search.searchString" class="form-control input-lg" placeholder="Type search string and press enter">
       <div class="help-block" ng-hide="search.firstLoading || search.secondLoading">
@@ -14,7 +14,7 @@
     </div>
   </form>
 </div>
-<div class="row">
+<div class="row big-margin-top">
   <ul class="media-list" ng-class="{ 'col-sm-offset-1 col-sm-5 col-md-offset-3 col-md-4': filteredUserSearch.length > 0 }">
     <li class="media" ng-repeat="user in filteredUserSearch = (search.userlist | filter: search.submittedSearchString) | orderBy: 'user.username' | limitTo:8">
     <span class="media-left">

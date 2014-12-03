@@ -3,20 +3,6 @@
 
   angular
     .module('n3twork')
-    .filter('capitalize', capitalize);
-
-    function capitalize() {
-      return function (input, all) {
-        return (!!input) ? input.replace(/([^\W_]+[^\s-]*) */g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) : '';
-      };
-    }
-})();
-
-(function() {
-  'use strict';
-
-  angular
-    .module('n3twork')
     .filter('symbolForKey', symbolForKey);
 
     function symbolForKey() {
@@ -151,6 +137,38 @@
           // make it safe
           description = $sce.trustAsHtml(description);
           return description;
+        } else { return "" };
+      };
+    }
+})();
+
+
+(function() {
+  'use strict';
+
+  angular
+    .module('n3twork')
+    .filter('parseName', ['$sce', parseName]);
+
+    function parseName($sce) {
+      return function (name) {
+        if (name) {
+          // remove script-tags
+          name = name.replace(/<script.*>.*<\/script>/igm, '');
+          // remove a-tags
+          name = name.replace(/<a .*>.*<\/a>/igm, '');
+          // remove img-tags
+          name = name.replace(/<img .*>.*<\/img>/igm, '');
+          // remove span-tags
+          name = name.replace(/<span .*>.*<\/span>/igm, '');
+          // remove trailing newLines
+          name = name.replace(/\n*/, '');
+          // replace newLines
+          name = name.replace(/\n/igm, '<br>');
+
+          // make it safe
+          name = $sce.trustAsHtml(name);
+          return name;
         } else { return "" };
       };
     }
