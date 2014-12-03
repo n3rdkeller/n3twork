@@ -11,6 +11,7 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -19,26 +20,15 @@ public class Post {
   final static Logger log = LogManager.getLogger(Post.class);
   
   private int id;
-  private int ownerID;
+  private Group owner;
+  private User author;
   private String content;
   private String title;
   private Date postDate;
-  private Boolean visibility;
-  private Boolean type;
+  private Boolean privatePost;
+  private Boolean groupPost;
   private Map<User,Date> upVotes = new HashMap<User,Date>();
 
-  /**
-   * Simple constructor
-   * @param owner Value for this.owner
-   * @param title Value for this.title
-   * @param visibility Value for this.visibility
-   */
-  public Post(int ownerID, String title, Boolean visibility) {
-    this.ownerID = ownerID;
-    this.title = title;
-    this.visibility = visibility;
-  }
-  
   /**
    * Empty constructor
    */
@@ -69,7 +59,7 @@ public class Post {
    *   "successful":true
    * } </code></pre>
    */
-  public static String convertPostListToJson(List<Post> postList) {
+  public static JsonValue convertPostListToJson(List<Post> postList) {
     JsonArrayBuilder jsonPostList = Json.createArrayBuilder();
     for(Post post: postList) {
       JsonArrayBuilder jsonUpVotes = Json.createArrayBuilder();
@@ -82,20 +72,21 @@ public class Post {
       if (post.getContent() == null) post.setContent("");
       jsonPostList.add(Json.createObjectBuilder()
           .add("id", post.getId())
-          .add("owner", post.getOwner())
+          .add("owner", post.getOwner().getAsJson())
+          .add("author", post.getAuthor().getAsJson())
           .add("title", post.getTitle())
           .add("content", post.getContent())
           .add("postDate", post.getPostDate().getTime())
-          .add("visibility", post.getVisibility())
+          .add("private", post.getPrivatePost())
           .add("upVotes", jsonUpVotes));
     }
     JsonObject output = Json.createObjectBuilder()
         .add("postList", jsonPostList)
         .add("successful", true)
         .build();
-    return String.valueOf(output);
+    return output;
   }
-  
+
   /**
    * Sets standard values in db
    * @return true if successful
@@ -108,12 +99,13 @@ public class Post {
     // int myInt = (myBoolean) ? 1 : 0
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
-        "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,type,title,content,visibility) "
-            + "VALUES(" + this.ownerID + "," 
-            + (this.type) != null ? "1" : "0" + ",'" 
+        "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,type,title,content,visibility) "
+            + "VALUES(" + this.owner.getId() + "," 
+            + this.author.getId() + ","
+            + (this.groupPost) != null ? "1" : "0" + ",'" 
             + this.title + "','"
             + this.content + "',"
-            + (this.visibility) != null ? "1" : "0");
+            + (this.privatePost) != null ? "1" : "0");
     return true;
   }
   
@@ -139,8 +131,8 @@ public class Post {
    * Simple getter for owner
    * @return this.owner
    */
-  public int getOwner() {
-    return this.ownerID;
+  public Group getOwner() {
+    return this.owner;
   }
 
   /**
@@ -148,8 +140,8 @@ public class Post {
    * @param owner New Value for this.owner
    * @return this
    */
-  public Post setOwner(int ownerID) {
-    this.ownerID = ownerID;
+  public Post setOwner(Group owner) {
+    this.owner = owner;
     return this;
   }
   /**
@@ -166,6 +158,7 @@ public class Post {
    * @return this
    */
   public Post setTitle(String title) {
+    this.title = title;
     return this;
   }
 
@@ -183,6 +176,7 @@ public class Post {
    * @return this
    */
   public Post setContent(String content) {
+    this.content = content;
     return this;
   }
 
@@ -200,6 +194,7 @@ public class Post {
    * @return this
    */
   public Post setPostDate(Date postDate) {
+    this.postDate = postDate;
     return this;
   }
 
@@ -207,8 +202,8 @@ public class Post {
    * Simple getter for visibility
    * @return this.visibility
    */
-  public Boolean getVisibility() {
-    return this.visibility;
+  public Boolean getPrivatePost() {
+    return this.privatePost;
   }
 
   /**
@@ -216,17 +211,27 @@ public class Post {
    * @param visibility New value for this.visibility
    * @return this
    */
-  public Post setVisibility(Boolean visibility) {
+  public Post setPrivatePost(Boolean privatePost) {
+    this.privatePost = privatePost;
     return this;
   }
   
-  public Boolean getType() {
-    return this.type;
+  public Boolean getGroupPost() {
+    return this.groupPost;
   }
   
-  public Post setType(Boolean type) {
-    this.type = type;
+  public Post setGroupPost(Boolean groupPost) {
+    this.groupPost = groupPost;
     return this;    
+  }
+  
+  public User getAuthor() {
+    return this.author;
+  }
+  
+  public Post setAuthor(User author) {
+    this.author = author;
+    return this;
   }
   /**
    * Simple getter for upVotes
@@ -242,6 +247,7 @@ public class Post {
    * @return this
    */
   public Post addUpVote(User voter) {
+    // TODO
     return this;
   }
 
