@@ -68,7 +68,6 @@ public class DBConnector {
     rs.close();
     
     return output;
-
   }
  
   /**

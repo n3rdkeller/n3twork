@@ -28,57 +28,6 @@ import classes.Group;
 @Path("/group")
 public class GroupResource {
   final static Logger log = LogManager.getLogger(GroupResource.class);
-
-  /**
-   * Options request for join
-   * @return Response with all needed headers
-   */
-  @OPTIONS @Path("/find/old")
-  public Response corsFindGroup() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
-  /**
-   * Post request to find groups
-   * @param jsonInput '{ "session" : "sessionID", "groupID":"groupID" }'
-   * @return '{ "successful" : true/false }' with html error code 200 or any exception with html error code 500
-   */
-  @POST @Path("/find/old")
-  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response findGroup(String jsonInput){
-    log.debug("find input: " + jsonInput);
-    try {
-      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
-      JsonObject input = jsonReader.readObject();
-      User user = Helper.checkSessionID(input.getString("session"));
-      if (user == null){
-        String entity = String.valueOf(Json.createObjectBuilder()
-            .add("successful", false)
-            .add("reason", "SessionID invalid")
-            .build());
-        log.debug("/group/find returns:" + entity);
-        return Helper.okResponse(entity);
-      } 
-      String entity = String.valueOf(Group.convertGroupListToJson(
-              Group.findGroup(
-                  input.getString("search"))));
-      log.debug("/group/find returns:" + entity);
-      return Helper.okResponse(entity);
-      
-    } catch (Exception e){
-      // internal server error
-      log.error(e);
-      return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(e.toString())
-          .header(Helper.ACCESSHEADER, "*")
-          .build();
-    }
-  }
-  
   
   /**
    * Options request for create
@@ -181,10 +130,8 @@ public class GroupResource {
         log.debug("/group/show returns:" + entity);
         return Helper.okResponse(entity);
       } else {
-        return Response.ok()
-            .entity(group.getAsJson())
-            .header(Helper.ACCESSHEADER, "*")
-            .build();
+        String entity = String.valueOf(group.getAsJson());
+        return Helper.okResponse(entity);
       }
     } catch (Exception e){
       // internal server error
@@ -230,7 +177,8 @@ public class GroupResource {
         log.debug("/group/find returns:" + entity);
         return Helper.okResponse(entity);
       } else {
-        String entity = Group.getAllAsJson();
+        String entity = String.valueOf(Group.convertGroupListToJson(
+            Group.findGroup()));
         log.debug("/group/find returns:" + entity);
         return Helper.okResponse(entity);
       }

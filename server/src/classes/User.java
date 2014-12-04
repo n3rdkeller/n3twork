@@ -1,6 +1,8 @@
 package classes;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -827,7 +829,6 @@ public class User {
             new SimpleEntry<Long,Boolean>(friendRequestsTable.getTimestamp("date").getTime(), false));
       }
     }
-    log.debug(this.friendRequests);
     conn.close();
     friendRequestsTable.close();
     pStmt.close();
@@ -957,8 +958,9 @@ public class User {
    */
   public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "SELECT id, title, content, visibility, date FROM " + DBConnector.DATABASE + ".Posts "
-        + "WHERE ownerID="+ this.id;
+    String sqlQuery = "SELECT id, title, content, visibility, date, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+        + "WHERE authorID="+ this.id + " AND ownerID=0";
     log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     ResultSet postsTable = pStmt.executeQuery();
@@ -967,10 +969,11 @@ public class User {
         .setId(postsTable.getInt("id"))
         .setTitle(postsTable.getString("title"))
         .setContent(postsTable.getString("content"))
-        .setPrivatePost(postsTable.getBoolean("private"))
+        .setPrivatePost(postsTable.getBoolean("visibility"))
         .setOwner(new Group(0))
         .setAuthor(this)
-        .setPostDate(postsTable.getTimestamp("date")));
+        .setPostDate(postsTable.getTimestamp("date"))
+        .setNumberOfUpVotes(postsTable.getInt("votes")));
     }
     return this.posts;
   }
@@ -987,7 +990,6 @@ public class User {
   public User addPost(Post post) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     post.setOwner(new Group(0));
     post.setAuthor(this);
-    post.setGroupPost(false);
     post.createInDB();
     return this;
   }
@@ -998,19 +1000,109 @@ public class User {
   
   public List<Post> getNewsFeedFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "SELECT Users.id, Users.username, Users.email, Users.name, Users.firstName, Posts.title, Posts.content, Posts.visibility, Posts.date FROM " + DBConnector.DATABASE + ".Friends" 
-         + "JOIN Posts"
-         + "ON Friends.friendID = Posts.ownerID"
-         + "JOIN Users"
-         + "ON Users.id = Posts.ownerID"
-         + "WHERE Friends.userID =" + this.id;
+    String sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
+          + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
+          + "Posts.id as postid, Posts.title, Posts.content, Posts.visibility, Posts.date, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+          + "JOIN " + DBConnector.DATABASE + ".Friends ON Friends.friendID = Posts.authorID "
+          + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
+          + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
+          + "WHERE Friends.userID = " + this.id + " AND Posts.ownerID = 0";
+    log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    ResultSet postsTable = pStmt.executeQuery();
-    if(this.friends.size() == 0) {
-      this.getFriendRequestsFromDB();
+    ResultSet UserPostsTable = pStmt.executeQuery();
+    
+    List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, 
+        "SELECT userID FROM " + DBConnector.DATABASE + ".Friends WHERE Friends.friendID=" + this.id);    
+    //  fill up bothWayFriendsList
+    List<Integer> bothWayFriendsList = new ArrayList<Integer>();
+    friendRequestsTable.remove(0);
+    for (ArrayList<String> smallList : friendRequestsTable) {
+      bothWayFriendsList.add(Integer.parseInt(smallList.get(0)));
     }
     
-    return null;
+    List<Post> postList = new ArrayList<Post>();
+    log.debug(bothWayFriendsList);
+    // read UserPostsTable
+    while (UserPostsTable.next()) {
+      log.debug(UserPostsTable.getInt("userid") + " " + UserPostsTable.getBoolean("visibility") + " " + bothWayFriendsList.contains(UserPostsTable.getInt("userid")));
+      if(bothWayFriendsList.contains(UserPostsTable.getInt("userid"))) {
+        // private posts of trueFriends™
+        postList.add(new Post()
+            .setId(UserPostsTable.getInt("postid"))
+            .setTitle(UserPostsTable.getString("title"))
+            .setContent(UserPostsTable.getString("content"))
+            .setPrivatePost(UserPostsTable.getBoolean("visibility"))
+            .setPostDate(UserPostsTable.getDate("date"))
+            .setOwner(new Group(UserPostsTable.getInt("groupid"))
+                .setName(UserPostsTable.getString("groupname")))
+            .setAuthor(new User(
+                UserPostsTable.getInt("userid"),
+                UserPostsTable.getString("username"),
+                UserPostsTable.getString("email"),
+                UserPostsTable.getString("name"),
+                UserPostsTable.getString("firstName")))
+            .setNumberOfUpVotes(UserPostsTable.getInt("votes")));
+      } else if (!UserPostsTable.getBoolean("visibility")){
+        // all public posts
+        postList.add(new Post()
+            .setId(UserPostsTable.getInt("postid"))
+            .setTitle(UserPostsTable.getString("title"))
+            .setContent(UserPostsTable.getString("content"))
+            .setPrivatePost(false)
+            .setPostDate(UserPostsTable.getDate("date"))
+            .setOwner(new Group(UserPostsTable.getInt("groupid"))
+                .setName(UserPostsTable.getString("groupname")))
+            .setAuthor(new User(
+                UserPostsTable.getInt("userid"),
+                UserPostsTable.getString("username"),
+                UserPostsTable.getString("email"),
+                UserPostsTable.getString("name"),
+                UserPostsTable.getString("firstName")))
+            .setNumberOfUpVotes(UserPostsTable.getInt("votes")));
+      }
+    }
+    
+    UserPostsTable.close();
+    pStmt.close();
+    
+    sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
+          + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
+          + "Posts.id as postid, Posts.title, Posts.content, Posts.visibility, Posts.date, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+          + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
+          + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
+          + "JOIN " + DBConnector.DATABASE + ".Members ON Members.groupID = Posts.ownerID "
+          + "WHERE Members.memberID = " + this.id;
+    log.debug(sqlQuery);
+    pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet GroupPostsTable = pStmt.executeQuery();
+    
+    // read GroupPostsTable
+    while (GroupPostsTable.next()) {
+      postList.add(new Post()
+      .setId(GroupPostsTable.getInt("postid"))
+      .setTitle(GroupPostsTable.getString("title"))
+      .setContent(GroupPostsTable.getString("content"))
+      .setPrivatePost(GroupPostsTable.getBoolean("visibility"))
+      .setPostDate(GroupPostsTable.getDate("date"))
+      .setOwner(new Group(GroupPostsTable.getInt("groupid"))
+          .setName(GroupPostsTable.getString("groupname")))
+      .setAuthor(new User(
+          GroupPostsTable.getInt("userid"),
+          GroupPostsTable.getString("username"),
+          GroupPostsTable.getString("email"),
+          GroupPostsTable.getString("name"),
+          GroupPostsTable.getString("firstName")))
+      .setNumberOfUpVotes(GroupPostsTable.getInt("votes")));
+    }
+    
+    GroupPostsTable.close();
+    pStmt.close();
+    conn.close();
+    // sort List by postDate
+    Collections.sort(postList, new PostComparator());
+    return postList;
   }
 
   public List<Message> getMessages() {

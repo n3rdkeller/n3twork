@@ -1,6 +1,8 @@
 package classes;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ public class Group {
   private String descr = "";
   private List<User> members = new ArrayList<User>();
   private Map<String,String> otherProperties = new HashMap<String,String>();
-  private List<Post> posts;
+  private List<Post> posts = new ArrayList<Post>();
   private int memberCount;
 
   /**
@@ -75,26 +77,52 @@ public class Group {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public static List<Group> findGroup(String searchString) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public static List<Group> findGroup() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<Group> groupList = new ArrayList<Group>();
     List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
-        "SELECT id,name, (" 
-            + "SELECT COUNT(*) FROM Members "
+        "SELECT Groups.id,name,descr, (" 
+            + "SELECT COUNT(*) FROM " + DBConnector.DATABASE + ".Members "
             + "WHERE Members.groupID = Groups.id) as membercount "
-            + "FROM " + DBConnector.DATABASE + ".Groups"
-            + "WHERE id != 0");
+            + "FROM " + DBConnector.DATABASE + ".Groups "
+            + "WHERE Groups.id != 0");
     groupTable.remove(0); // remove column names
     for (ArrayList<String> groupTableRow : groupTable) {
-      if (groupTableRow.get(1).toLowerCase().contains(searchString.toLowerCase())) {
         Group group = new Group(
-            Integer.parseInt(groupTableRow.get(0)))
-            .setName(groupTableRow.get(1))
-            .setMemberCount(Integer.parseInt(groupTableRow.get(3)));
+          Integer.parseInt(groupTableRow.get(0)))
+          .setName(groupTableRow.get(1))
+          .setDescr(groupTableRow.get(2))
+          .setMemberCount(Integer.parseInt(groupTableRow.get(3)));
         groupList.add(group);
-      }
     }
     return groupList;
+  }
+  
+  /**
+   * Gets all groups in a Json list
+   * @return {"groupList":[{"groupID":"groupID",...},...]}
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public static String getAllAsJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
+        "SELECT id,name,descr FROM " + DBConnector.DATABASE + ".Groups");
+    groupTable.remove(0);
+    JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
+    for (ArrayList<String> row : groupTable) {
+      groupJsonList.add(Json.createObjectBuilder()
+          .add("groupID", Integer.parseInt(row.get(0)))
+          .add("groupName", row.get(1))
+          .add("groupDescr", row.get(2)));
+    }
+    
+    return String.valueOf(Json.createObjectBuilder()
+        .add("groupList",groupJsonList)
+        .add("successful", true)
+        .build());
   }
   
   /**
@@ -234,6 +262,8 @@ public class Group {
       if (e.getValue() == null) e.setValue("");
       otherProperties.add(e.getKey(), e.getValue());
     }
+    if(this.descr == null) this.descr = "";
+    if(this.name == null) this.name = "";
     JsonObject groupJson = Json.createObjectBuilder()
       .add("id", this.id)
       .add("name", this.name)
@@ -243,33 +273,6 @@ public class Group {
       .add("memberCount", this.memberCount)
       .build();
     return groupJson;
-  }
-  
-  /**
-   * Gets all groups in a Json list
-   * @return {"groupList":[{"groupID":"groupID",...},...]}
-   * @throws InstantiationException
-   * @throws IllegalAccessException
-   * @throws ClassNotFoundException
-   * @throws SQLException
-   */
-  public static String getAllAsJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
-        "SELECT id,name,descr FROM " + DBConnector.DATABASE + ".Groups");
-    groupTable.remove(0);
-    JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
-    for (ArrayList<String> row : groupTable) {
-      groupJsonList.add(Json.createObjectBuilder()
-          .add("groupID", Integer.parseInt(row.get(0)))
-          .add("groupName", row.get(1))
-          .add("groupDescr", row.get(2)));
-    }
-    
-    return String.valueOf(Json.createObjectBuilder()
-        .add("groupList",groupJsonList)
-        .add("successful", true)
-        .build());
   }
   
   /**
@@ -370,6 +373,7 @@ public class Group {
     
     JsonObject membersObject = Json.createObjectBuilder()
       .add("memberList", memberList)
+      .add("name", this.name)
       .add("successful", true)
       .build();
     String jsonString = String.valueOf(membersObject);
@@ -513,31 +517,35 @@ public class Group {
 
   public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> postTable = DBConnector.selectQuery(conn, 
-        "SELECT GroupPosts.id, title, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName " + DBConnector.DATABASE + ".GroupPosts "
-        + "JOIN " + DBConnector.DATABASE + ".Users ON GroupPosts."
-        + "WHERE ownerID="+ this.id);
-    postTable.remove(0);
-    for(ArrayList<String> row : postTable) {
+    String sqlQuery = "SELECT Posts.id as postid, title, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+        + "JOIN " + DBConnector.DATABASE + ".Users ON Posts.authorID = Users.id "
+        + "WHERE ownerID="+ this.id;
+    log.debug(sqlQuery);
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet postsTable = pStmt.executeQuery();
+    while (postsTable.next()) {
       this.posts.add(new Post()
-        .setId(Integer.parseInt(row.get(0)))
-        .setTitle(row.get(1))
-        .setContent(row.get(2))
-        .setPrivatePost(Integer.parseInt(row.get(3)) != 0)
+        .setId(postsTable.getInt("postid"))
+        .setTitle(postsTable.getString("title"))
+        .setContent(postsTable.getString("content"))
+        .setPrivatePost(postsTable.getBoolean("visibility"))
         .setOwner(this)
-        .setPostDate(new Date(Long.parseLong(row.get(4)))) 
+        .setPostDate(postsTable.getTimestamp("date")) 
         .setAuthor(new User(
-            Integer.parseInt(row.get(5)),
-            row.get(6),
-            row.get(7),
-            row.get(8),
-            row.get(9))));
-    }
+            postsTable.getInt("id"),
+            postsTable.getString("username"),
+            postsTable.getString("email"),
+            postsTable.getString("name"),
+            postsTable.getString("firstName")))
+        .setNumberOfUpVotes(postsTable.getInt("votes"))
+        );
+    };
     return this.posts;
   }
 
   public Group addPost(Post post, User author) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    post.setOwner(new Group(0));
+    post.setOwner(this);
     post.setAuthor(author);
     post.setGroupPost(true);
     post.setPrivatePost(false);
