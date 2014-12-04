@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import org.apache.log4j.LogManager;
@@ -118,9 +117,57 @@ public class Post {
             + this.title + "','"
             + this.content + "',"
             + privatePost + ")");
+  }
+  
+  /**
+   * Deletes this from the db
+   * @return false if this.id is not given
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public Boolean deleteFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    if (this.id == 0) return false;
+    Connection conn = DBConnector.getConnection();
+    DBConnector.executeUpdate(conn, 
+        "DELETE FROM " + DBConnector.DATABASE + ".Posts "
+        + "WHERE id=" + this.id);
     return true;
   }
   
+  public Boolean updateDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+
+    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Posts SET ";
+    if (this.title != null) {
+      if (sqlQuery.endsWith("SET ")) {
+        sqlQuery = sqlQuery + "title='" + this.title + "'";
+      } else {
+        sqlQuery = sqlQuery + ",title='" + this.title + "'";
+      }
+    }
+    if (this.content != null) {
+      if (sqlQuery.endsWith("SET ")) {
+        sqlQuery = sqlQuery + "content='" + this.content + "'";
+      } else {
+        sqlQuery = sqlQuery + ",content='" + this.content + "'";
+      }
+    }
+    if (this.privatePost != null) {
+      if (sqlQuery.endsWith("SET ")) {
+        sqlQuery = sqlQuery + "visibility=" + this.privatePost;
+      } else {
+        sqlQuery = sqlQuery + ",visibility=" + this.privatePost;
+      }
+    }
+    if (!sqlQuery.endsWith("SET ")) {
+      Connection conn = DBConnector.getConnection();
+      DBConnector.executeUpdate(conn, sqlQuery + " WHERE id=" + this.id);
+      return true;
+    } else {
+      return false;
+    }
+  }
   /**
    * Simple getter for id
    * @return this.id
