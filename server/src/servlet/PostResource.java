@@ -291,4 +291,54 @@ public class PostResource {
       return Helper.errorResponse(e);
     }  
   }
+  
+  @OPTIONS @Path("/delete")
+  public Response corsDeletePost() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code> {
+   *   "session":"sessionID"
+   *   "id":0 //id of the doomed post
+   * }</code></pre>
+   * @return
+   */
+  @POST @Path("/delete")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response deletePost(String jsonInput) {
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/post/delete returns:" + entity);
+        return Helper.okResponse(entity);
+      }
+      if (input.containsKey("id")) {
+        Post post = new Post().setId(input.getInt("id"));
+        post.deleteFromDB();
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", true)
+            .build());
+        log.debug("/post/delete returns:" + entity);
+        return Helper.okResponse(entity);
+      } else {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "The 'id' key is not given")
+            .build());
+        log.debug("/post/delete returns:" + entity);
+        return Helper.okResponse(entity);
+      }
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }  
+  }
 }
