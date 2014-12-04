@@ -545,7 +545,7 @@ public class Group {
   }
 
   public Group addPost(Post post, User author) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    post.setOwner(new Group(0));
+    post.setOwner(this);
     post.setAuthor(author);
     post.setGroupPost(true);
     post.setPrivatePost(false);

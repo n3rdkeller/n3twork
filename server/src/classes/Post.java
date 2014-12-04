@@ -102,15 +102,14 @@ public class Post {
 
   /**
    * Sets standard values in db
-   * @return true if successful
    * @throws SQLException 
    * @throws ClassNotFoundException 
    * @throws IllegalAccessException 
    * @throws InstantiationException 
    */
-  public Boolean createInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public void createInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     // int myInt = (myBoolean) ? 1 : 0
-    int privatePost = (this.privatePost) != null ? 1 : 0;
+    int privatePost = (this.privatePost) ? 1 : 0;
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
         "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,title,content,visibility) "

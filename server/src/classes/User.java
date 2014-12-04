@@ -990,7 +990,6 @@ public class User {
   public User addPost(Post post) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     post.setOwner(new Group(0));
     post.setAuthor(this);
-    post.setGroupPost(false);
     post.createInDB();
     return this;
   }
