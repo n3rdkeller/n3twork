@@ -100,14 +100,14 @@ public class Post {
   }
 
   /**
-   * Sets standard values in db
+   * Inserts a post with ownerID, authorID, title, content, and privacy status into db. 
+   * this.author and this.owner with at least the id value, this.title, this.content and this.privatePost needs to be given.
    * @throws SQLException 
    * @throws ClassNotFoundException 
    * @throws IllegalAccessException 
    * @throws InstantiationException 
    */
   public void createInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    // int myInt = (myBoolean) ? 1 : 0
     int privatePost = (this.privatePost) ? 1 : 0;
     Connection conn = DBConnector.getConnection();
     DBConnector.executeUpdate(conn, 
@@ -136,8 +136,15 @@ public class Post {
     return true;
   }
   
+  /**
+   * Updates title, content or privacy status of this post. If a attribute wasn't changed, it must have the value null.
+   * @return false if no changes where made
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Boolean updateDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-
     String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Posts SET ";
     if (this.title != null) {
       if (sqlQuery.endsWith("SET ")) {
@@ -168,6 +175,7 @@ public class Post {
       return false;
     }
   }
+  
   /**
    * Simple getter for id
    * @return this.id
