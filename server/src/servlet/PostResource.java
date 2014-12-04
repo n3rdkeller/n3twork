@@ -162,6 +162,55 @@ public class PostResource {
     }
   }
   
+  @OPTIONS @Path("/votes")
+  public Response corsShowVotes() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * Post request to get upVotes of a post
+   * @param jsonInput <pre><code> {
+   *   "id":postID number,
+   *   "session":"sessionID"
+   * }
+   * @return <pre><code> {
+   *   "voteList": [
+   *     {
+   *       "date":voteDate number,
+   *       "voter":{
+   *         "firstName":firstName text,
+   *         "name":name text,
+   *         "username":username text
+   *       }
+   *     },
+   *   ],
+   *   "successful":true
+   * } </code></pre>
+   */
+  @POST @Path("/votes")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response showVotes(String jsonInput){
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/post returns:" + entity);
+        return Helper.okResponse(entity);
+      } 
+      Post post = new Post().setId(input.getInt("id"));
+      String entity = String.valueOf(post.getUpVotesFromDB().getUpVotesAsJson());
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }
+  }
+  
   @OPTIONS @Path("/add")
   public Response corsAddPost() {
     return Helper.optionsResponse();

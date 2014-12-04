@@ -328,9 +328,9 @@ public class Post {
    */
   public Post getUpVotesFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "Select Users.username, Users.name, Users.firstName, Votes.date From " + DBConnector.DATABASE + ".Votes"
-          + "join " + DBConnector.DATABASE + ".Posts on Posts.id = Votes.postID"
-          + "join " + DBConnector.DATABASE + ".Users on Users.id = Votes.voterID"
+    String sqlQuery = "Select Users.username, Users.name, Users.firstName, Votes.date From " + DBConnector.DATABASE + ".Votes "
+          + "JOIN " + DBConnector.DATABASE + ".Posts ON Posts.id = Votes.postID "
+          + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Votes.voterID "
           + "WHERE Posts.id = " + this.id;
     log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
