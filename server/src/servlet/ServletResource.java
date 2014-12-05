@@ -59,8 +59,23 @@ public class ServletResource {
   
   /**
    * Post request for login. 
-   * @param input as Json ( '{ "login" : "username/email", "password" : "pw in plain text" }' )
-   * @return The user as Json / '{ "successful" : false }' with html error code 200 or any exception with html error code 500
+   * @param input <pre><code>{
+   *  "login" : "username/email",
+   *  "password" : "pw in plain text"
+   *}</pre></code>   
+   * @return <pre><code>{
+   *  "session":"sessionID",
+   *  "id":userID,
+   *  "username":"username",
+   *  "email":"email",
+   *  "lastname":"last name",
+   *  "firstname":"first name",
+   *  "otherProperties":{
+   *    "propertie1":"value",
+   *    "propertie2":"value",
+   *  },
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/login")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -113,8 +128,12 @@ public class ServletResource {
   
   /**
    * Post request for logout
-   * @param jsonInput '{ "session" : "sessionID" }'
-   * @return Response with the entity '{ "successful" : true }' with html error code 200 or any exception and html error code 500
+   * @param jsonInput <pre><code>{
+   *  "session" : "sessionID"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/logout")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -157,8 +176,14 @@ public class ServletResource {
   
   /**
    * Post request for register
-   * @param jsonInput '{"email":"email@text","password":"pw as plain text","username":"usernametext"}'
-   * @return Response with the entity '{"successful": true/false}' with html error code 200 or any exception and html error code 500
+   * @param jsonInput <pre><code>{
+   *  "email":"email@text",
+   *  "password":"pw as plain text",
+   *  "username":"usernametext"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/register")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -198,8 +223,14 @@ public class ServletResource {
   
   /**
    * Post request for checkuser. Gets a List of all usernames and then checks if the user in in that list
-   * @param jsonInput '{"username":"usernametext"}'
-   * @return Response with the entity {"username":"usernametext", "taken":true/false} and html error code 200 or any exception and html error code 500
+   * @param jsonInput <pre><code>{
+   *  "username":"usernametext"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "username":"usernametext",
+   *  "taken":true/false,
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/register/checkuser")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -215,6 +246,7 @@ public class ServletResource {
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("username", user)
           .add("taken", this.userList.contains(user))
+          .add("successful", true)
           .build());
       log.debug("/register/checkuser returns: " + entity);
       return Response.ok()

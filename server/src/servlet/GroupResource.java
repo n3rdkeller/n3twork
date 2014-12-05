@@ -44,8 +44,14 @@ public class GroupResource {
   
   /**
    * Post request to create a group
-   * @param jsonInput '{ "session" : "sessionID", "groupName":"groupName", "groupDescr":"groupDescr" }'
-   * @return '{ "successful" : true/false }' with html error code 200 or any exception with html error code 500
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "groupName":"groupName",
+   *  "groupDescr":"groupDescr"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/create")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -103,8 +109,21 @@ public class GroupResource {
   
   /**
    * Post request to get a group if the user is a member
-   * @param jsonInput '{ "session" : "sessionID", "group":"groupID"}'
-   * @return '{ "successful" : true/false }' or group with html error code 200 or any exception with html error code 500
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "group":"groupID"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "id":groupID,
+   *  "name":"group name",
+   *  "descr":"group descr",
+   *  "otherProperties":{
+   *    "propertie1":"some text",
+   *    "propertie2":"some other text",
+   *  },
+   *  "memberCount":number of members,
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/show")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -158,8 +177,12 @@ public class GroupResource {
   
   /**
    * Post request to get a list of all groups
-   * @param jsonInput '{ "session" : "sessionID"}'
-   * @return '{ "successful" : true/false }' with html error code 200 or any exception with html error code 500
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/find")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -207,8 +230,13 @@ public class GroupResource {
   
   /**
    * Post Request to count user in db
-   * @param jsonInput {"session":"sessionID"} with userID being optional
-   * @return Response with the entity {"successful":true, "count":somenumber} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "groups":number of groups,
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/count")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -255,8 +283,22 @@ public class GroupResource {
   
   /**
    * Post request to get a list of all members in the group
-   * @param jsonInput '{ "session" : "sessionID", "group",groupID}'
-   * @return '{ "successful" : false }' or member as json with html error code 200 or any exception with html error code 500
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "group",groupID
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "memberList":[
+   *    {
+   *      "id":userID of the member,
+   *      "username":"username",
+   *      "email":"email",
+   *      "name":"name",
+   *      "firstName":"firstName"
+   *    },
+   *  ],
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/members")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)

@@ -222,6 +222,7 @@ public class User {
     String returnString = String.valueOf(Json.createObjectBuilder()
         .add("users", users)
         .add("usersOnline", usersOnline)
+        .add("successful", true)
         .build());
     return returnString;
   }

@@ -45,8 +45,18 @@ public class UserResource {
   
   /**
    * Post Request to apply settings
-   * @param jsonInput {"session":"sessionID","changedSetting1":"newValue1",...}
-   * @return Response with the entity {"successful", true/false} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "changedSetting1":"newValue1",
+   *  "changedSetting2":"newValue2",
+   *  "otherProperties":{
+   *    "changedPropertie1":"newValue3",
+   *    "changedPropertie2":"newValue4"
+   *  }
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/settings")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -112,8 +122,25 @@ public class UserResource {
   
   /**
    * Post Request to get a json all users
-   * @param jsonInput {"session":"sessionID"}
-   * @return Response with the entity {"successful":false} or json list of all users and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID"
+   *}
+   * @return <pre><code>{
+   *  "userList":[
+   *    {
+   *      "id":userID,
+   *      "username":"username",
+   *      "email":"email",
+   *      "lastname":"last name",
+   *      "firstname":"first name",
+   *      "otherProperties":{
+   *        "propertie1":"value",
+   *        "propertie2":"value",
+   *      }
+   *    },
+   *  ],
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/find")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -158,8 +185,14 @@ public class UserResource {
   
   /**
    * Post Request to count user in db
-   * @param jsonInput {"session":"sessionID"} with userID being optional
-   * @return Response with the entity {"successful":true, "count":somenumber} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true,
+   *  "users":number of users in the system
+   *  "usersOnline": number of users online
+   *}</code></pre>
    */
   @POST @Path("/count")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -206,8 +239,22 @@ public class UserResource {
   
   /**
    * Post Request to show user by id
-   * @param jsonInput {"session":"sessionID" , "username":"username"} with userID being optional
-   * @return Response with the entity {"successful":true / false} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "username":"username" // optional
+   *}<pre><code>
+   * @return <pre><code>{
+   *  "id":userID,
+   *  "username":"username",
+   *  "email":"email",
+   *  "lastname":"last name",
+   *  "firstname":"first name",
+   *  "otherProperties":{
+   *    "propertie1":"value",
+   *    "propertie2":"value",
+   *  },
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -267,8 +314,12 @@ public class UserResource {
   
   /**
    * Post Request to remove current user
-   * @param jsonInput {"session":"sessionID"}
-   * @return Response with the entity {"successful":true / false} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID"
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/remove")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -315,8 +366,24 @@ public class UserResource {
   
   /**
    * Post Request to get all friends of a user
-   * @param jsonInput {"session":"sessionID", "id":userID} with userID being optional
-   * @return Response with the entity {"friendList":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "id":userID //optional
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "friendList":[
+   *    {
+   *      "id":"id",
+   *      "username":"username",
+   *      "lastname":"last name",
+   *      "firstname":"first name",
+   *      "email":"email",
+   *      "trueFriend":true/false,
+   *      "date":timestamp of adding      
+   *    },
+   *  ],
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/friends")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -364,8 +431,23 @@ public class UserResource {
   
   /**
    * Post Request to get all friend requests of a user
-   * @param jsonInput {"session":"sessionID", "id":userID} with userID being optional
-   * @return Response with the entity {"friendRequests":[{"id":"id","username":"username",...},...],"successful":true} or {"successful":false} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "id":userID //optional
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "friendRequests":[
+   *    {
+   *      "id":"id",
+   *      "username":"username",
+   *      "lastname":"last name",
+   *      "firstname":"first name",
+   *      "email":"email",
+   *      "date":timestamp of adding 
+   *    },
+   *  ],
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/friendrequests")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -413,8 +495,13 @@ public class UserResource {
   
   /**
    * Post Request to add a friend
-   * @param jsonInput {"session":"sessionID","friend":userID}
-   * @return Response with the entity {"successful":true/false} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "friend":userID
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/friend/add")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -462,8 +549,13 @@ public class UserResource {
   
   /**
    * Post Request to remove a friend
-   * @param jsonInput {"session":"sessionID", "friend":friendID}
-   * @return Response with the entity {"successful":true/false} and html error code 200
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "friend":friendID
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/friend/remove")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -511,8 +603,20 @@ public class UserResource {
   
   /**
    * Post request to get all groups of a user
-   * @param jsonInput {"session":"sessionID","username":username} userID is optional. If it's not given, the method will use current user by sessionID
-   * @return {"groupList":[{"groupID":groupID,...},...], "successful":true}
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "username":"username" //optional
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "groupList":[
+   *    {
+   *      "groupID":groupID,
+   *      "groupName":"group name",
+   *      "groupDescr":"group descr"
+   *    },
+   *  ],
+   *  "successful":true
+   *}</pre></code>
    */
   @POST @Path("/groups")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -560,8 +664,13 @@ public class UserResource {
   
   /**
    * Post request to allow the current user to join a group
-   * @param jsonInput {"session":"sessionID","group":groupID}
-   * @return {"successful":true / false}
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "group":groupID
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/group/join")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -611,8 +720,13 @@ public class UserResource {
   
   /**
    * Post request to allow the current user to leave a group
-   * @param jsonInput {"session":"sessionID","group":groupID}
-   * @return {"successful":true / false}
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "group":groupID
+   *}</pre></code>
+   * @return <pre><code>{
+   *  "successful":true/false
+   *}</pre></code>
    */
   @POST @Path("/group/leave")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
