@@ -46,7 +46,6 @@
         });
         vm.loadingFriends = true;
         CacheSvc.getFriendListOfUser(vm.userdata.id).then(function (friendList) {
-          console.log(friendList);
           vm.friendlist = friendList;
           vm.loadingFriends = false;
         }, function (error) {
