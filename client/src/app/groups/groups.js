@@ -5,8 +5,8 @@
     .module('n3twork.groups')
     .controller('GroupsCtrl', GroupsCtrl);
 
-  GroupsCtrl.$inject = ['CacheSvc', '$routeParams', '$modal', '$timeout'];
-  function GroupsCtrl(CacheSvc, $routeParams, $modal, $timeout) {
+  GroupsCtrl.$inject = ['CacheSvc', '$routeParams', '$modal', '$timeout', '$location', '$rootScope'];
+  function GroupsCtrl(CacheSvc, $routeParams, $modal, $timeout, $location, $rootScope) {
     var vm = this;
 
     vm.openCreateGroupModal = openCreateGroupModal;
@@ -17,11 +17,13 @@
       vm.loadingGroups = true;
       CacheSvc.getUserData($routeParams.username).then(function (userdata) {
         vm.userdata = userdata;
-        CacheSvc.getGroupListOfUser($routeParams.username).then(function (groupList) {
+        if (vm.userdata.username == $rootScope.userdata.username) {
+          vm.itsMe = true;
+        }
+        CacheSvc.getGroupListOfUser(vm.userdata.username).then(function (groupList) {
           vm.groupList = groupList;
           vm.loadingGroups = false;
         }, function (error) {
-          vm.groupList = [];
           vm.loadingGroups = false;
         });
       }, function (error) {
@@ -36,16 +38,31 @@
         controllerAs: 'create',
         keyboard: false,
         backdrop: false
-      });
-      modalInstance.result.then(function (groupID) {
-        $timeout(function() {
-          vm.loadingGroups = true;
-          CacheSvc.removeGroupCache();
-          $location.path('group/' + groupID.toString());
-        }, 500);
+      }).result.then(function (groupName) {
+        vm.loadingGroups = true;
+        CacheSvc.removeGroupCache();
+        CacheSvc.getGroupListOfUser(vm.userdata.username).then(function (groupList) {
+          vm.groupList = groupList;
+          $timeout(function() {
+            $location.path('group/' + getIdForGroupName(groupName));
+
+          }, 500);
+          vm.loadingGroups = false;
+        }, function (error) {
+          vm.loadingGroups = false;
+        });
       }, function () {
         console.log('modal dismissed at ' + new Date());
       });
+    }
+
+    function getIdForGroupName (name) {
+      for (var group in vm.groupList) {
+        if (vm.groupList[group].groupName == name) {
+          return vm.groupList[group].groupID;
+        }
+      }
+      return 0;
     }
 
   }
@@ -60,8 +77,8 @@
     .module('n3twork.groups')
     .controller('CreateGroupCtrl', CreateGroupCtrl);
 
-  CreateGroupCtrl.$inject = ['APISvc', '$location', 'CacheSvc', '$modalInstance', '$timeout'];
-  function CreateGroupCtrl(APISvc, $location, CacheSvc, $modalInstance, $timeout) {
+  CreateGroupCtrl.$inject = ['APISvc', '$modalInstance'];
+  function CreateGroupCtrl(APISvc, $modalInstance) {
     var vm = this;
 
     vm.ok = okButtonPressed;
