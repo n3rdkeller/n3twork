@@ -40,12 +40,14 @@
 
     <!-- Main Container (containing ng-view container-fluid) -->
     <div>
-      <!-- <ng-include src="'app/views/tabs.html'"></ng-include> -->
       <div ng-view class="container-fluid"></div><br>
     </div>
 
     <!-- All scripts concatted (and maybe also minified) -->
     <!-- In here are also all frameworks and libraries -->
     <script type="text/javascript" src="js/n3twork.min.js"></script>
+
+    <!-- DEV: Livereload -->
+    <script src="//localhost:35729/livereload.js"></script>
   </body>
 </html>

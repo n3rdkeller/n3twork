@@ -4,7 +4,7 @@ module.exports = function(grunt) {
     // Clean
     clean: {
       dist: {
-        src: ["dist/"]
+        src: ['dist/']
       },
       options: {
         'no-write': false
@@ -26,6 +26,9 @@ module.exports = function(grunt) {
 
     // Watch
     watch: {
+      options: {
+        livereload: true
+      },
       less: {
         files: ['src/less/*'],
         tasks: ['less']
@@ -41,7 +44,7 @@ module.exports = function(grunt) {
 
     // Concat
     concat: {
-      dist: {
+      dev: {
         options: {
           sourceMap: false
         },
@@ -55,12 +58,13 @@ module.exports = function(grunt) {
       dist: {
         options: {
           beautify: false,
-          sourceMap: false,
+          sourceMap: true,
           report: 'gzip',
-          mangle: false
+          mangle: false,
+          sourceMapIncludeSources: true
         },
-        files:{
-          'dist/js/n3twork.min.js' : 'dist/js/n3twork.min.js', //'src/js/*.js'],
+        files: {
+          'dist/js/n3twork.min.js' : ['src/js/angular.js', 'src/js/jquery.js', 'src/js/*.js', 'src/app/app.js', 'src/app/app.*.js', 'src/app/*/*.js']//'dist/js/n3twork.js', //'src/js/*.js'],
           //'dist/js/stuff.min.js' : ['src/js/*.js', '!**/*.min.js', '!**/app.js']
         }
       }
@@ -96,18 +100,17 @@ module.exports = function(grunt) {
 
   // Register Other Tasks
   grunt.registerTask('default', ['dev', 'watch']);
-    grunt.registerTask('dev', [
+  grunt.registerTask('dev', [
     'clean',
     'less',
-    'concat',
+    'concat:dev',
     'copy'
   ]);
   grunt.registerTask('dist', [
     'clean',
     'less',
-    'concat',
-    'uglify',
-    'copy'
+    'copy',
+    'uglify'
   ]);
 
 };
