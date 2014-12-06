@@ -297,26 +297,35 @@ public class User {
    */
   public Boolean getBasicsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userTable = new ArrayList<ArrayList<String>>();
+    ResultSet userTable;
     // use sessionID or id to get userTable
     if (sessionID != null) {
-      userTable = DBConnector.selectQuery(conn,
-          "SELECT Users.* FROM " + DBConnector.DATABASE + ".SessionIDs "
-              + "JOIN " + DBConnector.DATABASE + ".Users "
-              + "ON Users.id = SessionIDs.userID "
-              + "WHERE SessionIDs.sessionID='" + this.sessionID + "'");
+      String sqlQuery = "SELECT Users.* FROM " + DBConnector.DATABASE + ".SessionIDs "
+          + "JOIN " + DBConnector.DATABASE + ".Users "
+          + "ON Users.id = SessionIDs.userID "
+          + "WHERE SessionIDs.sessionID=?";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setString(1, this.sessionID);
+      log.debug(pStmt);
+      userTable = pStmt.executeQuery();
     } else {
-      userTable = DBConnector.selectQuery(conn, 
-          "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id + " OR username='" + this.username + "'");
+      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=? OR username=?";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setInt(1, this.id);
+      pStmt.setString(2, this.username);
+      userTable = pStmt.executeQuery();
     }
-    conn.close();
-    if (userTable.size() == 1) return false;
+    ResultSetMetaData userTableMd = userTable.getMetaData();
+    int columnsNumber = userTableMd.getColumnCount();
+    if (!userTable.next()) return false;
     Map<String,String> userMap = new HashMap<String,String>();
     
-    ArrayList<String> keyRow = userTable.get(0);
-    ArrayList<String> dataRow = userTable.get(1);
+    List<String> keyRow = new ArrayList<String>();
+    for (int i = 1;i <= columnsNumber; i++) {
+      keyRow.add(userTableMd.getColumnName(i));
+    }
     for (int i = 0; i < keyRow.size(); i++) {
-      userMap.put(keyRow.get(i), dataRow.get(i));
+      userMap.put(keyRow.get(i), userTable.getString(i));
     }
     
     //setting attributes
@@ -327,6 +336,7 @@ public class User {
     this.email = userMap.remove("email");
     userMap.remove("password");
     this.otherProperties.putAll(userMap); 
+    conn.close();
     return true;
 
   }

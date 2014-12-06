@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -110,13 +111,15 @@ public class Post {
   public void createInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     int privatePost = (this.privatePost) ? 1 : 0;
     Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,title,content,visibility) "
-            + "VALUES(" + this.owner.getId() + "," 
-            + this.author.getId() + ",'"
-            + this.title + "','"
-            + this.content + "',"
-            + privatePost + ")");
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,title,content,visibility) "
+        + "VALUES(?,?,?,?,?)";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1,this.owner.getId());
+    pStmt.setInt(2, this.author.getId());
+    pStmt.setString(3, this.title);
+    pStmt.setString(4, this.content);
+    pStmt.setInt(5, privatePost);
+    pStmt.execute();
   }
   
   /**
@@ -146,30 +149,34 @@ public class Post {
    */
   public Boolean updateDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Posts SET ";
+    List<Object> valueList = new ArrayList<Object>();
     if (this.title != null) {
-      if (sqlQuery.endsWith("SET ")) {
-        sqlQuery = sqlQuery + "title='" + this.title + "'";
-      } else {
-        sqlQuery = sqlQuery + ",title='" + this.title + "'";
-      }
+      valueList.add(this.title);
+      sqlQuery = sqlQuery + "title=?";
     }
     if (this.content != null) {
+      valueList.add(this.content);
       if (sqlQuery.endsWith("SET ")) {
-        sqlQuery = sqlQuery + "content='" + this.content + "'";
+        sqlQuery = sqlQuery + "content=?";
       } else {
-        sqlQuery = sqlQuery + ",content='" + this.content + "'";
+        sqlQuery = sqlQuery + ",content=?";
       }
     }
     if (this.privatePost != null) {
+      valueList.add((this.privatePost) ? 1 : 0);
       if (sqlQuery.endsWith("SET ")) {
-        sqlQuery = sqlQuery + "visibility=" + this.privatePost;
+        sqlQuery = sqlQuery + "visibility=?";
       } else {
-        sqlQuery = sqlQuery + ",visibility=" + this.privatePost;
+        sqlQuery = sqlQuery + ",visibility=?";
       }
     }
-    if (!sqlQuery.endsWith("SET ")) {
+    if (valueList.size() > 0) {
       Connection conn = DBConnector.getConnection();
-      DBConnector.executeUpdate(conn, sqlQuery + " WHERE id=" + this.id);
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery + " WHERE id=" + this.id);
+      for (int i = 0; i < valueList.size(); i++) {
+        pStmt.setObject(i + 1, valueList.get(i));
+      }
+      pStmt.execute();
       return true;
     } else {
       return false;

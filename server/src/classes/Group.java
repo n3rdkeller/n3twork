@@ -3,7 +3,9 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,33 +101,6 @@ public class Group {
   }
   
   /**
-   * Gets all groups in a Json list
-   * @return {"groupList":[{"groupID":"groupID",...},...]}
-   * @throws InstantiationException
-   * @throws IllegalAccessException
-   * @throws ClassNotFoundException
-   * @throws SQLException
-   */
-  public static String getAllAsJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
-        "SELECT id,name,descr FROM " + DBConnector.DATABASE + ".Groups");
-    groupTable.remove(0);
-    JsonArrayBuilder groupJsonList = Json.createArrayBuilder();
-    for (ArrayList<String> row : groupTable) {
-      groupJsonList.add(Json.createObjectBuilder()
-          .add("groupID", Integer.parseInt(row.get(0)))
-          .add("groupName", row.get(1))
-          .add("groupDescr", row.get(2)));
-    }
-    
-    return String.valueOf(Json.createObjectBuilder()
-        .add("groupList",groupJsonList)
-        .add("successful", true)
-        .build());
-  }
-  
-  /**
    * Gets simple group stats as json
    * @return jsonString
    * @throws InstantiationException
@@ -181,7 +156,13 @@ public class Group {
   public void removeFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     if(this.id != 0) {
       Connection conn = DBConnector.getConnection();
-      DBConnector.executeUpdate(conn, "DELETE FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
+      String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Groups WHERE id=?";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setInt(1, this.id);
+      pStmt.execute();
+      log.debug(pStmt);
+      pStmt.close();
+      conn.close();
     }
   }
   
@@ -195,27 +176,23 @@ public class Group {
    */
   public Boolean getBasicsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     if(this.id == 0) return false;
-    Connection conn = DBConnector.getConnection();    
-    List<ArrayList<String>> groupList = DBConnector.selectQuery(conn, 
-        "SELECT *, (" 
-            + "SELECT COUNT(*) FROM " + DBConnector.DATABASE + ".Members "
-            + "WHERE Members.groupID = Groups.id) AS membercount "
-            + "FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
-    conn.close();
-    if (groupList.size() == 1) return false;
-    
-    //fill up groupMap
-    Map<String,String> groupMap = new HashMap<String,String>();
-    ArrayList<String> keyRow = groupList.get(0);
-    ArrayList<String> dataRow = groupList.get(1);
-    for (int i = 0; i < keyRow.size(); i++) {
-      groupMap.put(keyRow.get(i), dataRow.get(i));
-    }
-    
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "SELECT *, (" 
+        + "SELECT COUNT(*) FROM " + DBConnector.DATABASE + ".Members "
+        + "WHERE Members.groupID = Groups.id) AS membercount "
+        + "FROM " + DBConnector.DATABASE + ".Groups WHERE id=?";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    ResultSet groupTable = pStmt.executeQuery();
+
+    if (!groupTable.next()) return false;
     //setting attributes
-    this.name = groupMap.get("name");
-    this.descr = groupMap.get("descr");
-    this.memberCount = Integer.parseInt(groupMap.get("membercount"));
+    this.name = groupTable.getString("name");
+    this.descr = groupTable.getString("descr");
+    this.memberCount = groupTable.getInt("membercount");
+    groupTable.close();
+    pStmt.close();
+    conn.close();
     return true;
   }
   
@@ -229,7 +206,7 @@ public class Group {
    */
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> groupList = new ArrayList<ArrayList<String>>();
+    ResultSet groupList;
     
     if(this.name.equals("")) { // name not given
       log.debug("group name is not given");
@@ -237,14 +214,25 @@ public class Group {
       
     } else {
       log.debug("checking for group by name: " + this.name);
-      groupList = DBConnector.selectQuery(conn, 
-          "SELECT * FROM " + DBConnector.DATABASE + ".Groups WHERE name='" + this.name + "'");
+      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Groups WHERE name=?";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setString(1, this.name);
+      log.debug(pStmt);
+      groupList = pStmt.executeQuery();
     }
     
-    if (groupList.size() == 1) {
-      List<Integer> ids = DBConnector.executeUpdate(conn, 
-          "INSERT INTO " + DBConnector.DATABASE + ".Groups(name,descr) VALUES('" + this.name + "','" + this.descr +"')"); 
-      this.id = ids.get(0);
+    if (!groupList.next()) {
+      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Groups(name,descr) VALUES(?,?)";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery,Statement.RETURN_GENERATED_KEYS);
+      pStmt.setString(1, this.name);
+      pStmt.setString(2, this.descr);
+      pStmt.executeUpdate();
+      ResultSet ids = pStmt.getGeneratedKeys();
+      if (ids.next()) this.id = ids.getInt(1);
+      groupList.close();
+      ids.close();
+      pStmt.close();
+      conn.close();
       return true;
     } else {
       log.debug("Group already exists");
@@ -328,31 +316,21 @@ public class Group {
    */
   public void getMembersFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> membersTable = DBConnector.selectQuery(conn, 
-        "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Members JOIN " 
-            + DBConnector.DATABASE + ".Users ON Users.id=Members.memberID WHERE Members.groupID=" + this.id);
+    String sqlQuery = "SELECT Users.id,username,email,name,firstName FROM " + DBConnector.DATABASE + ".Members JOIN " 
+        + DBConnector.DATABASE + ".Users ON Users.id=Members.memberID WHERE Members.groupID=?";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    ResultSet membersTable = pStmt.executeQuery();
     conn.close();
     
-    // fill up membersList
-    List<HashMap<String, String>> membersList = new ArrayList<HashMap<String,String>>();
-    ArrayList<String> keyRow = membersTable.get(0);
-    membersTable.remove(0);
-    for (ArrayList<String> data : membersTable){
-      HashMap<String,String> userHelperMap = new HashMap<String,String>();
-      for (int i = 0; i < keyRow.size(); i++){
-        userHelperMap.put(keyRow.get(i), data.get(i));
-      }
-      membersList.add(userHelperMap);
-    }
-    
-    for (HashMap<String, String> user : membersList){
-      // add every User in membersList with the User(id, username, email, name, firstName) constructor
+    while (membersTable.next()){
+      // add every User in memberTable with the User(id, username, email, name, firstName) constructor
       this.members.add(new User(
-          Integer.parseInt(user.get("id")), 
-          user.get("username"), 
-          user.get("email"), 
-          user.get("name"), 
-          user.get("firstName")));
+          membersTable.getInt("id"), 
+          membersTable.getString("username"), 
+          membersTable.getString("email"), 
+          membersTable.getString("name"), 
+          membersTable.getString("firstName")));
     }
   }
 
@@ -478,24 +456,26 @@ public class Group {
     String insertQueryHead = "INSERT INTO " + DBConnector.DATABASE + ".Groups(";
     String insertQueryTail = ") VALUES(";
     List<String> toBeAdded = new ArrayList<String>();
-    
+    List<String> valueList = new ArrayList<String>();
+    List<String> keyList = new ArrayList<String>();
     for (Entry<String,String> prop: this.otherProperties.entrySet()) {
       // check if key is a column
       if (!groupList.get(0).contains(prop.getKey())) {
         toBeAdded.add(prop.getKey());
       }
-      
+      keyList.add(prop.getKey());
+      valueList.add(prop.getValue());
       // prepare insert statement
       if (insertQueryHead.endsWith(".Groups(")) {
-        insertQueryHead = insertQueryHead + prop.getKey();
+        insertQueryHead = insertQueryHead + "?";
       } else {
-        insertQueryHead = insertQueryHead + "," + prop.getKey();
+        insertQueryHead = insertQueryHead + ",?";
       }
       
       if (insertQueryTail.endsWith("VALUES(")) {
-        insertQueryTail = insertQueryTail + "'" + prop.getValue() + "'";
+        insertQueryTail = insertQueryTail + "?";
       } else {
-        insertQueryTail = insertQueryTail + ",'" + prop.getValue() + "'";
+        insertQueryTail = insertQueryTail + ",?";
       }
     }
     
@@ -504,15 +484,25 @@ public class Group {
       String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Groups ADD COLUMN ";
       for (int i = 0; i < toBeAdded.size(); i++) {
         if (i == 0) {
-          alterTable = toBeAdded.get(i) + " VARCHAR(45) NULL DEFAULT NULL";
+          alterTable = "? VARCHAR(45) NULL DEFAULT NULL";
         } else {
-          alterTable = "," + toBeAdded.get(i) + " VARCHAR(45) NULL DEFAULT NULL";
+          alterTable = ",? VARCHAR(45) NULL DEFAULT NULL";
         }
       }
-      DBConnector.executeUpdate(conn, alterTable);
+      PreparedStatement pStmt = conn.prepareStatement(alterTable);
+      for (int i = 0; i < toBeAdded.size(); i++) {
+        pStmt.setString(i + 1, toBeAdded.get(i));
+      }
+      log.debug(pStmt);
+      pStmt.execute();
     }
-    
-    DBConnector.executeUpdate(conn, insertQueryHead + insertQueryTail + ")");
+    PreparedStatement pStmt = conn.prepareStatement(insertQueryHead + insertQueryTail + ")");
+    for (int i = 0; i < keyList.size(); i++) {
+      pStmt.setString(i + 1, keyList.get(i));
+      pStmt.setString(i + 1 + keyList.size(), valueList.get(i));
+    }
+    log.debug(pStmt);
+    pStmt.execute();
   }
 
   public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
