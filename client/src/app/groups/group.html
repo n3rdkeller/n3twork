@@ -40,7 +40,6 @@
     <h3 class="text-center" ng-show="group.loadingMembers"><i class="fa fa-spinner fa-spin"></i></h3>
   </div>
 
-
   <div class="col-sm-8" ng-hide="group.loadingPosts">
     <br><br>
     <h4 class="text-center">Here will soon be some posts.</h4>
@@ -62,3 +61,20 @@
 <div class="text-center" ng-show="group.errorOccured">
   <h1><i class="fa fa-frown-o fa-4x"></i><br><br>Something went wrong. No further information available.</h1>
 </div>
+
+<script type="text/ng-template" id="groupLeaveConfirmation.html">
+  <div class="modal-header">
+    <h3 class="modal-title">Are you sure?</h3>
+  </div>
+  <div class="modal-body">
+    <p>You are the last one in the group, this means it will be deleted if you leave.</p>
+    <p><strong>Are you sure you still want to leave?</strong></p>
+  </div>
+  <div class="modal-footer">
+    <button role="button" class="btn btn-primary" ng-disabled="confirm.loading" ng-click="confirm.yes()">
+      <span ng-show="confirm.loading"><i class="fa fa-spinner fa-spin"></i> Loading</span>
+      <span ng-hide="confirm.loading"><i class="fa fa-check"></i> Yes</span>
+    </button>
+    <button class="btn btn-danger" ng-click="confirm.no()"><i class="fa fa-close"></i> No</button>
+  </div>
+</script>
