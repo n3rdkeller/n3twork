@@ -9,7 +9,7 @@ There are some steps you need to follow before you can test it.
 ### Steps
 1. Install `npm` [Node Package Manager][1]
 2. Install `bower` [Bower Package Manager][2]
-3. Install `grunt` [Grunt JavaScript Task Runner][3]
+3. Install `grunt-cli` [Grunt JavaScript Task Runner][3]
 4. Run `bower install` to install all needed dependencies specified in `bower.json`
 5. Run `npm install` to install all needed dependencies specified in `package.json`
 6. Run `grunt dist` to minify and copy all scripts

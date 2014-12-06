@@ -4,7 +4,7 @@ module.exports = function(grunt) {
     // Clean
     clean: {
       dist: {
-        src: ["dist/"]
+        src: ['dist/']
       },
       options: {
         'no-write': false
@@ -26,6 +26,9 @@ module.exports = function(grunt) {
 
     // Watch
     watch: {
+      options: {
+        livereload: true
+      },
       less: {
         files: ['src/less/*'],
         tasks: ['less']
@@ -35,10 +38,18 @@ module.exports = function(grunt) {
           'src/**/*.html',
           'src/**/*.js'
           ],
-        tasks: ['uglify', 'copy'],
+        tasks: ['concat', /*'uglify',*/ 'copy']
+      }
+    },
+
+    // Concat
+    concat: {
+      dev: {
         options: {
-          spawn: false,
-        }
+          sourceMap: false
+        },
+        src: ['src/js/angular.js', 'src/js/jquery.js', 'src/js/*.js', 'src/app/app.js', 'src/app/app.*.js', 'src/app/*/*.js'],
+        dest: 'dist/js/n3twork.min.js'
       }
     },
 
@@ -46,12 +57,15 @@ module.exports = function(grunt) {
     uglify: {
       dist: {
         options: {
-          beautify: true,
-          sourceMap: true
+          beautify: false,
+          sourceMap: true,
+          report: 'gzip',
+          mangle: false,
+          sourceMapIncludeSources: true
         },
-        files:{
-          // 'dist/js/app.min.js' : 'src/app/**/*.js',
-          'dist/js/stuff.min.js' : ['src/js/*.js', '!**/*.min.js']
+        files: {
+          'dist/js/n3twork.min.js' : ['src/js/angular.js', 'src/js/jquery.js', 'src/js/*.js', 'src/app/app.js', 'src/app/app.*.js', 'src/app/*/*.js']//'dist/js/n3twork.js', //'src/js/*.js'],
+          //'dist/js/stuff.min.js' : ['src/js/*.js', '!**/*.min.js', '!**/app.js']
         }
       }
     },
@@ -62,11 +76,14 @@ module.exports = function(grunt) {
         expand: true,
         cwd: 'src/',
         src: [
-          'app/**',
+          'app/**/*.html',
+          //'app/**',
           '*.html',
           'css/*',
           'fonts/*',
-          'js/*.min.**'
+          'js/n3twork.js',
+          //'js/*.min.js.map',
+          'img/**'
         ],
         dest: 'dist/'
       },
@@ -79,14 +96,21 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Register Other Tasks
-  grunt.registerTask('default', ['watch']);
+  grunt.registerTask('default', ['dev', 'watch']);
+  grunt.registerTask('dev', [
+    'clean',
+    'less',
+    'concat:dev',
+    'copy'
+  ]);
   grunt.registerTask('dist', [
     'clean',
     'less',
-    'uglify',
-    'copy'
+    'copy',
+    'uglify'
   ]);
 
 };

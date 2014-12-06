@@ -1,8 +1,114 @@
-.container#register {
-  background: #58ACFA; /* 58ACFA FF8000 */
-  color: white;
+@font-face {
+  font-family: 'capsule3regular';
+  src: url('../fonts/capsule3-webfont.eot');
+  src: url('../fonts/capsule3-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/capsule3-webfont.svg#capsule3regular') format('svg'),
+       url('../fonts/capsule3-webfont.woff') format('woff'),
+       url('../fonts/capsule3-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+nav {
+  #brandimg {
+    height: 50px;
+    margin-top: -16px;
+  }
+
+  #loginFailedText {
+    margin-right: 0;
+  }
+}
+
+.container-fluid {
+  .bigger-text {
+    font-size: 18px;
+  }
+
+  .margin-top {
+    margin-top: 10px;
+  }
+
+  .big-margin-top {
+    margin-top: 30px;
+  }
+
+  .margin-left {
+    margin-left: 20px;
+  }
+
+  .no-padding-left {
+    padding-left: 0;
+  }
+
+  .color-green {
+    color: green;
+  }
+
+  #register {
+    background: rgb(243, 148, 37); // #FF8000 #FFAB00 purple rgb(34, 34, 34) #58ACFA #FF8000
+    color: white;
+    border-radius: 4px;
+    a {
+      color: red;
+    }
+  }
+  .user-is-me {
+    color: rgb(243, 148, 37);
+  }
+}
+
+.nav-tabs {
+  li {
+    min-width: 200px;
+    text-align: center;
+  }
 }
 
 .page-header {
   color: white;
+}
+
+
+@screen-sm: 768px;
+@media (max-width: @screen-sm) {
+  #loginFailedText {
+    padding-left: 14px;
+  }
+  .navbar-collapse {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    ul {
+      margin: 0;
+      #loginForm {
+        .input-group {
+          padding: 4px 6px;
+        }
+      }
+      .navbar-form {
+        border: 0;
+        margin: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: @screen-sm) {
+  .nav-tabs > li {
+    float:none;
+  }
+  .nav-tabs > li {
+    float:none;
+    border:1px solid #dddddd;
+  }
+  .nav-tabs > li.active > a{
+    border:none;
+  }
+  .nav > li > a:hover, .nav > li > a:focus,
+  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus
+   {
+    background:none;
+    border:none;
+  }
 }

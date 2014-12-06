@@ -10,13 +10,14 @@ import org.apache.log4j.Logger;
 public class DBConnector {
   final static Logger log = LogManager.getLogger(DBConnector.class);
   private static String DRIVER = "com.mysql.jdbc.Driver";
-  public static String DATABASE = "TEAM_2E_DB";
-  private static String URL = "jdbc:mysql://141.2.89.26";
-  private static String USERNAME = "TEAM_2E";
-  private static String PASSWORD = "n3rdkeller sind die besten"; // old: LcCN8HJR
-  // private static String URL = "jdbc:mysql://192.168.178.51";
-  // private static String PASSWORD = "Wurstsalat";
-  // private static String USERNAME = "root";
+//  public static String DATABASE = "TEAM_2E_DB";
+//  private static String URL = "jdbc:mysql://141.2.89.26";
+//  private static String USERNAME = "TEAM_2E";
+//  private static String PASSWORD = "n3rdkeller sind die besten"; // old: LcCN8HJR
+    public static String DATABASE = "n3twork";
+    private static String URL = "jdbc:mysql://10.133.251.251";
+    private static String PASSWORD = "kekse sind voll n3rdig";
+    private static String USERNAME = "n3twork";
 
   /**
    * Static function to build connection
@@ -46,7 +47,6 @@ public class DBConnector {
     ResultSet rs = pStmt.executeQuery();
     ResultSetMetaData rsmd = rs.getMetaData();
     int columnsNumber = rsmd.getColumnCount();
-    log.debug("executed");
 
     List<ArrayList<String>> output  = new ArrayList<ArrayList<String>>();
     ArrayList<String> row = new ArrayList<String>();
@@ -66,10 +66,8 @@ public class DBConnector {
 
     pStmt.close();
     rs.close();
-
-    log.debug("selectQuery: done");
+    
     return output;
-
   }
  
   /**
@@ -85,7 +83,6 @@ public class DBConnector {
     stmt.executeUpdate(sqlQuery, Statement.RETURN_GENERATED_KEYS);
 
     ResultSet rs = stmt.getGeneratedKeys();
-    log.debug("executed");
 
     List<Integer> ids = new ArrayList<Integer>();
     while (rs.next()) {
@@ -97,9 +94,7 @@ public class DBConnector {
     for (int value : ids){
         idsPrintString = idsPrintString + value + " ";
     }
-
-    log.debug("retun ids: " + idsPrintString);
-    log.debug("executeUpdate: done");
+    
     return ids;
 
   }

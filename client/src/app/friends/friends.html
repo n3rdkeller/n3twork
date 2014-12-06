@@ -1,0 +1,59 @@
+<div class="row" ng-hide="friends.doesntexist">
+  <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-2 col-md-4' : friends.itsMe }" ng-hide="friends.loadingFriends">
+    <h2 ng-class="{ 'text-center' : !friends.itsMe }">Friends<span ng-hide="friends.itsMe"> of <a ng-bind="::friends.userdata.username" ng-href="#/user/{{ ::friends.userdata.username }}"></a></span> <span ng-hide="friends.friendList.length == 0" ng-bind="::friends.friendList.length" class="label label-warning"></span><i ng-show="friends.friendList.length == 0" class="fa fa-fw fa-frown-o"></i></h2>
+    <ul class="media-list big-margin-top">
+      <li class="media" ng-repeat="friend in friends.friendList">
+        <span class="media-left">
+          <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=200" />
+        </span>
+        <div class="media-body">
+          <h4 class="media-heading">
+            <a class="media-left media-middle" ng-href="#/user/{{ friend.username }}">
+              <span ng-bind="friend.firstname + ' ' + friend.lastname"></span><br ng-show="friend.firstname">
+              <span ng-bind="friend.username"></span>
+            </a><abbr ng-show="friend.trueFriend" class="media-right color-green no-padding-left" title="You are true friends."><br ng-show="friend.firstname"><i class="fa fa-check fa-fw"></i></abbr>
+          </h4>
+          <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::friend.email }}<br>
+        </div>
+      </li>
+    </ul>
+    <h4 ng-show="friends.friendList.length == 0" ng-class="{ 'text-center' : !friends.itsMe }">There are no friends to display here.</h4>
+  </div>
+
+  <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-2 col-md-4' : friends.itsMe }" ng-show="friends.loadingFriends">
+    <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
+  </div>
+
+  <div class="col-sm-5 col-md-4" ng-hide="friends.loadingFriendRequests || !friends.itsMe">
+    <h2>Friend Requests <span ng-hide="friends.friendRequestList.length == 0" class="label label-warning">{{ ::friends.friendRequestList.length }}</span><i ng-show="friends.friendRequestList.length == 0" class="fa fa-fw fa-smile-o"></i></h2>
+    <ul class="media-list big-margin-top">
+      <li class="media" ng-repeat="friend in friends.friendRequestList">
+        <span class="media-left">
+          <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=200" />
+        </span>
+        <div class="media-body">
+          <h4 class="media-heading">
+            <a class="media-left media-middle" ng-href="#/user/{{ friend.username }}">
+              <span ng-bind="friend.firstname + ' ' + friend.lastname"></span><br ng-show="friend.firstname">
+              <span ng-bind="friend.username"></span>
+            </a>
+          </h4>
+          <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::friend.email }}<br>
+        </div>
+      </li>
+    </ul>
+    <h4 ng-show="friends.friendRequestList.length == 0">You have no pending friend requests.</h4>
+  </div>
+
+  <div class="col-sm-5 col-md-4" ng-show="friends.loadingFriendRequests && friends.itsMe">
+    <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
+  </div>
+</div>
+
+
+<div class="text-center" ng-show="friends.doesntexist">
+  <h1><i class="fa fa-frown-o fa-4x"></i><br><br>Sorry, the user you were looking for does not exist.<br><br>And so do his friends.</h1>
+</div>
+

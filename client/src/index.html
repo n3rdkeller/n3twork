@@ -8,18 +8,16 @@
     <title>n3twork</title>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <!-- BootstrapValidator -->
-    <link rel="stylesheet" href="css/bootstrapValidator.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <!-- FontAwesome -->
-    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
     <!-- Stylesheet, created with LESS -->
     <link rel="stylesheet" type="text/css" href="css/main.css">
   </head>
 
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
@@ -28,41 +26,28 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">n3twork</a>
+          <a class="navbar-brand" href="#/">
+            <img id="brandimg" alt="n3twork" src="img/n3.png">
+          </a>
         </div>
 
         <div class="collapse navbar-collapse" id="navbar-collapse-1">
-          <ng-include src="'app/auth/auth.login.html'"></ng-include>
+          <ng-include ng-if="loggedin" src="'app/views/navbar.html'"></ng-include>
+          <ng-include src="'app/views/navbar.right.html'"></ng-include>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
 
-    <!-- Main Container (also working as ng-view) -->
-    <div ng-view class="container-fluid"></div>
+    <!-- Main Container (containing ng-view container-fluid) -->
+    <div>
+      <div ng-view class="container-fluid"></div><br>
+    </div>
 
-    <!-- Angular-App and Dependencies -->
-    <script type="text/javascript" src="js/angular.min.js"></script>
-    <script type="text/javascript" src="js/angular-route.min.js"></script>
-    <script type="text/javascript" src="js/angular-resource.min.js"></script>
-    <script type="text/javascript" src="js/angular-messages.min.js"></script>
-    <script type="text/javascript" src="js/showErrors.min.js"></script>
-    <script type="text/javascript" src="app/app.js"></script>
-    <script type="text/javascript" src="app/APISvc/APISvc.js"></script>
-    <script type="text/javascript" src="app/register/register.js"></script>
-    <script type="text/javascript" src="app/register/register.controller.js"></script>
-    <script type="text/javascript" src="app/register/compareTo.directive.js"></script>
-    <script type="text/javascript" src="app/register/checkUsername.directive.js"></script>
-    <script type="text/javascript" src="app/auth/auth.js"></script>
-    <script type="text/javascript" src="app/auth/auth.controller.js"></script>
-    <script type="text/javascript" src="app/mainpage/main.js"></script>
-    <script type="text/javascript" src="app/mainpage/main.controller.js"></script>
+    <!-- All scripts concatted (and maybe also minified) -->
+    <!-- In here are also all frameworks and libraries -->
+    <script type="text/javascript" src="js/n3twork.min.js"></script>
 
-
-    <!-- jQuery -->
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <!-- Bootstrap -->
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <!-- Collection of own scripts -->
-    <script type="text/javascript" src="js/stuff.min.js"></script>
+    <!-- DEV: Livereload -->
+    <script src="//localhost:35729/livereload.js"></script>
   </body>
 </html>

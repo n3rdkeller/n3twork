@@ -1,0 +1,37 @@
+<div class="row clearfix">
+  <div class="col-md-offset-3 col-md-6" ng-hide="groups.loadingGroups">
+    <!-- Header -->
+    <h2 class="text-center">Groups of <a ng-bind="::groups.userdata.username" ng-href="#/user/{{ ::groups.userdata.username }}"></a> <span ng-hide="groups.groupList.length == 0" ng-bind="::groups.groupList.length" class="label label-warning"></span> <i ng-show="groups.groupList.length == 0" class="fa fa-fw fa-frown-o"></i></h2>
+    <!-- New Group Button -->
+    <div ng-show="::groups.itsMe" class="center-text col-sm-offset-4 col-sm-4 margin-top">
+      <button name="createGroupButton" class="btn btn-block btn-default" ng-click="groups.openCreateGroupModal()">
+        <i class="fa fa-fw fa-asterisk"></i> Create Group
+      </button>
+    </div>
+    <br ng-show="::groups.itsMe">
+    <br ng-show="::groups.itsMe">
+
+    <!-- groupList -->
+    <ul class="media-list big-margin-top">
+      <li class="media" ng-repeat="group in groups.groupList | orderBy: 'memberCount':true">
+        <span class="media-left">
+          <i class="fa fa-users fa-fw fa-3x"></i>
+        </span>
+        <div class="media-body">
+          <h4 class="media-heading">
+            <p class="media-left media-middle">
+              <a ng-bind="::group.groupName" ng-href="#/group/{{ ::group.groupID }}"></a>
+              <span class="label label-warning" ng-bind="group.memberCount"></span>
+            </p>
+          </h4>
+          <span ng-bind-html="::group.groupDescr | shortenDescription"></span>
+        </div>
+      </li>
+    </ul>
+    <h4 ng-show="groups.groupList.length == 0" class="text-center">There are no groups to display here.</h4>
+  </div>
+
+  <div class="col-md-offset-3 col-md-6" ng-show="groups.loadingGroups">
+    <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
+  </div>
+</div>

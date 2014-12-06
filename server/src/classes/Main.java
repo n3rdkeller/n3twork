@@ -3,8 +3,6 @@ package classes;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import servlet.ServletResource;
-
 public class Main {
   final static Logger log = LogManager.getLogger(Main.class);
 
