@@ -42,6 +42,11 @@
           </h4>
           <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::friend.email }}<br>
         </div>
+        <button class="btn btn-xs btn-success margin-top" ng-disabled="friends.addButtonLoading[friend.id]" style="min-width: 50%;" ng-click="friends.addToFriends(friend.id)">
+          <span ng-hide="friends.addButtonLoading[friend.id]"><i class="fa fa-plus"></i> Add to friends</span>
+          <span ng-show="friends.addButtonLoading[friend.id]"><i class="fa fa-spinner fa-spin"></i> Adding</span>
+        </button>
+        <hr style="margin: 10px 0;">
       </li>
     </ul>
     <h4 ng-show="friends.friendRequestList.length == 0">You have no pending friend requests.</h4>
