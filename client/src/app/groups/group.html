@@ -71,10 +71,10 @@
     <p><strong>Are you sure you still want to leave?</strong></p>
   </div>
   <div class="modal-footer">
+    <button class="btn btn-danger" ng-click="confirm.no()"><i class="fa fa-close"></i> No</button>
     <button role="button" class="btn btn-primary" ng-disabled="confirm.loading" ng-click="confirm.yes()">
       <span ng-show="confirm.loading"><i class="fa fa-spinner fa-spin"></i> Loading</span>
       <span ng-hide="confirm.loading"><i class="fa fa-check"></i> Yes</span>
     </button>
-    <button class="btn btn-danger" ng-click="confirm.no()"><i class="fa fa-close"></i> No</button>
   </div>
 </script>

@@ -36,17 +36,17 @@
       <div ng-show="settingsForm.pwconfirm.$dirty && settingsForm.pwconfirm.$invalid" class="help-block" ng-messages="settingsForm.pwconfirm.$error" ng-messages-include="app/views/messages.html"></div>
     </div>
     <div class="form-group clearfix">
-      <div class="btn-block">
-      <button type="submit" class="btn btn-info" ng-disabled="settingsForm.$invalid || !settings.somethingChanged() || settings.loading">
+      <div class="pull-right">
+      <button type="button" class="btn btn-danger" ng-click="settings.resetForm()" ng-disabled="!settings.somethingChanged()">
+        <i class="fa fa-bolt"></i> Reset
+      </button>
+      <button type="submit" class="btn btn-primary" ng-disabled="settingsForm.$invalid || !settings.somethingChanged() || settings.loading">
         <span ng-hide="settings.loading">
-          <i class="fa fa-wrench fa-fw"></i> Save
+          <i class="fa fa-wrench"></i> Save
         </span>
         <span ng-show="settings.loading">
-          <i class="fa fa-spinner fa-spin fa-fw"></i> Saving
+          <i class="fa fa-spinner fa-spin"></i> Saving
         </span>
-      </button>
-      <button type="button" class="btn btn-warning pull-right" ng-click="settings.resetForm()" ng-disabled="!settings.somethingChanged()">
-        <i class="fa fa-bolt fa-fw"></i> Reset
       </button>
       </div>
     </div>
