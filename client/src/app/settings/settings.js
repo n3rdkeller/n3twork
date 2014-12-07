@@ -77,7 +77,7 @@
       // is email given?
       if (vm.user.email && (vm.user.email != $rootScope.userdata.email)) { dataThatHasChanged.email = vm.user.email };
       // is password given?
-      if (vm.user.pw && (vm.user.pw == vm.user.pwconfirm)) { dataThatHasChanged.pw = vm.user.pw };
+      if (vm.user.pw && (vm.user.pw == vm.user.pwconfirm)) { dataThatHasChanged.password = vm.user.pw };
 
       // otherProperties
       dataThatHasChanged.otherProperties = {};
