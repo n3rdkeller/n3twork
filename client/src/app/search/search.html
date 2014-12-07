@@ -19,7 +19,7 @@
     <li class="media" ng-repeat="user in filteredUserSearch = (search.userlist | filter: search.submittedSearchString) | orderBy: 'username' | limitTo:10">
     <span class="media-left">
       <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
-      <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ user.email | lowercase | md5Hash }}?d=mm&s=200" />
+      <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ user.email | lowercase | md5Hash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ user.email | lowercase | md5Hash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ user.email | lowercase | md5Hash }}?d=mm&s=128 2x" />
     </span>
     <div class="media-body">
       <h4 class="media-heading">
@@ -40,10 +40,10 @@
       </span>
       <div class="media-body">
         <h4 class="media-heading">
-          <a class="media-left media-middle" ng-href="#/group/{{ group.groupID }}">
-            <span ng-bind="::group.groupName"></span>
-             <span class="label label-warning" ng-bind="group.memberCount"></span>
-          </a>
+          <div class="media-left media-middle">
+            <a ng-href="#/group/{{ group.groupID }}" ng-bind="::group.groupName"></a>
+            <span class="label label-warning" ng-bind="group.memberCount"></span>
+          </div>
         </h4>
         <p ng-bind-html="group.groupDescr | shortenDescription"></p>
       </div>

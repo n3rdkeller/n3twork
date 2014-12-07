@@ -22,9 +22,9 @@
       <span ng-bind="create.errorReason"></span>
     </div>
   </div>
+  <button class="btn btn-danger" ng-click="create.cancel()"><i class="fa fa-close"></i> Cancel</button>
   <button role="button" class="btn btn-primary" ng-disabled="createForm.$invalid || create.loading || create.nothingChanged()" ng-click="create.ok()">
     <span ng-show="create.loading"><i class="fa fa-spinner fa-spin"></i> Loading</span>
     <span ng-hide="create.loading"><i class="fa fa-asterisk"></i> Create</span>
   </button>
-  <button class="btn btn-danger" ng-click="create.cancel()"><i class="fa fa-close"></i> Cancel</button>
 </div>

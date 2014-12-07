@@ -19,10 +19,10 @@
         </span>
         <div class="media-body">
           <h4 class="media-heading">
-            <p class="media-left media-middle">
+            <div class="media-left media-middle">
               <a ng-bind="::group.groupName" ng-href="#/group/{{ ::group.groupID }}"></a>
               <span class="label label-warning" ng-bind="group.memberCount"></span>
-            </p>
+            </div>
           </h4>
           <span ng-bind-html="::group.groupDescr | shortenDescription"></span>
         </div>

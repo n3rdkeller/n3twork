@@ -15,6 +15,9 @@
   FriendsCtrl.$inject = ['APISvc', 'CacheSvc', '$routeParams', '$q', '$rootScope'];
   function FriendsCtrl(APISvc, CacheSvc, $routeParams, $q, $rootScope) {
     var vm = this;
+    vm.addButtonLoading = {};
+
+    vm.addToFriends = addToFriends;
 
     init();
 
@@ -92,6 +95,27 @@
       return deferred.promise;
     }
 
+    function addToFriends(id) {
+      vm.addButtonLoading[id] = true;
+      console.log(vm.addButtonLoading);
+      APISvc.request({
+        method: 'POST',
+        url: '/user/friend/add',
+        data: { 'friend': id }
+      }).then(function (response) {
+        if (response.data.successful) {
+          // remove cache
+          CacheSvc.removeFriendCache();
+          init();
+        } else {
+          vm.addButtonLoading[id] = false;
+          // error changing friend status
+        }
+      }, function (error) {
+        vm.addButtonLoading[id] = false;
+        // error changing friend status
+      });
+    }
 
   }
 

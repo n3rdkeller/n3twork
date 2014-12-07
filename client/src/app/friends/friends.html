@@ -2,10 +2,11 @@
   <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-2 col-md-4' : friends.itsMe }" ng-hide="friends.loadingFriends">
     <h2 ng-class="{ 'text-center' : !friends.itsMe }">Friends<span ng-hide="friends.itsMe"> of <a ng-bind="::friends.userdata.username" ng-href="#/user/{{ ::friends.userdata.username }}"></a></span> <span ng-hide="friends.friendList.length == 0" ng-bind="::friends.friendList.length" class="label label-warning"></span><i ng-show="friends.friendList.length == 0" class="fa fa-fw fa-frown-o"></i></h2>
     <ul class="media-list big-margin-top">
-      <li class="media" ng-repeat="friend in friends.friendList">
+      <li class="media" ng-repeat="friend in friends.friendList | orderBy: 'username'">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
-          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=200" />
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=64 1x,
+          http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=128 2x">
         </span>
         <div class="media-body">
           <h4 class="media-heading">
@@ -31,7 +32,7 @@
       <li class="media" ng-repeat="friend in friends.friendRequestList">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
-          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=200" />
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=128 2x"/>
         </span>
         <div class="media-body">
           <h4 class="media-heading">
@@ -42,6 +43,11 @@
           </h4>
           <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::friend.email }}<br>
         </div>
+        <button class="btn btn-xs btn-success margin-top" ng-disabled="friends.addButtonLoading[friend.id]" style="min-width: 50%;" ng-click="friends.addToFriends(friend.id)">
+          <span ng-hide="friends.addButtonLoading[friend.id]"><i class="fa fa-plus"></i> Add to friends</span>
+          <span ng-show="friends.addButtonLoading[friend.id]"><i class="fa fa-spinner fa-spin"></i> Adding</span>
+        </button>
+        <hr style="margin: 10px 0;">
       </li>
     </ul>
     <h4 ng-show="friends.friendRequestList.length == 0">You have no pending friend requests.</h4>

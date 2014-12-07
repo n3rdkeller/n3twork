@@ -3,7 +3,8 @@
     <!-- Names -->
     <div class="media">
       <div class="media-left">
-        <img width="100px" ng-src="http://www.gravatar.com/avatar/{{ profile.userdata.email | lowercase | md5Hash }}?d=mm&s=200" />
+        <img width="100px" ng-src="http://www.gravatar.com/avatar/{{ profile.userdata.email | lowercase | md5Hash }}?d=mm&s=100" ng-srcset="http://www.gravatar.com/avatar/{{ profile.userdata.email | lowercase | md5Hash }}?d=mm&s=100 1x,
+        http://www.gravatar.com/avatar/{{ profile.userdata.email | lowercase | md5Hash }}?d=mm&s=200 2x" />
       </div>
       <div class="media-body">
         <h3 class="media-heading">
@@ -32,7 +33,7 @@
       <li ng-repeat="group in profile.grouplist | limitTo: 5" class="bigger-text"><strong><i class="fa-li fa fa-users"></i></strong><a ng-href="#/group/{{ ::group.groupID }}">{{ ::group.groupName }}</a></li>
       <li ng-show="profile.itsMe && (profile.grouplist.length == 0)" class="bigger-text"><strong><i class="fa-li fa fa-frown-o"></i></strong>You are in no groups yet.</li>
     </ul>
-    <p ng-hide="profile.grouplist.length == 0" class="margin-top">
+    <p ng-hide="profile.grouplist.length == 0 || profile.loadingGroups" class="margin-top">
       <span ng-bind="::profile.grouplist.length" class="label label-warning"></span><i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/groups">More</a>
     </p>
     <h3 class="text-center" ng-show="profile.loadingGroups"><i class="fa fa-spinner fa-spin"></i></h3>
@@ -42,7 +43,7 @@
       <li ng-repeat="friend in profile.friendlist | limitTo: 5" class="bigger-text"><strong><i class="fa-li fa fa-user"></i></strong><a ng-href="#/user/{{ ::friend.username }}">{{ ::friend.username }}</a></li>
       <li ng-show="profile.itsMe && (profile.friendlist.length == 0)" class="bigger-text"><strong><i class="fa-li fa fa-frown-o"></i></strong>You don't have any friends.</li>
     </ul>
-    <p ng-hide="profile.friendlist | isEmpty" class="margin-top">
+    <p ng-hide="(profile.friendlist.length == 0) || profile.loadingFriends" class="margin-top">
       <span ng-bind="::profile.friendlist.length" class="label label-warning"></span><i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/friends">More</a>
     </p>
     <h3 class="text-center" ng-show="profile.loadingFriends"><i class="fa fa-spinner fa-spin"></i></h3>
