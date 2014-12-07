@@ -40,10 +40,10 @@
       </span>
       <div class="media-body">
         <h4 class="media-heading">
-          <a class="media-left media-middle" ng-href="#/group/{{ group.groupID }}">
-            <span ng-bind="::group.groupName"></span>
-             <span class="label label-warning" ng-bind="group.memberCount"></span>
-          </a>
+          <div class="media-left media-middle">
+            <a ng-href="#/group/{{ group.groupID }}" ng-bind="::group.groupName"></a>
+            <span class="label label-warning" ng-bind="group.memberCount"></span>
+          </div>
         </h4>
         <p ng-bind-html="group.groupDescr | shortenDescription"></p>
       </div>
