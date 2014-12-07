@@ -1,7 +1,7 @@
 <div class="container" id="register">
   <!-- Page Header -->
   <div class="page-header">
-    <h1 class="text-center">w3lcome to n3twork</h1><br>
+    <h1 class="text-center"><span title="w3lcome to n3twork" style="font-family: capsule3regular; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;">w3lcome to n3twork</span></h1><br>
   </div>
 
   <div class="text-center" ng-show="register.submitted">
@@ -12,8 +12,8 @@
   </div>
 
   <!-- Login Toggle for Mobile Devices -->
-  <div class="visible-sm visible-xs text-center">
-    <h4><a href="" role="button" data-toggle="collapse" data-target="#navbar-collapse-1">Login above</a><span ng-hide="(register.submitted && register.signedup) || loggedin"> or register below.</span></h4><br>
+  <div class="visible-sm visible-xs text-center" ng-hide="(register.submitted && register.signedup) || loggedin">
+    <h4><a href="" role="button" data-toggle="collapse" data-target="#navbar-collapse-1">Login above</a> or register below.</h4><br>
   </div>
 
   <!-- Register Form -->
