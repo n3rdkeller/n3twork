@@ -79,12 +79,13 @@
           </form>
         </div>
       </li>
+      <hr class="margin-top">
       <li class="media" ng-repeat="post in profile.postlist | orderBy: 'postDate':true">
         <div class="media-left">
           <i class="fa fa-3x fa-fw" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }"></i>
         </div>
         <div class="media-body">
-          <h4 class="media-heading" ng-bind="post.title"></h4>
+          <h4 class="media-heading" ng-bind-html="post.title | parsePostTitle"></h4>
           <span ng-bind-html="post.content | parsePost"></span><br>
           <div class="margin-top">
             <button role="button" class="btn btn-xs btn-warning" ng-click="profile.voteAction(post.id)" ng-class="{ 'active': profile.didIVote[post.id] }" ng-disabled="profile.voteButtonLoading[post.id]">

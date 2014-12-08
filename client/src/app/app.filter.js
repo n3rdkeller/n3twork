@@ -175,7 +175,7 @@
           post = el.innerHTML;
           // replace newLines
           post = post.replace(/\n/g, '<br>');
-          // parse for usernames and link them
+          // TODO: parse for usernames and link them
           post = post.replace();
           // make it safe
           post = $sce.trustAsHtml(post);
@@ -185,6 +185,37 @@
     }
 })();
 
+(function() {
+  'use strict';
+
+  angular
+    .module('n3twork')
+    .filter('parsePostTitle', ['$sce', parsePostTitle]);
+
+    function parsePostTitle($sce) {
+      return function (postTitle) {
+        if (postTitle) {
+          // remove script-tags
+          postTitle = postTitle.replace(/<script.*>.*<\/script>/igm, '');
+          // remove a-tags
+          postTitle = postTitle.replace(/<a .*>.*<\/a>/igm, '');
+          // remove img-tags
+          postTitle = postTitle.replace(/<img .*>.*<\/img>/igm, '');
+          // remove span-tags
+          postTitle = postTitle.replace(/<span .*>.*<\/span>/igm, '');
+          // remove trailing newLines
+          postTitle = postTitle.replace(/\n*/, '');
+          // remove newLines
+          postTitle = postTitle.replace(/\n/g, '');
+          // TODO: parse for usernames and link them
+          postTitle = postTitle.replace();
+          // make it safe
+          postTitle = $sce.trustAsHtml(postTitle);
+          return postTitle;
+        } else { return "" };
+      };
+    }
+})();
 
 (function() {
   'use strict';
