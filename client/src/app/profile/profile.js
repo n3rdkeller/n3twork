@@ -92,6 +92,14 @@
           }, function (error) {
             // error
           });
+          vm.loadingPosts = true;
+          getPostList(vm.userdata.id).then(function (postList) {
+            vm.postlist = postList;
+            vm.loadingPosts = false;
+          }, function (error) {
+            // error
+            vm.loadingPosts = false;
+          });
         } else {
           // error changing friend status
         }
