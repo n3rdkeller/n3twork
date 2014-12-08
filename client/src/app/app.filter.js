@@ -142,34 +142,63 @@
     }
 })();
 
+(function() {
+  'use strict';
+
+  angular
+    .module('n3twork')
+    .filter('parsePost', ['$sce', parsePost]);
+
+    function parsePost($sce) {
+      return function (post) {
+        if (post) {
+          // remove script-tags
+          post = post.replace(/<script.*>.*<\/script>/igm, '');
+
+          // build DOM element
+          var el = document.createElement('div');
+          el.innerHTML = post;
+
+          var elements = el.getElementsByTagName("*");
+
+          for (var i = 0; i < elements.length; i++) {
+            var img = elements[i].querySelector('img');
+            if (img) {
+              if (img.width > 250) {
+                img.style.width = '';
+                img.removeAttribute('width');
+                img.addClass('img-responsive');
+                img.width = 250;
+              }
+            }
+          }
+          post = el.innerHTML;
+          // replace newLines
+          post = post.replace(/\n/g, '<br>');
+          // parse for usernames and link them
+          post = post.replace();
+          // make it safe
+          post = $sce.trustAsHtml(post);
+          return post;
+        } else { return "" };
+      };
+    }
+})();
+
 
 (function() {
   'use strict';
 
   angular
     .module('n3twork')
-    .filter('parseName', ['$sce', parseName]);
+    .filter('convertToDate', convertToDate);
 
-    function parseName($sce) {
-      return function (name) {
-        if (name) {
-          // remove script-tags
-          name = name.replace(/<script.*>.*<\/script>/igm, '');
-          // remove a-tags
-          name = name.replace(/<a .*>.*<\/a>/igm, '');
-          // remove img-tags
-          name = name.replace(/<img .*>.*<\/img>/igm, '');
-          // remove span-tags
-          name = name.replace(/<span .*>.*<\/span>/igm, '');
-          // remove trailing newLines
-          name = name.replace(/\n*/, '');
-          // replace newLines
-          name = name.replace(/\n/igm, '<br>');
-
-          // make it safe
-          name = $sce.trustAsHtml(name);
-          return name;
-        } else { return "" };
+    function convertToDate() {
+      return function (date) {
+        console.log(date);
+        var convertedDate = new Date(date).toLocaleString();
+        console.log(convertedDate);
+        return convertedDate;
       };
     }
 })();

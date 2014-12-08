@@ -1,0 +1,21 @@
+<div class="modal-header">
+  <button type="button" class="close pull-right" ng-click="votes.dismiss()">
+    <span aria-hidden="true">&times;</span>
+    <span class="sr-only">Close</span>
+  </button>
+  <h3 class="modal-title"><i class="fa fa-thumbs-o-up"></i> {{ votes.voteList.length }}</h3>
+</div>
+<div ng-hide="votes.loading" class="modal-body">
+  <ul class="fa-ul">
+    <li ng-repeat="vote in votes.voteList">
+      <i class="fa-li fa fa-thumbs-o-up"></i>
+      <a ng-href="#/user/{{ vote.voter.username }}" ng-click="votes.dismiss()">
+        <span ng-if="vote.voter.firstName" ng-bind="vote.voter.firstName + ' ' + vote.voter.name"></span>
+        <span ng-if="!vote.voter.firstName" ng-bind="vote.voter.username"></span>
+      </a>
+    </li>
+  </ul>
+</div>
+<div ng-show="votes.loading" class="modal-body text-center">
+  <i class="fa fa-spinner fa-spin fa-2x"></i>
+</div>
