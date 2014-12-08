@@ -36,8 +36,7 @@
         templateUrl: 'app/groups/createGroupModal.html',
         controller: 'CreateGroupCtrl',
         controllerAs: 'create',
-        keyboard: false,
-        backdrop: false
+        keyboard: false
       }).result.then(function (groupName) {
         vm.loadingGroups = true;
         CacheSvc.removeGroupCache();
@@ -52,7 +51,7 @@
           vm.loadingGroups = false;
         });
       }, function () {
-        console.log('modal dismissed at ' + new Date());
+        // modal dismissed
       });
     }
 

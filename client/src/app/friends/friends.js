@@ -97,7 +97,6 @@
 
     function addToFriends(id) {
       vm.addButtonLoading[id] = true;
-      console.log(vm.addButtonLoading);
       APISvc.request({
         method: 'POST',
         url: '/user/friend/add',
