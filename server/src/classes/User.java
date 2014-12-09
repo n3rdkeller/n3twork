@@ -231,8 +231,10 @@ public class User {
    * Converts any list of users to a json string
    * @param users
    * @return {"userList":[{"id":userID,...},...],"successful":true}
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public static String convertUserListToJson(List<User> users) {
+  public static String convertUserListToJson(List<User> users) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder userList = Json.createArrayBuilder();
     for (User user : users) {
       JsonObjectBuilder otherProperties = Json.createObjectBuilder();
@@ -244,6 +246,7 @@ public class User {
         .add("id", user.getId())
         .add("username", user.getUsername())
         .add("email", user.getEmail())
+        .add("emailhash", md5(user.getEmail().toLowerCase()))
         .add("lastname", user.getName())
         .add("firstname", user.getFirstName())
         .add("otherProperties", otherProperties));
@@ -314,6 +317,7 @@ public class User {
       pStmt.setInt(1, this.id);
       pStmt.setString(2, this.username);
       userTable = pStmt.executeQuery();
+      log.debug(pStmt);
     }
     ResultSetMetaData userTableMd = userTable.getMetaData();
     int columnsNumber = userTableMd.getColumnCount();
@@ -324,8 +328,8 @@ public class User {
     for (int i = 1;i <= columnsNumber; i++) {
       keyRow.add(userTableMd.getColumnName(i));
     }
-    for (int i = 0; i < keyRow.size(); i++) {
-      userMap.put(keyRow.get(i), userTable.getString(i));
+    for (int i = 1; i < keyRow.size(); i++) {
+      userMap.put(keyRow.get(i - 1), userTable.getString(i));
     }
     
     //setting attributes
@@ -379,8 +383,10 @@ public class User {
   /**
    * Method to get the User object as a Json dictionary
    * @return JsonObject converted to String
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public JsonValue getAsJson() {
+  public JsonValue getAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonObjectBuilder userJson = Json.createObjectBuilder();
     JsonObjectBuilder otherProperties = Json.createObjectBuilder();
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
@@ -396,6 +402,7 @@ public class User {
       .add("id", this.id)
       .add("username", this.username)
       .add("email", this.email)
+      .add("emailhash", md5(this.email.toLowerCase()))
       .add("lastname", this.name)
       .add("firstname", this.firstName)
       .add("otherProperties", otherProperties)
@@ -426,12 +433,10 @@ public class User {
               + "WHERE email='" + this.email + "' OR username='" + this.username + "'");
     }
     conn.close();
-
     if(userList.size() == 2) {
       if(userList.get(1).get(1).equals(this.password)) {
-
         this.id = Integer.parseInt(userList.get(1).get(0));
-        getBasicsFromDB();
+        this.getBasicsFromDB();
         log.debug("login successful");
         return true;
 
@@ -682,14 +687,17 @@ public class User {
   /**
    * Puts the friends attribute in a nice Json String
    * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public String getFriendsAsJson() {
+  public String getFriendsAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder friendList = Json.createArrayBuilder();
     for (Entry<User, SimpleEntry<Long,Boolean>> friend : this.friends.entrySet()) {
       friendList.add(Json.createObjectBuilder()
           .add("id", friend.getKey().getId())
           .add("username", friend.getKey().getUsername())
           .add("email", friend.getKey().getEmail())
+          .add("emailhash", md5(friend.getKey().getEmail().toLowerCase()))
           .add("lastname", friend.getKey().getName())
           .add("firstname", friend.getKey().getFirstName())
           .add("trueFriend", friend.getValue().getValue())
@@ -772,14 +780,17 @@ public class User {
   /**
    * Puts the friends attribute in a nice Json String
    * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public String getFriendRequestsAsJson() {
+  public String getFriendRequestsAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder friendRequestList = Json.createArrayBuilder();
     for (Entry<User, SimpleEntry<Long,Boolean>> friendRequest : this.friendRequests.entrySet()) {
       friendRequestList.add(Json.createObjectBuilder()
           .add("id", friendRequest.getKey().getId())
           .add("username", friendRequest.getKey().getUsername())
           .add("email", friendRequest.getKey().getEmail())
+          .add("emailhash", md5(friendRequest.getKey().getEmail().toLowerCase()))
           .add("lastname", friendRequest.getKey().getName())
           .add("firstname", friendRequest.getKey().getFirstName())
           .add("trueFriend", friendRequest.getValue().getValue())
@@ -1037,18 +1048,15 @@ public class User {
     }
     
     List<Post> postList = new ArrayList<Post>();
-    log.debug(bothWayFriendsList);
     // read UserPostsTable
     while (UserPostsTable.next()) {
-      log.debug(UserPostsTable.getInt("userid") + " " + UserPostsTable.getBoolean("visibility") + " " + bothWayFriendsList.contains(UserPostsTable.getInt("userid")));
       if(bothWayFriendsList.contains(UserPostsTable.getInt("userid"))) {
         // private posts of trueFriends™
         postList.add(new Post()
             .setId(UserPostsTable.getInt("postid"))
-            .setTitle(UserPostsTable.getString("title"))
             .setContent(UserPostsTable.getString("content"))
             .setPrivatePost(UserPostsTable.getBoolean("visibility"))
-            .setPostDate(UserPostsTable.getDate("date"))
+            .setPostDate(UserPostsTable.getTimestamp("date"))
             .setOwner(new Group(UserPostsTable.getInt("groupid"))
                 .setName(UserPostsTable.getString("groupname")))
             .setAuthor(new User(
@@ -1100,10 +1108,9 @@ public class User {
     while (GroupPostsTable.next()) {
       postList.add(new Post()
       .setId(GroupPostsTable.getInt("postid"))
-      .setTitle(GroupPostsTable.getString("title"))
       .setContent(GroupPostsTable.getString("content"))
       .setPrivatePost(GroupPostsTable.getBoolean("visibility"))
-      .setPostDate(GroupPostsTable.getDate("date"))
+      .setPostDate(GroupPostsTable.getTimestamp("date"))
       .setOwner(new Group(GroupPostsTable.getInt("groupid"))
           .setName(GroupPostsTable.getString("groupname")))
       .setAuthor(new User(
@@ -1119,6 +1126,7 @@ public class User {
     GroupPostsTable.close();
     pStmt.close();
     conn.close();
+    postList.addAll(this.getPosts(this));
     // sort List by postDate
     Collections.sort(postList, new PostComparator());
     return postList;

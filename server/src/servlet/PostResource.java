@@ -53,7 +53,6 @@ public class PostResource {
    *       "id":postID number,
    *       "owner":ownerID number,
    *       "postDate":timestamp number,
-   *       "title":"title text",
    *       "upVotes": [
    *         {
    *           "date":timestamp number,
@@ -95,29 +94,29 @@ public class PostResource {
         // not trueFriend
         if (!trueFriend) {
           List<Post> postToPrint = new ArrayList<Post>();
-          for (Post post: otherUser.getPosts()) {
+          for (Post post: otherUser.getPosts(user)) {
             if(!post.getPrivatePost()) {
               postToPrint.add(post);
             }
           }
-          String entity = String.valueOf(Post.convertPostListToJson(postToPrint));
+          String entity = String.valueOf(Post.convertPostListToJson(postToPrint, false));
           log.debug("/post returns:" + entity);
           return Helper.okResponse(entity);
         }
         // trueFriend
-        String entity = String.valueOf(Post.convertPostListToJson(otherUser.getPosts()));
+        String entity = String.valueOf(Post.convertPostListToJson(otherUser.getPosts(user), false));
         log.debug("/post returns:" + entity);
         return Helper.okResponse(entity);
         
       } else if (input.containsKey("groupID")) {
         // group
         Group group = new Group(input.getInt("groupID"));
-        String entity = String.valueOf(Post.convertPostListToJson(group.getPosts()));
+        String entity = String.valueOf(Post.convertPostListToJson(group.getPosts(user), true));
         log.debug("/post returns:" + entity);
         return Helper.okResponse(entity);
       }
       // own user
-      String entity = String.valueOf(Post.convertPostListToJson(user.getPosts()));
+      String entity = String.valueOf(Post.convertPostListToJson(user.getPosts(user), false));
       log.debug("/post returns:" + entity);
       return Helper.okResponse(entity);
     } catch(Exception e) {
@@ -153,7 +152,7 @@ public class PostResource {
         log.debug("/post/newsfeed returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      String entity = String.valueOf(Post.convertPostListToJson(user.getNewsFeedFromDB()));
+      String entity = String.valueOf(Post.convertPostListToJson(user.getNewsFeedFromDB(),true));
       log.debug("/post/newsfeed returns:" + entity);
       return Helper.okResponse(entity);
     } catch(Exception e) {
@@ -223,7 +222,6 @@ public class PostResource {
    *   "userID":0, //optional if given uses user
    *   "session":"sessionID"
    *   "post": {
-   *     "title":"",
    *     "content":"",
    *     "private":true/false
    *   }
@@ -262,14 +260,12 @@ public class PostResource {
           return Helper.okResponse(entity);
         }
         group.addPost(new Post()
-              .setContent(input.getJsonObject("post").getString("content"))
-              .setTitle(input.getJsonObject("post").getString("title")), user);
+              .setContent(input.getJsonObject("post").getString("content")), user);
         log.debug("/post/add returns:" + entity);
         return Helper.okResponse(entity);
       }
       user.addPost(new Post()
             .setContent(input.getJsonObject("post").getString("content"))
-            .setTitle(input.getJsonObject("post").getString("title"))
             .setPrivatePost(input.getJsonObject("post").getBoolean("private")));
       log.debug("/post/add returns:" + entity);
       return Helper.okResponse(entity);
@@ -290,7 +286,6 @@ public class PostResource {
    *   "session":"sessionID"
    *   "post": {
    *     "id":0,
-   *     "title":"", //optional
    *     "content":"", //optional
    *     "private":true/false //optional
    *   }
@@ -314,9 +309,7 @@ public class PostResource {
       }
       JsonObject jsonPost = input.getJsonObject("post");
       Post post = new Post().setId(jsonPost.getInt("id"));
-      if (jsonPost.containsKey("title")) {
-        post.setTitle(jsonPost.getString("title"));
-      } if (jsonPost.containsKey("content")) {
+      if (jsonPost.containsKey("content")) {
         post.setContent(jsonPost.getString("content"));
       } if (jsonPost.containsKey("private")) {
         post.setPrivatePost(jsonPost.getBoolean("private"));

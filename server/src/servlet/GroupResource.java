@@ -79,7 +79,7 @@ public class GroupResource {
       } else {
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", false)
-            .add("reason", "Group with that name already exists or no name is given")
+            .add("reason", "A group with that name already exists.")
             .build());
         log.debug("/group/found returns:" + entity);
         return Helper.okResponse(entity);
@@ -144,7 +144,7 @@ public class GroupResource {
       } else if (!group.getBasicsFromDB()) {
         String entity = String.valueOf(Json.createObjectBuilder()
             .add("successful", false)
-            .add("reason", "Group doesn't exist")
+            .add("reason", "Group doesn't exist.")
             .build());
         log.debug("/group/show returns:" + entity);
         return Helper.okResponse(entity);

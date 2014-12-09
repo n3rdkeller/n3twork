@@ -1,4 +1,6 @@
 package classes;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +15,7 @@ import java.util.Map.Entry;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import org.apache.log4j.LogManager;
@@ -49,7 +52,6 @@ public class Post {
    *       "id":postID number,
    *       "owner":owenerID number,
    *       "postDate":timestamp number,
-   *       "title":"title text",
    *       "upVotes": [
    *         {
    *           "date":timestamp number,
@@ -102,8 +104,8 @@ public class Post {
   }
 
   /**
-   * Inserts a post with ownerID, authorID, title, content, and privacy status into db. 
-   * this.author and this.owner with at least the id value, this.title, this.content and this.privatePost needs to be given.
+   * Inserts a post with ownerID, authorID, content, and privacy status into db. 
+   * this.author and this.owner with at least the id value, this.content and this.privatePost needs to be given.
    * @throws SQLException 
    * @throws ClassNotFoundException 
    * @throws IllegalAccessException 
@@ -112,14 +114,13 @@ public class Post {
   public void createInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     int privatePost = (this.privatePost) ? 1 : 0;
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,title,content,visibility) "
-        + "VALUES(?,?,?,?,?)";
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,content,visibility) "
+        + "VALUES(?,?,?,?)";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1,this.owner.getId());
     pStmt.setInt(2, this.author.getId());
-    pStmt.setString(3, this.title);
-    pStmt.setString(4, this.content);
-    pStmt.setInt(5, privatePost);
+    pStmt.setString(3, this.content);
+    pStmt.setInt(4, privatePost);
     pStmt.execute();
   }
   
@@ -141,7 +142,7 @@ public class Post {
   }
   
   /**
-   * Updates title, content or privacy status of this post. If a attribute wasn't changed, it must have the value null.
+   * Updates content or privacy status of this post. If a attribute wasn't changed, it must have the value null.
    * @return false if no changes where made
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -151,17 +152,10 @@ public class Post {
   public Boolean updateDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Posts SET ";
     List<Object> valueList = new ArrayList<Object>();
-    if (this.title != null) {
-      valueList.add(this.title);
-      sqlQuery = sqlQuery + "title=?";
-    }
+
     if (this.content != null) {
       valueList.add(this.content);
-      if (sqlQuery.endsWith("SET ")) {
-        sqlQuery = sqlQuery + "content=?";
-      } else {
-        sqlQuery = sqlQuery + ",content=?";
-      }
+      sqlQuery = sqlQuery + "content=?";
     }
     if (this.privatePost != null) {
       valueList.add((this.privatePost) ? 1 : 0);
@@ -217,23 +211,6 @@ public class Post {
    */
   public Post setOwner(Group owner) {
     this.owner = owner;
-    return this;
-  }
-  /**
-   * Simple getter for title
-   * @return this.title
-   */
-  public String getTitle() {
-    return this.title;
-  }
-
-  /**
-   * Simple setter for title
-   * @param tile New value for this.title
-   * @return this
-   */
-  public Post setTitle(String title) {
-    this.title = title;
     return this;
   }
 
@@ -376,8 +353,8 @@ public class Post {
           .add("date", upVote.getValue().getTime())
           .add("voter", Json.createObjectBuilder()
               .add("username", upVote.getKey().getUsername())
-              .add("name", upVote.getKey().getName())
-              .add("firstName", upVote.getKey().getFirstName()))
+              .add("lastname", upVote.getKey().getName())
+              .add("firstname", upVote.getKey().getFirstName()))
           );
     }
     JsonObject voteUps = Json.createObjectBuilder()

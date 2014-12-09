@@ -1,4 +1,6 @@
 package classes;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -276,6 +278,7 @@ public class Group {
    * @return
    */
   public String getName() {
+    if (this.name == null) return "";
     return this.name;
   }
   
@@ -294,6 +297,7 @@ public class Group {
    * @return descr
    */
   public String getDescr() {
+    if (this.descr == null) return "";
     return this.descr;
   }
 
@@ -321,7 +325,6 @@ public class Group {
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
     ResultSet membersTable = pStmt.executeQuery();
-    conn.close();
     
     while (membersTable.next()){
       // add every User in memberTable with the User(id, username, email, name, firstName) constructor
@@ -332,19 +335,23 @@ public class Group {
           membersTable.getString("name"), 
           membersTable.getString("firstName")));
     }
+    conn.close();
   }
 
   /**
    * Gets members as Json list
    * @return {"memberList":[{"id":"userID",...},...]}
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public String getMembersAsJson() {
+  public String getMembersAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder memberList = Json.createArrayBuilder();
     for (User member : this.members) {
       memberList.add(Json.createObjectBuilder()
           .add("id", member.getId())
           .add("username", member.getUsername())
           .add("email", member.getEmail())
+          .add("emailhash", User.md5(member.getEmail().toLowerCase()))
           .add("name", member.getName())
           .add("firstName", member.getFirstName()));
     }
@@ -519,7 +526,6 @@ public class Group {
     while (postsTable.next()) {
       this.posts.add(new Post()
         .setId(postsTable.getInt("postid"))
-        .setTitle(postsTable.getString("title"))
         .setContent(postsTable.getString("content"))
         .setPrivatePost(postsTable.getBoolean("visibility"))
         .setOwner(this)
@@ -547,7 +553,7 @@ public class Group {
     return this;    
   }
   
-  private int getMemberCount() {
+  public int getMemberCount() {
     return this.memberCount;
   }
   
