@@ -48,20 +48,6 @@
 
   angular
     .module('n3twork')
-    .filter('md5Hash', md5Hash);
-
-    function md5Hash() {
-      return function (value) {
-        return md5(value);
-      };
-    }
-})();
-
-(function() {
-  'use strict';
-
-  angular
-    .module('n3twork')
     .filter('parseDescription', ['$sce', parseDescription]);
 
     function parseDescription($sce) {

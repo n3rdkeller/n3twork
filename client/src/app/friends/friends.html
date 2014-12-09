@@ -5,8 +5,8 @@
       <li class="media" ng-repeat="friend in friends.friendList | orderBy: 'username'">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
-          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=64 1x,
-          http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=128 2x">
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ friend.emailhash }}?d=mm&s=64 1x,
+          http://www.gravatar.com/avatar/{{ friend.emailhash }}?d=mm&s=128 2x">
         </span>
         <div class="media-body">
           <h4 class="media-heading">
@@ -32,7 +32,7 @@
       <li class="media" ng-repeat="friend in friends.friendRequestList">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
-          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ friend.email | lowercase | md5Hash }}?d=mm&s=128 2x"/>
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ friend.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ friend.emailhash }}?d=mm&s=128 2x"/>
         </span>
         <div class="media-body">
           <h4 class="media-heading">
