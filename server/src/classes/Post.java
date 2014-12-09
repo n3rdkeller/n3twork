@@ -381,10 +381,37 @@ public class Post {
    * Add a new up vote to upVotes
    * @param voter The voter only needs the User.id value
    * @return this
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public Post addUpVote(User voter) {
-    // TODO
+  public Post addUpVote(User voter) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Votes(postID,voterID) VALUES(?,?)";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, voter.getId());
+    pStmt.execute();
     return this;
   }
-
+  
+  /**
+   * Remove a vote from the upVotes
+   * @param voter
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public Post removeUpVote(User voter) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Votes WHERE postID=? AND voterID=?";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, voter.getId());
+    pStmt.execute();
+    return this;
+  }
 }

@@ -390,4 +390,86 @@ public class PostResource {
       return Helper.errorResponse(e);
     }  
   }
+  
+  @OPTIONS @Path("/vote/add")
+  public Response corsAddVote() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code>{
+   *  "id":postID,
+   *  "session":"sessionID"
+   *}</code></pre>
+   * @return
+   */
+  @POST @Path("/vote/add")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response addVote(String jsonInput) {
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/post/delete returns:" + entity);
+        return Helper.okResponse(entity);
+      }
+      Post post = new Post()
+          .setId(input.getInt("id"))
+          .addUpVote(user);
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }  
+  }
+  
+  @OPTIONS @Path("/vote/remove")
+  public Response corsRemoveVote() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code>{
+   *  "id":postID,
+   *  "session":"sessionID"
+   *}</code></pre>
+   * @return
+   */
+  @POST @Path("/vote/remove")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response removeVote(String jsonInput) {
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/post/delete returns:" + entity);
+        return Helper.okResponse(entity);
+      }
+      Post post = new Post()
+          .setId(input.getInt("id"))
+          .removeUpVote(user);
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }  
+  }
 }
