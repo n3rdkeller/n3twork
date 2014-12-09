@@ -56,10 +56,9 @@
 
   <!-- POSTS -->
   <div class="col-sm-8 clearfix" ng-hide="profile.loadingPosts || profile.loadingUserData">
-    <!-- TODO: New Post Form -->
-
     <!-- Post List -->
     <ul class="media-list">
+      <!-- New Post Form -->
       <li class="media" ng-show="profile.itsMe">
         <div class="media-left">
           <button class="btn btn-default square-button" ng-click="profile.newPostPrivate = !profile.newPostPrivate" title="Toggle privacy">
@@ -69,8 +68,7 @@
         <div class="media-body full-width">
           <form role="form" name="newPostForm">
             <fieldset ng-disabled="profile.newPostLoading">
-              <input required ng-model="profile.newPostTitle" type="text" class="form-control input-lg" placeholder="Enter title here">
-              <textarea required ng-model="profile.newPostText" rows="3" class="form-control input-lg small-margin-top" placeholder="Enter text here"></textarea>
+              <textarea required autofocus ng-model="profile.newPostText" rows="3" class="form-control input-lg" placeholder="Post something here!"></textarea>
               <button type="button" class="btn btn-warning small-margin-top no-margin-bottom pull-right" ng-click="profile.newPost()" ng-disabled="newPostForm.$invalid">
                 <span ng-show="profile.newPostLoading"><i class="fa fa-spinner fa-spin"></i> Posting</span>
                 <span ng-hide="profile.newPostLoading"><i class="fa fa-fw fa-paper-plane-o"></i> Post</span>
@@ -79,23 +77,22 @@
           </form>
         </div>
       </li>
-      <hr class="margin-top">
+      <hr class="margin-top" ng-show="profile.itsMe">
       <li class="media" ng-repeat="post in profile.postlist | orderBy: 'postDate':true">
         <div class="media-left">
-          <i class="fa fa-3x fa-fw" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }"></i>
+          <i class="fa fa-3x fa-fw" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
         </div>
         <div class="media-body">
-          <h4 class="media-heading" ng-bind-html="post.title | parsePostTitle"></h4>
-          <span ng-bind-html="post.content | parsePost"></span><br>
+          <span class="media-heading bigger-text" ng-bind-html="post.content | parsePost"></span>
           <div class="margin-top">
-            <button role="button" class="btn btn-xs btn-warning" ng-click="profile.voteAction(post.id)" ng-class="{ 'active': profile.didIVote[post.id] }" ng-disabled="profile.voteButtonLoading[post.id]">
+            <button role="button" class="btn btn-xs btn-warning" ng-click="profile.voteAction(post.id, post.didIVote)" ng-class="{ 'active': post.didIVote }" ng-disabled="profile.voteButtonLoading[post.id]">
               <i class="fa fa-fw" ng-class="{ 'fa-thumbs-o-up': !profile.voteButtonLoading[post.id], 'fa-spin fa-spinner': profile.voteButtonLoading[post.id] }"></i>
             </button>
             <button role="button" class="btn btn-xs btn-default" ng-show="post.numberOfVotes > 0" ng-click="profile.showVotes(post.id)">
               {{ post.numberOfVotes }} votes
             </button>
             <small ng-bind="post.postDate | convertToDate" class="text-muted padding-left"></small>
-            <button role="button" class="btn btn-link btn-xs" ng-hide="profile.removeButtonConfirmation[post.id] || (userdata.id != post.author.id)" ng-click="profile.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
+            <button role="button" class="btn btn-link btn-xs" ng-hide="profile.removeButtonConfirmation[post.id] || !profile.itsMe" ng-click="profile.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
             <span ng-show="profile.removeButtonConfirmation[post.id]" class="small text-muted padding-left">Confirm deletion:</span>
             <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="profile.removeButtonConfirmation[post.id]" ng-click="profile.removePost(post.id)" ng-disabled="profile.removePostButtonLoading[post.id]">
               <span ng-hide="profile.removePostButtonLoading[post.id]"><i class="fa fa-fw fa-check text-muted"></i></span>
@@ -104,9 +101,14 @@
             <button role="button" class="btn btn-xs btn-link neg-margin" ng-show="profile.removeButtonConfirmation[post.id] && !profile.removePostButtonLoading[post.id]" ng-click="profile.removeButtonConfirmation[post.id] = false"><i class="fa fa-fw fa-remove text-muted"></i></button>
           </div>
         </div>
-        <hr class="margin-top">
+        <hr>
       </li>
     </ul>
+
+    <div ng-show="profile.postlist.length == 0" class="text-center" >
+      <h2>There are no posts here.</h2>
+      <h2><i class="fa fa-frown-o fa-2x"></i></h2>
+    </div>
 
   </div>
 

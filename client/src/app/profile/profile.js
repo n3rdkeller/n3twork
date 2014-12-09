@@ -12,9 +12,9 @@
     .module('n3twork.profile')
     .controller('ProfileCtrl', ProfileCtrl);
 
-  ProfileCtrl.$inject = ['APISvc', 'CacheSvc', '$q', '$rootScope', '$routeParams', '$modal'];
+  ProfileCtrl.$inject = ['APISvc', 'CacheSvc', 'VoteSvc', '$q', '$rootScope', '$routeParams'];
 
-  function ProfileCtrl(APISvc, CacheSvc, $q, $rootScope, $routeParams, $modal) {
+  function ProfileCtrl(APISvc, CacheSvc, VoteSvc, $q, $rootScope, $routeParams) {
     var vm = this;
 
     vm.friendAction = friendAction;
@@ -116,7 +116,6 @@
         data: {
           'userID': vm.userdata.id,
           'post': {
-            'title': vm.newPostTitle,
             'content': vm.newPostText,
             'private': vm.newPostPrivate
           }
@@ -140,7 +139,6 @@
     }
 
     function resetNewPostForm () {
-      vm.newPostTitle = "";
       vm.newPostText = "";
       vm.newPostPrivate = false;
     }
@@ -193,68 +191,23 @@
     }
 
     function showVotes(postID) {
-      var modalInstance = $modal.open({
-        templateUrl: 'app/profile/votes.html',
-        controller: 'ShowVotesCtrl',
-        controllerAs: 'votes',
-        size: 'sm',
-        resolve: {
-          getPostID: function() {
-            return postID;
-          }
-        }
-      });
+      VoteSvc.showVotes(postID);
     }
 
-    function voteAction(id) {
-      vm.voteButtonLoading[id] = true;
-      console.log('should add / remove a vote from the post ' + id);
-      getPostList(vm.userdata.id).then(function (postList) {
-        vm.postlist = postList;
-        vm.voteButtonLoading[id] = false;
+    function voteAction (postID, didIVote) {
+      vm.voteButtonLoading[postID] = true;
+      VoteSvc.voteAction(postID, didIVote).then(function (successful) {
+        getPostList(vm.userdata.id).then(function (postList) {
+          vm.postlist = postList;
+          vm.voteButtonLoading[postID] = false;
+        }, function (error) {
+          // error
+        });
       }, function (error) {
         // error
       });
+
     }
 
   }
 })();
-
-
-(function() {
-  'use strict';
-
-  angular
-    .module('n3twork.profile')
-    .controller('ShowVotesCtrl', ShowVotesCtrl);
-
-  ShowVotesCtrl.$inject = ['getPostID', 'APISvc', '$modalInstance'];
-  function ShowVotesCtrl(getPostID, APISvc, $modalInstance) {
-    var vm = this;
-
-    vm.postID = getPostID;
-    vm.dismiss = dismiss;
-
-    init();
-
-    function init() {
-      vm.loading = true;
-      APISvc.request({
-        method: 'POST',
-        url: '/post/votes',
-        data: { 'id': vm.postID }
-      }).then(function (response) {
-        vm.loading = false;
-        vm.voteList = response.data.voteList;
-      }, function (error) {
-        vm.loading = false;
-      });
-    }
-
-    function dismiss () {
-      $modalInstance.close();
-    }
-
-  }
-})();
-
