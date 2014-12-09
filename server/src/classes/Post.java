@@ -25,12 +25,12 @@ public class Post {
   private Group owner;
   private User author;
   private String content;
-  private String title;
   private Date postDate;
   private Boolean privatePost;
   private Boolean groupPost;
   private Map<User,Date> upVotes = new HashMap<User,Date>();
   private int numberOfUpVotes;
+  private Boolean didIVote;
 
   /**
    * Empty constructor
@@ -61,42 +61,43 @@ public class Post {
    *   ],
    *   "successful":true
    * } </code></pre>
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public static JsonValue convertPostListToJson(List<Post> postList) {
+  public static JsonValue convertPostListToJson(List<Post> postList, Boolean newsfeed) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder jsonPostList = Json.createArrayBuilder();
     for(Post post: postList) {
-      JsonArrayBuilder jsonUpVotes = Json.createArrayBuilder();
-      for(Entry<User,Date> upVote : post.getUpVotes().entrySet()) {
-        jsonUpVotes.add(Json.createObjectBuilder()
-            .add("voter", upVote.getKey().getId())
-            .add("date", upVote.getValue().getTime()));
-      }
-      if (post.getTitle() == null) post.setTitle("");
       if (post.getContent() == null) post.setContent("");
-      log.debug("id " + post.getId());
-      log.debug("owner "+ post.getOwner().getAsJson());
-      log.debug("author "+ post.getAuthor().getAsJson());
-      log.debug("title "+ post.getTitle());
-      log.debug("content "+ post.getContent());
-      log.debug("postDate "+ post.getPostDate().getTime());
-      log.debug("private "+ post.getPrivatePost());
-      log.debug("upVotes "+ jsonUpVotes);
-      log.debug("numberOfVotes "+ post.getNumberOfUpVotes());
-      jsonPostList.add(Json.createObjectBuilder()
+      JsonObjectBuilder jsonPost = Json.createObjectBuilder()
           .add("id", post.getId())
-          .add("owner", post.getOwner().getAsJson())
-          .add("author", post.getAuthor().getAsJson())
-          .add("title", post.getTitle())
           .add("content", post.getContent())
           .add("postDate", post.getPostDate().getTime())
           .add("private", post.getPrivatePost())
-          .add("upVotes", jsonUpVotes)
-          .add("numberOfVotes", post.getNumberOfUpVotes()));
+          .add("numberOfVotes", post.getNumberOfUpVotes())
+          .add("didIVote", post.getDidIVote());
+      if (newsfeed) {
+        log.debug("newsfeed part");
+        jsonPost
+            .add("owner", Json.createObjectBuilder()
+                .add("id", post.getOwner().getId())
+                .add("name", (post.getOwner().getName() == null) ? "" : post.getOwner().getName())
+                .add("descr", (post.getOwner().getDescr() == null) ? "" : post.getOwner().getDescr())
+                .add("membercount", post.getOwner().getMemberCount()))
+            .add("author", Json.createObjectBuilder()
+              .add("id", post.getAuthor().getId())
+              .add("username", post.getAuthor().getUsername())
+              .add("lastname", post.getAuthor().getName())
+              .add("firstname", post.getAuthor().getFirstName())
+              .add("email", post.getAuthor().getEmail())
+              .add("emailhash", User.md5(post.getAuthor().getEmail().toLowerCase())));
+      }      
+      jsonPostList.add(jsonPost);
     }
     JsonObject output = Json.createObjectBuilder()
         .add("postList", jsonPostList)
         .add("successful", true)
         .build();
+    log.debug(output);
     return output;
   }
 
@@ -314,6 +315,15 @@ public class Post {
   
   public Post setNumberOfUpVotes(int votesNum) {
     this.numberOfUpVotes = votesNum;
+    return this;
+  }
+  
+  public Boolean getDidIVote() {
+    return this.didIVote;
+  }
+  
+  public Post setDidIVote(Boolean didIVote) {
+    this.didIVote = didIVote;
     return this;
   }
   

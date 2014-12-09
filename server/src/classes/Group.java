@@ -505,10 +505,12 @@ public class Group {
     pStmt.execute();
   }
 
-  public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public List<Post> getPosts(User lookingUser) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "SELECT Posts.id as postid, title, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
-        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+    String sqlQuery = "SELECT Posts.id as postid, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
+        + "WHERE Votes.voterID = " + lookingUser.getId() + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
         + "JOIN " + DBConnector.DATABASE + ".Users ON Posts.authorID = Users.id "
         + "WHERE ownerID="+ this.id;
     log.debug(sqlQuery);
@@ -529,8 +531,10 @@ public class Group {
             postsTable.getString("name"),
             postsTable.getString("firstName")))
         .setNumberOfUpVotes(postsTable.getInt("votes"))
+        .setDidIVote(postsTable.getBoolean("didIVote"))
         );
     };
+    log.debug("end of getPosts");
     return this.posts;
   }
 

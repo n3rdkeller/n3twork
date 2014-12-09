@@ -967,10 +967,12 @@ public class User {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public List<Post> getPosts(User lookingUser) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "SELECT id, title, content, visibility, date, "
-        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+    String sqlQuery = "SELECT id, content, visibility, date, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
+        + "WHERE Votes.voterID = " + lookingUser.getId() + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
         + "WHERE authorID="+ this.id + " AND ownerID=0";
     log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
@@ -978,13 +980,13 @@ public class User {
     while(postsTable.next()) {
       this.posts.add(new Post()
         .setId(postsTable.getInt("id"))
-        .setTitle(postsTable.getString("title"))
         .setContent(postsTable.getString("content"))
         .setPrivatePost(postsTable.getBoolean("visibility"))
         .setOwner(new Group(0))
         .setAuthor(this)
         .setPostDate(postsTable.getTimestamp("date"))
-        .setNumberOfUpVotes(postsTable.getInt("votes")));
+        .setNumberOfUpVotes(postsTable.getInt("votes"))
+        .setDidIVote(postsTable.getInt("didIVote") >= 1));
     }
     return this.posts;
   }
@@ -1013,8 +1015,10 @@ public class User {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
-          + "Posts.id as postid, Posts.title, Posts.content, Posts.visibility, Posts.date, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+          + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
+          + "WHERE Votes.voterID = " + this.id + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Friends ON Friends.friendID = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
@@ -1053,15 +1057,15 @@ public class User {
                 UserPostsTable.getString("email"),
                 UserPostsTable.getString("name"),
                 UserPostsTable.getString("firstName")))
-            .setNumberOfUpVotes(UserPostsTable.getInt("votes")));
+            .setNumberOfUpVotes(UserPostsTable.getInt("votes"))
+            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1));
       } else if (!UserPostsTable.getBoolean("visibility")){
         // all public posts
         postList.add(new Post()
             .setId(UserPostsTable.getInt("postid"))
-            .setTitle(UserPostsTable.getString("title"))
             .setContent(UserPostsTable.getString("content"))
             .setPrivatePost(false)
-            .setPostDate(UserPostsTable.getDate("date"))
+            .setPostDate(UserPostsTable.getTimestamp("date"))
             .setOwner(new Group(UserPostsTable.getInt("groupid"))
                 .setName(UserPostsTable.getString("groupname")))
             .setAuthor(new User(
@@ -1070,7 +1074,8 @@ public class User {
                 UserPostsTable.getString("email"),
                 UserPostsTable.getString("name"),
                 UserPostsTable.getString("firstName")))
-            .setNumberOfUpVotes(UserPostsTable.getInt("votes")));
+            .setNumberOfUpVotes(UserPostsTable.getInt("votes"))
+            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1));
       }
     }
     
@@ -1079,8 +1084,10 @@ public class User {
     
     sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
-          + "Posts.id as postid, Posts.title, Posts.content, Posts.visibility, Posts.date, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+          + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
+          + "WHERE Votes.voterID = " + this.id + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
           + "JOIN " + DBConnector.DATABASE + ".Members ON Members.groupID = Posts.ownerID "
@@ -1105,7 +1112,8 @@ public class User {
           GroupPostsTable.getString("email"),
           GroupPostsTable.getString("name"),
           GroupPostsTable.getString("firstName")))
-      .setNumberOfUpVotes(GroupPostsTable.getInt("votes")));
+      .setNumberOfUpVotes(GroupPostsTable.getInt("votes"))
+      .setDidIVote(GroupPostsTable.getInt("didIVote") >= 1));
     }
     
     GroupPostsTable.close();
