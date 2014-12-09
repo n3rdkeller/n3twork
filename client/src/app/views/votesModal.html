@@ -10,8 +10,8 @@
     <li ng-repeat="vote in votes.voteList">
       <i class="fa-li fa fa-thumbs-o-up"></i>
       <a ng-href="#/user/{{ vote.voter.username }}" ng-click="votes.dismiss()">
-        <span ng-if="vote.voter.firstName" ng-bind="vote.voter.firstName + ' ' + vote.voter.name"></span>
-        <span ng-if="!vote.voter.firstName" ng-bind="vote.voter.username"></span>
+        <span ng-if="vote.voter.firstname" ng-bind="vote.voter.firstname + ' ' + vote.voter.lastname"></span>
+        <span ng-if="!vote.voter.firstname" ng-bind="vote.voter.username"></span>
       </a>
     </li>
   </ul>
