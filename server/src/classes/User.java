@@ -441,7 +441,6 @@ public class User {
       pStmt.setString(2, this.username);
       userList = pStmt.executeQuery();
     }
-    conn.close();
     if(userList.next()) {
       if(userList.getString("password").equals(this.password)) {
         this.id = userList.getInt("id");
