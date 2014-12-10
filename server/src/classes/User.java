@@ -636,7 +636,8 @@ public class User {
         "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     String updateQueryHead = "UPDATE " + DBConnector.DATABASE + ".Users SET ";
     List<String> toBeAdded = new ArrayList<String>();
-    
+    List<String> values = new ArrayList<String>();
+    List<String> keys = new ArrayList<String>();
     for (Entry<String,String> prop: this.otherProperties.entrySet()) {
       // check if key is a column
       if (!userList.get(0).contains(prop.getKey())) {
@@ -645,10 +646,12 @@ public class User {
       
       // prepare insert statement
       if (updateQueryHead.endsWith("SET ")) {
-        updateQueryHead = updateQueryHead + prop.getKey() + "='" + prop.getValue() + "'";
+        updateQueryHead = updateQueryHead + "?=?";
       } else {
-        updateQueryHead = updateQueryHead + "," + prop.getKey() + "='" + prop.getValue() + "'";
+        updateQueryHead = updateQueryHead + ",?=?";
       }
+      values.add(prop.getValue());
+      keys.add(prop.getKey());
     }
     
     if (toBeAdded.size() > 0) {
@@ -656,16 +659,27 @@ public class User {
       String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Users ADD COLUMN ";
       for (int i = 0; i < toBeAdded.size(); i++) {
         if (i == 0) {
-          alterTable = alterTable + "`" +  toBeAdded.get(i) + "` VARCHAR(45) NULL DEFAULT NULL";
+          alterTable = alterTable + "? VARCHAR(45) NULL DEFAULT NULL";
         } else {
-          alterTable = alterTable + ",`" + toBeAdded.get(i) + "` VARCHAR(45) NULL DEFAULT NULL";
+          alterTable = alterTable + ",? VARCHAR(45) NULL DEFAULT NULL";
         }
       }
-      DBConnector.executeUpdate(conn, alterTable);
+      PreparedStatement pStmt = conn.prepareStatement(alterTable);
+      for (int i = 0; i < toBeAdded.size(); i++) {
+        pStmt.setString(i + 1, toBeAdded.get(i));
+      }
+      log.debug(pStmt);
+      pStmt.execute();
     }
-    String insertQuery = updateQueryHead + " WHERE id=" + this.id;
-    log.debug(insertQuery);
-    DBConnector.executeUpdate(conn, insertQuery);
+    
+    String updateQuery = updateQueryHead + " WHERE id=" + this.id;
+    PreparedStatement pStmt = conn.prepareStatement(updateQuery);
+    for (int i = 0; i < keys.size(); i++) {
+      pStmt.setString(2*i + 1, keys.get(i));
+      pStmt.setString(2*i + 2, values.get(i));
+    }
+    log.debug(pStmt);
+    pStmt.execute();
     return this;
   }
   
@@ -684,13 +698,18 @@ public class User {
     this.sessionID = md5(seed);
     // save in db
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
-    if(userList.size() > 1) { //sessionID already exists
+    PreparedStatement pStmt = conn.prepareStatement(
+        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID=?");
+    pStmt.setString(1, this.sessionID);
+    ResultSet userList = pStmt.executeQuery();
+    if(userList.next()) { //sessionID already exists
       this.createSessionID();
     } else {
-      DBConnector.executeUpdate(conn, 
-          "INSERT INTO " + DBConnector.DATABASE + ".SessionIDs(userID,sessionID) VALUES(" + this.id + ",'" + this.sessionID + "')"); 
+      pStmt = conn.prepareStatement(
+          "INSERT INTO " + DBConnector.DATABASE + ".SessionIDs(userID,sessionID) VALUES(?,?)"); 
+      pStmt.setInt(1, this.id);
+      pStmt.setString(2, this.sessionID);
+      pStmt.execute();
     }
     conn.close();
     return this.sessionID;
@@ -917,8 +936,7 @@ public class User {
    * @throws SQLException
    */
   public User getGroupsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
         "SELECT Groups.id, Groups.name, Groups.descr, (" 
             + "SELECT COUNT(*) FROM " + DBConnector.DATABASE + ".Members "
             + "WHERE Members.groupID = Groups.id) as membercount "
@@ -927,14 +945,16 @@ public class User {
             + "ON Groups.id=Members.groupID "
             + "JOIN " + DBConnector.DATABASE + ".Users "
             + "ON Members.memberID=Users.id "
-            + "WHERE Users.id=" + this.id
-            + " OR Users.username='" + this.username + "'");
-    groupTable.remove(0); // remove column names
-    for (ArrayList<String> groupTableRow : groupTable) {
-      Group group = new Group(Integer.parseInt(groupTableRow.get(0)))
-                          .setName(groupTableRow.get(1))
-                          .setDescr(groupTableRow.get(2))
-                          .setMemberCount(Integer.parseInt(groupTableRow.get(3)));
+            + "WHERE Users.id=?"
+            + " OR Users.username=?");
+    pStmt.setInt(1, this.id);
+    pStmt.setString(2, this.username);
+    ResultSet groupTable = pStmt.executeQuery();
+    while (groupTable.next()) {
+      Group group = new Group(groupTable.getInt("id"))
+                          .setName(groupTable.getString("name"))
+                          .setDescr(groupTable.getString("descr"))
+                          .setMemberCount(groupTable.getInt("membercount"));
       this.groups.add(group);
     }
     return this;
