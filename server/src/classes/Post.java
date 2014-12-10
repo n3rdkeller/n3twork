@@ -334,7 +334,7 @@ public class Post {
         .setUsername(votesTable.getString("username"))
         .setName(votesTable.getString("name"))
         .setFirstName(votesTable.getString("firstName")), 
-        votesTable.getTime("date"));
+        votesTable.getTimestamp("date"));
     }
     pStmt.close();
     votesTable.close();

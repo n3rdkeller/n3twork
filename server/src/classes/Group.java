@@ -455,61 +455,37 @@ public class Group {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public void setOtherProperties(Map<String,String> properties) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Group setOtherProperties(Map<String,String> properties) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.otherProperties.putAll(properties);
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> groupList = DBConnector.selectQuery(conn, 
         "SELECT * FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
-    String insertQueryHead = "INSERT INTO " + DBConnector.DATABASE + ".Groups(";
-    String insertQueryTail = ") VALUES(";
-    List<String> toBeAdded = new ArrayList<String>();
-    List<String> valueList = new ArrayList<String>();
-    List<String> keyList = new ArrayList<String>();
+    String updateQueryHead = "UPDATE " + DBConnector.DATABASE + ".Groups SET ";
+    List<String> values = new ArrayList<String>();
+    List<String> keys = new ArrayList<String>();
     for (Entry<String,String> prop: this.otherProperties.entrySet()) {
       // check if key is a column
-      if (!groupList.get(0).contains(prop.getKey())) {
-        toBeAdded.add(prop.getKey());
-      }
-      keyList.add(prop.getKey());
-      valueList.add(prop.getValue());
-      // prepare insert statement
-      if (insertQueryHead.endsWith(".Groups(")) {
-        insertQueryHead = insertQueryHead + "?";
-      } else {
-        insertQueryHead = insertQueryHead + ",?";
-      }
-      
-      if (insertQueryTail.endsWith("VALUES(")) {
-        insertQueryTail = insertQueryTail + "?";
-      } else {
-        insertQueryTail = insertQueryTail + ",?";
+      if (groupList.get(0).contains(prop.getKey())) {
+        // prepare insert statement
+        if (updateQueryHead.endsWith("SET ")) {
+          updateQueryHead = updateQueryHead + "`" + prop.getKey() + "`=?";
+        } else {
+          updateQueryHead = updateQueryHead + ",`" + prop.getKey() + "`=?";
+        }
+        values.add(prop.getValue());
+        keys.add(prop.getKey());
       }
     }
-    
-    if (toBeAdded.size() > 0) {
-      // prepare alter table statement
-      String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Groups ADD COLUMN ";
-      for (int i = 0; i < toBeAdded.size(); i++) {
-        if (i == 0) {
-          alterTable = "? VARCHAR(45) NULL DEFAULT NULL";
-        } else {
-          alterTable = ",? VARCHAR(45) NULL DEFAULT NULL";
-        }
-      }
-      PreparedStatement pStmt = conn.prepareStatement(alterTable);
-      for (int i = 0; i < toBeAdded.size(); i++) {
-        pStmt.setString(i + 1, toBeAdded.get(i));
+    if (!updateQueryHead.endsWith("SET ")) {
+      String updateQuery = updateQueryHead + " WHERE id=" + this.id;
+      PreparedStatement pStmt = conn.prepareStatement(updateQuery);
+      for (int i = 0; i < keys.size(); i++) {
+        pStmt.setString(i + 1, values.get(i));
       }
       log.debug(pStmt);
       pStmt.execute();
     }
-    PreparedStatement pStmt = conn.prepareStatement(insertQueryHead + insertQueryTail + ")");
-    for (int i = 0; i < keyList.size(); i++) {
-      pStmt.setString(i + 1, keyList.get(i));
-      pStmt.setString(i + 1 + keyList.size(), valueList.get(i));
-    }
-    log.debug(pStmt);
-    pStmt.execute();
+    return this;
   }
 
   public List<Post> getPosts(User lookingUser) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {

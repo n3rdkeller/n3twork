@@ -635,51 +635,30 @@ public class User {
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
         "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     String updateQueryHead = "UPDATE " + DBConnector.DATABASE + ".Users SET ";
-    List<String> toBeAdded = new ArrayList<String>();
     List<String> values = new ArrayList<String>();
     List<String> keys = new ArrayList<String>();
     for (Entry<String,String> prop: this.otherProperties.entrySet()) {
       // check if key is a column
-      if (!userList.get(0).contains(prop.getKey())) {
-        toBeAdded.add(prop.getKey());
-      }
-      
-      // prepare insert statement
-      if (updateQueryHead.endsWith("SET ")) {
-        updateQueryHead = updateQueryHead + "?=?";
-      } else {
-        updateQueryHead = updateQueryHead + ",?=?";
-      }
-      values.add(prop.getValue());
-      keys.add(prop.getKey());
-    }
-    
-    if (toBeAdded.size() > 0) {
-      // prepare alter table statement
-      String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Users ADD COLUMN ";
-      for (int i = 0; i < toBeAdded.size(); i++) {
-        if (i == 0) {
-          alterTable = alterTable + "? VARCHAR(45) NULL DEFAULT NULL";
+      if (userList.get(0).contains(prop.getKey())) {
+        // prepare insert statement
+        if (updateQueryHead.endsWith("SET ")) {
+          updateQueryHead = updateQueryHead + "`" + prop.getKey() + "`=?";
         } else {
-          alterTable = alterTable + ",? VARCHAR(45) NULL DEFAULT NULL";
+          updateQueryHead = updateQueryHead + ",`" + prop.getKey() + "`=?";
         }
+        values.add(prop.getValue());
+        keys.add(prop.getKey());
       }
-      PreparedStatement pStmt = conn.prepareStatement(alterTable);
-      for (int i = 0; i < toBeAdded.size(); i++) {
-        pStmt.setString(i + 1, toBeAdded.get(i));
+    }
+    if (!updateQueryHead.endsWith("SET ")) {
+      String updateQuery = updateQueryHead + " WHERE id=" + this.id;
+      PreparedStatement pStmt = conn.prepareStatement(updateQuery);
+      for (int i = 0; i < keys.size(); i++) {
+        pStmt.setString(i + 1, values.get(i));
       }
       log.debug(pStmt);
       pStmt.execute();
     }
-    
-    String updateQuery = updateQueryHead + " WHERE id=" + this.id;
-    PreparedStatement pStmt = conn.prepareStatement(updateQuery);
-    for (int i = 0; i < keys.size(); i++) {
-      pStmt.setString(2*i + 1, keys.get(i));
-      pStmt.setString(2*i + 2, values.get(i));
-    }
-    log.debug(pStmt);
-    pStmt.execute();
     return this;
   }
   
