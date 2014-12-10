@@ -12,11 +12,15 @@
     .module('n3twork.groups')
     .controller('GroupCtrl', GroupCtrl);
 
-  GroupCtrl.$inject = ['APISvc','CacheSvc', '$routeParams', '$q', '$rootScope', '$modal', '$timeout', '$window'];
-  function GroupCtrl(APISvc, CacheSvc, $routeParams, $q, $rootScope, $modal, $timeout, $window) {
+  GroupCtrl.$inject = ['APISvc','CacheSvc', 'PostSvc', 'VoteSvc', '$routeParams', '$q', '$rootScope', '$modal', '$timeout', '$window'];
+  function GroupCtrl(APISvc, CacheSvc, PostSvc, VoteSvc, $routeParams, $q, $rootScope, $modal, $timeout, $window) {
     var vm = this;
 
     vm.groupAction = groupAction;
+    vm.showVotes = showVotes;
+    vm.voteAction = voteAction;
+    vm.newPost = newPost;
+    vm.removePost = removePost;
 
     vm.newPostPrivate = false;
     vm.removePostButtonLoading = {};
@@ -38,7 +42,7 @@
           vm.statusButtonLoading = false;
         });
         vm.loadingPosts = true;
-        getPostList(vm.groupData.id).then(function (postList) {
+        PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
           vm.postlist = postList;
           vm.loadingPosts = false;
         }, function (error) {
@@ -201,30 +205,16 @@
 
     function newPost() {
       vm.newPostLoading = true;
-      APISvc.request({
-        method: 'POST',
-        url: '/post/add',
-        data: {
-          'groupID': vm.userdata.id,
-          'post': {
-            'content': vm.newPostText,
-            'private': vm.newPostPrivate
-          }
-        }
-      }).then(function (response) {
-        vm.newPostLoading = false;
-        if (response.data.successful) {
+      PostSvc.newPost('groupID', vm.groupData.id, vm.newPostText, vm.newPostPrivate).then(function (successful) {
+        PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
           resetNewPostForm();
-          getPostList(vm.userdata.id).then(function (postList) {
-            vm.postlist = postList;
-          }, function (error) {
-            // error
-          });
-        } else {
-          // error
-        }
+          console.log('no error');
+          vm.postlist = postList;
+          vm.newPostLoading = false;
+        }, function (error) {
+          vm.newPostLoading = false;
+        });
       }, function (error) {
-        // error
         vm.newPostLoading = false;
       });
     }
@@ -234,15 +224,30 @@
       vm.newPostPrivate = false;
     }
 
+    function showVotes(postID) {
+      VoteSvc.showVotes(postID);
+    }
+
+    function voteAction (postID, didIVote) {
+      vm.voteButtonLoading[postID] = true;
+      VoteSvc.voteAction(postID, didIVote).then(function (successful) {
+        PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
+          vm.postlist = postList;
+          vm.voteButtonLoading[postID] = false;
+        }, function (error) {
+          // error
+        });
+      }, function (error) {
+        // error
+      });
+    }
+
     function removePost (postID) {
       vm.removePostButtonLoading[postID] = true;
-      APISvc.request({
-        method: 'POST',
-        url: '/post/delete',
-        data: { 'id': postID }
-      }).then(function (response) {
-        if (response.data.successful) {
-          getPostList(vm.userdata.id).then(function (postList) {
+
+      PostSvc.removePost(postID).then(function (successful) {
+        if (successful) {
+          PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
             vm.postlist = postList;
             vm.removePostButtonLoading[postID] = false;
             vm.removeButtonConfirmation[postID] = false;
@@ -260,27 +265,6 @@
         vm.removeButtonConfirmation[postID] = false;
       });
     }
-
-    function getPostList(groupID) {
-      var deferred = $q.defer();
-
-      APISvc.request({
-        method: 'POST',
-        url: '/post',
-        data: { 'groupID': groupID }
-      }).then(function (response) {
-        if (response.data.successful) {
-          deferred.resolve(response.data.postList);
-        } else {
-          deferred.reject(response.data.successful);
-        }
-      }, function (error) {
-        deferred.reject(error);
-      });
-
-      return deferred.promise;
-    }
-
 
   }
 
