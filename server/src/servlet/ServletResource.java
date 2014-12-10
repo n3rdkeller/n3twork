@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import classes.Group;
 import classes.User;
 /**
  * Basic part of the api. Contains login, registration and logout
@@ -191,14 +192,21 @@ public class ServletResource {
     log.debug("register input: " + jsonInput);
     try {
       User user = new User(jsonInput);
-      String entity = String.valueOf(Json.createObjectBuilder()
-          .add("successful", user.registerInDB())
-          .build());
-      log.debug("/register returns: " + entity);
-      return Response.ok()
-          .entity(entity)
-          .header(Helper.ACCESSHEADER, "*")
-          .build();
+      if (user.registerInDB()) {
+        new Group(1).addMember(user);
+        new Group(2).addMember(user);
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", true)
+            .build());
+        log.debug("/register returns: " + entity);
+        return Helper.okResponse(entity);
+      } else {
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .build());
+        log.debug("/register returns: " + entity);
+        return Helper.okResponse(entity);
+      }
     } catch (Exception e){
       log.error(e);
       return Response.status(Status.INTERNAL_SERVER_ERROR)
