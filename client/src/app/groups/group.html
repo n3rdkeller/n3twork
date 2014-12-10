@@ -29,17 +29,16 @@
       <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/group/{{ ::group.groupData.id }}/members">More</a>
     </p>
     <h3 class="text-center" ng-show="group.loadingMembers"><i class="fa fa-spinner fa-spin"></i></h3>
+    <hr>
   </div>
 
   <div class="col-sm-8" ng-hide="group.loadingPosts">
     <!-- Post List -->
       <ul class="media-list">
         <!-- New Post Form -->
-        <li class="media" ng-hide="group.groupData.id == 1">
+        <li class="media" ng-hide="group.groupData.id == 1 && (userdata.id != 45 && userdata.id != 47) || !group.isMember">
           <div class="media-left">
-            <button class="btn btn-default square-button" ng-click="group.newPostPrivate = !group.newPostPrivate" title="Toggle privacy">
-              <i class="fa fa-2x fa-fw" ng-class="{ 'fa-globe': !group.newPostPrivate, 'fa-lock': group.newPostPrivate }"></i>
-            </button>
+            <i class="fa fa-3x fa-fw fa-globe" title="In groups you can only post public."></i>
           </div>
           <div class="media-body full-width">
             <form role="form" name="newPostForm">
@@ -53,7 +52,7 @@
             </form>
           </div>
         </li>
-        <hr class="margin-top" ng-hide="group.groupData.id == 1">
+        <hr class="margin-top" ng-hide="group.groupData.id == 1 && (userdata.id != 45 && userdata.id != 47) || !group.isMember">
         <!-- Actual Post List -->
         <li class="media" ng-repeat="post in group.postlist | orderBy: 'postDate':true">
           <a class="media-left" ng-href="#/user/{{ post.author.username }}">
@@ -63,9 +62,6 @@
           <div class="media-body">
             <h4 class="media-heading">
               <a ng-href="#/user/{{ post.author.username }}" ng-bind="(post.author.firstname ? post.author.firstname : post.author.username) + (post.author.lastname ? ' ' + post.author.lastname : '')"></a>
-              <span ng-show="post.owner.id != 0">
-               in <i class="fa fa-users"></i> <a ng-href="#/group/{{ post.owner.id }}" ng-bind="post.owner.name"></a>:
-              </span>
             </h4>
             <span ng-bind-html="post.content | parsePost"></span><br>
             <div class="margin-top">
@@ -76,12 +72,12 @@
                 {{ post.numberOfVotes }} votes
               </button>
               <small ng-bind="post.postDate | convertToDate" class="text-muted padding-left"></small>
-              <i class="fa fa-fw text-muted" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" ng-show="post.owner.id == 0" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
+              <i class="fa fa-fw text-muted" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
               <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="group.removeButtonConfirmation[post.id] || (userdata.id != post.author.id)" ng-click="group.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
               <span ng-show="group.removeButtonConfirmation[post.id]" class="small text-muted no-padding-left">Confirm deletion:</span>
               <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="group.removeButtonConfirmation[post.id]" ng-click="group.removePost(post.id)" ng-disabled="group.removePostButtonLoading[post.id]">
                 <span ng-hide="group.removePostButtonLoading[post.id]"><i class="fa fa-fw fa-check text-muted"></i></span>
-                <span ng-show="group.removePostButtonLoading[post.id]"><i class="fa fa-fw fa-spin fa-spinner"></i></span>
+                <span ng-show="group.removePostButtonLoading[post.id]"><i class="fa fa-fw fa-spin fa-spinner text-muted"></i></span>
               </button>
               <button role="button" class="btn btn-xs btn-link neg-margin" ng-show="group.removeButtonConfirmation[post.id] && !group.removePostButtonLoading[post.id]" ng-click="group.removeButtonConfirmation[post.id] = false">
                 <i class="fa fa-fw fa-remove text-muted"></i>
