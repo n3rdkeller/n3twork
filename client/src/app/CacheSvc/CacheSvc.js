@@ -278,7 +278,7 @@
 
     function expirationTime() {
       // return Date object containing current time plus 1 minutes
-      return new Date(new Date().getTime() + 1 * 60000);
+      return new Date(new Date().getTime() + 30000);
     }
 
   }
