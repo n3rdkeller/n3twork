@@ -53,7 +53,6 @@ public class PostResource {
    *       "id":postID number,
    *       "owner":ownerID number,
    *       "postDate":timestamp number,
-   *       "title":"title text",
    *       "upVotes": [
    *         {
    *           "date":timestamp number,
@@ -95,29 +94,29 @@ public class PostResource {
         // not trueFriend
         if (!trueFriend) {
           List<Post> postToPrint = new ArrayList<Post>();
-          for (Post post: otherUser.getPosts()) {
+          for (Post post: otherUser.getPosts(user)) {
             if(!post.getPrivatePost()) {
               postToPrint.add(post);
             }
           }
-          String entity = String.valueOf(Post.convertPostListToJson(postToPrint));
+          String entity = String.valueOf(Post.convertPostListToJson(postToPrint, false));
           log.debug("/post returns:" + entity);
           return Helper.okResponse(entity);
         }
         // trueFriend
-        String entity = String.valueOf(Post.convertPostListToJson(otherUser.getPosts()));
+        String entity = String.valueOf(Post.convertPostListToJson(otherUser.getPosts(user), false));
         log.debug("/post returns:" + entity);
         return Helper.okResponse(entity);
         
       } else if (input.containsKey("groupID")) {
         // group
         Group group = new Group(input.getInt("groupID"));
-        String entity = String.valueOf(Post.convertPostListToJson(group.getPosts()));
+        String entity = String.valueOf(Post.convertPostListToJson(group.getPosts(user), true));
         log.debug("/post returns:" + entity);
         return Helper.okResponse(entity);
       }
       // own user
-      String entity = String.valueOf(Post.convertPostListToJson(user.getPosts()));
+      String entity = String.valueOf(Post.convertPostListToJson(user.getPosts(user), false));
       log.debug("/post returns:" + entity);
       return Helper.okResponse(entity);
     } catch(Exception e) {
@@ -153,7 +152,7 @@ public class PostResource {
         log.debug("/post/newsfeed returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      String entity = String.valueOf(Post.convertPostListToJson(user.getNewsFeedFromDB()));
+      String entity = String.valueOf(Post.convertPostListToJson(user.getNewsFeedFromDB(),true));
       log.debug("/post/newsfeed returns:" + entity);
       return Helper.okResponse(entity);
     } catch(Exception e) {
@@ -223,7 +222,6 @@ public class PostResource {
    *   "userID":0, //optional if given uses user
    *   "session":"sessionID"
    *   "post": {
-   *     "title":"",
    *     "content":"",
    *     "private":true/false
    *   }
@@ -262,14 +260,12 @@ public class PostResource {
           return Helper.okResponse(entity);
         }
         group.addPost(new Post()
-              .setContent(input.getJsonObject("post").getString("content"))
-              .setTitle(input.getJsonObject("post").getString("title")), user);
+              .setContent(input.getJsonObject("post").getString("content")), user);
         log.debug("/post/add returns:" + entity);
         return Helper.okResponse(entity);
       }
       user.addPost(new Post()
             .setContent(input.getJsonObject("post").getString("content"))
-            .setTitle(input.getJsonObject("post").getString("title"))
             .setPrivatePost(input.getJsonObject("post").getBoolean("private")));
       log.debug("/post/add returns:" + entity);
       return Helper.okResponse(entity);
@@ -290,7 +286,6 @@ public class PostResource {
    *   "session":"sessionID"
    *   "post": {
    *     "id":0,
-   *     "title":"", //optional
    *     "content":"", //optional
    *     "private":true/false //optional
    *   }
@@ -314,9 +309,7 @@ public class PostResource {
       }
       JsonObject jsonPost = input.getJsonObject("post");
       Post post = new Post().setId(jsonPost.getInt("id"));
-      if (jsonPost.containsKey("title")) {
-        post.setTitle(jsonPost.getString("title"));
-      } if (jsonPost.containsKey("content")) {
+      if (jsonPost.containsKey("content")) {
         post.setContent(jsonPost.getString("content"));
       } if (jsonPost.containsKey("private")) {
         post.setPrivatePost(jsonPost.getBoolean("private"));
@@ -385,6 +378,88 @@ public class PostResource {
         log.debug("/post/delete returns:" + entity);
         return Helper.okResponse(entity);
       }
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }  
+  }
+  
+  @OPTIONS @Path("/vote/add")
+  public Response corsAddVote() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code>{
+   *  "id":postID,
+   *  "session":"sessionID"
+   *}</code></pre>
+   * @return
+   */
+  @POST @Path("/vote/add")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response addVote(String jsonInput) {
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/post/delete returns:" + entity);
+        return Helper.okResponse(entity);
+      }
+      Post post = new Post()
+          .setId(input.getInt("id"))
+          .addUpVote(user);
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }  
+  }
+  
+  @OPTIONS @Path("/vote/remove")
+  public Response corsRemoveVote() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code>{
+   *  "id":postID,
+   *  "session":"sessionID"
+   *}</code></pre>
+   * @return
+   */
+  @POST @Path("/vote/remove")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response removeVote(String jsonInput) {
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/post/delete returns:" + entity);
+        return Helper.okResponse(entity);
+      }
+      Post post = new Post()
+          .setId(input.getInt("id"))
+          .removeUpVote(user);
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
       return Helper.errorResponse(e);

@@ -3,7 +3,7 @@
   <ul class="media-list big-margin-top">
     <li class="media" ng-repeat="member in members.memberList">
       <span class="media-left">
-        <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ member.email | lowercase | md5Hash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ member.email | lowercase | md5Hash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ member.email | lowercase | md5Hash }}?d=mm&s=128 2x" />
+        <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ member.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ member.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ member.emailhash }}?d=mm&s=128 2x" />
       </span>
       <div class="media-body">
         <h4 class="media-heading">

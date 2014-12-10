@@ -12,10 +12,20 @@
     .module('n3twork.groups')
     .controller('GroupCtrl', GroupCtrl);
 
-  GroupCtrl.$inject = ['APISvc','CacheSvc', '$routeParams', '$q', '$rootScope', '$modal', '$timeout', '$window'];
-  function GroupCtrl(APISvc, CacheSvc, $routeParams, $q, $rootScope, $modal, $timeout, $window) {
+  GroupCtrl.$inject = ['APISvc','CacheSvc', 'PostSvc', 'VoteSvc', '$routeParams', '$q', '$rootScope', '$modal', '$timeout', '$window'];
+  function GroupCtrl(APISvc, CacheSvc, PostSvc, VoteSvc, $routeParams, $q, $rootScope, $modal, $timeout, $window) {
     var vm = this;
+
     vm.groupAction = groupAction;
+    vm.showVotes = showVotes;
+    vm.voteAction = voteAction;
+    vm.newPost = newPost;
+    vm.removePost = removePost;
+
+    vm.newPostPrivate = false;
+    vm.removePostButtonLoading = {};
+    vm.removeButtonConfirmation = {};
+    vm.voteButtonLoading = {};
 
     init();
 
@@ -30,6 +40,13 @@
           vm.isMember = isMember;
           vm.loadingMembers = false;
           vm.statusButtonLoading = false;
+        });
+        vm.loadingPosts = true;
+        PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
+          vm.postlist = postList;
+          vm.loadingPosts = false;
+        }, function (error) {
+          // vm.loadingPosts = false;
         });
       }, function (error) {
         vm.loadingGroup = false;
@@ -186,6 +203,68 @@
       return deferred.promise;
     }
 
+    function newPost() {
+      vm.newPostLoading = true;
+      PostSvc.newPost('groupID', vm.groupData.id, vm.newPostText, vm.newPostPrivate).then(function (successful) {
+        PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
+          resetNewPostForm();
+          console.log('no error');
+          vm.postlist = postList;
+          vm.newPostLoading = false;
+        }, function (error) {
+          vm.newPostLoading = false;
+        });
+      }, function (error) {
+        vm.newPostLoading = false;
+      });
+    }
+
+    function resetNewPostForm () {
+      vm.newPostText = "";
+      vm.newPostPrivate = false;
+    }
+
+    function showVotes(postID) {
+      VoteSvc.showVotes(postID);
+    }
+
+    function voteAction (postID, didIVote) {
+      vm.voteButtonLoading[postID] = true;
+      VoteSvc.voteAction(postID, didIVote).then(function (successful) {
+        PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
+          vm.postlist = postList;
+          vm.voteButtonLoading[postID] = false;
+        }, function (error) {
+          // error
+        });
+      }, function (error) {
+        // error
+      });
+    }
+
+    function removePost (postID) {
+      vm.removePostButtonLoading[postID] = true;
+
+      PostSvc.removePost(postID).then(function (successful) {
+        if (successful) {
+          PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
+            vm.postlist = postList;
+            vm.removePostButtonLoading[postID] = false;
+            vm.removeButtonConfirmation[postID] = false;
+          }, function (error) {
+            // error
+          });
+        } else {
+          vm.removePostButtonLoading[postID] = false;
+          vm.removeButtonConfirmation[postID] = false;
+          // error deleting the post
+        }
+      }, function (error) {
+        // error deleting the post
+        vm.removePostButtonLoading[postID] = false;
+        vm.removeButtonConfirmation[postID] = false;
+      });
+    }
 
   }
 

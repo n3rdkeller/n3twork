@@ -11,19 +11,18 @@
       'n3twork.settings',
       'n3twork.search',
       'n3twork.friends',
-      'n3twork.groups'
+      'n3twork.groups',
+      'n3twork.feed'
     ])
     .config(config);
 
   function config($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'app/profile/profile.html',
-        controller: 'ProfileCtrl',
-        controllerAs: 'profile',
+        templateUrl: 'app/feed/feed.html',
+        controller: 'FeedCtrl',
+        controllerAs: 'feed',
         resolve: authResolver
-
-        // TODO: Here comes News Feed
       })
       .when('/register', {
         templateUrl: 'app/register/register.html',

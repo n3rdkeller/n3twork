@@ -1,14 +1,5 @@
 <div ng-hide="group.loadingGroup || group.doesntexist || group.errorOccured">
   <div class="col-sm-4">
-    <!-- Group Name -->
-    <!-- <div class="row">
-      <div class="col-xs-4">
-        <h3><i class="fa fa-users fa-3x"></i></h3>
-      </div>
-      <div class="col-xs-8">
-        <h3 ng-bind="group.groupData.name"></h3>
-      </div>
-    </div> -->
     <div class="media">
       <div class="media-left">
         <i class="fa fa-users fa-5x"></i>
@@ -38,14 +29,72 @@
       <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/group/{{ ::group.groupData.id }}/members">More</a>
     </p>
     <h3 class="text-center" ng-show="group.loadingMembers"><i class="fa fa-spinner fa-spin"></i></h3>
+    <hr>
   </div>
 
   <div class="col-sm-8" ng-hide="group.loadingPosts">
-    <br><br>
-    <h4 class="text-center">Here will soon be some posts.</h4>
+    <!-- Post List -->
+      <ul class="media-list">
+        <!-- New Post Form -->
+        <li class="media" ng-hide="group.groupData.id == 1 && (userdata.id != 45 && userdata.id != 47) || !group.isMember">
+          <div class="media-left">
+            <i class="fa fa-3x fa-fw fa-globe" title="In groups you can only post public."></i>
+          </div>
+          <div class="media-body full-width">
+            <form role="form" name="newPostForm">
+              <fieldset ng-disabled="group.newPostLoading">
+                <textarea required autofocus ng-model="group.newPostText" rows="3" class="form-control input-lg" placeholder="Post something here!"></textarea>
+                <button type="button" class="btn btn-warning small-margin-top no-margin-bottom pull-right" ng-click="group.newPost()" ng-disabled="newPostForm.$invalid">
+                  <span ng-show="group.newPostLoading"><i class="fa fa-spinner fa-spin"></i> Posting</span>
+                  <span ng-hide="group.newPostLoading"><i class="fa fa-fw fa-paper-plane-o"></i> Post</span>
+                </button>
+              </fieldset>
+            </form>
+          </div>
+        </li>
+        <hr class="margin-top" ng-hide="group.groupData.id == 1 && (userdata.id != 45 && userdata.id != 47) || !group.isMember">
+        <!-- Actual Post List -->
+        <li class="media" ng-repeat="post in group.postlist | orderBy: 'postDate':true">
+          <a class="media-left" ng-href="#/user/{{ post.author.username }}">
+            <!-- <span ng-show="post.owner.id != 0"><i class="fa fa-fw fa-users fa-3x padding-bottom padding-left text-center"></i><br></span> -->
+            <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ post.author.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ post.author.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ post.author.emailhash }}?d=mm&s=128 2x">
+          </a>
+          <div class="media-body">
+            <h4 class="media-heading">
+              <a ng-href="#/user/{{ post.author.username }}" ng-bind="(post.author.firstname ? post.author.firstname : post.author.username) + (post.author.lastname ? ' ' + post.author.lastname : '')"></a>
+            </h4>
+            <span ng-bind-html="post.content | parsePost"></span><br>
+            <div class="margin-top">
+              <button role="button" class="btn btn-xs btn-warning" ng-click="group.voteAction(post.id, post.didIVote)" ng-class="{ 'active': post.didIVote }" ng-disabled="group.voteButtonLoading[post.id]">
+                <i class="fa fa-fw" ng-class="{ 'fa-thumbs-o-up': !group.voteButtonLoading[post.id], 'fa-spin fa-spinner': group.voteButtonLoading[post.id] }"></i>
+              </button>
+              <button role="button" class="btn btn-xs btn-default" ng-show="post.numberOfVotes > 0" ng-click="group.showVotes(post.id)">
+                {{ post.numberOfVotes }} votes
+              </button>
+              <small ng-bind="post.postDate | convertToDate" class="text-muted padding-left"></small>
+              <i class="fa fa-fw text-muted" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
+              <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="group.removeButtonConfirmation[post.id] || (userdata.id != post.author.id)" ng-click="group.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
+              <span ng-show="group.removeButtonConfirmation[post.id]" class="small text-muted no-padding-left">Confirm deletion:</span>
+              <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="group.removeButtonConfirmation[post.id]" ng-click="group.removePost(post.id)" ng-disabled="group.removePostButtonLoading[post.id]">
+                <span ng-hide="group.removePostButtonLoading[post.id]"><i class="fa fa-fw fa-check text-muted"></i></span>
+                <span ng-show="group.removePostButtonLoading[post.id]"><i class="fa fa-fw fa-spin fa-spinner text-muted"></i></span>
+              </button>
+              <button role="button" class="btn btn-xs btn-link neg-margin" ng-show="group.removeButtonConfirmation[post.id] && !group.removePostButtonLoading[post.id]" ng-click="group.removeButtonConfirmation[post.id] = false">
+                <i class="fa fa-fw fa-remove text-muted"></i>
+              </button>
+            </div>
+          </div>
+          <hr class="margin-top">
+        </li>
+      </ul>
+      <div ng-show="group.postlist.length == 0" class="text-center" >
+        <h2>There are no posts here.</h2>
+        <h2><i class="fa fa-frown-o fa-2x"></i></h2>
+      </div>
+    </div>
   </div>
 
-  <div class="col-sm-8" ng-show="profile.loadingPosts">
+  <div class="col-sm-8" ng-show="group.loadingPosts">
     <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
   </div>
 </div>

@@ -1,4 +1,6 @@
 package classes;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +15,7 @@ import java.util.Map.Entry;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import org.apache.log4j.LogManager;
@@ -25,12 +28,12 @@ public class Post {
   private Group owner;
   private User author;
   private String content;
-  private String title;
   private Date postDate;
   private Boolean privatePost;
   private Boolean groupPost;
   private Map<User,Date> upVotes = new HashMap<User,Date>();
   private int numberOfUpVotes;
+  private Boolean didIVote;
 
   /**
    * Empty constructor
@@ -49,7 +52,6 @@ public class Post {
    *       "id":postID number,
    *       "owner":owenerID number,
    *       "postDate":timestamp number,
-   *       "title":"title text",
    *       "upVotes": [
    *         {
    *           "date":timestamp number,
@@ -61,48 +63,49 @@ public class Post {
    *   ],
    *   "successful":true
    * } </code></pre>
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public static JsonValue convertPostListToJson(List<Post> postList) {
+  public static JsonValue convertPostListToJson(List<Post> postList, Boolean newsfeed) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder jsonPostList = Json.createArrayBuilder();
     for(Post post: postList) {
-      JsonArrayBuilder jsonUpVotes = Json.createArrayBuilder();
-      for(Entry<User,Date> upVote : post.getUpVotes().entrySet()) {
-        jsonUpVotes.add(Json.createObjectBuilder()
-            .add("voter", upVote.getKey().getId())
-            .add("date", upVote.getValue().getTime()));
-      }
-      if (post.getTitle() == null) post.setTitle("");
       if (post.getContent() == null) post.setContent("");
-      log.debug("id " + post.getId());
-      log.debug("owner "+ post.getOwner().getAsJson());
-      log.debug("author "+ post.getAuthor().getAsJson());
-      log.debug("title "+ post.getTitle());
-      log.debug("content "+ post.getContent());
-      log.debug("postDate "+ post.getPostDate().getTime());
-      log.debug("private "+ post.getPrivatePost());
-      log.debug("upVotes "+ jsonUpVotes);
-      log.debug("numberOfVotes "+ post.getNumberOfUpVotes());
-      jsonPostList.add(Json.createObjectBuilder()
+      JsonObjectBuilder jsonPost = Json.createObjectBuilder()
           .add("id", post.getId())
-          .add("owner", post.getOwner().getAsJson())
-          .add("author", post.getAuthor().getAsJson())
-          .add("title", post.getTitle())
           .add("content", post.getContent())
           .add("postDate", post.getPostDate().getTime())
           .add("private", post.getPrivatePost())
-          .add("upVotes", jsonUpVotes)
-          .add("numberOfVotes", post.getNumberOfUpVotes()));
+          .add("numberOfVotes", post.getNumberOfUpVotes())
+          .add("didIVote", post.getDidIVote());
+      if (newsfeed) {
+        log.debug("newsfeed part");
+        jsonPost
+            .add("owner", Json.createObjectBuilder()
+                .add("id", post.getOwner().getId())
+                .add("name", (post.getOwner().getName() == null) ? "" : post.getOwner().getName())
+                .add("descr", (post.getOwner().getDescr() == null) ? "" : post.getOwner().getDescr())
+                .add("membercount", post.getOwner().getMemberCount()))
+            .add("author", Json.createObjectBuilder()
+              .add("id", post.getAuthor().getId())
+              .add("username", post.getAuthor().getUsername())
+              .add("lastname", post.getAuthor().getName())
+              .add("firstname", post.getAuthor().getFirstName())
+              .add("email", post.getAuthor().getEmail())
+              .add("emailhash", User.md5(post.getAuthor().getEmail().toLowerCase())));
+      }      
+      jsonPostList.add(jsonPost);
     }
     JsonObject output = Json.createObjectBuilder()
         .add("postList", jsonPostList)
         .add("successful", true)
         .build();
+    log.debug(output);
     return output;
   }
 
   /**
-   * Inserts a post with ownerID, authorID, title, content, and privacy status into db. 
-   * this.author and this.owner with at least the id value, this.title, this.content and this.privatePost needs to be given.
+   * Inserts a post with ownerID, authorID, content, and privacy status into db. 
+   * this.author and this.owner with at least the id value, this.content and this.privatePost needs to be given.
    * @throws SQLException 
    * @throws ClassNotFoundException 
    * @throws IllegalAccessException 
@@ -111,14 +114,13 @@ public class Post {
   public void createInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     int privatePost = (this.privatePost) ? 1 : 0;
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,title,content,visibility) "
-        + "VALUES(?,?,?,?,?)";
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Posts(ownerID,authorID,content,visibility) "
+        + "VALUES(?,?,?,?)";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1,this.owner.getId());
     pStmt.setInt(2, this.author.getId());
-    pStmt.setString(3, this.title);
-    pStmt.setString(4, this.content);
-    pStmt.setInt(5, privatePost);
+    pStmt.setString(3, this.content);
+    pStmt.setInt(4, privatePost);
     pStmt.execute();
   }
   
@@ -140,7 +142,7 @@ public class Post {
   }
   
   /**
-   * Updates title, content or privacy status of this post. If a attribute wasn't changed, it must have the value null.
+   * Updates content or privacy status of this post. If a attribute wasn't changed, it must have the value null.
    * @return false if no changes where made
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -150,17 +152,10 @@ public class Post {
   public Boolean updateDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Posts SET ";
     List<Object> valueList = new ArrayList<Object>();
-    if (this.title != null) {
-      valueList.add(this.title);
-      sqlQuery = sqlQuery + "title=?";
-    }
+
     if (this.content != null) {
       valueList.add(this.content);
-      if (sqlQuery.endsWith("SET ")) {
-        sqlQuery = sqlQuery + "content=?";
-      } else {
-        sqlQuery = sqlQuery + ",content=?";
-      }
+      sqlQuery = sqlQuery + "content=?";
     }
     if (this.privatePost != null) {
       valueList.add((this.privatePost) ? 1 : 0);
@@ -216,23 +211,6 @@ public class Post {
    */
   public Post setOwner(Group owner) {
     this.owner = owner;
-    return this;
-  }
-  /**
-   * Simple getter for title
-   * @return this.title
-   */
-  public String getTitle() {
-    return this.title;
-  }
-
-  /**
-   * Simple setter for title
-   * @param tile New value for this.title
-   * @return this
-   */
-  public Post setTitle(String title) {
-    this.title = title;
     return this;
   }
 
@@ -317,6 +295,15 @@ public class Post {
     return this;
   }
   
+  public Boolean getDidIVote() {
+    return this.didIVote;
+  }
+  
+  public Post setDidIVote(Boolean didIVote) {
+    this.didIVote = didIVote;
+    return this;
+  }
+  
   /**
    * Simple getter for upVotes
    * @return this.upVotes
@@ -347,7 +334,7 @@ public class Post {
         .setUsername(votesTable.getString("username"))
         .setName(votesTable.getString("name"))
         .setFirstName(votesTable.getString("firstName")), 
-        votesTable.getTime("date"));
+        votesTable.getTimestamp("date"));
     }
     pStmt.close();
     votesTable.close();
@@ -366,8 +353,8 @@ public class Post {
           .add("date", upVote.getValue().getTime())
           .add("voter", Json.createObjectBuilder()
               .add("username", upVote.getKey().getUsername())
-              .add("name", upVote.getKey().getName())
-              .add("firstName", upVote.getKey().getFirstName()))
+              .add("lastname", upVote.getKey().getName())
+              .add("firstname", upVote.getKey().getFirstName()))
           );
     }
     JsonObject voteUps = Json.createObjectBuilder()
@@ -381,10 +368,37 @@ public class Post {
    * Add a new up vote to upVotes
    * @param voter The voter only needs the User.id value
    * @return this
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
    */
-  public Post addUpVote(User voter) {
-    // TODO
+  public Post addUpVote(User voter) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Votes(postID,voterID) VALUES(?,?)";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, voter.getId());
+    pStmt.execute();
     return this;
   }
-
+  
+  /**
+   * Remove a vote from the upVotes
+   * @param voter
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public Post removeUpVote(User voter) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Votes WHERE postID=? AND voterID=?";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, voter.getId());
+    pStmt.execute();
+    return this;
+  }
 }

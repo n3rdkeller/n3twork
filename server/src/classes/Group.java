@@ -1,4 +1,6 @@
 package classes;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -276,6 +278,7 @@ public class Group {
    * @return
    */
   public String getName() {
+    if (this.name == null) return "";
     return this.name;
   }
   
@@ -294,6 +297,7 @@ public class Group {
    * @return descr
    */
   public String getDescr() {
+    if (this.descr == null) return "";
     return this.descr;
   }
 
@@ -321,7 +325,6 @@ public class Group {
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
     ResultSet membersTable = pStmt.executeQuery();
-    conn.close();
     
     while (membersTable.next()){
       // add every User in memberTable with the User(id, username, email, name, firstName) constructor
@@ -332,19 +335,23 @@ public class Group {
           membersTable.getString("name"), 
           membersTable.getString("firstName")));
     }
+    conn.close();
   }
 
   /**
    * Gets members as Json list
    * @return {"memberList":[{"id":"userID",...},...]}
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public String getMembersAsJson() {
+  public String getMembersAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder memberList = Json.createArrayBuilder();
     for (User member : this.members) {
       memberList.add(Json.createObjectBuilder()
           .add("id", member.getId())
           .add("username", member.getUsername())
           .add("email", member.getEmail())
+          .add("emailhash", User.md5(member.getEmail().toLowerCase()))
           .add("name", member.getName())
           .add("firstName", member.getFirstName()));
     }
@@ -448,67 +455,45 @@ public class Group {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public void setOtherProperties(Map<String,String> properties) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Group setOtherProperties(Map<String,String> properties) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.otherProperties.putAll(properties);
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> groupList = DBConnector.selectQuery(conn, 
         "SELECT * FROM " + DBConnector.DATABASE + ".Groups WHERE id=" + this.id);
-    String insertQueryHead = "INSERT INTO " + DBConnector.DATABASE + ".Groups(";
-    String insertQueryTail = ") VALUES(";
-    List<String> toBeAdded = new ArrayList<String>();
-    List<String> valueList = new ArrayList<String>();
-    List<String> keyList = new ArrayList<String>();
+    String updateQueryHead = "UPDATE " + DBConnector.DATABASE + ".Groups SET ";
+    List<String> values = new ArrayList<String>();
+    List<String> keys = new ArrayList<String>();
     for (Entry<String,String> prop: this.otherProperties.entrySet()) {
       // check if key is a column
-      if (!groupList.get(0).contains(prop.getKey())) {
-        toBeAdded.add(prop.getKey());
-      }
-      keyList.add(prop.getKey());
-      valueList.add(prop.getValue());
-      // prepare insert statement
-      if (insertQueryHead.endsWith(".Groups(")) {
-        insertQueryHead = insertQueryHead + "?";
-      } else {
-        insertQueryHead = insertQueryHead + ",?";
-      }
-      
-      if (insertQueryTail.endsWith("VALUES(")) {
-        insertQueryTail = insertQueryTail + "?";
-      } else {
-        insertQueryTail = insertQueryTail + ",?";
+      if (groupList.get(0).contains(prop.getKey())) {
+        // prepare insert statement
+        if (updateQueryHead.endsWith("SET ")) {
+          updateQueryHead = updateQueryHead + "`" + prop.getKey() + "`=?";
+        } else {
+          updateQueryHead = updateQueryHead + ",`" + prop.getKey() + "`=?";
+        }
+        values.add(prop.getValue());
+        keys.add(prop.getKey());
       }
     }
-    
-    if (toBeAdded.size() > 0) {
-      // prepare alter table statement
-      String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Groups ADD COLUMN ";
-      for (int i = 0; i < toBeAdded.size(); i++) {
-        if (i == 0) {
-          alterTable = "? VARCHAR(45) NULL DEFAULT NULL";
-        } else {
-          alterTable = ",? VARCHAR(45) NULL DEFAULT NULL";
-        }
-      }
-      PreparedStatement pStmt = conn.prepareStatement(alterTable);
-      for (int i = 0; i < toBeAdded.size(); i++) {
-        pStmt.setString(i + 1, toBeAdded.get(i));
+    if (!updateQueryHead.endsWith("SET ")) {
+      String updateQuery = updateQueryHead + " WHERE id=" + this.id;
+      PreparedStatement pStmt = conn.prepareStatement(updateQuery);
+      for (int i = 0; i < keys.size(); i++) {
+        pStmt.setString(i + 1, values.get(i));
       }
       log.debug(pStmt);
       pStmt.execute();
     }
-    PreparedStatement pStmt = conn.prepareStatement(insertQueryHead + insertQueryTail + ")");
-    for (int i = 0; i < keyList.size(); i++) {
-      pStmt.setString(i + 1, keyList.get(i));
-      pStmt.setString(i + 1 + keyList.size(), valueList.get(i));
-    }
-    log.debug(pStmt);
-    pStmt.execute();
+    return this;
   }
 
-  public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public List<Post> getPosts(User lookingUser) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "SELECT Posts.id as postid, title, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
-        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+    String sqlQuery = "SELECT Posts.id as postid, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
+        + "WHERE Votes.voterID = " + lookingUser.getId() + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
         + "JOIN " + DBConnector.DATABASE + ".Users ON Posts.authorID = Users.id "
         + "WHERE ownerID="+ this.id;
     log.debug(sqlQuery);
@@ -517,7 +502,6 @@ public class Group {
     while (postsTable.next()) {
       this.posts.add(new Post()
         .setId(postsTable.getInt("postid"))
-        .setTitle(postsTable.getString("title"))
         .setContent(postsTable.getString("content"))
         .setPrivatePost(postsTable.getBoolean("visibility"))
         .setOwner(this)
@@ -529,8 +513,10 @@ public class Group {
             postsTable.getString("name"),
             postsTable.getString("firstName")))
         .setNumberOfUpVotes(postsTable.getInt("votes"))
+        .setDidIVote(postsTable.getBoolean("didIVote"))
         );
     };
+    log.debug("end of getPosts");
     return this.posts;
   }
 
@@ -543,7 +529,7 @@ public class Group {
     return this;    
   }
   
-  private int getMemberCount() {
+  public int getMemberCount() {
     return this.memberCount;
   }
   

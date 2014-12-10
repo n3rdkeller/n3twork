@@ -34,6 +34,7 @@
           session: parseddata.session,
           username: parseddata.username,
           email: parseddata.email,
+          emailhash: parseddata.emailhash,
           id: parseddata.id,
           otherProperties: parseddata.otherProperties
         }
@@ -78,6 +79,7 @@
             session: response.data.session,
             username: response.data.username,
             email: response.data.email,
+            emailhash: response.data.emailhash,
             id: response.data.id,
             otherProperties: response.data.otherProperties
           }

@@ -231,8 +231,10 @@ public class User {
    * Converts any list of users to a json string
    * @param users
    * @return {"userList":[{"id":userID,...},...],"successful":true}
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public static String convertUserListToJson(List<User> users) {
+  public static String convertUserListToJson(List<User> users) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder userList = Json.createArrayBuilder();
     for (User user : users) {
       JsonObjectBuilder otherProperties = Json.createObjectBuilder();
@@ -244,6 +246,7 @@ public class User {
         .add("id", user.getId())
         .add("username", user.getUsername())
         .add("email", user.getEmail())
+        .add("emailhash", md5(user.getEmail().toLowerCase()))
         .add("lastname", user.getName())
         .add("firstname", user.getFirstName())
         .add("otherProperties", otherProperties));
@@ -314,6 +317,7 @@ public class User {
       pStmt.setInt(1, this.id);
       pStmt.setString(2, this.username);
       userTable = pStmt.executeQuery();
+      log.debug(pStmt);
     }
     ResultSetMetaData userTableMd = userTable.getMetaData();
     int columnsNumber = userTableMd.getColumnCount();
@@ -324,8 +328,8 @@ public class User {
     for (int i = 1;i <= columnsNumber; i++) {
       keyRow.add(userTableMd.getColumnName(i));
     }
-    for (int i = 0; i < keyRow.size(); i++) {
-      userMap.put(keyRow.get(i), userTable.getString(i));
+    for (int i = 1; i < keyRow.size(); i++) {
+      userMap.put(keyRow.get(i - 1), userTable.getString(i));
     }
     
     //setting attributes
@@ -351,24 +355,31 @@ public class User {
    */
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
-    
+    ResultSet userList;
     if(this.email.equals("") && this.username.equals("")) { // neither given //TODO make it work with null
       log.debug("neither username nor email are given");
       return false;
       
     } else {
       log.debug("logging in: " + this.username + " " + this.email);
-      userList = DBConnector.selectQuery(conn, 
-          "SELECT * FROM " + DBConnector.DATABASE + ".Users "
-              + "WHERE email='" + this.email + "' OR username='" + this.username + "'");
+      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setString(1, this.email);
+      pStmt.setString(2, this.username);
+      log.debug(pStmt);
+      userList = pStmt.executeQuery();
     }
     
-    if (userList.size() == 1) {
-      List<Integer> ids = DBConnector.executeUpdate(conn, 
-          "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) "
-              + "VALUES('" + this.username + "','" + this.email + "','" + this.password + "')"); 
-      this.id = ids.get(0);
+    if (userList.next()) {
+      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(?,?,?)";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
+      pStmt.setString(1, this.username.toLowerCase());
+      pStmt.setString(2, this.email.toLowerCase());
+      pStmt.setString(3, this.password);
+      log.debug(pStmt);
+      pStmt.executeUpdate();
+      ResultSet ids = pStmt.getGeneratedKeys();
+      if (ids.next()) this.id = ids.getInt(1);
       return true;
     } else {
       log.debug("User already exists");
@@ -379,8 +390,10 @@ public class User {
   /**
    * Method to get the User object as a Json dictionary
    * @return JsonObject converted to String
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public JsonValue getAsJson() {
+  public JsonValue getAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonObjectBuilder userJson = Json.createObjectBuilder();
     JsonObjectBuilder otherProperties = Json.createObjectBuilder();
     for (Entry<String, String> e : this.otherProperties.entrySet()) {
@@ -396,6 +409,7 @@ public class User {
       .add("id", this.id)
       .add("username", this.username)
       .add("email", this.email)
+      .add("emailhash", md5(this.email.toLowerCase()))
       .add("lastname", this.name)
       .add("firstname", this.firstName)
       .add("otherProperties", otherProperties)
@@ -413,7 +427,7 @@ public class User {
    */
   public Boolean login() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
+    ResultSet userList;
     
     if(this.email.equals("") && this.username.equals("")) { // neither given
       log.debug("neither username nor email are given");
@@ -421,26 +435,25 @@ public class User {
       
     } else {
       log.debug("logging in: " + this.username + " " + this.email);
-      userList = DBConnector.selectQuery(conn, 
-          "SELECT id,password FROM " + DBConnector.DATABASE + ".Users "
-              + "WHERE email='" + this.email + "' OR username='" + this.username + "'");
+      PreparedStatement pStmt = conn.prepareStatement(
+          "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?");
+      pStmt.setString(1, this.email);
+      pStmt.setString(2, this.username);
+      userList = pStmt.executeQuery();
     }
     conn.close();
-
-    if(userList.size() == 2) {
-      if(userList.get(1).get(1).equals(this.password)) {
-
-        this.id = Integer.parseInt(userList.get(1).get(0));
-        getBasicsFromDB();
+    if(userList.next()) {
+      if(userList.getString("password").equals(this.password)) {
+        this.id = userList.getInt("id");
+        this.getBasicsFromDB();
         log.debug("login successful");
         return true;
+      } else {
+        log.debug("wrong password");
+      }
 
-      } else log.debug("wrong password");
-
-    } else if(userList.size() == 1) {
-      log.debug("user doesn't exist");
     } else {
-      log.debug("email and username dont match or someone doesnt have an email");
+      log.debug("user doesn't exist");
     }
     // if one of the previous if-conditions returns false
     log.debug("login failed");
@@ -456,12 +469,14 @@ public class User {
    */
   public void logout() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    if (DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs "
-            + "WHERE sessionID='" + this.sessionID + "'").size() != 1) {
-      DBConnector.executeUpdate(conn, 
-          "DELETE FROM " + DBConnector.DATABASE + ".SessionIDs "
-              + "WHERE sessionID='" + this.sessionID + "'");
+    PreparedStatement pStmt = conn.prepareStatement( 
+        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID=?");
+    pStmt.setString(1, this.sessionID);
+    if (pStmt.executeQuery().next()) {
+      pStmt = conn.prepareStatement(
+          "DELETE FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID=?");
+      pStmt.setString(1, this.sessionID);
+      pStmt.execute();
     }
   }
   
@@ -491,10 +506,12 @@ public class User {
    * @throws InstantiationException 
    */
   public User setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET name='" + name + "' WHERE id=" + this.id);
-    conn.close();
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
+        "UPDATE " + DBConnector.DATABASE + ".Users SET name=? WHERE id=?");
+    pStmt.setString(1, name);
+    pStmt.setInt(2, this.id);
+    pStmt.execute();
+    pStmt.close();
     this.name = name;
     return this;
   }
@@ -517,10 +534,12 @@ public class User {
    * @throws InstantiationException
    */
   public User setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET firstName='" + firstName + "' WHERE id=" + this.id);
-    conn.close();
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
+        "UPDATE " + DBConnector.DATABASE + ".Users SET firstName=? WHERE id=?");
+    pStmt.setString(1, firstName);
+    pStmt.setInt(2, this.id);
+    pStmt.execute();
+    pStmt.close();
     this.firstName = firstName;
     return this;
   }
@@ -556,9 +575,12 @@ public class User {
    * @throws InstantiationException
    */
   public User setEmail(String email) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET email='" + email + "' WHERE id=" + this.id);
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
+        "UPDATE " + DBConnector.DATABASE + ".Users SET email=? WHERE id=?");
+    pStmt.setString(1, email);
+    pStmt.setInt(2, this.id);
+    pStmt.execute();
+    pStmt.close();
     this.email = email;
     return this;
   }
@@ -575,9 +597,12 @@ public class User {
    */
   public User setPassword(String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.password = md5(pw);
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET password='" + this.password + "' WHERE id=" + this.id);
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
+        "UPDATE " + DBConnector.DATABASE + ".Users SET password=? WHERE id=?");
+    pStmt.setString(1, this.password);
+    pStmt.setInt(2, this.id);
+    pStmt.execute();
+    pStmt.close();
     return this;
   }
 
@@ -610,37 +635,30 @@ public class User {
     List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
         "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=" + this.id);
     String updateQueryHead = "UPDATE " + DBConnector.DATABASE + ".Users SET ";
-    List<String> toBeAdded = new ArrayList<String>();
-    
+    List<String> values = new ArrayList<String>();
+    List<String> keys = new ArrayList<String>();
     for (Entry<String,String> prop: this.otherProperties.entrySet()) {
       // check if key is a column
-      if (!userList.get(0).contains(prop.getKey())) {
-        toBeAdded.add(prop.getKey());
-      }
-      
-      // prepare insert statement
-      if (updateQueryHead.endsWith("SET ")) {
-        updateQueryHead = updateQueryHead + prop.getKey() + "='" + prop.getValue() + "'";
-      } else {
-        updateQueryHead = updateQueryHead + "," + prop.getKey() + "='" + prop.getValue() + "'";
-      }
-    }
-    
-    if (toBeAdded.size() > 0) {
-      // prepare alter table statement
-      String alterTable = "ALTER TABLE " + DBConnector.DATABASE + ".Users ADD COLUMN ";
-      for (int i = 0; i < toBeAdded.size(); i++) {
-        if (i == 0) {
-          alterTable = alterTable + "`" +  toBeAdded.get(i) + "` VARCHAR(45) NULL DEFAULT NULL";
+      if (userList.get(0).contains(prop.getKey())) {
+        // prepare insert statement
+        if (updateQueryHead.endsWith("SET ")) {
+          updateQueryHead = updateQueryHead + "`" + prop.getKey() + "`=?";
         } else {
-          alterTable = alterTable + ",`" + toBeAdded.get(i) + "` VARCHAR(45) NULL DEFAULT NULL";
+          updateQueryHead = updateQueryHead + ",`" + prop.getKey() + "`=?";
         }
+        values.add(prop.getValue());
+        keys.add(prop.getKey());
       }
-      DBConnector.executeUpdate(conn, alterTable);
     }
-    String insertQuery = updateQueryHead + " WHERE id=" + this.id;
-    log.debug(insertQuery);
-    DBConnector.executeUpdate(conn, insertQuery);
+    if (!updateQueryHead.endsWith("SET ")) {
+      String updateQuery = updateQueryHead + " WHERE id=" + this.id;
+      PreparedStatement pStmt = conn.prepareStatement(updateQuery);
+      for (int i = 0; i < keys.size(); i++) {
+        pStmt.setString(i + 1, values.get(i));
+      }
+      log.debug(pStmt);
+      pStmt.execute();
+    }
     return this;
   }
   
@@ -659,13 +677,18 @@ public class User {
     this.sessionID = md5(seed);
     // save in db
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID='" + this.sessionID + "'");
-    if(userList.size() > 1) { //sessionID already exists
+    PreparedStatement pStmt = conn.prepareStatement(
+        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID=?");
+    pStmt.setString(1, this.sessionID);
+    ResultSet userList = pStmt.executeQuery();
+    if(userList.next()) { //sessionID already exists
       this.createSessionID();
     } else {
-      DBConnector.executeUpdate(conn, 
-          "INSERT INTO " + DBConnector.DATABASE + ".SessionIDs(userID,sessionID) VALUES(" + this.id + ",'" + this.sessionID + "')"); 
+      pStmt = conn.prepareStatement(
+          "INSERT INTO " + DBConnector.DATABASE + ".SessionIDs(userID,sessionID) VALUES(?,?)"); 
+      pStmt.setInt(1, this.id);
+      pStmt.setString(2, this.sessionID);
+      pStmt.execute();
     }
     conn.close();
     return this.sessionID;
@@ -682,14 +705,17 @@ public class User {
   /**
    * Puts the friends attribute in a nice Json String
    * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public String getFriendsAsJson() {
+  public String getFriendsAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder friendList = Json.createArrayBuilder();
     for (Entry<User, SimpleEntry<Long,Boolean>> friend : this.friends.entrySet()) {
       friendList.add(Json.createObjectBuilder()
           .add("id", friend.getKey().getId())
           .add("username", friend.getKey().getUsername())
           .add("email", friend.getKey().getEmail())
+          .add("emailhash", md5(friend.getKey().getEmail().toLowerCase()))
           .add("lastname", friend.getKey().getName())
           .add("firstname", friend.getKey().getFirstName())
           .add("trueFriend", friend.getValue().getValue())
@@ -772,14 +798,17 @@ public class User {
   /**
    * Puts the friends attribute in a nice Json String
    * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public String getFriendRequestsAsJson() {
+  public String getFriendRequestsAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder friendRequestList = Json.createArrayBuilder();
     for (Entry<User, SimpleEntry<Long,Boolean>> friendRequest : this.friendRequests.entrySet()) {
       friendRequestList.add(Json.createObjectBuilder()
           .add("id", friendRequest.getKey().getId())
           .add("username", friendRequest.getKey().getUsername())
           .add("email", friendRequest.getKey().getEmail())
+          .add("emailhash", md5(friendRequest.getKey().getEmail().toLowerCase()))
           .add("lastname", friendRequest.getKey().getName())
           .add("firstname", friendRequest.getKey().getFirstName())
           .add("trueFriend", friendRequest.getValue().getValue())
@@ -886,8 +915,7 @@ public class User {
    * @throws SQLException
    */
   public User getGroupsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> groupTable = DBConnector.selectQuery(conn, 
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
         "SELECT Groups.id, Groups.name, Groups.descr, (" 
             + "SELECT COUNT(*) FROM " + DBConnector.DATABASE + ".Members "
             + "WHERE Members.groupID = Groups.id) as membercount "
@@ -896,14 +924,16 @@ public class User {
             + "ON Groups.id=Members.groupID "
             + "JOIN " + DBConnector.DATABASE + ".Users "
             + "ON Members.memberID=Users.id "
-            + "WHERE Users.id=" + this.id
-            + " OR Users.username='" + this.username + "'");
-    groupTable.remove(0); // remove column names
-    for (ArrayList<String> groupTableRow : groupTable) {
-      Group group = new Group(Integer.parseInt(groupTableRow.get(0)))
-                          .setName(groupTableRow.get(1))
-                          .setDescr(groupTableRow.get(2))
-                          .setMemberCount(Integer.parseInt(groupTableRow.get(3)));
+            + "WHERE Users.id=?"
+            + " OR Users.username=?");
+    pStmt.setInt(1, this.id);
+    pStmt.setString(2, this.username);
+    ResultSet groupTable = pStmt.executeQuery();
+    while (groupTable.next()) {
+      Group group = new Group(groupTable.getInt("id"))
+                          .setName(groupTable.getString("name"))
+                          .setDescr(groupTable.getString("descr"))
+                          .setMemberCount(groupTable.getInt("membercount"));
       this.groups.add(group);
     }
     return this;
@@ -967,10 +997,12 @@ public class User {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public List<Post> getPosts() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public List<Post> getPosts(User lookingUser) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "SELECT id, title, content, visibility, date, "
-        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+    String sqlQuery = "SELECT id, content, visibility, date, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
+        + "WHERE Votes.voterID = " + lookingUser.getId() + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
         + "WHERE authorID="+ this.id + " AND ownerID=0";
     log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
@@ -978,13 +1010,13 @@ public class User {
     while(postsTable.next()) {
       this.posts.add(new Post()
         .setId(postsTable.getInt("id"))
-        .setTitle(postsTable.getString("title"))
         .setContent(postsTable.getString("content"))
         .setPrivatePost(postsTable.getBoolean("visibility"))
         .setOwner(new Group(0))
         .setAuthor(this)
         .setPostDate(postsTable.getTimestamp("date"))
-        .setNumberOfUpVotes(postsTable.getInt("votes")));
+        .setNumberOfUpVotes(postsTable.getInt("votes"))
+        .setDidIVote(postsTable.getInt("didIVote") >= 1));
     }
     return this.posts;
   }
@@ -1013,8 +1045,10 @@ public class User {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
-          + "Posts.id as postid, Posts.title, Posts.content, Posts.visibility, Posts.date, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+          + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
+          + "WHERE Votes.voterID = " + this.id + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Friends ON Friends.friendID = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
@@ -1033,18 +1067,15 @@ public class User {
     }
     
     List<Post> postList = new ArrayList<Post>();
-    log.debug(bothWayFriendsList);
     // read UserPostsTable
     while (UserPostsTable.next()) {
-      log.debug(UserPostsTable.getInt("userid") + " " + UserPostsTable.getBoolean("visibility") + " " + bothWayFriendsList.contains(UserPostsTable.getInt("userid")));
       if(bothWayFriendsList.contains(UserPostsTable.getInt("userid"))) {
         // private posts of trueFriends™
         postList.add(new Post()
             .setId(UserPostsTable.getInt("postid"))
-            .setTitle(UserPostsTable.getString("title"))
             .setContent(UserPostsTable.getString("content"))
             .setPrivatePost(UserPostsTable.getBoolean("visibility"))
-            .setPostDate(UserPostsTable.getDate("date"))
+            .setPostDate(UserPostsTable.getTimestamp("date"))
             .setOwner(new Group(UserPostsTable.getInt("groupid"))
                 .setName(UserPostsTable.getString("groupname")))
             .setAuthor(new User(
@@ -1053,15 +1084,15 @@ public class User {
                 UserPostsTable.getString("email"),
                 UserPostsTable.getString("name"),
                 UserPostsTable.getString("firstName")))
-            .setNumberOfUpVotes(UserPostsTable.getInt("votes")));
+            .setNumberOfUpVotes(UserPostsTable.getInt("votes"))
+            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1));
       } else if (!UserPostsTable.getBoolean("visibility")){
         // all public posts
         postList.add(new Post()
             .setId(UserPostsTable.getInt("postid"))
-            .setTitle(UserPostsTable.getString("title"))
             .setContent(UserPostsTable.getString("content"))
             .setPrivatePost(false)
-            .setPostDate(UserPostsTable.getDate("date"))
+            .setPostDate(UserPostsTable.getTimestamp("date"))
             .setOwner(new Group(UserPostsTable.getInt("groupid"))
                 .setName(UserPostsTable.getString("groupname")))
             .setAuthor(new User(
@@ -1070,7 +1101,8 @@ public class User {
                 UserPostsTable.getString("email"),
                 UserPostsTable.getString("name"),
                 UserPostsTable.getString("firstName")))
-            .setNumberOfUpVotes(UserPostsTable.getInt("votes")));
+            .setNumberOfUpVotes(UserPostsTable.getInt("votes"))
+            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1));
       }
     }
     
@@ -1079,8 +1111,10 @@ public class User {
     
     sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
-          + "Posts.id as postid, Posts.title, Posts.content, Posts.visibility, Posts.date, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes FROM " + DBConnector.DATABASE + ".Posts "
+          + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
+          + "WHERE Votes.voterID = " + this.id + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
           + "JOIN " + DBConnector.DATABASE + ".Members ON Members.groupID = Posts.ownerID "
@@ -1093,10 +1127,9 @@ public class User {
     while (GroupPostsTable.next()) {
       postList.add(new Post()
       .setId(GroupPostsTable.getInt("postid"))
-      .setTitle(GroupPostsTable.getString("title"))
       .setContent(GroupPostsTable.getString("content"))
       .setPrivatePost(GroupPostsTable.getBoolean("visibility"))
-      .setPostDate(GroupPostsTable.getDate("date"))
+      .setPostDate(GroupPostsTable.getTimestamp("date"))
       .setOwner(new Group(GroupPostsTable.getInt("groupid"))
           .setName(GroupPostsTable.getString("groupname")))
       .setAuthor(new User(
@@ -1105,12 +1138,14 @@ public class User {
           GroupPostsTable.getString("email"),
           GroupPostsTable.getString("name"),
           GroupPostsTable.getString("firstName")))
-      .setNumberOfUpVotes(GroupPostsTable.getInt("votes")));
+      .setNumberOfUpVotes(GroupPostsTable.getInt("votes"))
+      .setDidIVote(GroupPostsTable.getInt("didIVote") >= 1));
     }
     
     GroupPostsTable.close();
     pStmt.close();
     conn.close();
+    postList.addAll(this.getPosts(this));
     // sort List by postDate
     Collections.sort(postList, new PostComparator());
     return postList;

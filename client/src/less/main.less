@@ -9,8 +9,6 @@
   font-style: normal;
 }
 
-body { padding-top: 70px; } // navbar-fix
-
 nav {
   #brandimg {
     height: 50px;
@@ -22,9 +20,22 @@ nav {
   }
 }
 
+// this solution is full of crap
+// .modal-backdrop {
+//   height: 1000%;
+// }
+
 .container-fluid {
   .bigger-text {
     font-size: 18px;
+  }
+
+  .no-margin-top {
+    margin-top: 0;
+  }
+
+  .small-margin-top {
+    margin-top: 5px;
   }
 
   .margin-top {
@@ -35,16 +46,55 @@ nav {
     margin-top: 30px;
   }
 
+  .small-margin-bottom {
+    margin-bottom: 5px;
+  }
+
   .margin-left {
     margin-left: 20px;
+  }
+
+  .neg-margin {
+    margin-left: -5px;
+    margin-right: -5px;
+  }
+
+  .padding-left {
+    padding-left: 10px;
   }
 
   .no-padding-left {
     padding-left: 0;
   }
 
+  .no-margin {
+    margin: 0;
+  }
+
+  .padding-bottom {
+    padding-bottom: 10px;
+  }
+
+  .no-margin-bottom {
+    margin-bottom: 0;
+  }
+
+  .square-button {
+    padding: 8px 6px;
+    margin-right: -5px;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
   .color-green {
     color: green;
+  }
+
+  .panel-footer {
+    padding: 0 10px;
+    background-color: #fcf8e3;
   }
 
   #register {
@@ -93,24 +143,5 @@ nav {
         margin: 0;
       }
     }
-  }
-}
-
-@media (max-width: @screen-sm) {
-  .nav-tabs > li {
-    float:none;
-  }
-  .nav-tabs > li {
-    float:none;
-    border:1px solid #dddddd;
-  }
-  .nav-tabs > li.active > a{
-    border:none;
-  }
-  .nav > li > a:hover, .nav > li > a:focus,
-  .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus
-   {
-    background:none;
-    border:none;
   }
 }
