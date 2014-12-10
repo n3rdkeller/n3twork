@@ -92,8 +92,8 @@
               {{ post.numberOfVotes }} votes
             </button>
             <small ng-bind="post.postDate | convertToDate" class="text-muted padding-left"></small>
-            <button role="button" class="btn btn-link btn-xs" ng-hide="profile.removeButtonConfirmation[post.id] || !profile.itsMe" ng-click="profile.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
-            <span ng-show="profile.removeButtonConfirmation[post.id]" class="small text-muted padding-left">Confirm deletion:</span>
+            <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="profile.removeButtonConfirmation[post.id] || !profile.itsMe" ng-click="profile.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
+            <span ng-show="profile.removeButtonConfirmation[post.id]" class="small text-muted no-padding-left">Confirm deletion:</span>
             <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="profile.removeButtonConfirmation[post.id]" ng-click="profile.removePost(post.id)" ng-disabled="profile.removePostButtonLoading[post.id]">
               <span ng-hide="profile.removePostButtonLoading[post.id]"><i class="fa fa-fw fa-check text-muted"></i></span>
               <span ng-show="profile.removePostButtonLoading[post.id]"><i class="fa fa-fw fa-spin fa-spinner"></i></span>
