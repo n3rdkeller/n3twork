@@ -355,24 +355,31 @@ public class User {
    */
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
-    
+    ResultSet userList;
     if(this.email.equals("") && this.username.equals("")) { // neither given //TODO make it work with null
       log.debug("neither username nor email are given");
       return false;
       
     } else {
       log.debug("logging in: " + this.username + " " + this.email);
-      userList = DBConnector.selectQuery(conn, 
-          "SELECT * FROM " + DBConnector.DATABASE + ".Users "
-              + "WHERE email='" + this.email + "' OR username='" + this.username + "'");
+      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setString(1, this.email);
+      pStmt.setString(2, this.username);
+      log.debug(pStmt);
+      userList = pStmt.executeQuery();
     }
     
-    if (userList.size() == 1) {
-      List<Integer> ids = DBConnector.executeUpdate(conn, 
-          "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) "
-              + "VALUES('" + this.username + "','" + this.email + "','" + this.password + "')"); 
-      this.id = ids.get(0);
+    if (userList.next()) {
+      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(?,?,?)";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
+      pStmt.setString(1, this.username.toLowerCase());
+      pStmt.setString(2, this.email.toLowerCase());
+      pStmt.setString(3, this.password);
+      log.debug(pStmt);
+      pStmt.executeUpdate();
+      ResultSet ids = pStmt.getGeneratedKeys();
+      if (ids.next()) this.id = ids.getInt(1);
       return true;
     } else {
       log.debug("User already exists");
@@ -420,7 +427,7 @@ public class User {
    */
   public Boolean login() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    List<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
+    ResultSet userList;
     
     if(this.email.equals("") && this.username.equals("")) { // neither given
       log.debug("neither username nor email are given");
@@ -428,24 +435,25 @@ public class User {
       
     } else {
       log.debug("logging in: " + this.username + " " + this.email);
-      userList = DBConnector.selectQuery(conn, 
-          "SELECT id,password FROM " + DBConnector.DATABASE + ".Users "
-              + "WHERE email='" + this.email + "' OR username='" + this.username + "'");
+      PreparedStatement pStmt = conn.prepareStatement(
+          "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?");
+      pStmt.setString(1, this.email);
+      pStmt.setString(2, this.username);
+      userList = pStmt.executeQuery();
     }
     conn.close();
-    if(userList.size() == 2) {
-      if(userList.get(1).get(1).equals(this.password)) {
-        this.id = Integer.parseInt(userList.get(1).get(0));
+    if(userList.next()) {
+      if(userList.getString("password").equals(this.password)) {
+        this.id = userList.getInt("id");
         this.getBasicsFromDB();
         log.debug("login successful");
         return true;
+      } else {
+        log.debug("wrong password");
+      }
 
-      } else log.debug("wrong password");
-
-    } else if(userList.size() == 1) {
-      log.debug("user doesn't exist");
     } else {
-      log.debug("email and username dont match or someone doesnt have an email");
+      log.debug("user doesn't exist");
     }
     // if one of the previous if-conditions returns false
     log.debug("login failed");
@@ -461,12 +469,14 @@ public class User {
    */
   public void logout() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    if (DBConnector.selectQuery(conn, 
-        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs "
-            + "WHERE sessionID='" + this.sessionID + "'").size() != 1) {
-      DBConnector.executeUpdate(conn, 
-          "DELETE FROM " + DBConnector.DATABASE + ".SessionIDs "
-              + "WHERE sessionID='" + this.sessionID + "'");
+    PreparedStatement pStmt = conn.prepareStatement( 
+        "SELECT * FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID=?");
+    pStmt.setString(1, this.sessionID);
+    if (pStmt.executeQuery().next()) {
+      pStmt = conn.prepareStatement(
+          "DELETE FROM " + DBConnector.DATABASE + ".SessionIDs WHERE sessionID=?");
+      pStmt.setString(1, this.sessionID);
+      pStmt.execute();
     }
   }
   
@@ -496,10 +506,12 @@ public class User {
    * @throws InstantiationException 
    */
   public User setName(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET name='" + name + "' WHERE id=" + this.id);
-    conn.close();
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
+        "UPDATE " + DBConnector.DATABASE + ".Users SET name=? WHERE id=?");
+    pStmt.setString(1, name);
+    pStmt.setInt(2, this.id);
+    pStmt.execute();
+    pStmt.close();
     this.name = name;
     return this;
   }
@@ -522,10 +534,12 @@ public class User {
    * @throws InstantiationException
    */
   public User setFirstName(String firstName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET firstName='" + firstName + "' WHERE id=" + this.id);
-    conn.close();
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
+        "UPDATE " + DBConnector.DATABASE + ".Users SET firstName=? WHERE id=?");
+    pStmt.setString(1, firstName);
+    pStmt.setInt(2, this.id);
+    pStmt.execute();
+    pStmt.close();
     this.firstName = firstName;
     return this;
   }
@@ -561,9 +575,12 @@ public class User {
    * @throws InstantiationException
    */
   public User setEmail(String email) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET email='" + email + "' WHERE id=" + this.id);
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
+        "UPDATE " + DBConnector.DATABASE + ".Users SET email=? WHERE id=?");
+    pStmt.setString(1, email);
+    pStmt.setInt(2, this.id);
+    pStmt.execute();
+    pStmt.close();
     this.email = email;
     return this;
   }
@@ -580,9 +597,12 @@ public class User {
    */
   public User setPassword(String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.password = md5(pw);
-    Connection conn = DBConnector.getConnection();
-    DBConnector.executeUpdate(conn, 
-        "UPDATE " + DBConnector.DATABASE + ".Users SET password='" + this.password + "' WHERE id=" + this.id);
+    PreparedStatement pStmt = DBConnector.getConnection().prepareStatement(
+        "UPDATE " + DBConnector.DATABASE + ".Users SET password=? WHERE id=?");
+    pStmt.setString(1, this.password);
+    pStmt.setInt(2, this.id);
+    pStmt.execute();
+    pStmt.close();
     return this;
   }
 
