@@ -43,7 +43,7 @@
             {{ post.numberOfVotes }} votes
           </button>
           <small ng-bind="post.postDate | convertToDate" class="text-muted padding-left"></small>
-          <i class="fa fa-fw text-muted" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" ng-show="post.owner.id == 0" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
+          <i class="fa fa-fw text-muted" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
           <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="feed.removeButtonConfirmation[post.id] || (userdata.id != post.author.id)" ng-click="feed.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
           <span ng-show="feed.removeButtonConfirmation[post.id]" class="small text-muted no-padding-left">Confirm deletion:</span>
           <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="feed.removeButtonConfirmation[post.id]" ng-click="feed.removePost(post.id)" ng-disabled="feed.removePostButtonLoading[post.id]">
