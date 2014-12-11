@@ -222,7 +222,9 @@ public class PostResource {
    *     "private":true/false
    *   }
    * }</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/add")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -286,7 +288,9 @@ public class PostResource {
    *     "private":true/false //optional
    *   }
    * }</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/update")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -341,7 +345,9 @@ public class PostResource {
    *   "session":"sessionID"
    *   "id":0 //id of the doomed post
    * }</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/delete")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -391,7 +397,9 @@ public class PostResource {
    *  "id":postID,
    *  "session":"sessionID"
    *}</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/vote/add")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -432,7 +440,9 @@ public class PostResource {
    *  "id":postID,
    *  "session":"sessionID"
    *}</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/vote/remove")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
