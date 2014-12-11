@@ -11,6 +11,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -124,12 +125,7 @@ public class PostResource {
       return Helper.errorResponse(e);
     }
   }
-  
-  @OPTIONS @Path("/newsfeed")
-  public Response corsGetFeed() {
-    return Helper.optionsResponse();
-  }
-  
+
   /**
    * 
    * @param jsonInput <pre><code> {
@@ -137,7 +133,7 @@ public class PostResource {
    * }</code></pre>
    * @return
    */
-  @POST @Path("/newsfeed")
+  @GET @Path("/newsfeed")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getFeed(String jsonInput) {
     try {
@@ -226,7 +222,9 @@ public class PostResource {
    *     "private":true/false
    *   }
    * }</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/add")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -290,7 +288,9 @@ public class PostResource {
    *     "private":true/false //optional
    *   }
    * }</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/update")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -345,7 +345,9 @@ public class PostResource {
    *   "session":"sessionID"
    *   "id":0 //id of the doomed post
    * }</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/delete")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -395,7 +397,9 @@ public class PostResource {
    *  "id":postID,
    *  "session":"sessionID"
    *}</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/vote/add")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -436,7 +440,9 @@ public class PostResource {
    *  "id":postID,
    *  "session":"sessionID"
    *}</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "successful":true
+   * }</code></pre>
    */
   @POST @Path("/vote/remove")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)

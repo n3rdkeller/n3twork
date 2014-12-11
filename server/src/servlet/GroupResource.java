@@ -6,6 +6,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -161,20 +162,7 @@ public class GroupResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for find
-   * @return Response with all needed headers
-   */
-  @OPTIONS @Path("/find")
-  public Response corsShowAllGroups() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
+
   /**
    * Post request to get a list of all groups
    * @param jsonInput <pre><code>{
@@ -184,7 +172,7 @@ public class GroupResource {
    *  "successful":true/false
    *}</pre></code>
    */
-  @POST @Path("/find")
+  @GET @Path("/find")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showAllGroups(String jsonInput){
     log.debug("showAll input: " + jsonInput);
@@ -214,20 +202,7 @@ public class GroupResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for count
-   * @return Response with all the needed headers
-   */
-  @OPTIONS @Path("/count")
-  public Response corsCountGroup() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
+
   /**
    * Post Request to count user in db
    * @param jsonInput <pre><code>{
@@ -238,7 +213,7 @@ public class GroupResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/count")
+  @GET @Path("/count")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response countGroup(String jsonInput){
     try{
