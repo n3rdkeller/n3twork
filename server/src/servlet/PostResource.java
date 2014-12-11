@@ -11,6 +11,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -124,12 +125,7 @@ public class PostResource {
       return Helper.errorResponse(e);
     }
   }
-  
-  @OPTIONS @Path("/newsfeed")
-  public Response corsGetFeed() {
-    return Helper.optionsResponse();
-  }
-  
+
   /**
    * 
    * @param jsonInput <pre><code> {
@@ -137,7 +133,7 @@ public class PostResource {
    * }</code></pre>
    * @return
    */
-  @POST @Path("/newsfeed")
+  @GET @Path("/newsfeed")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getFeed(String jsonInput) {
     try {

@@ -113,20 +113,7 @@ public class ServletResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for logout
-   * @return Response with all needed headers
-   */
-  @OPTIONS @Path("/logout")
-  public Response corsLogout() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
+
   /**
    * Post request for logout
    * @param jsonInput <pre><code>{
@@ -136,7 +123,7 @@ public class ServletResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/logout")
+  @GET @Path("/logout")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response logout(String jsonInput){
     log.debug("logout input: " + jsonInput);

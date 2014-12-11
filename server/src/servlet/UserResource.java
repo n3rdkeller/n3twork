@@ -7,6 +7,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -106,20 +107,7 @@ public class UserResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for find
-   * @return Response with all the needed headers
-   */
-  @OPTIONS @Path("/find")
-  public Response corsFindUser() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
+
   /**
    * Post Request to get a json all users
    * @param jsonInput <pre><code>{
@@ -142,7 +130,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/find")
+  @GET @Path("/find")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response findUser(String jsonInput){
     try{
@@ -169,20 +157,7 @@ public class UserResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for count
-   * @return Response with all the needed headers
-   */
-  @OPTIONS @Path("/count")
-  public Response corsCountUser() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
+
   /**
    * Post Request to count user in db
    * @param jsonInput <pre><code>{
@@ -194,7 +169,7 @@ public class UserResource {
    *  "usersOnline": number of users online
    *}</code></pre>
    */
-  @POST @Path("/count")
+  @GET @Path("/count")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response countUser(String jsonInput){
     try{
@@ -298,20 +273,7 @@ public class UserResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for remove
-   * @return Response with all the needed headers
-   */
-  @OPTIONS @Path("/remove")
-  public Response corsRemoveUser() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
-  }
-  
+
   /**
    * Post Request to remove current user
    * @param jsonInput <pre><code>{
@@ -321,7 +283,7 @@ public class UserResource {
    *  "successful":true/false
    *}</pre></code>
    */
-  @POST @Path("/remove")
+  @GET @Path("/remove")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response removeUser(String jsonInput){
     try{
