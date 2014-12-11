@@ -370,7 +370,7 @@ public class User {
       userList = pStmt.executeQuery();
     }
     
-    if (userList.next()) {
+    if (!userList.next()) {
       String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(?,?,?)";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
       pStmt.setString(1, this.username.toLowerCase());
