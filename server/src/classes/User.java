@@ -328,7 +328,7 @@ public class User {
     for (int i = 1;i <= columnsNumber; i++) {
       keyRow.add(userTableMd.getColumnName(i));
     }
-    for (int i = 1; i < keyRow.size(); i++) {
+    for (int i = 1; i <= keyRow.size(); i++) {
       userMap.put(keyRow.get(i - 1), userTable.getString(i));
     }
     
