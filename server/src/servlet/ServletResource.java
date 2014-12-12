@@ -240,7 +240,7 @@ public class ServletResource {
       String user = userAsJsonObject.getString("username");
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("username", user)
-          .add("taken", this.userList.contains(user))
+          .add("taken", this.userList.contains(user.toLowerCase()))
           .add("successful", true)
           .build());
       log.debug("/register/checkuser returns: " + entity);

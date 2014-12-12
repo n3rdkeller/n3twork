@@ -315,7 +315,7 @@ public class User {
       String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=? OR username=?";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setInt(1, this.id);
-      pStmt.setString(2, this.username);
+      pStmt.setString(2, this.username.toLowerCase());
       userTable = pStmt.executeQuery();
       log.debug(pStmt);
     }
@@ -336,7 +336,7 @@ public class User {
     this.id = Integer.parseInt(userMap.remove("id"));
     this.name = userMap.remove("name");
     this.firstName = userMap.remove("firstName");
-    this.username = userMap.remove("username");
+    this.username = userMap.remove("usernameWithCase");
     this.email = userMap.remove("email");
     userMap.remove("password");
     this.otherProperties.putAll(userMap); 
@@ -365,17 +365,18 @@ public class User {
       String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setString(1, this.email);
-      pStmt.setString(2, this.username);
+      pStmt.setString(2, this.username.toLowerCase());
       log.debug(pStmt);
       userList = pStmt.executeQuery();
     }
     
     if (!userList.next()) {
-      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(?,?,?)";
+      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,usernameWithCase,email,password) VALUES(?,?,?,?)";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
       pStmt.setString(1, this.username.toLowerCase());
-      pStmt.setString(2, this.email.toLowerCase());
-      pStmt.setString(3, this.password);
+      pStmt.setString(2, this.username);
+      pStmt.setString(3, this.email.toLowerCase());
+      pStmt.setString(4, this.password);
       log.debug(pStmt);
       pStmt.executeUpdate();
       ResultSet ids = pStmt.getGeneratedKeys();
@@ -437,8 +438,8 @@ public class User {
       log.debug("logging in: " + this.username + " " + this.email);
       PreparedStatement pStmt = conn.prepareStatement(
           "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?");
-      pStmt.setString(1, this.email);
-      pStmt.setString(2, this.username);
+      pStmt.setString(1, this.email.toLowerCase());
+      pStmt.setString(2, this.username.toLowerCase());
       userList = pStmt.executeQuery();
     }
     if(userList.next()) {
