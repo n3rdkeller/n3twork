@@ -108,6 +108,11 @@ public class UserResource {
     }
   }
 
+  @OPTIONS @Path("/find")
+  public Response corsFindUser() {
+    return Helper.optionsResponse();
+  }
+  
   /**
    * Post Request to get a json all users
    * @param jsonInput <pre><code>{
@@ -158,6 +163,11 @@ public class UserResource {
     }
   }
 
+  @OPTIONS @Path("/count")
+  public Response corsCountUser() {
+    return Helper.optionsResponse();
+  }
+  
   /**
    * Post Request to count user in db
    * @param jsonInput <pre><code>{
@@ -274,6 +284,11 @@ public class UserResource {
     }
   }
 
+  @OPTIONS @Path("/remove")
+  public Response corsRemoveUser() {
+    return Helper.optionsResponse();
+  }
+  
   /**
    * Post Request to remove current user
    * @param jsonInput <pre><code>{

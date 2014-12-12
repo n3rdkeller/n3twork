@@ -126,6 +126,11 @@ public class PostResource {
     }
   }
 
+  @OPTIONS @Path("/newsfeed")
+  public Response corsGetFeed() {
+    return Helper.optionsResponse();
+  }
+  
   /**
    * 
    * @param jsonInput <pre><code> {

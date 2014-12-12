@@ -163,6 +163,11 @@ public class GroupResource {
     }
   }
 
+  @OPTIONS @Path("/find")
+  public Response corsShowAllGroups() {
+    return Helper.optionsResponse();
+  }
+  
   /**
    * Post request to get a list of all groups
    * @param jsonInput <pre><code>{
@@ -202,7 +207,12 @@ public class GroupResource {
           .build();
     }
   }
-
+  
+  @OPTIONS @Path("/count")
+  public Response corsCountGroup() {
+    return Helper.optionsResponse();
+  }
+  
   /**
    * Post Request to count user in db
    * @param jsonInput <pre><code>{

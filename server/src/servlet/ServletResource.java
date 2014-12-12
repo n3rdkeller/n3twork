@@ -114,6 +114,11 @@ public class ServletResource {
     }
   }
 
+  @OPTIONS @Path("/logout")
+  public Response corsLogout() {
+    return Helper.optionsResponse();
+  }
+  
   /**
    * Post request for logout
    * @param jsonInput <pre><code>{
