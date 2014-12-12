@@ -1047,14 +1047,17 @@ public class User {
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
           + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
           + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
-          + "WHERE Votes.voterID = " + this.id + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Comments.id) as comments, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.voterID = ? AND Votes.postID = Posts.id) as didIVote "
+          + "FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Friends ON Friends.friendID = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
-          + "WHERE Friends.userID = " + this.id + " AND Posts.ownerID = 0";
+          + "WHERE Friends.userID = ? AND Posts.ownerID = 0";
     log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, this.id);
     ResultSet UserPostsTable = pStmt.executeQuery();
     
     List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, 
@@ -1085,7 +1088,8 @@ public class User {
                 UserPostsTable.getString("name"),
                 UserPostsTable.getString("firstName")))
             .setNumberOfUpVotes(UserPostsTable.getInt("votes"))
-            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1));
+            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1)
+            .setNumberOfComments(UserPostsTable.getInt("comments")));
       } else if (!UserPostsTable.getBoolean("visibility")){
         // all public posts
         postList.add(new Post()
@@ -1102,7 +1106,8 @@ public class User {
                 UserPostsTable.getString("name"),
                 UserPostsTable.getString("firstName")))
             .setNumberOfUpVotes(UserPostsTable.getInt("votes"))
-            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1));
+            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1)
+            .setNumberOfComments(UserPostsTable.getInt("comments")));
       }
     }
     
@@ -1113,14 +1118,17 @@ public class User {
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
           + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
           + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
-          + "WHERE Votes.voterID = " + this.id + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Comments.id) as comments, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.voterID = ? AND Votes.postID = Posts.id) as didIVote "
+          + "FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
           + "JOIN " + DBConnector.DATABASE + ".Members ON Members.groupID = Posts.ownerID "
-          + "WHERE Members.memberID = " + this.id;
+          + "WHERE Members.memberID = ?";
     log.debug(sqlQuery);
     pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, this.id);
     ResultSet GroupPostsTable = pStmt.executeQuery();
     
     // read GroupPostsTable
@@ -1139,7 +1147,8 @@ public class User {
           GroupPostsTable.getString("name"),
           GroupPostsTable.getString("firstName")))
       .setNumberOfUpVotes(GroupPostsTable.getInt("votes"))
-      .setDidIVote(GroupPostsTable.getInt("didIVote") >= 1));
+      .setDidIVote(GroupPostsTable.getInt("didIVote") >= 1)
+      .setNumberOfComments(GroupPostsTable.getInt("comments")));
     }
     
     GroupPostsTable.close();

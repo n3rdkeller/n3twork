@@ -1,4 +1,6 @@
 package classes;
+
+import java.util.AbstractMap.SimpleEntry;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -34,6 +36,8 @@ public class Post {
   private Map<User,Date> upVotes = new HashMap<User,Date>();
   private int numberOfUpVotes;
   private Boolean didIVote;
+  private Map<SimpleEntry<User,Integer>,SimpleEntry<String,Date>> comments = new HashMap<SimpleEntry<User,Integer>,SimpleEntry<String,Date>>();
+  private int numberOfComments;
 
   /**
    * Empty constructor
@@ -76,7 +80,8 @@ public class Post {
           .add("postDate", post.getPostDate().getTime())
           .add("private", post.getPrivatePost())
           .add("numberOfVotes", post.getNumberOfUpVotes())
-          .add("didIVote", post.getDidIVote());
+          .add("didIVote", post.getDidIVote())
+          .add("numberOfComments", post.getNumberOfComments());
       if (newsfeed) {
         log.debug("newsfeed part");
         jsonPost
@@ -398,6 +403,118 @@ public class Post {
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
     pStmt.setInt(2, voter.getId());
+    pStmt.execute();
+    return this;
+  }
+
+  public int getNumberOfComments() {
+    return this.numberOfComments;
+  }
+  
+  public Post setNumberOfComments(int noc) {
+    this.numberOfComments = noc;
+    return this;
+  }
+  
+  /**
+   * Simple getter for comments
+   * @return this.upVotes
+   */
+  public Map<SimpleEntry<User,Integer>,SimpleEntry<String,Date>> getComments() {
+    return this.comments;
+  }
+  
+  /**
+   * Gets all comments of this from the db
+   * @return this
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
+   */
+  public Post getCommentsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "Select Users.username, Users.name, Users.firstName, Comments.content, Comments.date, Comments.id From " + DBConnector.DATABASE + ".Comments "
+          + "JOIN " + DBConnector.DATABASE + ".Posts ON Posts.id = Comments.postID "
+          + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Comments.authorID "
+          + "WHERE Posts.id = " + this.id;
+    log.debug(sqlQuery);
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    ResultSet commentsTable = pStmt.executeQuery();
+    while (commentsTable.next()) {
+      this.comments.put(new SimpleEntry<User,Integer>(new User()
+        .setUsername(commentsTable.getString("username"))
+        .setName(commentsTable.getString("name"))
+        .setFirstName(commentsTable.getString("firstName")),
+        commentsTable.getInt("id")), 
+        new SimpleEntry<String,Date>(
+            commentsTable.getString("content"),
+            commentsTable.getTimestamp("date")));
+    }
+    pStmt.close();
+    commentsTable.close();
+    conn.close();
+    return this;
+  }
+  
+  /**
+   * Gets comments as Json
+   * @return 
+   */
+  public JsonValue getCommentsAsJson() {
+    JsonArrayBuilder commentList = Json.createArrayBuilder();
+    for (Entry<SimpleEntry<User,Integer>,SimpleEntry<String,Date>> comment : this.comments.entrySet()) {
+      commentList.add(Json.createObjectBuilder()
+          .add("date", comment.getValue().getValue().getTime())
+          .add("author", Json.createObjectBuilder()
+              .add("username", comment.getKey().getKey().getUsername())
+              .add("lastname", comment.getKey().getKey().getName())
+              .add("firstname", comment.getKey().getKey().getFirstName()))
+          .add("content", comment.getValue().getKey())
+          );
+    }
+    JsonObject voteUps = Json.createObjectBuilder()
+        .add("commentList", commentList)
+        .add("successful", true)
+        .build();
+    return voteUps;
+  }
+  
+  /**
+   * Add a new comment to comments
+   * @param author The author only needs the User.id value
+   * @param content any String
+   * @return this
+   * @throws SQLException 
+   * @throws ClassNotFoundException 
+   * @throws IllegalAccessException 
+   * @throws InstantiationException 
+   */
+  public Post addComment(User author, String content) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Comments(postID,authorID,content) VALUES(?,?,?)";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, author.getId());
+    pStmt.setString(3, content);
+    pStmt.execute();
+    return this;
+  }
+  
+  /**
+   * Remove a comment
+   * @param commentID
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public Post removeComment(int commentID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Comments WHERE id=";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, commentID);
     pStmt.execute();
     return this;
   }

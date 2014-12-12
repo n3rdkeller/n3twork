@@ -492,12 +492,15 @@ public class Group {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT Posts.id as postid, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
         + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
-        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
-        + "WHERE Votes.voterID = " + lookingUser.getId() + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Comments.id) as comments, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.voterID = ? AND Votes.postID = Posts.id) as didIVote "
+        + "FROM " + DBConnector.DATABASE + ".Posts "
         + "JOIN " + DBConnector.DATABASE + ".Users ON Posts.authorID = Users.id "
-        + "WHERE ownerID="+ this.id;
+        + "WHERE ownerID=?";
     log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, lookingUser.getId());
+    pStmt.setInt(2, this.id);
     ResultSet postsTable = pStmt.executeQuery();
     while (postsTable.next()) {
       this.posts.add(new Post()
@@ -514,6 +517,7 @@ public class Group {
             postsTable.getString("firstName")))
         .setNumberOfUpVotes(postsTable.getInt("votes"))
         .setDidIVote(postsTable.getBoolean("didIVote"))
+        .setNumberOfComments(postsTable.getInt("comments"))
         );
     };
     log.debug("end of getPosts");
