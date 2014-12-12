@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonValue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
@@ -611,7 +610,7 @@ public class PostResource {
         return Helper.okResponse(entity);
       }
       Post post = new Post()
-          .removeComment(input.getInt("id"));
+          .removeComment(input.getInt("id"), user);
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());

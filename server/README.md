@@ -32,6 +32,9 @@ We used `eclipse` to generate a `n3.war` we deployed on our Tomcat 8 Server.
 - [POST /post/update](#postupdate)
 - [POST /post/delete](#postdelete)
 - [POST /post/vote/add and POST /post/vote/remove](postvoteadd-and-postvoteremove)
+- [POST /post/comments](#postcomments)
+- [POST /post/comment/add](#postcommentadd)
+- [POST /post/comment/remove](#postcommentremove)
 
 #### /login
 ##### POST
@@ -559,3 +562,61 @@ out:
     "successful":true
 }
 ```
+#### /post/comments
+##### POST
+in:
+``` json
+{
+    "id":"postID",
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "commentList":[
+        {
+            "author":{
+                "firstname":"firstname text",
+                "lastname":"lastname text",
+                "username":"username text"
+            },
+            "content":"content text",
+            "date":0, "//comment date as unix timestamp"
+            "id":0 "//commentID"
+        },
+    ],
+    "successful":true
+}
+```
+#### /post/comment/add
+##### POST
+in:
+``` json
+{
+    "id":0, "//postID"
+    "content":"contentOfComment text",
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /post/comment/remove
+##### POST
+in:
+``` json
+{
+    "id":0, "//commentID"
+    "session":"sessionID"
+
+}
+```
+out:
+``` json
+{
+    "successful":true
+}

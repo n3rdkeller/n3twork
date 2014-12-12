@@ -510,11 +510,12 @@ public class Post {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public Post removeComment(int commentID) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Post removeComment(int commentID, User author) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Comments WHERE id=";
+    String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Comments WHERE id=? AND authorID=?";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, commentID);
+    pStmt.setInt(2, author.getId());
     pStmt.execute();
     return this;
   }
