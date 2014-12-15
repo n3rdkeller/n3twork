@@ -136,7 +136,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/find")
+  @POST @Path("/find")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response findUser(String jsonInput){
     try{
@@ -180,7 +180,7 @@ public class UserResource {
    *  "usersOnline": number of users online
    *}</code></pre>
    */
-  @GET @Path("/count")
+  @POST @Path("/count")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response countUser(String jsonInput){
     try{
@@ -242,7 +242,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/")
+  @POST @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showUser(String jsonInput){
     try{
@@ -363,7 +363,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/friends")
+  @POST @Path("/friends")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getFriends(String jsonInput){
     try{
@@ -427,7 +427,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/friendrequests")
+  @POST @Path("/friendrequests")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getFriendRequests(String jsonInput){
     try{
@@ -596,7 +596,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/groups")
+  @POST @Path("/groups")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getGroups(String jsonInput){
     try{

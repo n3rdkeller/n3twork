@@ -66,7 +66,7 @@ public class PostResource {
    *   "successful":true
    * } </code></pre>
    */
-  @GET @Path("/")
+  @POST @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showPost(String jsonInput){
     try {
@@ -138,7 +138,7 @@ public class PostResource {
    * }</code></pre>
    * @return
    */
-  @GET @Path("/newsfeed")
+  @POST @Path("/newsfeed")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getFeed(String jsonInput) {
     try {
@@ -367,7 +367,7 @@ public class PostResource {
    *   "successful":true
    * } </code></pre>
    */
-  @GET @Path("/votes")
+  @POST @Path("/votes")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showVotes(String jsonInput){
     try {
@@ -504,7 +504,7 @@ public class PostResource {
    *   "successful":true
    * } </code></pre>
    */
-  @GET @Path("/comments")
+  @POST @Path("/comments")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showComments(String jsonInput){
     try {

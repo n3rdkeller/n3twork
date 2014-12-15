@@ -126,7 +126,7 @@ public class GroupResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/show")
+  @POST @Path("/show")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showGroup(String jsonInput){
     log.debug("show input: " + jsonInput);
@@ -177,7 +177,7 @@ public class GroupResource {
    *  "successful":true/false
    *}</pre></code>
    */
-  @GET @Path("/find")
+  @POST @Path("/find")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showAllGroups(String jsonInput){
     log.debug("showAll input: " + jsonInput);
@@ -223,7 +223,7 @@ public class GroupResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/count")
+  @POST @Path("/count")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response countGroup(String jsonInput){
     try{
@@ -285,7 +285,7 @@ public class GroupResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/members")
+  @POST @Path("/members")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showGroupMembers(String jsonInput){
     log.debug("showAll input: " + jsonInput);

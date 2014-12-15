@@ -232,7 +232,7 @@ public class ServletResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/register/checkuser")
+  @POST @Path("/register/checkuser")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response checkUser(String jsonInput){
     log.debug(jsonInput);
