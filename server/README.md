@@ -6,33 +6,33 @@ We used `eclipse` to generate a `n3.war` we deployed on our Tomcat 8 Server.
 
 # n3twork API Quick Reference
 - [POST /login](#login)
-- [GET /logout](#logout)
+- [POST /logout](#logout)
 - [POST /register](#register)
-- [POST /register/checkuser](#registercheckuser)
-- [POST /user](#user)
-- [POST /user/settings](#usersettings)
-- [GET /user/remove](#userremove)
+- [GET /register/checkuser](#registercheckuser)
+- [GET /user](#user)
+- [PUT /user/settings](#usersettings)
+- [POST /user/remove](#userremove)
 - [GET /user/find](#userfind)
 - [GET /user/count](#usercount)
-- [POST /user/friends](#userfriends)
-- [POST /user/friendrequests](#userfriendrequests)
+- [GET /user/friends](#userfriends)
+- [GET /user/friendrequests](#userfriendrequests)
 - [POST /user/friend/add](#userfriendadd)
 - [POST /user/friend/remove](#userfriendremove)
-- [POST /user/groups](#usergroups)
+- [GET /user/groups](#usergroups)
 - [POST /user/group/join and POST /user/group/leave](#usergroupjoin-and-usergroupleave)
 - [POST /group/create](#groupfound)
-- [POST /group/show](#groupshow)
+- [GET /group/show](#groupshow)
 - [GET /group/find](#groupfind)
 - [GET /group/count](#groupcount)
-- [POST /group/members](#groupmembers)
-- [POST /post](#post)
+- [GET /group/members](#groupmembers)
+- [GET /post](#post)
 - [GET /post/newsfeed](#postnewsfeed)
-- [POST /post/votes](#postvotes)
+- [GET /post/votes](#postvotes)
 - [POST /post/add](#postadd)
-- [POST /post/update](#postupdate)
+- [PUT /post/update](#postupdate)
 - [POST /post/delete](#postdelete)
 - [POST /post/vote/add and POST /post/vote/remove](postvoteadd-and-postvoteremove)
-- [POST /post/comments](#postcomments)
+- [GET /post/comments](#postcomments)
 - [POST /post/comment/add](#postcommentadd)
 - [POST /post/comment/remove](#postcommentremove)
 
@@ -151,7 +151,7 @@ in:
 "session":"sessionID"
 }
 ```
-out: 
+out:
 ``` json
 {
     "successful": true,
@@ -171,7 +171,7 @@ out:
             "lastname": "",
             "otherProperties": {},
             "username": "Tessa1337"
-        }, 
+        },
     ]
 }
 ```
@@ -259,7 +259,7 @@ in:
 ``` json
 {
 	"session":"sessionID",
-	"friend":1337 
+	"friend":1337
 }
 ```
 out:
@@ -274,7 +274,7 @@ in:
 ``` json
 {
 	"session":"sessionID",
-	"friend":1337 
+	"friend":1337
 }
 out:
 ``` json
@@ -316,7 +316,7 @@ in:
 out:
 ``` json
 {
-    "successful": true 
+    "successful": true
     "//Bei join auch wenn der user schon Mitglied ist. Wird aber nicht 2x in der db registriert"
 }
 ```
@@ -333,7 +333,7 @@ in:
 out:
 ``` json
 {
-    "successful": true 
+    "successful": true
 }
 ```
 #### /group/show
@@ -387,7 +387,7 @@ in:
 {
     "session": "sessionID"
 }
-``` 
+```
 out:
 ``` json
 {
@@ -402,7 +402,7 @@ in:
 	"session":"sessionID",
 	"group":1337
 }
-``` 
+```
 out:
 ``` json
 {
