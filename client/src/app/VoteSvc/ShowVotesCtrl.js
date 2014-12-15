@@ -17,7 +17,7 @@
     function init() {
       vm.loading = true;
       APISvc.request({
-        method: 'POST',
+        method: 'GET',
         url: '/post/votes',
         data: { 'id': vm.postID }
       }).then(function (response) {

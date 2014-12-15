@@ -42,7 +42,7 @@
       var deferred = $q.defer();
 
       APISvc.request({
-        method: 'POST',
+        method: 'GET',
         url: '/post/newsfeed/',
         data: { }
       }).then(function (response) {

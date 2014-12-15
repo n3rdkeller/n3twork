@@ -60,7 +60,7 @@
       var deferred = $q.defer();
       // get groupList from API
       APISvc.request({
-        method: 'POST',
+        method: 'GET',
         url: '/group/show',
         data: { 'group': parseInt($routeParams.id) }
       }).then(function (response) {
@@ -82,7 +82,7 @@
       var deferred = $q.defer();
       // get groupList from API
       APISvc.request({
-        method: 'POST',
+        method: 'GET',
         url: '/group/members',
         data: { 'group': parseInt($routeParams.id) }
       }).then(function (response) {

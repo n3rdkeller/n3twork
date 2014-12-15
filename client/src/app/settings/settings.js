@@ -30,7 +30,7 @@
       if (isValid) {
         vm.loading = true;
         APISvc.request({
-          method: 'POST',
+          method: 'PUT',
           url: '/user/settings',
           data: changedData()
         })
