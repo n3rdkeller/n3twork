@@ -61,7 +61,7 @@ public class Helper {
   public static Response optionsResponse(){
     return Response.ok()
         .header(Helper.ACCESSHEADER, "*")
-        .header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        .header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
         .header("Access-Control-Allow-Headers", "Content-Type")
         .build();
   }
