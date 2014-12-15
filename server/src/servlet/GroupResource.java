@@ -126,7 +126,7 @@ public class GroupResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/show")
+  @GET @Path("/show")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showGroup(String jsonInput){
     log.debug("show input: " + jsonInput);
@@ -285,7 +285,7 @@ public class GroupResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/members")
+  @GET @Path("/members")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showGroupMembers(String jsonInput){
     log.debug("showAll input: " + jsonInput);

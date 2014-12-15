@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -65,7 +66,7 @@ public class PostResource {
    *   "successful":true
    * } </code></pre>
    */
-  @POST @Path("/")
+  @GET @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showPost(String jsonInput){
     try {
@@ -247,7 +248,7 @@ public class PostResource {
    *   "successful":true
    * }</code></pre>
    */
-  @POST @Path("/update")
+  @PUT @Path("/update")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response updatePost(String jsonInput) {
     try {
@@ -366,7 +367,7 @@ public class PostResource {
    *   "successful":true
    * } </code></pre>
    */
-  @POST @Path("/votes")
+  @GET @Path("/votes")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showVotes(String jsonInput){
     try {
@@ -503,7 +504,7 @@ public class PostResource {
    *   "successful":true
    * } </code></pre>
    */
-  @POST @Path("/comments")
+  @GET @Path("/comments")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showComments(String jsonInput){
     try {

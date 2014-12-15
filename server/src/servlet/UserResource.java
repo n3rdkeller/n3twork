@@ -10,6 +10,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -59,7 +60,7 @@ public class UserResource {
    *  "successful":true/false
    *}</pre></code>
    */
-  @POST @Path("/settings")
+  @PUT @Path("/settings")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response updateUserSettings(String jsonInput){
     try{
@@ -169,7 +170,7 @@ public class UserResource {
   }
   
   /**
-   * Post Request to count user in db
+   * GET Request to count user in db
    * @param jsonInput <pre><code>{
    *  "session":"sessionID"
    *}</pre></code>
@@ -241,7 +242,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/")
+  @GET @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response showUser(String jsonInput){
     try{
@@ -298,7 +299,7 @@ public class UserResource {
    *  "successful":true/false
    *}</pre></code>
    */
-  @GET @Path("/remove")
+  @POST @Path("/remove")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response removeUser(String jsonInput){
     try{
@@ -362,7 +363,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/friends")
+  @GET @Path("/friends")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getFriends(String jsonInput){
     try{
@@ -426,7 +427,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/friendrequests")
+  @GET @Path("/friendrequests")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getFriendRequests(String jsonInput){
     try{
@@ -595,7 +596,7 @@ public class UserResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/groups")
+  @GET @Path("/groups")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response getGroups(String jsonInput){
     try{

@@ -128,7 +128,7 @@ public class ServletResource {
    *  "successful":true
    *}</pre></code>
    */
-  @GET @Path("/logout")
+  @POST @Path("/logout")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response logout(String jsonInput){
     log.debug("logout input: " + jsonInput);
@@ -232,7 +232,7 @@ public class ServletResource {
    *  "successful":true
    *}</pre></code>
    */
-  @POST @Path("/register/checkuser")
+  @GET @Path("/register/checkuser")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response checkUser(String jsonInput){
     log.debug(jsonInput);

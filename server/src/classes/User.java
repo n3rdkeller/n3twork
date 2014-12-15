@@ -312,10 +312,10 @@ public class User {
       log.debug(pStmt);
       userTable = pStmt.executeQuery();
     } else {
-      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=? OR username=?";
+      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=? OR username LIKE ?";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setInt(1, this.id);
-      pStmt.setString(2, this.username.toLowerCase());
+      pStmt.setString(2, this.username);
       userTable = pStmt.executeQuery();
       log.debug(pStmt);
     }
@@ -336,7 +336,7 @@ public class User {
     this.id = Integer.parseInt(userMap.remove("id"));
     this.name = userMap.remove("name");
     this.firstName = userMap.remove("firstName");
-    this.username = userMap.remove("usernameWithCase");
+    this.username = userMap.remove("username");
     this.email = userMap.remove("email");
     userMap.remove("password");
     this.otherProperties.putAll(userMap); 
@@ -356,16 +356,16 @@ public class User {
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     ResultSet userList;
-    if(this.email.equals("") && this.username.equals("")) { // neither given //TODO make it work with null
+    if(this.email.equals("") && this.username.equals("")) { // neither given
       log.debug("neither username nor email are given");
       return false;
       
     } else {
       log.debug("logging in: " + this.username + " " + this.email);
-      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?";
+      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email LIKE ? OR username LIKE ?";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setString(1, this.email);
-      pStmt.setString(2, this.username.toLowerCase());
+      pStmt.setString(2, this.username);
       log.debug(pStmt);
       userList = pStmt.executeQuery();
     }
@@ -373,9 +373,9 @@ public class User {
     if (!userList.next()) {
       String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,usernameWithCase,email,password) VALUES(?,?,?,?)";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
-      pStmt.setString(1, this.username.toLowerCase());
+      pStmt.setString(1, this.username);
       pStmt.setString(2, this.username);
-      pStmt.setString(3, this.email.toLowerCase());
+      pStmt.setString(3, this.email);
       pStmt.setString(4, this.password);
       log.debug(pStmt);
       pStmt.executeUpdate();
@@ -437,9 +437,9 @@ public class User {
     } else {
       log.debug("logging in: " + this.username + " " + this.email);
       PreparedStatement pStmt = conn.prepareStatement(
-          "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?");
-      pStmt.setString(1, this.email.toLowerCase());
-      pStmt.setString(2, this.username.toLowerCase());
+          "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email LIKE ? OR username LIKE ?");
+      pStmt.setString(1, this.email);
+      pStmt.setString(2, this.username);
       userList = pStmt.executeQuery();
     }
     if(userList.next()) {
@@ -925,7 +925,7 @@ public class User {
             + "JOIN " + DBConnector.DATABASE + ".Users "
             + "ON Members.memberID=Users.id "
             + "WHERE Users.id=?"
-            + " OR Users.username=?");
+            + " OR Users.username LIKE ?");
     pStmt.setInt(1, this.id);
     pStmt.setString(2, this.username);
     ResultSet groupTable = pStmt.executeQuery();
