@@ -123,7 +123,7 @@
         if (name != '') {
           console.log('Now doing check: ' + name)
           APISvc.request({
-            method: 'GET',
+            method: 'POST',
             url: '/register/checkuser',
             data: {
               'username': name

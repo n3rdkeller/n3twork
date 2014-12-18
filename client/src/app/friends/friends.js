@@ -79,7 +79,7 @@
       var deferred = $q.defer();
       // get userdata from API
       APISvc.request({
-        method: 'GET',
+        method: 'POST',
         url: '/user',
         data: { 'username': $routeParams.username }
       }).then(function (response) {

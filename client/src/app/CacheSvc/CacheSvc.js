@@ -51,7 +51,7 @@
       var deferred = $q.defer();
       // get userdata from API
       APISvc.request({
-        method: 'GET',
+        method: 'POST',
         url: '/user',
         data: { 'username': username }
       }).then(function (response) {
@@ -74,7 +74,7 @@
         deferred.resolve(sessionData);
       } else {
         APISvc.request({
-          method: 'GET',
+          method: 'POST',
           url: '/user/find',
           data: {}
         }).then(function (response) {
@@ -94,7 +94,7 @@
         deferred.resolve(sessionData);
       } else {
         APISvc.request({
-          method: 'GET',
+          method: 'POST',
           url: '/group/find',
           data: {}
         }).then(function (response) {
@@ -115,7 +115,7 @@
       } else {
         // get groupList from API
         APISvc.request({
-          method: 'GET',
+          method: 'POST',
           url: '/user/groups',
           data: { 'username': username }
         }).then(function (response) {
@@ -143,7 +143,7 @@
       } else {
         // get friendList from API
         APISvc.request({
-          method: 'GET',
+          method: 'POST',
           url: '/user/friends',
           data: { 'id': id }
         }).then(function (response) {
@@ -165,7 +165,7 @@
       var deferred = $q.defer();
       // get OWN friendList from API
       APISvc.request({
-        method: 'GET',
+        method: 'POST',
         url: '/user/friends',
         data: { }
       }).then(function (response) {
@@ -199,7 +199,7 @@
       } else {
         // get friendList from API
         APISvc.request({
-          method: 'GET',
+          method: 'POST',
           url: '/user/friendrequests',
           data: { }
         }).then(function (response) {

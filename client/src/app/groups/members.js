@@ -27,7 +27,7 @@
       var deferred = $q.defer();
       // get memberList from API
       APISvc.request({
-        method: 'GET',
+        method: 'POST',
         url: '/group/members',
         data: { 'group': vm.groupID }
       }).then(function (response) {
