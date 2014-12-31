@@ -14,7 +14,7 @@
     return factory;
 
     function request(req) {
-      var APIUrl = 'http://178.62.239.25:8080/master';
+      var APIUrl = 'http://178.62.239.25:8080/n3';
       req.url = APIUrl + req.url;
 
       // if user has a session, add it to request
