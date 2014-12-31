@@ -434,7 +434,7 @@ public class Post {
    */
   public Post getCommentsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "Select Users.username, Users.name, Users.firstName, Comments.content, Comments.date, Comments.id From " + DBConnector.DATABASE + ".Comments "
+    String sqlQuery = "Select Users.username, Users.name, Users.firstName, Users.email, Comments.content, Comments.date, Comments.id From " + DBConnector.DATABASE + ".Comments "
           + "JOIN " + DBConnector.DATABASE + ".Posts ON Posts.id = Comments.postID "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Comments.authorID "
           + "WHERE Posts.id = " + this.id;
@@ -445,7 +445,8 @@ public class Post {
       this.comments.put(new SimpleEntry<User,Integer>(new User()
         .setUsername(commentsTable.getString("username"))
         .setName(commentsTable.getString("name"))
-        .setFirstName(commentsTable.getString("firstName")),
+        .setFirstName(commentsTable.getString("firstName"))
+        .setEmail(commentsTable.getString("email")),
         commentsTable.getInt("id")), 
         new SimpleEntry<String,Date>(
             commentsTable.getString("content"),
@@ -460,8 +461,10 @@ public class Post {
   /**
    * Gets comments as Json
    * @return 
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public JsonValue getCommentsAsJson() {
+  public JsonValue getCommentsAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder commentList = Json.createArrayBuilder();
     for (Entry<SimpleEntry<User,Integer>,SimpleEntry<String,Date>> comment : this.comments.entrySet()) {
       commentList.add(Json.createObjectBuilder()
@@ -469,7 +472,8 @@ public class Post {
           .add("author", Json.createObjectBuilder()
               .add("username", comment.getKey().getKey().getUsername())
               .add("lastname", comment.getKey().getKey().getName())
-              .add("firstname", comment.getKey().getKey().getFirstName()))
+              .add("firstname", comment.getKey().getKey().getFirstName())
+              .add("emailhash", User.md5(comment.getKey().getKey().getEmail())))
           .add("content", comment.getValue().getKey())
           );
     }

@@ -1001,6 +1001,7 @@ public class User {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT id, content, visibility, date, "
         + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Posts.id) as comments, "
         + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
         + "WHERE Votes.voterID = " + lookingUser.getId() + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
         + "WHERE authorID="+ this.id + " AND ownerID=0";
@@ -1016,7 +1017,8 @@ public class User {
         .setAuthor(this)
         .setPostDate(postsTable.getTimestamp("date"))
         .setNumberOfUpVotes(postsTable.getInt("votes"))
-        .setDidIVote(postsTable.getInt("didIVote") >= 1));
+        .setDidIVote(postsTable.getInt("didIVote") >= 1)
+        .setNumberOfComments(postsTable.getInt("comments")));
     }
     return this.posts;
   }
@@ -1047,7 +1049,7 @@ public class User {
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
           + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
           + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Comments.id) as comments, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Posts.id) as comments, "
           + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.voterID = ? AND Votes.postID = Posts.id) as didIVote "
           + "FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Friends ON Friends.friendID = Posts.authorID "
@@ -1118,7 +1120,7 @@ public class User {
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
           + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
           + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Comments.id) as comments, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Posts.id) as comments, "
           + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.voterID = ? AND Votes.postID = Posts.id) as didIVote "
           + "FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
