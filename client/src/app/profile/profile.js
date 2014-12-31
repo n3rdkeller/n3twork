@@ -61,7 +61,7 @@
           vm.loadingFriends = false;
         });
         vm.loadingPosts = true;
-        PostSvc.getPostList(vm.userdata.id).then(function (postList) {
+        PostSvc.getPostList({ 'userID': vm.userdata.id }).then(function (postList) {
           vm.postlist = postList;
           vm.loadingPosts = false;
         }, function (error) {
@@ -93,7 +93,7 @@
             // error
           });
           vm.loadingPosts = true;
-          getPostList(vm.userdata.id).then(function (postList) {
+          PostSvc.getPostList({ 'userID': vm.userdata.id }).then(function (postList) {
             vm.postlist = postList;
             vm.loadingPosts = false;
           }, function (error) {
@@ -113,7 +113,7 @@
       PostSvc.newPost('userID', $rootScope.userdata.id, vm.newPostText, vm.newPostPrivate).then(function (successful) {
         vm.newPostLoading = false;
         resetNewPostForm();
-        getPostList(vm.userdata.id).then(function (postList) {
+        PostSvc.getPostList({ 'userID': vm.userdata.id }).then(function (postList) {
           vm.postlist = postList;
         }, function (error) {
           // error
@@ -137,7 +137,7 @@
         data: { 'id': postID }
       }).then(function (response) {
         if (response.data.successful) {
-          getPostList(vm.userdata.id).then(function (postList) {
+          PostSvc.getPostList({ 'userID': vm.userdata.id }).then(function (postList) {
             vm.postlist = postList;
             vm.removePostButtonLoading[postID] = false;
             vm.removeButtonConfirmation[postID] = false;
@@ -183,7 +183,7 @@
     function voteAction (postID, didIVote) {
       vm.voteButtonLoading[postID] = true;
       VoteSvc.voteAction(postID, didIVote).then(function (successful) {
-        getPostList(vm.userdata.id).then(function (postList) {
+        PostSvc.getPostList({ 'userID': vm.userdata.id }).then(function (postList) {
           vm.postlist = postList;
           vm.voteButtonLoading[postID] = false;
         }, function (error) {
