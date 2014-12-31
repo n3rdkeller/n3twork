@@ -12,8 +12,8 @@
     .module('n3twork.feed')
     .controller('FeedCtrl', FeedCtrl);
 
-  FeedCtrl.$inject = ['APISvc', 'VoteSvc', '$q', '$rootScope'];
-  function FeedCtrl(APISvc, VoteSvc, $q, $rootScope) {
+  FeedCtrl.$inject = ['APISvc', 'PostSvc', 'VoteSvc', '$q', '$rootScope'];
+  function FeedCtrl(APISvc, PostSvc, VoteSvc, $q, $rootScope) {
     var vm = this;
 
     vm.showVotes = showVotes;
@@ -48,6 +48,7 @@
       }).then(function (response) {
         deferred.resolve(response.data.postList);
       }, function (error) {
+        vm.errorOccured = true;
         deferred.reject(error);
       });
 
@@ -56,28 +57,15 @@
 
     function newPost() {
       vm.newPostLoading = true;
-      APISvc.request({
-        method: 'POST',
-        url: '/post/add',
-        data: {
-          'userID': $rootScope.userdata.id,
-          'post': {
-            'content': vm.newPostText,
-            'private': vm.newPostPrivate
-          }
-        }
-      }).then(function (response) {
-        vm.newPostLoading = false;
-        if (response.data.successful) {
-          resetNewPostForm();
-          getFeed().then(function (postList) {
-            vm.postlist = postList;
-          }, function (error) {
-            // error
-          });
-        } else {
+      PostSvc.newPost('userID', $rootScope.userdata.id, vm.newPostText, vm.newPostPrivate).then(function (successful) {
+        resetNewPostForm();
+        getFeed().then(function (postList) {
+          vm.postlist = postList;
+          vm.newPostLoading = false;
+        }, function (error) {
           // error
-        }
+          vm.newPostLoading = false;
+        });
       }, function (error) {
         // error
         vm.newPostLoading = false;
@@ -91,24 +79,14 @@
 
     function removePost (postID) {
       vm.removePostButtonLoading[postID] = true;
-      APISvc.request({
-        method: 'POST',
-        url: '/post/delete',
-        data: { 'id': postID }
-      }).then(function (response) {
-        if (response.data.successful) {
-          getFeed().then(function (postList) {
-            vm.postlist = postList;
-            vm.removePostButtonLoading[postID] = false;
-            vm.removeButtonConfirmation[postID] = false;
-          }, function (error) {
-            // error
-          });
-        } else {
+      PostSvc.removePost(postID).then(function (successful) {
+        getFeed().then(function (postList) {
+          vm.postlist = postList;
           vm.removePostButtonLoading[postID] = false;
           vm.removeButtonConfirmation[postID] = false;
-          // error deleting the post
-        }
+        }, function (error) {
+          // error
+        });
       }, function (error) {
         // error deleting the post
         vm.removePostButtonLoading[postID] = false;

@@ -12,9 +12,9 @@
     .module('n3twork.profile')
     .controller('ProfileCtrl', ProfileCtrl);
 
-  ProfileCtrl.$inject = ['APISvc', 'CacheSvc', 'VoteSvc', '$q', '$rootScope', '$routeParams'];
+  ProfileCtrl.$inject = ['APISvc', 'CacheSvc', 'PostSvc', 'VoteSvc', '$q', '$rootScope', '$routeParams'];
 
-  function ProfileCtrl(APISvc, CacheSvc, VoteSvc, $q, $rootScope, $routeParams) {
+  function ProfileCtrl(APISvc, CacheSvc, PostSvc, VoteSvc, $q, $rootScope, $routeParams) {
     var vm = this;
 
     vm.friendAction = friendAction;
@@ -61,7 +61,7 @@
           vm.loadingFriends = false;
         });
         vm.loadingPosts = true;
-        getPostList(vm.userdata.id).then(function (postList) {
+        PostSvc.getPostList(vm.userdata.id).then(function (postList) {
           vm.postlist = postList;
           vm.loadingPosts = false;
         }, function (error) {
@@ -110,28 +110,14 @@
 
     function newPost() {
       vm.newPostLoading = true;
-      APISvc.request({
-        method: 'POST',
-        url: '/post/add',
-        data: {
-          'userID': vm.userdata.id,
-          'post': {
-            'content': vm.newPostText,
-            'private': vm.newPostPrivate
-          }
-        }
-      }).then(function (response) {
+      PostSvc.newPost('userID', $rootScope.userdata.id, vm.newPostText, vm.newPostPrivate).then(function (successful) {
         vm.newPostLoading = false;
-        if (response.data.successful) {
-          resetNewPostForm();
-          getPostList(vm.userdata.id).then(function (postList) {
-            vm.postlist = postList;
-          }, function (error) {
-            // error
-          });
-        } else {
+        resetNewPostForm();
+        getPostList(vm.userdata.id).then(function (postList) {
+          vm.postlist = postList;
+        }, function (error) {
           // error
-        }
+        });
       }, function (error) {
         // error
         vm.newPostLoading = false;
