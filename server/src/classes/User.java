@@ -1185,7 +1185,7 @@ public class User {
             .setContent(messageTable.getString("content"))
             .setRead(messageTable.getBoolean("read"))
             .setSendDate(messageTable.getTimestamp("date"))
-            .setNumberOfRecievers(messageTable.getInt("receivers"))
+            .setNumberOfReceivers(messageTable.getInt("receivers"))
             .setSender(new User(messageTable.getInt("uid"))
                 .setUsername(messageTable.getString("username"))
                 .setName(messageTable.getString("name"))
@@ -1197,7 +1197,21 @@ public class User {
     return this.messages;
   }
 
-  public User sendMessage(Message Message) {
+  public User sendMessage(Message message) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, authorID) VALUES(?,?)";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+    pStmt.setString(1, message.getContent());
+    pStmt.setInt(2, message.getSender().getId());
+    int id = pStmt.executeUpdate();
+    sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Receiver(messageID,receiverID) VALUES(?,?)";
+    for(User receiver: message.getReceiver()) {
+      pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setInt(1, id);
+      pStmt.setInt(2, receiver.getId());
+      pStmt.execute();
+    }
+    conn.close();
     return this;
   }
 

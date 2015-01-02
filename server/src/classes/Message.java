@@ -22,8 +22,8 @@ public class Message {
   
   private int id;
   private User sender;
-  private List<User> reciever = new ArrayList<User>();
-  private int numberOfRecievers;
+  private List<User> receiver = new ArrayList<User>();
+  private int numberOfReceivers;
   private String content;
   private Date sendDate;
   private Map<User,Boolean> readList = new HashMap<User,Boolean>();
@@ -47,7 +47,7 @@ public class Message {
    *        "email":"email",
    *        "emailhash":"emailhash"
    *      }
-   *      "numberOfRecievers":0,
+   *      "numberOfReceivers":0,
    *      "content":"content",
    *      "date":123412312123,
    *      "read":true,
@@ -74,7 +74,7 @@ public class Message {
               .add("firstname", message.getSender().getFirstName())
               .add("email", message.getSender().getEmail())
               .add("emailhash", User.md5(message.getSender().getEmail().toLowerCase())))
-          .add("numberOfRecievers", message.getNumberOfRecievers())
+          .add("numberOfReceivers", message.getNumberOfReceivers())
           .add("content", message.getContent())
           .add("date", message.getSendDate().getTime())
           .add("read", message.getRead())
@@ -117,21 +117,21 @@ public class Message {
     return this;
   }
 
-  public List<User> getReciever() {
-    return this.reciever;
+  public List<User> getReceiver() {
+    return this.receiver;
   }
   
-  public Message setReciever(List<User> reciever) {
-    this.reciever = reciever;
+  public Message setReceiver(List<User> receiver) {
+    this.receiver = receiver;
     return this;
   }
   
-  public int getNumberOfRecievers() {
-    return this.numberOfRecievers;
+  public int getNumberOfReceivers() {
+    return this.numberOfReceivers;
   }
   
-  public Message setNumberOfRecievers( int numberOfRecievers) {
-    this.numberOfRecievers = numberOfRecievers;
+  public Message setNumberOfReceivers( int numberOfReceivers) {
+    this.numberOfReceivers = numberOfReceivers;
     return this;
   }
 

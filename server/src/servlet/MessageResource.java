@@ -104,9 +104,37 @@ public class MessageResource {
     }
   }
   
-  @POST @Path("/")
+  @OPTIONS @Path("/send")
+  public Response corsSendMessage() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code>{
+   *  "fuck"
+   * @return
+   */
+  @POST @Path("/send")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response sendMessage(String jsonInput){
-    return null;
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/message returns:" + entity);
+        return Helper.okResponse(entity);
+      } 
+      String entity = String.valueOf(Message.convertMessageListToJson(user.getMessagesFromDB()));
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }
   }
 }
