@@ -61,8 +61,11 @@ public class Message {
    */
   public JsonValue convertMessageListToJson(List<Message> messageList) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder jsonMessageList = Json.createArrayBuilder();
+    List<User> senderList = new ArrayList<User>();
     for(Message message: messageList) {
-      if (message.getContent() == null) message.setContent("");
+      if(!senderList.contains(message.getSender())) {
+        senderList.add(message.getSender());
+      }
       JsonObjectBuilder jsonMessage = Json.createObjectBuilder()
           .add("sender", Json.createObjectBuilder()
               .add("id", message.getSender().getId())
@@ -78,8 +81,19 @@ public class Message {
           .add("id", message.getID());
       jsonMessageList.add(jsonMessage);
     }
+    JsonArrayBuilder jsonSender = Json.createArrayBuilder();
+    for(User sender: senderList) {
+      jsonSender.add(Json.createObjectBuilder()
+          .add("id", sender.getId())
+          .add("username", sender.getUsername())
+          .add("lastname", sender.getName())
+          .add("firstname", sender.getFirstName())
+          .add("email", sender.getEmail())
+          .add("emailhash", User.md5(sender.getEmail())));
+    }
     JsonObject output = Json.createObjectBuilder()
         .add("messageList", jsonMessageList)
+        .add("senderList", jsonSender)
         .add("successful", true)
         .build();
     log.debug(output);

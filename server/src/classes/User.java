@@ -1165,6 +1165,12 @@ public class User {
   public List<Message> getMessages() {
     return null;
   }
+  
+  public User getMessagesFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    
+    return this;
+  }
 
   public User sendMessage(Message Message) {
     return this;
