@@ -588,7 +588,8 @@ public class PostResource {
   /**
    * 
    * @param jsonInput <pre><code>{
-   *  "id":commentID,
+   *  "commentID":commentID,
+   *  "postID":postID,
    *  "session":"sessionID"
    *}</code></pre>
    * @return <pre><code> {
@@ -611,7 +612,7 @@ public class PostResource {
         return Helper.okResponse(entity);
       }
       Post post = new Post()
-          .removeComment(input.getInt("id"), user);
+          .removeComment(input.getInt("commentID"), input.getInt("postID"),user);
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());

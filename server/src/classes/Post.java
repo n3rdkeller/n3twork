@@ -434,7 +434,7 @@ public class Post {
    */
   public Post getCommentsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "Select Users.username, Users.name, Users.firstName, Users.email, Comments.content, Comments.date, Comments.id From " + DBConnector.DATABASE + ".Comments "
+    String sqlQuery = "Select Users.id as userid, Users.username, Users.name, Users.firstName, Users.email, Comments.content, Comments.date, Comments.id From " + DBConnector.DATABASE + ".Comments "
           + "JOIN " + DBConnector.DATABASE + ".Posts ON Posts.id = Comments.postID "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Comments.authorID "
           + "WHERE Posts.id = " + this.id;
@@ -442,7 +442,7 @@ public class Post {
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     ResultSet commentsTable = pStmt.executeQuery();
     while (commentsTable.next()) {
-      this.comments.put(new SimpleEntry<User,Integer>(new User()
+      this.comments.put(new SimpleEntry<User,Integer>(new User(commentsTable.getInt("userid"))
         .setUsername(commentsTable.getString("username"))
         .setName(commentsTable.getString("name"))
         .setFirstName(commentsTable.getString("firstName"))
@@ -470,11 +470,13 @@ public class Post {
       commentList.add(Json.createObjectBuilder()
           .add("date", comment.getValue().getValue().getTime())
           .add("author", Json.createObjectBuilder()
+              .add("id", comment.getKey().getKey().getId())
               .add("username", comment.getKey().getKey().getUsername())
               .add("lastname", comment.getKey().getKey().getName())
               .add("firstname", comment.getKey().getKey().getFirstName())
               .add("emailhash", User.md5(comment.getKey().getKey().getEmail())))
           .add("content", comment.getValue().getKey())
+          .add("id", comment.getKey().getValue())
           );
     }
     JsonObject voteUps = Json.createObjectBuilder()
@@ -514,13 +516,22 @@ public class Post {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public Post removeComment(int commentID, User author) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Post removeComment(int commentID, int postID, User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
+    List<ArrayList<String>> idList = DBConnector.selectQuery(conn, "SELECT Posts.authorID FROM " + DBConnector.DATABASE + ".Posts "
+        + "JOIN `n3twork-dev`.Comments on Comments.postID=Posts.id WHERE Comments.id=" + commentID);
+    if(idList.get(1).contains(Integer.toString(user.getId()))) {
+      String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Comments WHERE id=?";
+      PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setInt(1, commentID);
+      pStmt.execute();
+    }
     String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Comments WHERE id=? AND authorID=?";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, commentID);
-    pStmt.setInt(2, author.getId());
+    pStmt.setInt(2, user.getId());
     pStmt.execute();
+    conn.close();
     return this;
   }
 }
