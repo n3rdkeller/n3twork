@@ -32,6 +32,7 @@ import classes.Message;
  * @author johannes
  *
  */
+@Path("/message")
 public class MessageResource {
   final static Logger log = LogManager.getLogger(PostResource.class);
   
@@ -45,11 +46,40 @@ public class MessageResource {
   }
   
   /**
-   * Post request to get posts. Only public post if user is no true friend.
-   * @param jsonInput <pre><code> {
-   * }
-   * @return <pre><code> {
-   * } </code></pre>
+   * Post request to get messages
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID"
+   *}
+   * @return <pre><code>{
+   *  "messageList": [
+   *    {
+   *      "id":0,
+   *      "content":"somecontent",
+   *      "date":1234,
+   *      "read":true,
+   *      "numberOfRecievers":1,
+   *      "sender": {
+   *        "id":0,
+   *        "username":"adsf",
+   *        "firstname":"Ad",
+   *        "lastname":"Sf",
+   *        "email":"em@il",
+   *        "emailhash":"hashisch"
+   *      }
+   *    }
+   *  ],
+   *  "senderList":[
+   *    {
+   *      "id":0,
+   *      "username":"adsf",
+   *      "firstname":"Ad",
+   *      "lastname":"Sf",
+   *      "email":"em@il",
+   *      "emailhash":"hashisch"
+   *    }
+   *  ],
+   *  "successful":true  
+   *} </code></pre>
    */
   @POST @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -63,13 +93,20 @@ public class MessageResource {
             .add("successful", false)
             .add("reason", "SessionID invalid")
             .build());
-        log.debug("/post returns:" + entity);
+        log.debug("/message returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      return null;
+      String entity = String.valueOf(Message.convertMessageListToJson(user.getMessagesFromDB()));
+      return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
       return Helper.errorResponse(e);
     }
+  }
+  
+  @POST @Path("/")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response sendMessage(String jsonInput){
+    return null;
   }
 }

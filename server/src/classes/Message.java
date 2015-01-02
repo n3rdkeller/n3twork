@@ -59,7 +59,7 @@ public class Message {
    * @throws NoSuchAlgorithmException
    * @throws UnsupportedEncodingException
    */
-  public JsonValue convertMessageListToJson(List<Message> messageList) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+  public static JsonValue convertMessageListToJson(List<Message> messageList) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder jsonMessageList = Json.createArrayBuilder();
     List<User> senderList = new ArrayList<User>();
     for(Message message: messageList) {
@@ -178,8 +178,8 @@ public class Message {
     return this;
   }
   
-  public Message setRead() {
-    this.read = !this.read;
+  public Message setRead(Boolean read) {
+    this.read = read;
     return this;
   }
 }

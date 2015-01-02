@@ -1163,13 +1163,38 @@ public class User {
   }
 
   public List<Message> getMessages() {
-    return null;
+    return this.messages;
   }
   
-  public User getMessagesFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public List<Message> getMessagesFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    
-    return this;
+    String sqlQuery = "SELECT Messages.id as mid, Messages.content, Messages.date, Receiver.read, Receiver.deleted, "
+        + "Users.id as uid, Users.username, Users.name, Users.firstName, Users.email, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Receiver WHERE Receiver.messageID = Messages.id) as receivers "
+        + "FROM " + DBConnector.DATABASE + ".Messages "
+        + "JOIN " + DBConnector.DATABASE + ".Receiver ON Receiver.messageID=Messages.id "
+        + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Messages.authorID "
+        + "WHERE Receiver.receiverID=?";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    ResultSet messageTable = pStmt.executeQuery();
+    while(messageTable.next()) {
+      if(!messageTable.getBoolean("deleted")) {
+        this.messages.add(new Message()
+            .setID(messageTable.getInt("mid"))
+            .setContent(messageTable.getString("content"))
+            .setRead(messageTable.getBoolean("read"))
+            .setSendDate(messageTable.getTimestamp("date"))
+            .setNumberOfRecievers(messageTable.getInt("receivers"))
+            .setSender(new User(messageTable.getInt("uid"))
+                .setUsername(messageTable.getString("username"))
+                .setName(messageTable.getString("name"))
+                .setFirstName(messageTable.getString("firstName"))
+                .setEmail(messageTable.getString("email"))));
+      }
+    }
+    conn.close();
+    return this.messages;
   }
 
   public User sendMessage(Message Message) {
