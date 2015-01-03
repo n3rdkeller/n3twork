@@ -38,7 +38,7 @@
         <!-- New Post Form -->
         <li class="media" ng-hide="group.groupData.id == 1 && (userdata.id != 45 && userdata.id != 47) || !group.isMember">
           <div class="media-left">
-            <i class="fa fa-3x fa-fw fa-globe" title="In groups you can only post public."></i>
+            <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=128 2x">
           </div>
           <div class="media-body full-width">
             <form role="form" name="newPostForm">
@@ -69,10 +69,25 @@
                 <i class="fa fa-fw" ng-class="{ 'fa-thumbs-o-up': !group.voteButtonLoading[post.id], 'fa-spin fa-spinner': group.voteButtonLoading[post.id] }"></i>
               </button>
               <button role="button" class="btn btn-xs btn-default" ng-show="post.numberOfVotes > 0" ng-click="group.showVotes(post.id)">
-                {{ post.numberOfVotes }} votes
+                <span ng-hide="group.voteButtonLoading[post.id]" ng-bind="post.numberOfVotes"></span><i ng-show="group.voteButtonLoading[post.id]" class="fa fa-spinner fa-spin text-muted"></i> <i class="fa fa-thumbs-o-up fa-fw"></i>
+              </button>
+              <button role="button" class="btn btn-xs btn-default" style="min-width: 38px;" ng-click="group.commentAction(post.id, post.numberOfComments)" ng-disabled="group.commentsLoading[post.id]">
+                <span ng-hide="group.commentsLoading[post.id] || group.showComments[post.id]">
+                  <span ng-hide="post.numberOfComments == 0" ng-bind="post.numberOfComments + '  '"></span>
+                  <i ng-show="post.numberOfComments == 0" class="fa fa-caret-down"></i>
+                  <i class="fa fa-comments-o"></i>
+                </span>
+                <span ng-show="group.commentsLoading[post.id]">
+                  <i class="fa fa-spinner fa-spin"></i>
+                  <i class="fa fa-comments-o"></i>
+                </span>
+                <span ng-show="group.showComments[post.id] && !group.commentsLoading[post.id]">
+                  <i class="fa fa-caret-up"></i>
+                  <i class="fa fa-comments-o"></i>
+                </span>
               </button>
               <small ng-bind="post.postDate | convertToDate" class="text-muted padding-left"></small>
-              <i class="fa fa-fw text-muted" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
+              <i class="fa fa-fw text-muted fa-globe" title="Public"></i>
               <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="group.removeButtonConfirmation[post.id] || (userdata.id != post.author.id)" ng-click="group.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
               <span ng-show="group.removeButtonConfirmation[post.id]" class="small text-muted no-padding-left">Confirm deletion:</span>
               <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="group.removeButtonConfirmation[post.id]" ng-click="group.removePost(post.id)" ng-disabled="group.removePostButtonLoading[post.id]">
@@ -83,6 +98,53 @@
                 <i class="fa fa-fw fa-remove text-muted"></i>
               </button>
             </div>
+            <!-- Comment-List -->
+            <ul class="media-list three-quarter-width" ng-show="group.showComments[post.id] && !group.commentsLoading[post.id]">
+              <hr class="margin-top">
+              <!-- New comment section -->
+              <li class="media">
+                <div class="media-left">
+                  <img width="42px" ng-src="http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=42" ng-srcset="http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=42 1x, http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=84 2x">
+                </div>
+                <div class="media-body full-width">
+                  <form role="form" name="{{ 'newCommentForm' + post.id }}">
+                    <fieldset ng-disabled="group.newCommentLoading[post.id] || !group.isMember">
+                      <textarea required ng-model="group.newCommentText[post.id]" rows="2" class="form-control" placeholder="{{ group.isMember ? 'Comment this post here!' : 'You must be a member of this group to comment here!' }}"></textarea>
+                      <button type="button" class="btn btn-warning btn-xs small-margin-top no-margin-bottom pull-right" ng-click="group.newComment(post.id)" ng-disabled="{{ 'newCommentForm' + post.id }}.$invalid" ng-show="group.isMember">
+                        <span ng-show="group.newCommentLoading[post.id]"><i class="fa fa-spinner fa-spin"></i> Commenting</span>
+                        <span ng-hide="group.newCommentLoading[post.id]"><i class="fa fa-fw fa-comment-o"></i> Comment</span>
+                      </button>
+                    </fieldset>
+                  </form>
+                </div>
+              </li>
+              <hr class="margin-top" ng-hide="post.numberOfComments == 0">
+              <!-- Actual comment-list -->
+              <li class="media" ng-repeat="comment in post.comments | orderBy: 'date':true">
+                <a class="media-left" ng-href="#/user/{{ comment.author.username }}">
+                  <img width="42px" ng-src="http://www.gravatar.com/avatar/{{ comment.author.emailhash }}?d=mm&s=42" ng-srcset="http://www.gravatar.com/avatar/{{ comment.author.emailhash }}?d=mm&s=42 1x, http://www.gravatar.com/avatar/{{ comment.author.emailhash }}?d=mm&s=84 2x">
+                </a>
+                <div class="media-body">
+                  <h5 class="media-heading">
+                    <a ng-href="#/user/{{ comment.author.username }}" ng-bind="(comment.author.firstname ? comment.author.firstname : comment.author.username) + (comment.author.lastname ? ' ' + comment.author.lastname : '')"></a>
+                  </h5>
+                  <span ng-bind="comment.content"></span><br>
+                  <small class="text-muted">
+                    <span title="{{ comment.date | convertToDate }}" ng-bind="comment.date | convertToAgo"></span>
+                    <i class="fa fa-globe fa-fw text-muted" title="Can be seen by all users that can see this post."></i>
+                    <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="group.removeCommentButtonConfirmation[comment.id] || ((userdata.id != post.author.id) && (userdata.id != comment.author.id))" ng-click="group.removeCommentButtonConfirmation[comment.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
+                    <span ng-show="group.removeCommentButtonConfirmation[comment.id]" class="text-muted no-padding-left">Confirm deletion:</span>
+                    <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="group.removeCommentButtonConfirmation[comment.id]" ng-click="group.removeComment(comment.id, post.id)" ng-disabled="group.removeCommentButtonLoading[comment.id]">
+                      <span ng-hide="group.removeCommentButtonLoading[comment.id]"><i class="fa fa-fw fa-check text-muted"></i></span>
+                      <span ng-show="group.removeCommentButtonLoading[comment.id]"><i class="fa fa-fw fa-spin fa-spinner text-muted"></i></span>
+                    </button>
+                    <button role="button" class="btn btn-xs btn-link neg-margin" ng-show="group.removeCommentButtonConfirmation[comment.id] && !group.removeCommentButtonLoading[comment.id]" ng-click="group.removeCommentButtonConfirmation[comment.id] = false">
+                      <i class="fa fa-fw fa-remove text-muted"></i>
+                    </button>
+                  </small>
+                </div>
+              </li>
+            </ul>
           </div>
           <hr class="margin-top">
         </li>
