@@ -108,9 +108,9 @@
                 </div>
                 <div class="media-body full-width">
                   <form role="form" name="{{ 'newCommentForm' + post.id }}">
-                    <fieldset ng-disabled="group.newCommentLoading[post.id]">
-                      <textarea required ng-model="group.newCommentText[post.id]" rows="2" class="form-control" placeholder="Comment this post here!"></textarea>
-                      <button type="button" class="btn btn-warning btn-xs small-margin-top no-margin-bottom pull-right" ng-click="group.newComment(post.id)" ng-disabled="{{ 'newCommentForm' + post.id }}.$invalid">
+                    <fieldset ng-disabled="group.newCommentLoading[post.id] || !group.isMember">
+                      <textarea required ng-model="group.newCommentText[post.id]" rows="2" class="form-control" placeholder="{{ group.isMember ? 'Comment this post here!' : 'You must be a member of this group to comment here!' }}"></textarea>
+                      <button type="button" class="btn btn-warning btn-xs small-margin-top no-margin-bottom pull-right" ng-click="group.newComment(post.id)" ng-disabled="{{ 'newCommentForm' + post.id }}.$invalid" ng-show="group.isMember">
                         <span ng-show="group.newCommentLoading[post.id]"><i class="fa fa-spinner fa-spin"></i> Commenting</span>
                         <span ng-hide="group.newCommentLoading[post.id]"><i class="fa fa-fw fa-comment-o"></i> Comment</span>
                       </button>
