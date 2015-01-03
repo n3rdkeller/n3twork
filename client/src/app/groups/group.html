@@ -38,7 +38,7 @@
         <!-- New Post Form -->
         <li class="media" ng-hide="group.groupData.id == 1 && (userdata.id != 45 && userdata.id != 47) || !group.isMember">
           <div class="media-left">
-            <i class="fa fa-3x fa-fw fa-globe" title="In groups you can only post public."></i>
+            <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=128 2x">
           </div>
           <div class="media-body full-width">
             <form role="form" name="newPostForm">
@@ -72,7 +72,7 @@
                 {{ post.numberOfVotes }} votes
               </button>
               <small ng-bind="post.postDate | convertToDate" class="text-muted padding-left"></small>
-              <i class="fa fa-fw text-muted" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
+              <i class="fa fa-fw text-muted fa-globe" title="Public"></i>
               <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="group.removeButtonConfirmation[post.id] || (userdata.id != post.author.id)" ng-click="group.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
               <span ng-show="group.removeButtonConfirmation[post.id]" class="small text-muted no-padding-left">Confirm deletion:</span>
               <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="group.removeButtonConfirmation[post.id]" ng-click="group.removePost(post.id)" ng-disabled="group.removePostButtonLoading[post.id]">
