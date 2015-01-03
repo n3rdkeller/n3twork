@@ -56,7 +56,6 @@
 
   <!-- POSTS -->
   <div class="col-sm-8 clearfix" ng-hide="profile.loadingPosts || profile.loadingUserData">
-    <!-- Post List -->
     <ul class="media-list">
       <!-- New Post Form -->
       <li class="media" ng-show="profile.itsMe">
@@ -78,6 +77,7 @@
         </div>
       </li>
       <hr class="margin-top" ng-show="profile.itsMe">
+      <!-- Actual Post-List -->
       <li class="media" ng-repeat="post in profile.postlist | orderBy: 'postDate':true">
         <div class="media-left">
           <i class="fa fa-3x fa-fw" ng-class="{ 'fa-globe': !post.private, 'fa-lock': post.private }" title="{{ (post.private ? 'Private' : 'Public') }}"></i>
@@ -89,7 +89,22 @@
               <i class="fa fa-fw" ng-class="{ 'fa-thumbs-o-up': !profile.voteButtonLoading[post.id], 'fa-spin fa-spinner': profile.voteButtonLoading[post.id] }"></i>
             </button>
             <button role="button" class="btn btn-xs btn-default" ng-show="post.numberOfVotes > 0" ng-click="profile.showVotes(post.id)">
-              {{ post.numberOfVotes }} votes
+              <span ng-hide="profile.voteButtonLoading[post.id]" ng-bind="post.numberOfVotes"></span><i ng-show="profile.voteButtonLoading[post.id]" class="fa fa-spinner fa-spin text-muted"></i> <i class="fa fa-thumbs-o-up fa-fw"></i>
+            </button>
+            <button role="button" class="btn btn-xs btn-default" style="min-width: 38px;" ng-click="profile.commentAction(post.id, post.numberOfComments)" ng-disabled="profile.commentsLoading[post.id]">
+              <span ng-hide="profile.commentsLoading[post.id] || profile.showComments[post.id]">
+                <span ng-hide="post.numberOfComments == 0" ng-bind="post.numberOfComments + '  '"></span>
+                <i ng-show="post.numberOfComments == 0" class="fa fa-caret-down"></i>
+                <i class="fa fa-comments-o"></i>
+              </span>
+              <span ng-show="profile.commentsLoading[post.id]">
+                <i class="fa fa-spinner fa-spin"></i>
+                <i class="fa fa-comments-o"></i>
+              </span>
+              <span ng-show="profile.showComments[post.id] && !profile.commentsLoading[post.id]">
+                <i class="fa fa-caret-up"></i>
+                <i class="fa fa-comments-o"></i>
+              </span>
             </button>
             <small ng-bind="post.postDate | convertToDate" class="text-muted padding-left"></small>
             <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="profile.removeButtonConfirmation[post.id] || !profile.itsMe" ng-click="profile.removeButtonConfirmation[post.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
@@ -100,6 +115,53 @@
             </button>
             <button role="button" class="btn btn-xs btn-link neg-margin" ng-show="profile.removeButtonConfirmation[post.id] && !profile.removePostButtonLoading[post.id]" ng-click="profile.removeButtonConfirmation[post.id] = false"><i class="fa fa-fw fa-remove text-muted"></i></button>
           </div>
+          <!-- Comment-List -->
+          <ul class="media-list three-quarter-width" ng-show="profile.showComments[post.id] && !profile.commentsLoading[post.id]">
+            <hr class="margin-top">
+            <!-- New comment section -->
+            <li class="media">
+              <div class="media-left">
+                <img width="42px" ng-src="http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=42" ng-srcset="http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=42 1x, http://www.gravatar.com/avatar/{{ userdata.emailhash }}?d=mm&s=84 2x">
+              </div>
+              <div class="media-body full-width">
+                <form role="form" name="{{ 'newCommentForm' + post.id }}">
+                  <fieldset ng-disabled="profile.newCommentLoading[post.id]">
+                    <textarea required ng-model="profile.newCommentText[post.id]" rows="2" class="form-control" placeholder="Comment this post here!"></textarea>
+                    <button type="button" class="btn btn-warning btn-xs small-margin-top no-margin-bottom pull-right" ng-click="profile.newComment(post.id)" ng-disabled="{{ 'newCommentForm' + post.id }}.$invalid">
+                      <span ng-show="profile.newCommentLoading[post.id]"><i class="fa fa-spinner fa-spin"></i> Commenting</span>
+                      <span ng-hide="profile.newCommentLoading[post.id]"><i class="fa fa-fw fa-comment-o"></i> Comment</span>
+                    </button>
+                  </fieldset>
+                </form>
+              </div>
+            </li>
+            <hr class="margin-top" ng-hide="post.numberOfComments == 0">
+            <!-- Actual comment-list -->
+            <li class="media" ng-repeat="comment in post.comments | orderBy: 'date':true">
+              <a class="media-left" ng-href="#/user/{{ comment.author.username }}">
+                <img width="42px" ng-src="http://www.gravatar.com/avatar/{{ comment.author.emailhash }}?d=mm&s=42" ng-srcset="http://www.gravatar.com/avatar/{{ comment.author.emailhash }}?d=mm&s=42 1x, http://www.gravatar.com/avatar/{{ comment.author.emailhash }}?d=mm&s=84 2x">
+              </a>
+              <div class="media-body">
+                <h5 class="media-heading">
+                  <a ng-href="#/user/{{ comment.author.username }}" ng-bind="(comment.author.firstname ? comment.author.firstname : comment.author.username) + (comment.author.lastname ? ' ' + comment.author.lastname : '')"></a>
+                </h5>
+                <span ng-bind="comment.content"></span><br>
+                <small class="text-muted">
+                  <span title="{{ comment.date | convertToDate }}" ng-bind="comment.date | convertToAgo"></span>
+                  <i class="fa fa-globe fa-fw text-muted" title="Can be seen by all users that can see this post."></i>
+                  <button role="button" class="btn btn-link btn-xs neg-margin no-padding-left" ng-hide="profile.removeCommentButtonConfirmation[comment.id] || (!profile.itsMe && (userdata.id != comment.author.id))" ng-click="profile.removeCommentButtonConfirmation[comment.id] = true"><i class="fa fa-fw fa-remove text-muted"></i></button>
+                  <span ng-show="profile.removeCommentButtonConfirmation[comment.id]" class="text-muted no-padding-left">Confirm deletion:</span>
+                  <button role="button" class="btn btn-link btn-xs neg-margin" ng-show="profile.removeCommentButtonConfirmation[comment.id]" ng-click="profile.removeComment(comment.id, post.id)" ng-disabled="profile.removeCommentButtonLoading[comment.id]">
+                    <span ng-hide="profile.removeCommentButtonLoading[comment.id]"><i class="fa fa-fw fa-check text-muted"></i></span>
+                    <span ng-show="profile.removeCommentButtonLoading[comment.id]"><i class="fa fa-fw fa-spin fa-spinner text-muted"></i></span>
+                  </button>
+                  <button role="button" class="btn btn-xs btn-link neg-margin" ng-show="profile.removeCommentButtonConfirmation[comment.id] && !profile.removeCommentButtonLoading[comment.id]" ng-click="profile.removeCommentButtonConfirmation[comment.id] = false">
+                    <i class="fa fa-fw fa-remove text-muted"></i>
+                  </button>
+                </small>
+              </div>
+            </li>
+          </ul>
         </div>
         <hr>
       </li>

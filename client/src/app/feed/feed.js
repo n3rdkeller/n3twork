@@ -27,7 +27,7 @@
     vm.newComment = newComment;
     vm.removeComment = removeComment;
 
-    // new post
+    // post
     vm.newPostPrivate = false;
     vm.removePostButtonLoading = {};
     vm.removeButtonConfirmation = {};
@@ -185,7 +185,7 @@
           vm.removeCommentButtonLoading[commentID] = false;
         });
       }, function (error) {
-        // error deleting the post
+        // error deleting the comment
         vm.removeCommentButtonConfirmation[commentID] = false;
         vm.removeCommentButtonLoading[commentID] = false;
       });

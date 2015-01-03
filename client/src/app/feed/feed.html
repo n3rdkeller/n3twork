@@ -40,7 +40,7 @@
             <i class="fa fa-fw" ng-class="{ 'fa-thumbs-o-up': !feed.voteButtonLoading[post.id], 'fa-spin fa-spinner': feed.voteButtonLoading[post.id] }"></i>
           </button>
           <button role="button" class="btn btn-xs btn-default" ng-show="post.numberOfVotes > 0" ng-click="feed.showVotes(post.id)">
-            <span ng-hide="feed.voteButtonLoading[post.id]" ng-bind="post.numberOfVotes"></span><i ng-show="feed.voteButtonLoading[post.id]" class="fa fa-spinner fa-spin text-muted fa-flip-horizontal"></i> <i class="fa fa-thumbs-o-up fa-fw"></i>
+            <span ng-hide="feed.voteButtonLoading[post.id]" ng-bind="post.numberOfVotes"></span><i ng-show="feed.voteButtonLoading[post.id]" class="fa fa-spinner fa-spin text-muted"></i> <i class="fa fa-thumbs-o-up fa-fw"></i>
           </button>
           <button role="button" class="btn btn-xs btn-default" style="min-width: 38px;" ng-click="feed.commentAction(post.id, post.numberOfComments)" ng-disabled="feed.commentsLoading[post.id]">
             <span ng-hide="feed.commentsLoading[post.id] || feed.showComments[post.id]">
