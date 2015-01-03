@@ -43,7 +43,7 @@
           <div class="media-body full-width">
             <form role="form" name="newPostForm">
               <fieldset ng-disabled="group.newPostLoading">
-                <textarea required autofocus ng-model="group.newPostText" rows="3" class="form-control input-lg" placeholder="Post something here!"></textarea>
+                <textarea required label-warning ng-model="group.newPostText" rows="3" class="form-control input-lg" placeholder="Post something here!"></textarea>
                 <button type="button" class="btn btn-warning small-margin-top no-margin-bottom pull-right" ng-click="group.newPost()" ng-disabled="newPostForm.$invalid">
                   <span ng-show="group.newPostLoading"><i class="fa fa-spinner fa-spin"></i> Posting</span>
                   <span ng-hide="group.newPostLoading"><i class="fa fa-fw fa-paper-plane-o"></i> Post</span>
