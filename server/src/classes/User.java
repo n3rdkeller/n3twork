@@ -1174,9 +1174,10 @@ public class User {
         + "FROM " + DBConnector.DATABASE + ".Messages "
         + "JOIN " + DBConnector.DATABASE + ".Receiver ON Receiver.messageID=Messages.id "
         + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Messages.authorID "
-        + "WHERE Receiver.receiverID=?";
+        + "WHERE Receiver.receiverID=? OR Messages.authorID=?";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
+    pStmt.setInt(2, this.id);
     ResultSet messageTable = pStmt.executeQuery();
     while(messageTable.next()) {
       if(!messageTable.getBoolean("deleted")) {
@@ -1204,11 +1205,17 @@ public class User {
     pStmt.setString(1, message.getContent());
     pStmt.setInt(2, message.getSender().getId());
     int id = pStmt.executeUpdate();
-    sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Receiver(messageID,receiverID) VALUES(?,?)";
     for(User receiver: message.getReceiver()) {
+      sqlQuery = "SELECT id FROM " + DBConnector.DATABASE + ".Users WHERE username LIKE ?";
+      pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setString(1, receiver.getUsername());
+      ResultSet idTable = pStmt.executeQuery();
+      idTable.next();
+      int receiverID = idTable.getInt("id");
+      sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Receiver(messageID,receiverID) VALUES(?,?)";
       pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setInt(1, id);
-      pStmt.setInt(2, receiver.getId());
+      pStmt.setInt(2, receiverID);
       pStmt.execute();
     }
     conn.close();

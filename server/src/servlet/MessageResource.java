@@ -112,7 +112,7 @@ public class MessageResource {
   /**
    * 
    * @param jsonInput <pre><code>{
-   *  "fuck"
+   *  
    * @return
    */
   @POST @Path("/send")
@@ -130,8 +130,7 @@ public class MessageResource {
         log.debug("/message returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      String entity = String.valueOf(Message.convertMessageListToJson(user.getMessagesFromDB()));
-      return Helper.okResponse(entity);
+      return Helper.okResponse("");
     } catch(Exception e) {
       log.error(e);
       return Helper.errorResponse(e);
