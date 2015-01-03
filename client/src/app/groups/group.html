@@ -26,7 +26,7 @@
     </ul>
     <p ng-hide="group.loadingMembers || (group.memberCount < 6)" class="margin-top">
       <span ng-bind="::group.memberList.length" class="label label-warning"></span>
-      <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/group/{{ ::group.groupData.id }}/members">More</a>
+      <i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/group/{{ ::group.groupData.id }}/members">Members</a>
     </p>
     <h3 class="text-center" ng-show="group.loadingMembers"><i class="fa fa-spinner fa-spin"></i></h3>
     <hr>

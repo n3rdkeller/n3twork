@@ -34,7 +34,7 @@
       <li ng-show="profile.itsMe && (profile.grouplist.length == 0)" class="bigger-text"><strong><i class="fa-li fa fa-frown-o"></i></strong>You are in no groups yet.</li>
     </ul>
     <p ng-hide="profile.grouplist.length == 0 || profile.loadingGroups" class="margin-top">
-      <span ng-bind="::profile.grouplist.length" class="label label-warning"></span><i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/groups">More</a>
+      <span ng-bind="::profile.grouplist.length" class="label label-warning"></span><i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/groups">Groups</a>
     </p>
     <h3 class="text-center" ng-show="profile.loadingGroups"><i class="fa fa-spinner fa-spin"></i></h3>
     <!-- Friends -->
@@ -44,7 +44,7 @@
       <li ng-show="profile.itsMe && (profile.friendlist.length == 0)" class="bigger-text"><strong><i class="fa-li fa fa-frown-o"></i></strong>You don't have any friends.</li>
     </ul>
     <p ng-hide="(profile.friendlist.length == 0) || profile.loadingFriends" class="margin-top">
-      <span ng-bind="::profile.friendlist.length" class="label label-warning"></span><i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/friends">More</a>
+      <span ng-bind="::profile.friendlist.length" class="label label-warning"></span><i class="fa fa-fw fa-sort-down fa-rotate-270"></i><a ng-href="#/user/{{ ::profile.userdata.username }}/friends">Friends</a>
     </p>
     <h3 class="text-center" ng-show="profile.loadingFriends"><i class="fa fa-spinner fa-spin"></i></h3>
     <hr>
