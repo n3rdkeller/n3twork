@@ -12,9 +12,9 @@
     .module('n3twork.profile')
     .controller('ProfileCtrl', ProfileCtrl);
 
-  ProfileCtrl.$inject = ['APISvc', 'CacheSvc', 'PostSvc', 'VoteSvc', '$q', '$rootScope', '$routeParams'];
+  ProfileCtrl.$inject = ['APISvc', 'CacheSvc', 'PostSvc', 'VoteSvc', 'CommentSvc', '$q', '$rootScope', '$routeParams'];
 
-  function ProfileCtrl(APISvc, CacheSvc, PostSvc, VoteSvc, $q, $rootScope, $routeParams) {
+  function ProfileCtrl(APISvc, CacheSvc, PostSvc, VoteSvc, CommentSvc, $q, $rootScope, $routeParams) {
     var vm = this;
 
     // friends
