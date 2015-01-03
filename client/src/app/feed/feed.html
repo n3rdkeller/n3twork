@@ -31,7 +31,7 @@
         <h4 class="media-heading">
           <a ng-href="#/user/{{ post.author.username }}" ng-bind="(post.author.firstname ? post.author.firstname : post.author.username) + (post.author.lastname ? ' ' + post.author.lastname : '')"></a>
           <span ng-show="post.owner.id != 0">
-           in <i class="fa fa-users"></i> <a ng-href="#/group/{{ post.owner.id }}" ng-bind="post.owner.name"></a>:
+           in <span class="text-nowrap"><i class="fa fa-users"></i> <a ng-href="#/group/{{ post.owner.id }}" ng-bind="post.owner.name"></a>:</span>
           </span>
         </h4>
         <span ng-bind-html="post.content | parsePost"></span><br>
