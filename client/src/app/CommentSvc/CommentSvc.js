@@ -57,14 +57,15 @@
       return deferred.promise;
     }
 
-    function removeComment (commentID) {
+    function removeComment (commentID, postID) {
       var deferred = $q.defer();
 
       APISvc.request({
         method: 'POST',
         url: '/post/comment/remove',
         data: {
-          'id': commentID,
+          'commentID': commentID,
+          'postID': postID
         }
       }).then(function (response) {
         if (response.data.successful) {
