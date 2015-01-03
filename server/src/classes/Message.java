@@ -1,6 +1,11 @@
 package classes;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,6 +103,38 @@ public class Message {
         .build();
     log.debug(output);
     return output;
+  }
+
+  public Message sendMessage() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, authorID) VALUES(?,?)";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+    pStmt.setString(1, this.getContent());
+    pStmt.setInt(2, this.getSender().getId());
+    int id = pStmt.executeUpdate();
+    for(User receiver: this.getReceiver()) {
+      sqlQuery = "SELECT id FROM " + DBConnector.DATABASE + ".Users WHERE username LIKE ?";
+      pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setString(1, receiver.getUsername());
+      ResultSet idTable = pStmt.executeQuery();
+      idTable.next();
+      int receiverID = idTable.getInt("id");
+      sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Receiver(messageID,receiverID) VALUES(?,?)";
+      pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setInt(1, id);
+      pStmt.setInt(2, receiverID);
+      pStmt.execute();
+    }
+    conn.close();
+    return this;
+  }
+
+  public void deleteMessage() {
+
+  }
+
+  public void readMessage() {
+
   }
   
   public int getID() {
