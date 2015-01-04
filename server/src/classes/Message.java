@@ -129,12 +129,24 @@ public class Message {
     return this;
   }
 
-  public void deleteMessage() {
-
+  public Message deleteMessage(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receiver SET deleted = 1 WHERE receiverID = ?";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, receiver.getId());
+    pStmt.execute();
+    conn.close();
+    return this;
   }
 
-  public void readMessage() {
-
+  public Message readMessage(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receiver SET read = 1 WHERE receiverID = ?";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, receiver.getId());
+    pStmt.execute();
+    conn.close();
+    return this;
   }
   
   public int getID() {

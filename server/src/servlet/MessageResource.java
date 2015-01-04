@@ -10,6 +10,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.Consumes;
@@ -112,8 +113,17 @@ public class MessageResource {
   /**
    * 
    * @param jsonInput <pre><code>{
-   *  
-   * @return
+   *  "session":"sessionID",
+   *  "content":"asdfasdf",
+   *  "receiverList":[
+   *    {
+   *      "username":"username"
+   *    },
+   *  ]
+   *}</code></pre>
+   * @return <pre><code>{
+   *  "successful":true
+   *}</code></pre>
    */
   @POST @Path("/send")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -130,7 +140,20 @@ public class MessageResource {
         log.debug("/message returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      return Helper.okResponse("");
+      JsonArray JsonReceiver = input.getJsonArray("receiverList");
+      List<User> receiver = new ArrayList<User>();
+      for (int i = 0; i < JsonReceiver.size(); i++){
+        receiver.add(new User().setUsername(JsonReceiver.getString(i)));
+      }
+      Message message = new Message()
+        .setContent(input.getString("content"))
+        .setSender(user)
+        .setReceiver(receiver)
+        .sendMessage();
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("successful", true)
+          .build());
+      return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
       return Helper.errorResponse(e);
