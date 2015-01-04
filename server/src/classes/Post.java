@@ -520,7 +520,7 @@ public class Post {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> idList = DBConnector.selectQuery(conn, "SELECT Posts.authorID FROM " + DBConnector.DATABASE + ".Posts "
         + "JOIN `n3twork-dev`.Comments on Comments.postID=Posts.id WHERE Comments.id=" + commentID);
-    if(idList.get(1).contains(Integer.toString(user.getId()))) {
+    if(idList.size() == 2 && idList.get(1).contains(Integer.toString(user.getId()))) {
       String sqlQuery = "DELETE FROM " + DBConnector.DATABASE + ".Comments WHERE id=?";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setInt(1, commentID);

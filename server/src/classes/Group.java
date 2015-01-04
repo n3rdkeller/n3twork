@@ -492,7 +492,7 @@ public class Group {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT Posts.id as postid, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
         + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
-        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Comments.id) as comments, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Posts.id) as comments, "
         + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.voterID = ? AND Votes.postID = Posts.id) as didIVote "
         + "FROM " + DBConnector.DATABASE + ".Posts "
         + "JOIN " + DBConnector.DATABASE + ".Users ON Posts.authorID = Users.id "
