@@ -38,11 +38,7 @@ public class UserResource {
    */
   @OPTIONS @Path("/settings")
   public Response corsUpdateUserSettings() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
+     return Helper.optionsResponse();
   }
   
   /**
