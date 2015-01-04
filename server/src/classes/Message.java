@@ -1,17 +1,10 @@
 package classes;
+
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -26,18 +19,10 @@ public class Message {
   final static Logger log = LogManager.getLogger(Message.class);
   
   private int id;
-  private User sender;
-  private List<User> receiver = new ArrayList<User>();
-  private int numberOfReceivers;
   private String content;
   private Date sendDate;
-  private Map<User,Boolean> readList = new HashMap<User,Boolean>();
+  private User sender;
   private Boolean read;
-
-  public Message() {
-    //empty
-  }
-
   /**
    * 
    * @param messageList
@@ -52,7 +37,6 @@ public class Message {
    *        "email":"email",
    *        "emailhash":"emailhash"
    *      }
-   *      "numberOfReceivers":0,
    *      "content":"content",
    *      "date":123412312123,
    *      "read":true,
@@ -79,73 +63,22 @@ public class Message {
               .add("firstname", message.getSender().getFirstName())
               .add("email", message.getSender().getEmail())
               .add("emailhash", User.md5(message.getSender().getEmail().toLowerCase())))
-          .add("numberOfReceivers", message.getNumberOfReceivers())
           .add("content", message.getContent())
           .add("date", message.getSendDate().getTime())
           .add("read", message.getRead())
           .add("id", message.getID());
       jsonMessageList.add(jsonMessage);
     }
-    JsonArrayBuilder jsonSender = Json.createArrayBuilder();
-    for(User sender: senderList) {
-      jsonSender.add(Json.createObjectBuilder()
-          .add("id", sender.getId())
-          .add("username", sender.getUsername())
-          .add("lastname", sender.getName())
-          .add("firstname", sender.getFirstName())
-          .add("email", sender.getEmail())
-          .add("emailhash", User.md5(sender.getEmail())));
-    }
     JsonObject output = Json.createObjectBuilder()
         .add("messageList", jsonMessageList)
-        .add("senderList", jsonSender)
         .add("successful", true)
         .build();
     log.debug(output);
     return output;
   }
 
-  public Message sendMessage() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, authorID) VALUES(?,?)";
-    PreparedStatement pStmt = conn.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
-    pStmt.setString(1, this.getContent());
-    pStmt.setInt(2, this.getSender().getId());
-    int id = pStmt.executeUpdate();
-    for(User receiver: this.getReceiver()) {
-      sqlQuery = "SELECT id FROM " + DBConnector.DATABASE + ".Users WHERE username LIKE ?";
-      pStmt = conn.prepareStatement(sqlQuery);
-      pStmt.setString(1, receiver.getUsername());
-      ResultSet idTable = pStmt.executeQuery();
-      idTable.next();
-      int receiverID = idTable.getInt("id");
-      sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Receiver(messageID,receiverID) VALUES(?,?)";
-      pStmt = conn.prepareStatement(sqlQuery);
-      pStmt.setInt(1, id);
-      pStmt.setInt(2, receiverID);
-      pStmt.execute();
-    }
-    conn.close();
-    return this;
-  }
-
-  public Message deleteMessage(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receiver SET deleted = 1 WHERE receiverID = ?";
-    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    pStmt.setInt(1, receiver.getId());
-    pStmt.execute();
-    conn.close();
-    return this;
-  }
-
-  public Message readMessage(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receiver SET read = 1 WHERE receiverID = ?";
-    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    pStmt.setInt(1, receiver.getId());
-    pStmt.execute();
-    conn.close();
+  public Message setID(int id) {
+    this.id = id;
     return this;
   }
   
@@ -153,82 +86,41 @@ public class Message {
     return this.id;
   }
   
-  public Message setID(int id) {
-    this.id = id;
-    return this;
-  }
-  public User getSender() {
-    return this.sender;
-  }
-  
-  public Message setSender(User sender) {
-    this.sender = sender;
-    return this;
-  }
-
-  public List<User> getReceiver() {
-    return this.receiver;
-  }
-  
-  public Message setReceiver(List<User> receiver) {
-    this.receiver = receiver;
-    return this;
-  }
-  
-  public int getNumberOfReceivers() {
-    return this.numberOfReceivers;
-  }
-  
-  public Message setNumberOfReceivers( int numberOfReceivers) {
-    this.numberOfReceivers = numberOfReceivers;
-    return this;
-  }
-
-  public String getContent() {
-    if (this.content == null) {
-      return "";
-    }
-    return this.content;
-  }
-  
   public Message setContent(String content) {
     this.content = content;
     return this;
   }
-
-  public Date getSendDate() {
-    return this.sendDate;
+  
+  public String getContent() {
+    if(this.content == null) return "";
+    return this.content;
   }
   
   public Message setSendDate(Date sendDate) {
     this.sendDate = sendDate;
     return this;
   }
-
-  public Map<User,Boolean> getReadList() {
-    return this.readList;
+  
+  public Date getSendDate() {
+    return this.sendDate;
   }
   
-  public Message setReadList(Map<User,Boolean> readList) {
-    this.readList = readList;
+  public Message setSender(User sender) { 
+    this.sender = sender;
     return this;
   }
-
-  public Boolean getRead() {
-    return read;
-  }
- 
-  public Message setRead(User user) {
-    for (Entry<User,Boolean> entry : this.readList.entrySet()) {
-      if (entry.getKey().getId() == user.getId()) {
-        entry.setValue(!entry.getValue());
-      }
-    }
-    return this;
+  
+  public User getSender() { 
+    return this.sender;
   }
   
   public Message setRead(Boolean read) {
     this.read = read;
     return this;
+  }
+  
+  public Boolean getRead() {
+    if(this.read == null) return true;
+    return this.read;
   }
 }

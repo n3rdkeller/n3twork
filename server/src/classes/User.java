@@ -41,7 +41,7 @@ public class User {
   private Map<User,SimpleEntry<Long,Boolean>> friendRequests = new HashMap<User,SimpleEntry<Long,Boolean>>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
-  private List<Message> messages = new ArrayList<Message>();
+  private List<Conversation> conversations = new ArrayList<Conversation>();
   
   /**
    * Old constructor for login and registration. Used for testing
@@ -371,12 +371,11 @@ public class User {
     }
     
     if (!userList.next()) {
-      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,usernameWithCase,email,password) VALUES(?,?,?,?)";
+      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(?,?,?)";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
       pStmt.setString(1, this.username);
-      pStmt.setString(2, this.username);
-      pStmt.setString(3, this.email);
-      pStmt.setString(4, this.password);
+      pStmt.setString(2, this.email);
+      pStmt.setString(3, this.password);
       log.debug(pStmt);
       pStmt.executeUpdate();
       ResultSet ids = pStmt.getGeneratedKeys();
@@ -1162,40 +1161,68 @@ public class User {
     return postList;
   }
 
-  public List<Message> getMessages() {
-    return this.messages;
+  public List<Conversation> getConversations() {
+    return this.conversations;
   }
   
-  public List<Message> getMessagesFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public List<Conversation> getConversationsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "SELECT Messages.id as mid, Messages.content, Messages.date, Receiver.read, Receiver.deleted, "
-        + "Users.id as uid, Users.username, Users.name, Users.firstName, Users.email, "
-        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Receiver WHERE Receiver.messageID = Messages.id) as receivers "
-        + "FROM " + DBConnector.DATABASE + ".Messages "
-        + "JOIN " + DBConnector.DATABASE + ".Receiver ON Receiver.messageID=Messages.id "
-        + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Messages.authorID "
-        + "WHERE Receiver.receiverID=? OR Messages.authorID=?";
+    String sqlQuery = "select Conversations.id, Conversations.name, "
+        + "Users.username, Users.name as lastName, Users.firstName, Users.email FROM Conversations "
+        + "JOIN Receivers ON Receivers.conversationID = Conversations.id "
+        + "JOIN Users ON Receivers.receiverID = Users.id "
+        + "WHERE Conversations.id IN (select Conversations.id FROM Conversations "
+          + "JOIN Receivers ON Receivers.conversationID = Conversations.id "
+          + "WHERE Receivers.receiverID = ? AND Receivers.deleted sqlQuery= 0);";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
-    pStmt.setInt(2, this.id);
     ResultSet messageTable = pStmt.executeQuery();
+    Conversation con = new Conversation();
+    List<User> receivers = new ArrayList<User>();
     while(messageTable.next()) {
-      if(!messageTable.getBoolean("deleted")) {
-        this.messages.add(new Message()
-            .setID(messageTable.getInt("mid"))
-            .setContent(messageTable.getString("content"))
-            .setRead(messageTable.getBoolean("read"))
-            .setSendDate(messageTable.getTimestamp("date"))
-            .setNumberOfReceivers(messageTable.getInt("receivers"))
-            .setSender(new User(messageTable.getInt("uid"))
-                .setUsername(messageTable.getString("username"))
-                .setName(messageTable.getString("name"))
-                .setFirstName(messageTable.getString("firstName"))
-                .setEmail(messageTable.getString("email"))));
+      if(con.getID() != messageTable.getInt("id")) {
+        if(receivers.size() != 0) {
+          // fix for empty name
+          if(con.getName() == "") {
+            String name = "";
+            for(int i = 0; i < receivers.size(); i++) {
+              if(i == receivers.size() - 1 ) {
+                if(receivers.get(i).getFirstName() == "") {
+                  name = name + receivers.get(i).getUsername();
+                } else if(receivers.get(i).getName() == "") {
+                  name = name + receivers.get(i).getFirstName();
+                } else {
+                  name = name + receivers.get(i).getFirstName() + " " + receivers.get(i).getName();
+                }
+              } else {
+                if(receivers.get(i).getFirstName() == "") {
+                  name = name + receivers.get(i).getUsername() + ", ";
+                } else if(receivers.get(i).getName() == "") {
+                  name = name + receivers.get(i).getFirstName() + ", ";
+                } else {
+                  name = name + receivers.get(i).getFirstName() + " " + receivers.get(i).getName() + ", ";
+                }
+              }
+            }
+            con.setName(name);
+          }
+          // fix for empty name end
+          this.conversations.add(con.setReceivers(receivers));
+        }
+        receivers = new ArrayList<User>();
+        con.setID(messageTable.getInt("id"))
+           .setName(messageTable.getString("name"));
       }
+      if(messageTable.getString("username") != this.username) {
+        receivers.add(new User()
+            .setUsername(messageTable.getString("username"))
+            .setName(messageTable.getString("lastName"))
+            .setFirstName(messageTable.getString("firstName"))
+            .setEmail("email"));
+      }      
     }
     conn.close();
-    return this.messages;
+    return this.conversations;
   }
   
 }
