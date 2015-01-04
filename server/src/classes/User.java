@@ -312,7 +312,7 @@ public class User {
       log.debug(pStmt);
       userTable = pStmt.executeQuery();
     } else {
-      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=? OR username=?";
+      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE id=? OR username LIKE ?";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setInt(1, this.id);
       pStmt.setString(2, this.username);
@@ -356,13 +356,13 @@ public class User {
   public Boolean registerInDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     ResultSet userList;
-    if(this.email.equals("") && this.username.equals("")) { // neither given //TODO make it work with null
+    if(this.email.equals("") && this.username.equals("")) { // neither given
       log.debug("neither username nor email are given");
       return false;
       
     } else {
       log.debug("logging in: " + this.username + " " + this.email);
-      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?";
+      String sqlQuery = "SELECT * FROM " + DBConnector.DATABASE + ".Users WHERE email LIKE ? OR username LIKE ?";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setString(1, this.email);
       pStmt.setString(2, this.username);
@@ -371,11 +371,12 @@ public class User {
     }
     
     if (!userList.next()) {
-      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(?,?,?)";
+      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,usernameWithCase,email,password) VALUES(?,?,?,?)";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
-      pStmt.setString(1, this.username.toLowerCase());
-      pStmt.setString(2, this.email.toLowerCase());
-      pStmt.setString(3, this.password);
+      pStmt.setString(1, this.username);
+      pStmt.setString(2, this.username);
+      pStmt.setString(3, this.email);
+      pStmt.setString(4, this.password);
       log.debug(pStmt);
       pStmt.executeUpdate();
       ResultSet ids = pStmt.getGeneratedKeys();
@@ -436,7 +437,7 @@ public class User {
     } else {
       log.debug("logging in: " + this.username + " " + this.email);
       PreparedStatement pStmt = conn.prepareStatement(
-          "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email=? OR username=?");
+          "SELECT id,password FROM " + DBConnector.DATABASE + ".Users WHERE email LIKE ? OR username LIKE ?");
       pStmt.setString(1, this.email);
       pStmt.setString(2, this.username);
       userList = pStmt.executeQuery();
@@ -924,7 +925,7 @@ public class User {
             + "JOIN " + DBConnector.DATABASE + ".Users "
             + "ON Members.memberID=Users.id "
             + "WHERE Users.id=?"
-            + " OR Users.username=?");
+            + " OR Users.username LIKE ?");
     pStmt.setInt(1, this.id);
     pStmt.setString(2, this.username);
     ResultSet groupTable = pStmt.executeQuery();
@@ -1000,6 +1001,7 @@ public class User {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT id, content, visibility, date, "
         + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Posts.id) as comments, "
         + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
         + "WHERE Votes.voterID = " + lookingUser.getId() + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
         + "WHERE authorID="+ this.id + " AND ownerID=0";
@@ -1015,7 +1017,8 @@ public class User {
         .setAuthor(this)
         .setPostDate(postsTable.getTimestamp("date"))
         .setNumberOfUpVotes(postsTable.getInt("votes"))
-        .setDidIVote(postsTable.getInt("didIVote") >= 1));
+        .setDidIVote(postsTable.getInt("didIVote") >= 1)
+        .setNumberOfComments(postsTable.getInt("comments")));
     }
     return this.posts;
   }
@@ -1046,14 +1049,17 @@ public class User {
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
           + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
           + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
-          + "WHERE Votes.voterID = " + this.id + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Posts.id) as comments, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.voterID = ? AND Votes.postID = Posts.id) as didIVote "
+          + "FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Friends ON Friends.friendID = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
-          + "WHERE Friends.userID = " + this.id + " AND Posts.ownerID = 0";
+          + "WHERE Friends.userID = ? AND Posts.ownerID = 0";
     log.debug(sqlQuery);
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, this.id);
     ResultSet UserPostsTable = pStmt.executeQuery();
     
     List<ArrayList<String>> friendRequestsTable = DBConnector.selectQuery(conn, 
@@ -1084,7 +1090,8 @@ public class User {
                 UserPostsTable.getString("name"),
                 UserPostsTable.getString("firstName")))
             .setNumberOfUpVotes(UserPostsTable.getInt("votes"))
-            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1));
+            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1)
+            .setNumberOfComments(UserPostsTable.getInt("comments")));
       } else if (!UserPostsTable.getBoolean("visibility")){
         // all public posts
         postList.add(new Post()
@@ -1101,7 +1108,8 @@ public class User {
                 UserPostsTable.getString("name"),
                 UserPostsTable.getString("firstName")))
             .setNumberOfUpVotes(UserPostsTable.getInt("votes"))
-            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1));
+            .setDidIVote(UserPostsTable.getInt("didIVote") >= 1)
+            .setNumberOfComments(UserPostsTable.getInt("comments")));
       }
     }
     
@@ -1112,14 +1120,17 @@ public class User {
           + "Users.id as userid, Users.username, Users.email, Users.name, Users.firstName, "
           + "Posts.id as postid, Posts.content, Posts.visibility, Posts.date, "
           + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.postID = Posts.id) as votes, "
-          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes "
-          + "WHERE Votes.voterID = " + this.id + " AND Votes.postID = Posts.id) as didIVote FROM " + DBConnector.DATABASE + ".Posts "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Comments WHERE Comments.postID = Posts.id) as comments, "
+          + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Votes WHERE Votes.voterID = ? AND Votes.postID = Posts.id) as didIVote "
+          + "FROM " + DBConnector.DATABASE + ".Posts "
           + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id = Posts.authorID "
           + "JOIN " + DBConnector.DATABASE + ".Groups ON Posts.ownerID = Groups.id "
           + "JOIN " + DBConnector.DATABASE + ".Members ON Members.groupID = Posts.ownerID "
-          + "WHERE Members.memberID = " + this.id;
+          + "WHERE Members.memberID = ?";
     log.debug(sqlQuery);
     pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    pStmt.setInt(2, this.id);
     ResultSet GroupPostsTable = pStmt.executeQuery();
     
     // read GroupPostsTable
@@ -1138,7 +1149,8 @@ public class User {
           GroupPostsTable.getString("name"),
           GroupPostsTable.getString("firstName")))
       .setNumberOfUpVotes(GroupPostsTable.getInt("votes"))
-      .setDidIVote(GroupPostsTable.getInt("didIVote") >= 1));
+      .setDidIVote(GroupPostsTable.getInt("didIVote") >= 1)
+      .setNumberOfComments(GroupPostsTable.getInt("comments")));
     }
     
     GroupPostsTable.close();
@@ -1151,10 +1163,55 @@ public class User {
   }
 
   public List<Message> getMessages() {
-    return null;
+    return this.messages;
+  }
+  
+  public List<Message> getMessagesFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "SELECT Messages.id as mid, Messages.content, Messages.date, Receiver.read, Receiver.deleted, "
+        + "Users.id as uid, Users.username, Users.name, Users.firstName, Users.email, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Receiver WHERE Receiver.messageID = Messages.id) as receivers "
+        + "FROM " + DBConnector.DATABASE + ".Messages "
+        + "JOIN " + DBConnector.DATABASE + ".Receiver ON Receiver.messageID=Messages.id "
+        + "JOIN " + DBConnector.DATABASE + ".Users ON Users.id=Messages.authorID "
+        + "WHERE Receiver.receiverID=?";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.id);
+    ResultSet messageTable = pStmt.executeQuery();
+    while(messageTable.next()) {
+      if(!messageTable.getBoolean("deleted")) {
+        this.messages.add(new Message()
+            .setID(messageTable.getInt("mid"))
+            .setContent(messageTable.getString("content"))
+            .setRead(messageTable.getBoolean("read"))
+            .setSendDate(messageTable.getTimestamp("date"))
+            .setNumberOfReceivers(messageTable.getInt("receivers"))
+            .setSender(new User(messageTable.getInt("uid"))
+                .setUsername(messageTable.getString("username"))
+                .setName(messageTable.getString("name"))
+                .setFirstName(messageTable.getString("firstName"))
+                .setEmail(messageTable.getString("email"))));
+      }
+    }
+    conn.close();
+    return this.messages;
   }
 
-  public User sendMessage(Message Message) {
+  public User sendMessage(Message message) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, authorID) VALUES(?,?)";
+    PreparedStatement pStmt = conn.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+    pStmt.setString(1, message.getContent());
+    pStmt.setInt(2, message.getSender().getId());
+    int id = pStmt.executeUpdate();
+    sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Receiver(messageID,receiverID) VALUES(?,?)";
+    for(User receiver: message.getReceiver()) {
+      pStmt = conn.prepareStatement(sqlQuery);
+      pStmt.setInt(1, id);
+      pStmt.setInt(2, receiver.getId());
+      pStmt.execute();
+    }
+    conn.close();
     return this;
   }
 

@@ -1,8 +1,8 @@
 <ul ng-controller="AuthCtrl as auth" class="nav navbar-nav navbar-right">
-  <li ng-show="auth.loginFailed && !auth.loadingLogin" id="loginFailedText" class="navbar-text text-danger">Login failed. Try again.</li>
+  <li ng-show="auth.loginFailed && !auth.loadingLogin" id="loginFailedText" class="navbar-text">Login failed. Try again.</li>
   <li ng-if="!loggedin" id="loginForm">
     <form name="loginForm" class="navbar-form" ng-submit="auth.login()" role="form" novalidate>
-      <div class="input-group" ng-class="{ 'has-error': auth.loginFailed && !auth.loadingLogin}">
+      <div class="input-group" ng-class="{ 'has-error': auth.loginFailed && !auth.loadingLogin }">
         <span class="input-group-addon">
           <i class="fa fa-user fa-fw"></i>
         </span>

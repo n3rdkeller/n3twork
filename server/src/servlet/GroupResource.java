@@ -6,6 +6,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -161,18 +162,10 @@ public class GroupResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for find
-   * @return Response with all needed headers
-   */
+
   @OPTIONS @Path("/find")
   public Response corsShowAllGroups() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
+    return Helper.optionsResponse();
   }
   
   /**
@@ -215,17 +208,9 @@ public class GroupResource {
     }
   }
   
-  /**
-   * Options request for count
-   * @return Response with all the needed headers
-   */
   @OPTIONS @Path("/count")
   public Response corsCountGroup() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
+    return Helper.optionsResponse();
   }
   
   /**

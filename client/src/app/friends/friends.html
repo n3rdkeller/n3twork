@@ -59,7 +59,11 @@
 </div>
 
 
-<div class="text-center" ng-show="friends.doesntexist">
+<div class="text-center" ng-show="friends.doesntexist && !friends.errorOccured">
   <h1><i class="fa fa-frown-o fa-4x"></i><br><br>Sorry, the user you were looking for does not exist.<br><br>And so do his friends.</h1>
+</div>
+
+<div class="text-center" ng-show="friends.errorOccured && !friends.doesntexist">
+  <h1><i class="fa fa-frown-o fa-4x"></i><br><br>An error occured, try to reload.</h1>
 </div>
 

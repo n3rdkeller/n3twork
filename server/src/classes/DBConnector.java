@@ -14,7 +14,7 @@ public class DBConnector {
 //  private static String URL = "jdbc:mysql://141.2.89.26";
 //  private static String USERNAME = "TEAM_2E";
 //  private static String PASSWORD = "n3rdkeller sind die besten"; // old: LcCN8HJR
-    public static String DATABASE = "`n3twork`";
+    public static String DATABASE = "`n3twork-dev`";
     private static String URL = "jdbc:mysql://10.133.251.251";
     private static String PASSWORD = "kekse sind voll n3rdig";
     private static String USERNAME = "n3twork";

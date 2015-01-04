@@ -7,8 +7,10 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -58,7 +60,7 @@ public class UserResource {
    *  "successful":true/false
    *}</pre></code>
    */
-  @POST @Path("/settings")
+  @PUT @Path("/settings")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response updateUserSettings(String jsonInput){
     try{
@@ -106,18 +108,10 @@ public class UserResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for find
-   * @return Response with all the needed headers
-   */
+
   @OPTIONS @Path("/find")
   public Response corsFindUser() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
+    return Helper.optionsResponse();
   }
   
   /**
@@ -169,22 +163,14 @@ public class UserResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for count
-   * @return Response with all the needed headers
-   */
+
   @OPTIONS @Path("/count")
   public Response corsCountUser() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
+    return Helper.optionsResponse();
   }
   
   /**
-   * Post Request to count user in db
+   * GET Request to count user in db
    * @param jsonInput <pre><code>{
    *  "session":"sessionID"
    *}</pre></code>
@@ -298,18 +284,10 @@ public class UserResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for remove
-   * @return Response with all the needed headers
-   */
+
   @OPTIONS @Path("/remove")
   public Response corsRemoveUser() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
+    return Helper.optionsResponse();
   }
   
   /**

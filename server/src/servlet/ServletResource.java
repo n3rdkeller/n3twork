@@ -113,18 +113,10 @@ public class ServletResource {
           .build();
     }
   }
-  
-  /**
-   * Options request for logout
-   * @return Response with all needed headers
-   */
+
   @OPTIONS @Path("/logout")
   public Response corsLogout() {
-     return Response.ok()
-         .header(Helper.ACCESSHEADER, "*")
-         .header("Access-Control-Allow-Methods", "POST, OPTIONS")
-         .header("Access-Control-Allow-Headers", "Content-Type")
-         .build();
+    return Helper.optionsResponse();
   }
   
   /**
@@ -253,7 +245,7 @@ public class ServletResource {
       String user = userAsJsonObject.getString("username");
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("username", user)
-          .add("taken", this.userList.contains(user))
+          .add("taken", this.userList.contains(user.toLowerCase()))
           .add("successful", true)
           .build());
       log.debug("/register/checkuser returns: " + entity);

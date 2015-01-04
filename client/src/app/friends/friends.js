@@ -34,6 +34,7 @@
             vm.loadingFriendRequests = false;
           }, function (error) {
             vm.loadingFriendRequests = false;
+            vm.errorOccured = true;
           });
         }
         CacheSvc.getFriendListOfUser(vm.userdata.id).then(function (friendList) {
@@ -41,6 +42,7 @@
           vm.loadingFriends = false;
         }, function (error) {
           vm.loadingFriends = false;
+          vm.errorOccured = true;
         });
       }, function (error) {
         vm.loadingFriends = false;

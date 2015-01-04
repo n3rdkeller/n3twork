@@ -5,23 +5,110 @@ This is the server side of our n3twork.
 We used `eclipse` to generate a `n3.war` we deployed on our Tomcat 8 Server.
 
 # n3twork API Quick Reference
-- [/user](#user)
-- [/user/remove](#userremove)
-- [/user/find](#userfind)
-- [/user/count](#usercount)
-- [/user/friends](#userfriends)
-- [/user/friendrequests](#userfriendrequests)
-- [/user/friend/add](#userfriendadd)
-- [/user/friend/remove](#userfriendremove)
-- [/user/groups](#usergroups)
-- [/user/group/join and /user/group/leave](#usergroupjoin-and-usergroupleave)
-- [/group/create](#groupfound)
-- [/group/show](#groupshow)
-- [/group/find](#groupfind)
-- [/group/count](#groupcount)
-- [/group/members](#groupmembers)
+- [POST /login](#login)
+- [POST /logout](#logout)
+- [POST /register](#register)
+- [GET /register/checkuser](#registercheckuser)
+- [GET /user](#user)
+- [PUT /user/settings](#usersettings)
+- [POST /user/remove](#userremove)
+- [GET /user/find](#userfind)
+- [GET /user/count](#usercount)
+- [GET /user/friends](#userfriends)
+- [GET /user/friendrequests](#userfriendrequests)
+- [POST /user/friend/add](#userfriendadd)
+- [POST /user/friend/remove](#userfriendremove)
+- [GET /user/groups](#usergroups)
+- [POST /user/group/join and POST /user/group/leave](#usergroupjoin-and-usergroupleave)
+- [POST /group/create](#groupfound)
+- [GET /group/show](#groupshow)
+- [GET /group/find](#groupfind)
+- [GET /group/count](#groupcount)
+- [GET /group/members](#groupmembers)
+- [GET /post](#post)
+- [GET /post/newsfeed](#postnewsfeed)
+- [GET /post/votes](#postvotes)
+- [POST /post/add](#postadd)
+- [PUT /post/update](#postupdate)
+- [POST /post/delete](#postdelete)
+- [POST /post/vote/add and POST /post/vote/remove](postvoteadd-and-postvoteremove)
+- [GET /post/comments](#postcomments)
+- [POST /post/comment/add](#postcommentadd)
+- [POST /post/comment/remove](#postcommentremove)
 
+#### /login
+##### POST
+in:
+``` json
+{
+    "login" : "username/email",
+    "password" : "pw in plain text"
+}
+```
+out:
+``` json
+{
+        "session":"sessionID",
+        "id":0,
+        "username":"username",
+        "email":"email",
+        "lastname":"last name",
+        "firstname":"first name",
+        "otherProperties":{
+            "propertie1":"value",
+            "propertie2":"value",
+    },
+    "successful":true
+}
+```
+#### /logout
+##### GET
+in:
+``` json
+{
+    "session" : "sessionID"
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /register
+##### POST
+in:
+``` json
+{
+    "email":"email@text",
+    "password":"pw as plain text",
+    "username":"usernametext"
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /register/checkuser
+##### POST
+in:
+``` json
+{
+    "username":"usernametext"
+}
+```
+out:
+``` json
+{
+    "username":"usernametext",
+    "taken":true false,
+    "successful":true
+}
+```
 #### /user
+##### POST
 in:
 ``` json
 {
@@ -43,6 +130,7 @@ out:
 }
 ```
 #### /user/remove
+##### GET
 in:
 ``` json
 {
@@ -56,13 +144,14 @@ out:
 }
 ```
 #### /user/find
+##### GET
 in:
 ``` json
 {
 "session":"sessionID"
 }
 ```
-out: 
+out:
 ``` json
 {
     "successful": true,
@@ -82,11 +171,12 @@ out:
             "lastname": "",
             "otherProperties": {},
             "username": "Tessa1337"
-        }, 
+        },
     ]
 }
 ```
 #### /user/count
+##### GET
 in:
 ``` json
 {
@@ -103,6 +193,7 @@ out:
 ```
 
 #### /user/friends
+##### POST
 in:
 ``` json
 {
@@ -137,10 +228,12 @@ out:
 }
 ```
 #### /user/friendrequests
+##### POST
 in:
 ``` json
 {
-    "session": "sessionID"
+    "session": "sessionID",
+    "id":45 "//userID: Optional (Wenn keine userID gegeben ist wird aktueller user genommen)"
 }
 ```
 out:
@@ -161,11 +254,12 @@ out:
 }
 ```
 #### /user/friend/add
+##### POST
 in:
 ``` json
 {
 	"session":"sessionID",
-	"friend":1337 
+	"friend":1337
 }
 ```
 out:
@@ -175,11 +269,12 @@ out:
 }
 ```
 #### /user/friend/remove
+##### POST
 in:
 ``` json
 {
 	"session":"sessionID",
-	"friend":1337 
+	"friend":1337
 }
 out:
 ``` json
@@ -188,6 +283,7 @@ out:
 }
 ```
 #### /user/groups
+##### POST
 in:
 ``` json
 {
@@ -209,6 +305,7 @@ out:
 }
 ```
 #### /user/group/join and /user/group/leave
+##### POST
 in:
 ``` json
 {
@@ -219,11 +316,12 @@ in:
 out:
 ``` json
 {
-    "successful": true 
+    "successful": true
     "//Bei join auch wenn der user schon Mitglied ist. Wird aber nicht 2x in der db registriert"
 }
 ```
 #### /group/create
+##### POST
 in:
 ``` json
 {
@@ -235,10 +333,11 @@ in:
 out:
 ``` json
 {
-    "successful": true 
+    "successful": true
 }
 ```
 #### /group/show
+##### POST
 in:
 ``` json
 {
@@ -282,12 +381,13 @@ out:
 }
 ```
 #### /group/count
+##### GET
 in:
 ``` json
 {
     "session": "sessionID"
 }
-``` 
+```
 out:
 ``` json
 {
@@ -295,13 +395,14 @@ out:
 }
 ```
 #### /group/members
+##### POST
 in:
 ``` json
 {
 	"session":"sessionID",
 	"group":1337
 }
-``` 
+```
 out:
 ``` json
 {
@@ -324,4 +425,198 @@ out:
     "successful": true
 }
 ```
+#### /post
+##### POST
+in:
+``` json
+{
+    "groupID":0, "//optional if given uses group"
+    "userID":0, "//optional if given uses user"
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "postList": [
+        {
+            "author":authorID number,
+            "content":"content text",
+            "id":postID number,
+            "owner":ownerID number,
+            "postDate":timestamp number,
+            "upVotes": [
+                {
+                    "date":timestamp number,
+                    "voter":voterID number
+                },
+            ],
+            "private":true/false
+        },
+    ],
+    "successful":true
+}
+```
+#### /post/newsfeed
+##### GET
+in:
+``` json
+{
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "postList": [
+        {
+            "author":authorID number,
+            "content":"content text",
+            "id":postID number,
+            "owner":ownerID number,
+            "postDate":timestamp number,
+            "upVotes": [
+                {
+                    "date":timestamp number,
+                    "voter":voterID number
+                },
+            ],
+            "private":true/false
+        },
+    ],
+    "successful":true
+}
+```
+#### /post/votes
+##### POST
+in:
+``` json
+{
+    "id":postID number,
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "voteList": [
+        {
+            "date":voteDate number,
+            "voter":{
+                "firstName":firstName text,
+                "name":name text,
+                "username":username text
+            }
+        },
+    ],
+    "successful":true
+}
+```
+#### /post/add
+##### POST
+in:
+``` json
+{
+    "groupID":0, "//optional if given uses group"
+    "userID":0, "//optional if given uses user"
+    "session":"sessionID",
+    "post": {
+        "content":"",
+        "private":true false
+    }
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /post/delete
+##### POST
+in:
+``` json
+{
+    "session":"sessionID",
+    "id":0 "//id of the doomed post"
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /post/vote/add and /post/vote/remove
+##### POST
+in:
+``` json
+{
+    "id":postID,
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /post/comments
+##### POST
+in:
+``` json
+{
+    "id":"postID",
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "commentList":[
+        {
+            "author":{
+                "firstname":"firstname text",
+                "lastname":"lastname text",
+                "username":"username text"
+            },
+            "content":"content text",
+            "date":0, "//comment date as unix timestamp"
+            "id":0 "//commentID"
+        },
+    ],
+    "successful":true
+}
+```
+#### /post/comment/add
+##### POST
+in:
+``` json
+{
+    "id":0, "//postID"
+    "content":"contentOfComment text",
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /post/comment/remove
+##### POST
+in:
+``` json
+{
+    "id":0, "//commentID"
+    "session":"sessionID"
 
+}
+```
+out:
+``` json
+{
+    "successful":true
+}

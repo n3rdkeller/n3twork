@@ -12,19 +12,35 @@
     .module('n3twork.feed')
     .controller('FeedCtrl', FeedCtrl);
 
-  FeedCtrl.$inject = ['APISvc', 'VoteSvc', '$q', '$rootScope'];
-  function FeedCtrl(APISvc, VoteSvc, $q, $rootScope) {
+  FeedCtrl.$inject = ['APISvc', 'PostSvc', 'VoteSvc', 'CommentSvc', '$q', '$rootScope'];
+  function FeedCtrl(APISvc, PostSvc, VoteSvc, CommentSvc, $q, $rootScope) {
     var vm = this;
 
+    // post
+    vm.newPost = newPost;
+    vm.removePost = removePost;
+    // vote
     vm.showVotes = showVotes;
     vm.voteAction = voteAction;
-    vm.removePost = removePost;
-    vm.newPost = newPost;
+    // comment
+    vm.commentAction = commentAction;
+    vm.newComment = newComment;
+    vm.removeComment = removeComment;
 
+    // post
     vm.newPostPrivate = false;
     vm.removePostButtonLoading = {};
     vm.removeButtonConfirmation = {};
+    // vote
     vm.voteButtonLoading = {};
+    // comments
+    vm.commentsLoading = {};
+    vm.showComments = {};
+    vm.newCommentForm = {};
+    vm.newCommentText = {};
+    vm.newCommentLoading = {};
+    vm.removeCommentButtonConfirmation = {};
+    vm.removeCommentButtonLoading = {};
 
     init();
 
@@ -48,6 +64,7 @@
       }).then(function (response) {
         deferred.resolve(response.data.postList);
       }, function (error) {
+        vm.errorOccured = true;
         deferred.reject(error);
       });
 
@@ -56,28 +73,15 @@
 
     function newPost() {
       vm.newPostLoading = true;
-      APISvc.request({
-        method: 'POST',
-        url: '/post/add',
-        data: {
-          'userID': $rootScope.userdata.id,
-          'post': {
-            'content': vm.newPostText,
-            'private': vm.newPostPrivate
-          }
-        }
-      }).then(function (response) {
-        vm.newPostLoading = false;
-        if (response.data.successful) {
-          resetNewPostForm();
-          getFeed().then(function (postList) {
-            vm.postlist = postList;
-          }, function (error) {
-            // error
-          });
-        } else {
+      PostSvc.newPost('userID', $rootScope.userdata.id, vm.newPostText, vm.newPostPrivate).then(function (successful) {
+        resetNewPostForm();
+        getFeed().then(function (postList) {
+          vm.postlist = postList;
+          vm.newPostLoading = false;
+        }, function (error) {
           // error
-        }
+          vm.newPostLoading = false;
+        });
       }, function (error) {
         // error
         vm.newPostLoading = false;
@@ -91,24 +95,14 @@
 
     function removePost (postID) {
       vm.removePostButtonLoading[postID] = true;
-      APISvc.request({
-        method: 'POST',
-        url: '/post/delete',
-        data: { 'id': postID }
-      }).then(function (response) {
-        if (response.data.successful) {
-          getFeed().then(function (postList) {
-            vm.postlist = postList;
-            vm.removePostButtonLoading[postID] = false;
-            vm.removeButtonConfirmation[postID] = false;
-          }, function (error) {
-            // error
-          });
-        } else {
+      PostSvc.removePost(postID).then(function (successful) {
+        getFeed().then(function (postList) {
+          vm.postlist = postList;
           vm.removePostButtonLoading[postID] = false;
           vm.removeButtonConfirmation[postID] = false;
-          // error deleting the post
-        }
+        }, function (error) {
+          // error
+        });
       }, function (error) {
         // error deleting the post
         vm.removePostButtonLoading[postID] = false;
@@ -131,6 +125,69 @@
         });
       }, function (error) {
         // error
+      });
+    }
+
+
+    function commentAction (postID, numberOfComments) {
+      vm.showComments[postID] = !vm.showComments[postID];
+      if (numberOfComments != 0) {
+        vm.commentsLoading[postID] = true;
+        if (vm.showComments[postID]) {
+          CommentSvc.getCommentList(postID).then(function (commentList) {
+              vm.commentsLoading[postID] = false;
+              addCommentsToPost(commentList, postID);
+            }, function (error) {
+              vm.commentsLoading[postID] = false;
+            });
+        } else {
+          vm.commentsLoading[postID] = false;
+        }
+      }
+    }
+
+    function addCommentsToPost (commentList, postID) {
+      for (var i = 0; i < vm.postlist.length; i++) {
+        if (vm.postlist[i].id == postID) {
+          vm.postlist[i].comments = commentList;
+          vm.postlist[i].numberOfComments = commentList.length;
+        }
+      };
+    }
+
+    function newComment (postID) {
+      vm.newCommentLoading[postID] = true;
+      CommentSvc.newComment(postID, vm.newCommentText[postID]).then(function (successful) {
+        CommentSvc.getCommentList(postID).then(function (commentList) {
+            addCommentsToPost(commentList, postID);
+            vm.newCommentLoading[postID] = false;
+            resetNewCommentForm(postID);
+          }, function (error) {
+            vm.newCommentLoading[postID] = false;
+          });
+      }, function (error) {
+        vm.newCommentLoading[postID] = false;
+      });
+    }
+
+    function resetNewCommentForm (postID) {
+      vm.newCommentText[postID] = "";
+    }
+
+    function removeComment (commentID, postID) {
+      vm.removeCommentButtonLoading[commentID] = true;
+      CommentSvc.removeComment(commentID, postID).then(function (successful) {
+        CommentSvc.getCommentList(postID).then(function (commentList) {
+          addCommentsToPost(commentList, postID);
+          vm.removeCommentButtonConfirmation[commentID] = false;
+          vm.removeCommentButtonLoading[commentID] = false;
+        }, function (error) {
+          vm.removeCommentButtonLoading[commentID] = false;
+        });
+      }, function (error) {
+        // error deleting the comment
+        vm.removeCommentButtonConfirmation[commentID] = false;
+        vm.removeCommentButtonLoading[commentID] = false;
       });
     }
 
