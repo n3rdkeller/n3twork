@@ -34,7 +34,7 @@ import classes.Message;
  *
  */
 @Path("/message")
-public class MessageResource {
+public class ConversationResource {
   final static Logger log = LogManager.getLogger(PostResource.class);
   
   /**

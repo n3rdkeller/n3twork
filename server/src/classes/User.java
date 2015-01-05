@@ -486,6 +486,11 @@ public class User {
   public int getId() {
     return this.id;
   }
+
+  public User setId(int id) {
+    this.id = id;
+    return this;    
+  }
   
   /**
    * Simple getter for the attribute name
@@ -1183,29 +1188,29 @@ public class User {
       if(con.getID() != messageTable.getInt("id")) {
         if(receivers.size() != 0) {
           // fix for empty name
-          if(con.getName() == "") {
-            String name = "";
-            for(int i = 0; i < receivers.size(); i++) {
-              if(i == receivers.size() - 1 ) {
-                if(receivers.get(i).getFirstName() == "") {
-                  name = name + receivers.get(i).getUsername();
-                } else if(receivers.get(i).getName() == "") {
-                  name = name + receivers.get(i).getFirstName();
-                } else {
-                  name = name + receivers.get(i).getFirstName() + " " + receivers.get(i).getName();
-                }
-              } else {
-                if(receivers.get(i).getFirstName() == "") {
-                  name = name + receivers.get(i).getUsername() + ", ";
-                } else if(receivers.get(i).getName() == "") {
-                  name = name + receivers.get(i).getFirstName() + ", ";
-                } else {
-                  name = name + receivers.get(i).getFirstName() + " " + receivers.get(i).getName() + ", ";
-                }
-              }
-            }
-            con.setName(name);
-          }
+//          if(con.getName() == "") {
+//            String name = "";
+//            for(int i = 0; i < receivers.size(); i++) {
+//              if(i == receivers.size() - 1 ) {
+//                if(receivers.get(i).getFirstName() == "") {
+//                  name = name + receivers.get(i).getUsername();
+//                } else if(receivers.get(i).getName() == "") {
+//                  name = name + receivers.get(i).getFirstName();
+//                } else {
+//                  name = name + receivers.get(i).getFirstName() + " " + receivers.get(i).getName();
+//                }
+//              } else {
+//                if(receivers.get(i).getFirstName() == "") {
+//                  name = name + receivers.get(i).getUsername() + ", ";
+//                } else if(receivers.get(i).getName() == "") {
+//                  name = name + receivers.get(i).getFirstName() + ", ";
+//                } else {
+//                  name = name + receivers.get(i).getFirstName() + " " + receivers.get(i).getName() + ", ";
+//                }
+//              }
+//            }
+//            con.setName(name);
+//          }
           // fix for empty name end
           this.conversations.add(con.setReceivers(receivers));
         }

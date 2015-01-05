@@ -35,9 +35,59 @@ public class Conversation {
     //empty
   }
 
+  /**
+   * 
+   * @param conList - Any list of conversations which have at least id and receiverList set
+   * @return <pre><code>{
+   *  "conversationList": [
+   *    {
+   *      "receiverList": [
+   *        {
+   *          "username":"",
+   *          "firstName":"",
+   *          "lastName":"",
+   *          "email":"",
+   *          "emailhash":""
+   *        },
+   *      ]
+   *      "name":"",
+   *      "id":0
+   *    },
+   *  ],
+   *  "successful":true
+   *}<code><pre>
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
+   */
+  public static JsonValue getConversationListAsJson(List<Conversation> conList) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    JsonArrayBuilder jsonConList = Json.createArrayBuilder();
+    for(Conversation con: conList) {
+      JsonArrayBuilder jsonReceiverList = Json.createArrayBuilder();
+      for(User receiver : con.getReceivers()) {
+        jsonReceiverList.add(Json.createObjectBuilder()
+            .add("username", receiver.getUsername())
+            .add("firstname", receiver.getFirstName())
+            .add("lastname", receiver.getName())
+            .add("email", receiver.getEmail())
+            .add("emailhash", User.md5(receiver.getEmail())));
+      }
+      jsonConList.add(Json.createObjectBuilder()
+          .add("receiverList", jsonReceiverList)
+          .add("id", con.getID()));
+      if(con.getName() != "") {
+        jsonConList.add(con.getName());
+      }
+    }
+    JsonObject jsonConObject = Json.createObjectBuilder()
+        .add("conversationList", jsonConList)
+        .add("successful", true)
+        .build();
+    return jsonConObject;
+  }
+  
   public Conversation sendMessage(Message message) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, authorID) VALUES(?,?)";
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, senderID) VALUES(?,?)";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
     pStmt.setString(1, message.getContent());
     pStmt.setInt(2, message.getSender().getId());
@@ -48,7 +98,7 @@ public class Conversation {
       pStmt.setString(1, receiver.getUsername());
       ResultSet idTable = pStmt.executeQuery();
       idTable.next();
-      int receiverID = idTable.getInt("id");
+      receiver.setId(idTable.getInt("id"));
       sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Receiver(messageID,receiverID) VALUES(?,?)";
       pStmt = conn.prepareStatement(sqlQuery);
       pStmt.setInt(1, id);
