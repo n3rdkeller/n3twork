@@ -92,19 +92,18 @@ public class Conversation {
     pStmt.setString(1, message.getContent());
     pStmt.setInt(2, message.getSender().getId());
     int id = pStmt.executeUpdate();
-    for(User receiver: this.getReceivers()) {
-      sqlQuery = "SELECT id FROM " + DBConnector.DATABASE + ".Users WHERE username LIKE ?";
-      pStmt = conn.prepareStatement(sqlQuery);
-      pStmt.setString(1, receiver.getUsername());
-      ResultSet idTable = pStmt.executeQuery();
-      idTable.next();
-      receiver.setId(idTable.getInt("id"));
-      sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Receiver(messageID,receiverID) VALUES(?,?)";
-      pStmt = conn.prepareStatement(sqlQuery);
-      pStmt.setInt(1, id);
-      pStmt.setInt(2, receiverID);
-      pStmt.execute();
+    sqlQuery = "SELECT id FROM " + DBConnector.DATABASE + ".Users WHERE ";
+    for(int i = 0; i < receivers.size(); i++) {
+      if(i == receivers.size() - 1) {
+        sqlQuery = sqlQuery + "username LIKE ?";
+      } else {
+        sqlQuery = sqlQuery + "username LIKE ? OR ";
+      }
     }
+    sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ?";
+    pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, id);
+    pStmt.execute();
     conn.close();
     return this;
   }
