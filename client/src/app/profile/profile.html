@@ -116,7 +116,7 @@
             <button role="button" class="btn btn-xs btn-link neg-margin" ng-show="profile.removeButtonConfirmation[post.id] && !profile.removePostButtonLoading[post.id]" ng-click="profile.removeButtonConfirmation[post.id] = false"><i class="fa fa-fw fa-remove text-muted"></i></button>
           </div>
           <!-- Comment-List -->
-          <ul class="media-list three-quarter-width" ng-show="profile.showComments[post.id] && !profile.commentsLoading[post.id]">
+          <ul class="media-list comment-width" ng-show="profile.showComments[post.id] && !profile.commentsLoading[post.id]">
             <hr class="margin-top">
             <!-- New comment section -->
             <li class="media">
