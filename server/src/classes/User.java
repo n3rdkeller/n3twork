@@ -1172,13 +1172,15 @@ public class User {
   
   public List<Conversation> getConversationsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "select Conversations.id, Conversations.name, "
-        + "Users.username, Users.name as lastName, Users.firstName, Users.email FROM Conversations "
-        + "JOIN Receivers ON Receivers.conversationID = Conversations.id "
-        + "JOIN Users ON Receivers.receiverID = Users.id "
-        + "WHERE Conversations.id IN (select Conversations.id FROM Conversations "
-          + "JOIN Receivers ON Receivers.conversationID = Conversations.id "
-          + "WHERE Receivers.receiverID = ? AND Receivers.deleted = 0);";
+    String sqlQuery = "SELECT Conversations.id, Conversations.name, "
+        + "Users.id as userid, Users.username, Users.name as lastName, Users.firstName, Users.email "
+        + "FROM " + DBConnector.DATABASE + ".Conversations "
+        + "JOIN " + DBConnector.DATABASE + ".Receivers ON Receivers.conversationID = Conversations.id "
+        + "JOIN " + DBConnector.DATABASE + ".Users ON Receivers.receiverID = Users.id "
+        + "WHERE Conversations.id IN (select Conversations.id "
+          + "FROM " + DBConnector.DATABASE + ".Conversations "
+          + "JOIN " + DBConnector.DATABASE + ".Receivers ON Receivers.conversationID = Conversations.id "
+          + "WHERE Receivers.receiverID = ? AND Receivers.deleted = 0)";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
     ResultSet messageTable = pStmt.executeQuery();
@@ -1219,11 +1221,11 @@ public class User {
            .setName(messageTable.getString("name"));
       }
       if(messageTable.getString("username") != this.username) {
-        receivers.add(new User()
-            .setUsername(messageTable.getString("username"))
-            .setName(messageTable.getString("lastName"))
-            .setFirstName(messageTable.getString("firstName"))
-            .setEmail("email"));
+        receivers.add(new User(messageTable.getInt("userid"),
+                               messageTable.getString("username"),
+                               messageTable.getString("email"),
+                               messageTable.getString("lastName"),
+                               messageTable.getString("firstName")));
       }      
     }
     conn.close();

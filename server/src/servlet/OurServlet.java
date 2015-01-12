@@ -22,6 +22,7 @@ public class OurServlet extends Application {
         classes.add(UserResource.class);
         classes.add(GroupResource.class);
         classes.add(PostResource.class);
+        classes.add(ConversationResource.class);
         
         return classes;
     }

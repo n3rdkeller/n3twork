@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import classes.Conversation;
 import classes.Group;
 import classes.Post;
 import classes.User;
@@ -33,7 +34,7 @@ import classes.Message;
  * @author johannes
  *
  */
-@Path("/message")
+@Path("/conversation")
 public class ConversationResource {
   final static Logger log = LogManager.getLogger(PostResource.class);
   
@@ -51,36 +52,24 @@ public class ConversationResource {
    * @param jsonInput <pre><code>{
    *  "session":"sessionID"
    *}
-   * @return <pre><code>{
-   *  "messageList": [
+   * @return  <pre><code>{
+   *  "conversationList": [
    *    {
-   *      "id":0,
-   *      "content":"somecontent",
-   *      "date":1234,
-   *      "read":true,
-   *      "numberOfRecievers":1,
-   *      "sender": {
-   *        "id":0,
-   *        "username":"adsf",
-   *        "firstname":"Ad",
-   *        "lastname":"Sf",
-   *        "email":"em@il",
-   *        "emailhash":"hashisch"
-   *      }
-   *    }
+   *      "receiverList": [
+   *        {
+   *          "username":"",
+   *          "firstName":"",
+   *          "lastName":"",
+   *          "email":"",
+   *          "emailhash":""
+   *        },
+   *      ]
+   *      "name":"",
+   *      "id":0
+   *    },
    *  ],
-   *  "senderList":[
-   *    {
-   *      "id":0,
-   *      "username":"adsf",
-   *      "firstname":"Ad",
-   *      "lastname":"Sf",
-   *      "email":"em@il",
-   *      "emailhash":"hashisch"
-   *    }
-   *  ],
-   *  "successful":true  
-   *} </code></pre>
+   *  "successful":true
+   *}<code><pre>
    */
   @POST @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -97,7 +86,7 @@ public class ConversationResource {
         log.debug("/message returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      String entity = String.valueOf(Message.convertMessageListToJson(user.getMessagesFromDB()));
+      String entity = String.valueOf(Conversation.convertConversationListToJson(user.getConversationsFromDB()));
       return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
@@ -147,9 +136,7 @@ public class ConversationResource {
       }
       Message message = new Message()
         .setContent(input.getString("content"))
-        .setSender(user)
-        .setReceiver(receiver)
-        .sendMessage();
+        .setSender(user);
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());

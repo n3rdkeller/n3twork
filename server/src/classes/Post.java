@@ -442,11 +442,12 @@ public class Post {
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     ResultSet commentsTable = pStmt.executeQuery();
     while (commentsTable.next()) {
-      this.comments.put(new SimpleEntry<User,Integer>(new User(commentsTable.getInt("userid"))
-        .setUsername(commentsTable.getString("username"))
-        .setName(commentsTable.getString("name"))
-        .setFirstName(commentsTable.getString("firstName"))
-        .setEmail(commentsTable.getString("email")),
+      this.comments.put(new SimpleEntry<User,Integer>(
+          new User(commentsTable.getInt("userid"),
+                   commentsTable.getString("email"),
+                   commentsTable.getString("username"),
+                   commentsTable.getString("name"),
+                   commentsTable.getString("firstName")),
         commentsTable.getInt("id")), 
         new SimpleEntry<String,Date>(
             commentsTable.getString("content"),

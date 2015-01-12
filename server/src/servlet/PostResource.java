@@ -238,11 +238,9 @@ public class PostResource {
    * Doesn't check if the post is made by the user
    * @param jsonInput <pre><code> {
    *   "session":"sessionID"
-   *   "post": {
-   *     "id":0,
-   *     "content":"", //optional
-   *     "private":true/false //optional
-   *   }
+   *   "id":0,
+   *   "content":"", //optional
+   *   "private":true/false //optional
    * }</code></pre>
    * @return <pre><code> {
    *   "successful":true
@@ -263,12 +261,11 @@ public class PostResource {
         log.debug("/post/update returns:" + entity);
         return Helper.okResponse(entity);
       }
-      JsonObject jsonPost = input.getJsonObject("post");
-      Post post = new Post().setId(jsonPost.getInt("id"));
-      if (jsonPost.containsKey("content")) {
-        post.setContent(jsonPost.getString("content"));
-      } if (jsonPost.containsKey("private")) {
-        post.setPrivatePost(jsonPost.getBoolean("private"));
+      Post post = new Post().setId(input.getInt("id"));
+      if (input.containsKey("content")) {
+        post.setContent(input.getString("content"));
+      } if (input.containsKey("private")) {
+        post.setPrivatePost(input.getBoolean("private"));
       }
       if (post.updateDB()) {
         String entity = String.valueOf(Json.createObjectBuilder()

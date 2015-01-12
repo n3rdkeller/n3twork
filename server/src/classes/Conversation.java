@@ -59,7 +59,7 @@ public class Conversation {
    * @throws UnsupportedEncodingException 
    * @throws NoSuchAlgorithmException 
    */
-  public static JsonValue getConversationListAsJson(List<Conversation> conList) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+  public static JsonValue convertConversationListToJson(List<Conversation> conList) throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder jsonConList = Json.createArrayBuilder();
     for(Conversation con: conList) {
       JsonArrayBuilder jsonReceiverList = Json.createArrayBuilder();
@@ -71,12 +71,13 @@ public class Conversation {
             .add("email", receiver.getEmail())
             .add("emailhash", User.md5(receiver.getEmail())));
       }
-      jsonConList.add(Json.createObjectBuilder()
+      JsonObjectBuilder jsonCon = Json.createObjectBuilder()
           .add("receiverList", jsonReceiverList)
-          .add("id", con.getID()));
+          .add("id", con.getID());
       if(con.getName() != "") {
-        jsonConList.add(con.getName());
+        jsonCon.add("name", con.getName());
       }
+      jsonConList.add(jsonCon);
     }
     JsonObject jsonConObject = Json.createObjectBuilder()
         .add("conversationList", jsonConList)
@@ -85,6 +86,33 @@ public class Conversation {
     return jsonConObject;
   }
   
+  /**
+   * 
+   * @param receiver
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public Conversation archiveConversation(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sql = "UPDATE " + DBConnector.DATABASE + ".Receivers SET deleted = 1 WHERE receiverID = ?";
+    PreparedStatement pStmt = conn.prepareStatement(sql);
+    pStmt.setInt(1, receiver.getId());
+    pStmt.execute();
+    return this;
+  }
+  
+  /**
+   * 
+   * @param message - needs id, content, and id of the sender set
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Conversation sendMessage(Message message) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, senderID) VALUES(?,?)";
@@ -95,9 +123,9 @@ public class Conversation {
     sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ?, deleted = 0 WHERE ";
     for(int i = 0; i < receivers.size(); i++) {
       if(i == receivers.size() - 1) {
-        sqlQuery = sqlQuery + "username LIKE ?";
+        sqlQuery = sqlQuery + "receiverID = ?";
       } else {
-        sqlQuery = sqlQuery + "username LIKE ? OR ";
+        sqlQuery = sqlQuery + "receiverID = ? OR ";
       }
     }
     pStmt = conn.prepareStatement(sqlQuery);
@@ -110,6 +138,15 @@ public class Conversation {
     return this;
   }
 
+  /**
+   * 
+   * @param receiver - only id has to be set
+   * @return this
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Conversation deleteConversation(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET deleted = 1 WHERE receiverID = ?";
@@ -120,6 +157,16 @@ public class Conversation {
     return this;
   }
 
+  /**
+   * Changes the lastreadID in the db for a specific receiver
+   * @param receiver - only id has to be set
+   * @param lastMessage - only id has to be set
+   * @return this
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Conversation readMessage(User receiver, Message lastMessage) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ? WHERE receiverID = ?";
