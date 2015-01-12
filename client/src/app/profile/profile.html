@@ -67,7 +67,7 @@
         <div class="media-body full-width">
           <form role="form" name="newPostForm">
             <fieldset ng-disabled="profile.newPostLoading">
-              <textarea required autofocus ng-model="profile.newPostText" rows="3" class="form-control input-lg" placeholder="Post something here!"></textarea>
+              <textarea required ng-model="profile.newPostText" rows="3" class="form-control input-lg" placeholder="Post something here!"></textarea>
               <button type="button" class="btn btn-warning small-margin-top no-margin-bottom pull-right" ng-click="profile.newPost()" ng-disabled="newPostForm.$invalid">
                 <span ng-show="profile.newPostLoading"><i class="fa fa-spinner fa-spin"></i> Posting</span>
                 <span ng-hide="profile.newPostLoading"><i class="fa fa-fw fa-paper-plane-o"></i> Post</span>
