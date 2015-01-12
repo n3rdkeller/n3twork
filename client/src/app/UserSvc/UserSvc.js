@@ -113,8 +113,8 @@
         } else {
           console.log('Error logging out at server.')
         }
+        localLogout();
       });
-      localLogout();
     }
 
     function localLogout() {
