@@ -1,6 +1,7 @@
 <div class="container" id="register">
   <!-- Page Header -->
   <div class="page-header">
+    <!-- TODO: Custom CSS-Stuff -->
     <h1 class="text-center"><span title="w3lcome to n3twork" style="font-family: capsule3regular; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;">w3lcome to n3twork</span></h1><br>
   </div>
 
@@ -35,8 +36,8 @@
       </div>
 
       <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress default paste' }">
-        <input required type="password" ng-model="register.user.pwconfirm" compare-to="register.user.pw" class="form-control" name="pwconfirm" placeholder="Confirm Password"/>
-        <div ng-show="registerForm.pwconfirm.$dirty && registerForm.pwconfirm.$invalid" class="help-block" ng-messages="registerForm.pwconfirm.$error" ng-messages-include="app/views/messages.html"></div>
+        <input required ng-disabled="registerForm.pw.$invalid" type="password" ng-model="register.user.pwconfirm" compare-to="register.user.pw" class="form-control" name="pwconfirm" placeholder="Confirm Password"/>
+        <div ng-show="registerForm.pwconfirm.$dirty && registerForm.pwconfirm.$invalid && registerForm.pw.$valid" class="help-block" ng-messages="registerForm.pwconfirm.$error" ng-messages-include="app/views/messages.html"></div>
       </div>
 
       <div class="form-group text-center">
