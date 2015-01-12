@@ -133,16 +133,16 @@
       vm.showComments[postID] = !vm.showComments[postID];
       if (numberOfComments != 0) {
         vm.commentsLoading[postID] = true;
-        if (vm.showComments[postID]) {
-          CommentSvc.getCommentList(postID).then(function (commentList) {
-              vm.commentsLoading[postID] = false;
-              addCommentsToPost(commentList, postID);
-            }, function (error) {
-              vm.commentsLoading[postID] = false;
-            });
-        } else {
-          vm.commentsLoading[postID] = false;
-        }
+      }
+      if (vm.showComments[postID]) {
+        CommentSvc.getCommentList(postID).then(function (commentList) {
+            vm.commentsLoading[postID] = false;
+            addCommentsToPost(commentList, postID);
+          }, function (error) {
+            vm.commentsLoading[postID] = false;
+          });
+      } else {
+        vm.commentsLoading[postID] = false;
       }
     }
 
