@@ -1178,7 +1178,7 @@ public class User {
         + "JOIN Users ON Receivers.receiverID = Users.id "
         + "WHERE Conversations.id IN (select Conversations.id FROM Conversations "
           + "JOIN Receivers ON Receivers.conversationID = Conversations.id "
-          + "WHERE Receivers.receiverID = ? AND Receivers.deleted sqlQuery= 0);";
+          + "WHERE Receivers.receiverID = ? AND Receivers.deleted = 0);";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
     ResultSet messageTable = pStmt.executeQuery();

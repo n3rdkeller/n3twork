@@ -92,7 +92,7 @@ public class Conversation {
     pStmt.setString(1, message.getContent());
     pStmt.setInt(2, message.getSender().getId());
     int id = pStmt.executeUpdate();
-    sqlQuery = "SELECT id FROM " + DBConnector.DATABASE + ".Users WHERE ";
+    sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ?, deleted = 0 WHERE ";
     for(int i = 0; i < receivers.size(); i++) {
       if(i == receivers.size() - 1) {
         sqlQuery = sqlQuery + "username LIKE ?";
@@ -100,17 +100,19 @@ public class Conversation {
         sqlQuery = sqlQuery + "username LIKE ? OR ";
       }
     }
-    sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ?";
     pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, id);
+    for(int i = 0; i < receivers.size(); i++) {
+      pStmt.setInt(i + 2, receivers.get(i).getId());
+    }
     pStmt.execute();
     conn.close();
     return this;
   }
 
-  public Message deleteMessage(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Conversation deleteConversation(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receiver SET deleted = 1 WHERE receiverID = ?";
+    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET deleted = 1 WHERE receiverID = ?";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, receiver.getId());
     pStmt.execute();
@@ -118,11 +120,12 @@ public class Conversation {
     return this;
   }
 
-  public Message readMessage(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Conversation readMessage(User receiver, Message lastMessage) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receiver SET read = 1 WHERE receiverID = ?";
+    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ? WHERE receiverID = ?";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    pStmt.setInt(1, receiver.getId());
+    pStmt.setInt(1, lastMessage.getID());
+    pStmt.setInt(2, receiver.getId());
     pStmt.execute();
     conn.close();
     return this;
