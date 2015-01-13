@@ -2,7 +2,7 @@
   <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-2 col-md-4' : friends.itsMe }" ng-hide="friends.loadingFriends">
     <h2 ng-class="{ 'text-center' : !friends.itsMe }">Friends<span ng-hide="friends.itsMe"> of <a ng-bind="::friends.userdata.username" ng-href="#/user/{{ ::friends.userdata.username }}"></a></span> <span ng-hide="friends.friendList.length == 0" ng-bind="friends.friendList.length" class="label label-warning"></span><i ng-show="friends.friendList.length == 0" class="fa fa-fw fa-frown-o"></i></h2>
     <ul class="media-list big-margin-top">
-      <li class="media" ng-repeat="friend in friends.friendList | orderBy: 'username'">
+      <li class="media" ng-repeat="friend in friends.friendList | orderBy: 'date':true">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
           <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ friend.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ friend.emailhash }}?d=mm&s=64 1x,

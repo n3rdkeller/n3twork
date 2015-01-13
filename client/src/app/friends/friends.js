@@ -19,11 +19,13 @@
 
     vm.addToFriends = addToFriends;
 
-    init();
+    init(true);
 
-    function init() {
-      vm.loadingFriends = true;
-      vm.loadingFriendRequests = true;
+    function init(loadingStates) {
+      if (loadingStates) {
+        vm.loadingFriends = true;
+        vm.loadingFriendRequests = true;
+      }
       var username = $routeParams.username;
       vm.itsMe = (username == $rootScope.userdata.username);
       CacheSvc.getUserData(username).then(function (userdata) {
@@ -107,7 +109,7 @@
         if (response.data.successful) {
           // remove cache
           CacheSvc.removeFriendCache();
-          init();
+          init(false);
         } else {
           vm.addButtonLoading[id] = false;
           // error changing friend status
