@@ -43,7 +43,7 @@ public class ConversationResource {
    * @return Response with all needed headers
    */
   @OPTIONS @Path("/")
-  public Response corsShowMessage() {
+  public Response corsShowConversations() {
     return Helper.optionsResponse();
   }
   
@@ -73,7 +73,7 @@ public class ConversationResource {
    */
   @POST @Path("/")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response showMessage(String jsonInput){
+  public Response showConversations(String jsonInput){
     try {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject input = jsonReader.readObject();
@@ -83,10 +83,49 @@ public class ConversationResource {
             .add("successful", false)
             .add("reason", "SessionID invalid")
             .build());
-        log.debug("/message returns:" + entity);
+        log.debug("/conversation returns:" + entity);
         return Helper.okResponse(entity);
       } 
       String entity = String.valueOf(Conversation.convertConversationListToJson(user.getConversationsFromDB()));
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }
+  }
+  
+  @OPTIONS @Path("/show")
+  public Response corsShowConversation() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * Post request to get messages
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "conversation":0
+   *}
+   * @return  <pre><code>{
+   *  "messageList": //TODO
+   *}<code><pre>
+   */
+  @POST @Path("/show")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response showConversation(String jsonInput){
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/conversation returns:" + entity);
+        return Helper.okResponse(entity);
+      } 
+      String entity = String.valueOf(new Conversation() // TODO
+            .getAsJson());
       return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
@@ -126,17 +165,20 @@ public class ConversationResource {
             .add("successful", false)
             .add("reason", "SessionID invalid")
             .build());
-        log.debug("/message returns:" + entity);
+        log.debug("/conversation/send returns:" + entity);
         return Helper.okResponse(entity);
       } 
       JsonArray JsonReceiver = input.getJsonArray("receiverList");
-      List<User> receiver = new ArrayList<User>();
+      List<User> receivers = new ArrayList<User>();
       for (int i = 0; i < JsonReceiver.size(); i++){
-        receiver.add(new User().setUsername(JsonReceiver.getString(i)));
+        receivers.add(new User().setUsername(JsonReceiver.getString(i)));
       }
       Message message = new Message()
         .setContent(input.getString("content"))
         .setSender(user);
+      Conversation con = new Conversation()
+        .setReceivers(receivers)
+        .sendMessage(message);
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());
@@ -156,7 +198,7 @@ public class ConversationResource {
    * 
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
-   *  "content":"asdfasdf",
+   *  "name":"conName", //optional
    *  "receiverList":[
    *    {
    *      "username":"username"
@@ -167,7 +209,7 @@ public class ConversationResource {
    *  "successful":true
    *}</code></pre>
    */
-  @POST @Path("/create")
+  @POST @Path("/new")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
   public Response newConversation(String jsonInput){
     try {
@@ -179,18 +221,20 @@ public class ConversationResource {
             .add("successful", false)
             .add("reason", "SessionID invalid")
             .build());
-        log.debug("/message returns:" + entity);
+        log.debug("/conversation/new returns:" + entity);
         return Helper.okResponse(entity);
       } 
       JsonArray JsonReceiver = input.getJsonArray("receiverList");
-      List<User> receiver = new ArrayList<User>();
+      List<User> receivers = new ArrayList<User>();
       for (int i = 0; i < JsonReceiver.size(); i++){
-        receiver.add(new User().setUsername(JsonReceiver.getString(i)));
+        receivers.add(new User().setUsername(JsonReceiver.getString(i)));
       }
-      Message message = new Message()
-        .setContent(input.getString("content"))
-        .setSender(user);
-      String entity = String.valueOf(Json.createObjectBuilder()
+      Conversation con = new Conversation()
+        .setReceivers(receivers);
+      if(input.containsKey("name")) {
+        con.setName(input.getString("name"));
+      }
+      String entity = String.valueOf(Json.createObjectBuilder() //TODO
           .add("successful", true)
           .build());
       return Helper.okResponse(entity);

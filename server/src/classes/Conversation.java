@@ -88,6 +88,50 @@ public class Conversation {
     return jsonConObject;
   }
   
+  /**
+   * 
+   * @return
+   * @throws NoSuchAlgorithmException
+   * @throws UnsupportedEncodingException
+   */
+  public JsonValue getAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    JsonArrayBuilder jsonReceiverList = Json.createArrayBuilder();
+    for(User receiver : this.getReceivers()) {
+      jsonReceiverList.add(Json.createObjectBuilder()
+          .add("username", receiver.getUsername())
+          .add("firstname", receiver.getFirstName())
+          .add("lastname", receiver.getName())
+          .add("email", receiver.getEmail())
+          .add("emailhash", User.md5(receiver.getEmail())));
+    }
+    JsonObjectBuilder jsonCon = Json.createObjectBuilder()
+        .add("receiverList", jsonReceiverList)
+        .add("id", this.getID())
+        .add("successful", true);
+    if(this.getName() != "") {
+      jsonCon.add("name", this.getName());
+    }
+    return jsonCon.build();
+  }
+  
+  public Conversation getConversationFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sql = "SELECT senderID, content, date FROM " + DBConnector.DATABASE + ".Messages WHERE conversationID = ?";
+    PreparedStatement pStmt = conn.prepareStatement(sql);
+    pStmt.setInt(1, this.getID());
+    pStmt.execute();
+    conn.close();
+    return this;
+  }
+  
+  /**
+   * 
+   * @return this
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Conversation addConversationToDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sql = "INSERT INTO " + DBConnector.DATABASE + ".Conversations(name) VALUE(?)";
@@ -105,6 +149,7 @@ public class Conversation {
       pStmt.setInt(2, receiver.getId());
       pStmt.execute();
     }
+    conn.close();
     return this;
   }
   
@@ -157,26 +202,7 @@ public class Conversation {
     }
     pStmt.execute();
     conn.close();
-    return this;
-  }
-
-  /**
-   * 
-   * @param receiver - only id has to be set
-   * @return this
-   * @throws InstantiationException
-   * @throws IllegalAccessException
-   * @throws ClassNotFoundException
-   * @throws SQLException
-   */
-  public Conversation deleteConversation(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-    Connection conn = DBConnector.getConnection();
-    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET deleted = 1 WHERE receiverID = ?";
-    PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    pStmt.setInt(1, receiver.getId());
-    pStmt.execute();
-    conn.close();
-    return this;
+    return this; 
   }
 
   /**
@@ -191,7 +217,7 @@ public class Conversation {
    */
   public Conversation readMessage(User receiver, Message lastMessage) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ? WHERE receiverID = ?";
+    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ? WHERE receiverID = ?"; //TODO
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, lastMessage.getID());
     pStmt.setInt(2, receiver.getId());
