@@ -19,6 +19,8 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
+import jersey.repackaged.org.objectweb.asm.Type;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -84,6 +86,26 @@ public class Conversation {
         .add("successful", true)
         .build();
     return jsonConObject;
+  }
+  
+  public Conversation addConversationToDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sql = "INSERT INTO " + DBConnector.DATABASE + ".Conversations(name) VALUE(?)";
+    PreparedStatement pStmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+    if(this.getName() != "") {
+      pStmt.setString(1, this.getName());
+    } else {
+      pStmt.setNull(1, Type.CHAR);
+    }
+    this.setID(pStmt.executeUpdate());
+    sql = "INSERT INTO " + DBConnector.DATABASE + ".Receivers(conversationID, receiverID) VALUES(?,?)";
+    for(User receiver: this.getReceivers()) {
+      pStmt = conn.prepareStatement(sql);
+      pStmt.setInt(1, this.getID());
+      pStmt.setInt(2, receiver.getId());
+      pStmt.execute();
+    }
+    return this;
   }
   
   /**
