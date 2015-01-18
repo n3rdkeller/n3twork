@@ -106,7 +106,14 @@ public class ConversationResource {
    *  "conversation":0
    *}
    * @return  <pre><code>{
-   *  "messageList": //TODO
+   *  "messageList":[
+   *    {
+   *      "content":"content",
+   *      "senderDate":456456465465,
+   *      "senderID":0
+   *    },
+   *  ],
+   *  "successful":true
    *}<code><pre>
    */
   @POST @Path("/show")
@@ -124,7 +131,8 @@ public class ConversationResource {
         log.debug("/conversation returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      String entity = String.valueOf(new Conversation() // TODO
+      String entity = String.valueOf(new Conversation()
+            .getConversationFromDB()
             .getAsJson());
       return Helper.okResponse(entity);
     } catch(Exception e) {

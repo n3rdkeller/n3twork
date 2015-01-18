@@ -95,31 +95,42 @@ public class Conversation {
    * @throws UnsupportedEncodingException
    */
   public JsonValue getAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-    JsonArrayBuilder jsonReceiverList = Json.createArrayBuilder();
-    for(User receiver : this.getReceivers()) {
-      jsonReceiverList.add(Json.createObjectBuilder()
-          .add("username", receiver.getUsername())
-          .add("firstname", receiver.getFirstName())
-          .add("lastname", receiver.getName())
-          .add("email", receiver.getEmail())
-          .add("emailhash", User.md5(receiver.getEmail())));
+    JsonArrayBuilder jsonMessageList = Json.createArrayBuilder();
+    for(Message message : this.getMessageList()) {
+      jsonMessageList.add(Json.createObjectBuilder()
+          .add("content", message.getContent())
+          .add("sendDate", message.getSendDate().getTime())
+          .add("senderID", message.getSender().getId()));
     }
     JsonObjectBuilder jsonCon = Json.createObjectBuilder()
-        .add("receiverList", jsonReceiverList)
-        .add("id", this.getID())
+        .add("messageList", jsonMessageList)
         .add("successful", true);
-    if(this.getName() != "") {
-      jsonCon.add("name", this.getName());
-    }
     return jsonCon.build();
   }
   
+  /**
+   * 
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Conversation getConversationFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sql = "SELECT senderID, content, date FROM " + DBConnector.DATABASE + ".Messages WHERE conversationID = ?";
+    String sql = "SELECT Users.id, Messages.content, Messages.date FROM " + DBConnector.DATABASE + ".Messages "
+        + "JOIN Users ON Messages.senderID = Users.id WHERE conversationID = ?";
     PreparedStatement pStmt = conn.prepareStatement(sql);
     pStmt.setInt(1, this.getID());
-    pStmt.execute();
+    ResultSet messageTable = pStmt.executeQuery();
+    List<Message> messageList = new ArrayList<Message>();
+    while(messageTable.next()) {
+      messageList.add(new Message()
+      .setContent(messageTable.getString("content"))
+      .setSendDate(messageTable.getTimestamp("date"))
+      .setSender(new User(
+          messageTable.getInt("id"))));
+    }
     conn.close();
     return this;
   }
@@ -188,8 +199,8 @@ public class Conversation {
     pStmt.setInt(2, message.getSender().getId());
     int id = pStmt.executeUpdate();
     sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ?, deleted = 0 WHERE ";
-    for(int i = 0; i < receivers.size(); i++) {
-      if(i == receivers.size() - 1) {
+    for(int i = 0; i < this.getReceivers().size(); i++) {
+      if(i == this.getReceivers().size() - 1) {
         sqlQuery = sqlQuery + "receiverID = ?";
       } else {
         sqlQuery = sqlQuery + "receiverID = ? OR ";
@@ -197,8 +208,8 @@ public class Conversation {
     }
     pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, id);
-    for(int i = 0; i < receivers.size(); i++) {
-      pStmt.setInt(i + 2, receivers.get(i).getId());
+    for(int i = 0; i < this.getReceivers().size(); i++) {
+      pStmt.setInt(i + 2, this.getReceivers().get(i).getId());
     }
     pStmt.execute();
     conn.close();
@@ -217,7 +228,7 @@ public class Conversation {
    */
   public Conversation readMessage(User receiver, Message lastMessage) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ? WHERE receiverID = ?"; //TODO
+    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ? WHERE receiverID = ?";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, lastMessage.getID());
     pStmt.setInt(2, receiver.getId());
