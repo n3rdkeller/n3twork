@@ -103,7 +103,8 @@ public class ConversationResource {
    * Post request to get messages
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
-   *  "conversation":0
+   *  "conversationID":0, 
+   *  "lastread":0
    *}
    * @return  <pre><code>{
    *  "messageList":[
@@ -132,6 +133,9 @@ public class ConversationResource {
         return Helper.okResponse(entity);
       } 
       String entity = String.valueOf(new Conversation()
+            .setID(input.getInt("conversationID"))
+            .setLastRead(new Message()
+              .setID(input.getInt("lastread")))
             .getConversationFromDB()
             .getAsJson());
       return Helper.okResponse(entity);
@@ -151,10 +155,7 @@ public class ConversationResource {
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
    *  "content":"asdfasdf",
-   *  "receiverList":[
-   *    {
-   *      "username":"username"
-   *    },
+   *  "conversationID"
    *  ]
    *}</code></pre>
    * @return <pre><code>{
@@ -176,16 +177,11 @@ public class ConversationResource {
         log.debug("/conversation/send returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      JsonArray JsonReceiver = input.getJsonArray("receiverList");
-      List<User> receivers = new ArrayList<User>();
-      for (int i = 0; i < JsonReceiver.size(); i++){
-        receivers.add(new User().setUsername(JsonReceiver.getString(i)));
-      }
       Message message = new Message()
         .setContent(input.getString("content"))
         .setSender(user);
       Conversation con = new Conversation()
-        .setReceivers(receivers)
+        .setID(input.getInt("conversationID"))
         .sendMessage(message);
       String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
@@ -214,7 +210,8 @@ public class ConversationResource {
    *  ]
    *}</code></pre>
    * @return <pre><code>{
-   *  "successful":true
+   *  "successful":true,
+   *  "conversationID":0
    *}</code></pre>
    */
   @POST @Path("/new")
@@ -242,7 +239,53 @@ public class ConversationResource {
       if(input.containsKey("name")) {
         con.setName(input.getString("name"));
       }
-      String entity = String.valueOf(Json.createObjectBuilder() //TODO
+      con.addConversationToDB();
+      String entity = String.valueOf(Json.createObjectBuilder()
+          .add("conversationID", con.getID())
+          .add("successful", true)
+          .build());
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }
+  }  
+  
+  @OPTIONS @Path("/archive")
+  public Response corsArchiveConversation() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID",
+   *  "conversationID":0
+   *  ]
+   *}</code></pre>
+   * @return <pre><code>{
+   *  "successful":true
+   *}</code></pre>
+   */
+  @POST @Path("/archive")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response archiveConversation(String jsonInput){
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/conversation/archive returns:" + entity);
+        return Helper.okResponse(entity);
+      } 
+      new Conversation()
+        .setID(input.getInt("conversationID"))
+        .archiveConversation(user);
+      String entity = String.valueOf(Json.createObjectBuilder()
           .add("successful", true)
           .build());
       return Helper.okResponse(entity);
