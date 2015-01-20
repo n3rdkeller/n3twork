@@ -1173,7 +1173,10 @@ public class User {
   public List<Conversation> getConversationsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT Conversations.id, Conversations.name, "
-        + "Users.id as userid, Users.username, Users.name as lastName, Users.firstName, Users.email "
+        + "Users.id as userid, Users.username, Users.name as lastName, Users.firstName, Users.email, "
+        + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Messages WHERE conversationID = Conversations.id "
+        + "AND id > (SELECT lastreadID FROM " + DBConnector.DATABASE + ".Receivers "
+            + "WHERE receiverID = 45 AND conversationID = Conversations.id)) as unread"
         + "FROM " + DBConnector.DATABASE + ".Conversations "
         + "JOIN " + DBConnector.DATABASE + ".Receivers ON Receivers.conversationID = Conversations.id "
         + "JOIN " + DBConnector.DATABASE + ".Users ON Receivers.receiverID = Users.id "
@@ -1189,36 +1192,13 @@ public class User {
     while(messageTable.next()) {
       if(con.getID() != messageTable.getInt("id")) {
         if(receivers.size() != 0) {
-          // fix for empty name
-//          if(con.getName() == "") {
-//            String name = "";
-//            for(int i = 0; i < receivers.size(); i++) {
-//              if(i == receivers.size() - 1 ) {
-//                if(receivers.get(i).getFirstName() == "") {
-//                  name = name + receivers.get(i).getUsername();
-//                } else if(receivers.get(i).getName() == "") {
-//                  name = name + receivers.get(i).getFirstName();
-//                } else {
-//                  name = name + receivers.get(i).getFirstName() + " " + receivers.get(i).getName();
-//                }
-//              } else {
-//                if(receivers.get(i).getFirstName() == "") {
-//                  name = name + receivers.get(i).getUsername() + ", ";
-//                } else if(receivers.get(i).getName() == "") {
-//                  name = name + receivers.get(i).getFirstName() + ", ";
-//                } else {
-//                  name = name + receivers.get(i).getFirstName() + " " + receivers.get(i).getName() + ", ";
-//                }
-//              }
-//            }
-//            con.setName(name);
-//          }
-          // fix for empty name end
+          log.debug("receivers:" + receivers);
           this.conversations.add(con.setReceivers(receivers));
         }
         receivers = new ArrayList<User>();
         con.setID(messageTable.getInt("id"))
-           .setName(messageTable.getString("name"));
+           .setName(messageTable.getString("name"))
+           .setUnread(messageTable.getInt("unread"));
       }
       if(messageTable.getString("username") != this.username) {
         receivers.add(new User(messageTable.getInt("userid"),
@@ -1228,6 +1208,7 @@ public class User {
                                messageTable.getString("firstName")));
       }      
     }
+    log.debug("conversations" + this.conversations);
     conn.close();
     return this.conversations;
   }

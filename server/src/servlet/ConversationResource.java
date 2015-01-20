@@ -39,7 +39,7 @@ public class ConversationResource {
   final static Logger log = LogManager.getLogger(PostResource.class);
   
   /**
-   * Options request for /
+   * Options request for / (All options requests are identical, therefore all following are without docstring)
    * @return Response with all needed headers
    */
   @OPTIONS @Path("/")
@@ -132,11 +132,13 @@ public class ConversationResource {
         log.debug("/conversation returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      String entity = String.valueOf(new Conversation()
-            .setID(input.getInt("conversationID"))
-            .setLastRead(new Message()
-              .setID(input.getInt("lastread")))
-            .getConversationFromDB()
+      Conversation con = new Conversation()
+        .setID(input.getInt("conversationID"))
+        .setLastRead(new Message()
+          .setID(input.getInt("lastread")))
+        .getConversationFromDB()
+        .readConversation(user);
+      String entity = String.valueOf(con
             .getAsJson());
       return Helper.okResponse(entity);
     } catch(Exception e) {
@@ -155,7 +157,7 @@ public class ConversationResource {
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
    *  "content":"asdfasdf",
-   *  "conversationID"
+   *  "conversationID":0
    *  ]
    *}</code></pre>
    * @return <pre><code>{
@@ -261,7 +263,6 @@ public class ConversationResource {
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
    *  "conversationID":0
-   *  ]
    *}</code></pre>
    * @return <pre><code>{
    *  "successful":true
@@ -293,5 +294,5 @@ public class ConversationResource {
       log.error(e);
       return Helper.errorResponse(e);
     }
-  }
+  }  
 }

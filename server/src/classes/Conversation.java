@@ -19,8 +19,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
-import jersey.repackaged.org.objectweb.asm.Type;
-
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -31,6 +29,7 @@ public class Conversation {
   private List<Message> messageList = new ArrayList<Message>();
   private List<User> receivers = new ArrayList<User>();
   private Message lastRead;
+  private int unread;
   private String name;
 
   public Conversation() {
@@ -73,13 +72,11 @@ public class Conversation {
             .add("email", receiver.getEmail())
             .add("emailhash", User.md5(receiver.getEmail())));
       }
-      JsonObjectBuilder jsonCon = Json.createObjectBuilder()
+      jsonConList.add(Json.createObjectBuilder()
           .add("receiverList", jsonReceiverList)
-          .add("id", con.getID());
-      if(con.getName() != "") {
-        jsonCon.add("name", con.getName());
-      }
-      jsonConList.add(jsonCon);
+          .add("unreadCount", con.getUnread())
+          .add("name", con.getName())
+          .add("id", con.getID()));
     }
     JsonObject jsonConObject = Json.createObjectBuilder()
         .add("conversationList", jsonConList)
@@ -152,7 +149,7 @@ public class Conversation {
     if(this.getName() != "") {
       pStmt.setString(1, this.getName());
     } else {
-      pStmt.setNull(1, Type.CHAR);
+      pStmt.setString(1, null);
     }
     this.setID(pStmt.executeUpdate());
     sql = "INSERT INTO " + DBConnector.DATABASE + ".Receivers(conversationID, receiverID) VALUES(?,?)";
@@ -224,13 +221,22 @@ public class Conversation {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public Conversation readMessage(User receiver, Message lastMessage) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Conversation readConversation(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ? WHERE receiverID = ?";
+    String sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers "
+        + "SET lastreadID = (SELECT MAX(id) FROM `n3twork-dev`.Messages WHERE conversationID = ?) "
+        + "WHERE receiverID = ? AND conversationID = ?";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
-    pStmt.setInt(1, lastMessage.getID());
+    pStmt.setInt(1, this.getID());
     pStmt.setInt(2, receiver.getId());
+    pStmt.setInt(3, this.getID());
     pStmt.execute();
+    conn.close();
+    return this;
+  }
+  
+  public Conversation rename(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
     conn.close();
     return this;
   }
@@ -279,5 +285,14 @@ public class Conversation {
   public String getName() {
     if(this.name == null) return "";
     return this.name;
+  }
+  
+  public Conversation setUnread(int unread) {
+    this.unread = unread;
+    return this;
+  }
+  
+  public int getUnread() {
+    return this.unread;
   }
 }
