@@ -100,7 +100,8 @@ public class Conversation {
       jsonMessageList.add(Json.createObjectBuilder()
           .add("content", message.getContent())
           .add("sendDate", message.getSendDate().getTime())
-          .add("senderID", message.getSender().getId()));
+          .add("senderID", message.getSender().getId())
+          .add("read", message.getID() <= this.getLastRead().getID()));
     }
     JsonObjectBuilder jsonCon = Json.createObjectBuilder()
         .add("messageList", jsonMessageList)
@@ -118,7 +119,7 @@ public class Conversation {
    */
   public Conversation getConversationFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sql = "SELECT Users.id, Messages.content, Messages.date FROM " + DBConnector.DATABASE + ".Messages "
+    String sql = "SELECT Users.id as uid, Messages.id, Messages.content, Messages.date FROM " + DBConnector.DATABASE + ".Messages "
         + "JOIN Users ON Messages.senderID = Users.id WHERE conversationID = ?";
     PreparedStatement pStmt = conn.prepareStatement(sql);
     pStmt.setInt(1, this.getID());
@@ -126,10 +127,11 @@ public class Conversation {
     List<Message> messageList = new ArrayList<Message>();
     while(messageTable.next()) {
       messageList.add(new Message()
+      .setID(messageTable.getInt("id"))
       .setContent(messageTable.getString("content"))
       .setSendDate(messageTable.getTimestamp("date"))
       .setSender(new User(
-          messageTable.getInt("id"))));
+          messageTable.getInt("uid"))));
     }
     conn.close();
     return this;
@@ -175,9 +177,10 @@ public class Conversation {
    */
   public Conversation archiveConversation(User receiver) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sql = "UPDATE " + DBConnector.DATABASE + ".Receivers SET deleted = 1 WHERE receiverID = ?";
+    String sql = "UPDATE " + DBConnector.DATABASE + ".Receivers SET deleted = 1 WHERE receiverID = ? AND conversationID = ?";
     PreparedStatement pStmt = conn.prepareStatement(sql);
     pStmt.setInt(1, receiver.getId());
+    pStmt.setInt(2, this.getID());
     pStmt.execute();
     return this;
   }
@@ -198,20 +201,15 @@ public class Conversation {
     pStmt.setString(1, message.getContent());
     pStmt.setInt(2, message.getSender().getId());
     int id = pStmt.executeUpdate();
-    sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ?, deleted = 0 WHERE ";
-    for(int i = 0; i < this.getReceivers().size(); i++) {
-      if(i == this.getReceivers().size() - 1) {
-        sqlQuery = sqlQuery + "receiverID = ?";
-      } else {
-        sqlQuery = sqlQuery + "receiverID = ? OR ";
-      }
-    }
+    sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET deleted = 0 WHERE conversationID = ?";
+    pStmt = conn.prepareStatement(sqlQuery);
+    pStmt.setInt(1, this.getID());
+    pStmt.execute();
+    sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET lastreadID = ? WHERE receiverID = ? AND conversationID = ?";
     pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, id);
-    for(int i = 0; i < this.getReceivers().size(); i++) {
-      pStmt.setInt(i + 2, this.getReceivers().get(i).getId());
-    }
-    pStmt.execute();
+    pStmt.setInt(2, message.getSender().getId());
+    pStmt.setInt(3, this.getID());
     conn.close();
     return this; 
   }
