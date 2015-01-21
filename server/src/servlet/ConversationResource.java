@@ -161,7 +161,8 @@ public class ConversationResource {
    *  ]
    *}</code></pre>
    * @return <pre><code>{
-   *  "successful":true
+   *  "successful":true,
+   *  "id":0
    *}</code></pre>
    */
   @POST @Path("/send")
@@ -183,11 +184,12 @@ public class ConversationResource {
         .setContent(input.getString("content"))
         .setSender(user);
       Conversation con = new Conversation()
-        .setID(input.getInt("conversationID"))
-        .sendMessage(message);
+        .setID(input.getInt("conversationID"));
       String entity = String.valueOf(Json.createObjectBuilder()
+          .add("id", con.sendMessage(message))
           .add("successful", true)
           .build());
+      con.readConversation(user);
       return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
@@ -231,11 +233,12 @@ public class ConversationResource {
         log.debug("/conversation/new returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      JsonArray JsonReceiver = input.getJsonArray("receiverList");
+      JsonArray jsonReceiver = input.getJsonArray("receiverList");
       List<User> receivers = new ArrayList<User>();
-      for (int i = 0; i < JsonReceiver.size(); i++){
-        receivers.add(new User().setUsername(JsonReceiver.getString(i)));
+      for (int i = 0; i < jsonReceiver.size(); i++){
+        receivers.add(new User().setUsername(jsonReceiver.getJsonObject(i).getString("username")));
       }
+      receivers.add(user);
       Conversation con = new Conversation()
         .setReceivers(receivers);
       if(input.containsKey("name")) {

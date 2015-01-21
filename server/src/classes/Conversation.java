@@ -66,6 +66,7 @@ public class Conversation {
       JsonArrayBuilder jsonReceiverList = Json.createArrayBuilder();
       for(User receiver : con.getReceivers()) {
         jsonReceiverList.add(Json.createObjectBuilder()
+            .add("id", receiver.getId())
             .add("username", receiver.getUsername())
             .add("firstname", receiver.getFirstName())
             .add("lastname", receiver.getName())
@@ -116,19 +117,18 @@ public class Conversation {
    */
   public Conversation getConversationFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sql = "SELECT Users.id as uid, Messages.id, Messages.content, Messages.date FROM " + DBConnector.DATABASE + ".Messages "
-        + "JOIN Users ON Messages.senderID = Users.id WHERE conversationID = ?";
+    String sql = "SELECT Messages.senderID, Messages.id, Messages.content, Messages.date "
+        + "FROM " + DBConnector.DATABASE + ".Messages WHERE conversationID = ?";
     PreparedStatement pStmt = conn.prepareStatement(sql);
     pStmt.setInt(1, this.getID());
     ResultSet messageTable = pStmt.executeQuery();
-    List<Message> messageList = new ArrayList<Message>();
     while(messageTable.next()) {
-      messageList.add(new Message()
+      this.messageList.add(new Message()
       .setID(messageTable.getInt("id"))
       .setContent(messageTable.getString("content"))
       .setSendDate(messageTable.getTimestamp("date"))
       .setSender(new User(
-          messageTable.getInt("uid"))));
+          messageTable.getInt("senderID"))));
     }
     conn.close();
     return this;
@@ -151,12 +151,16 @@ public class Conversation {
     } else {
       pStmt.setString(1, null);
     }
-    this.setID(pStmt.executeUpdate());
-    sql = "INSERT INTO " + DBConnector.DATABASE + ".Receivers(conversationID, receiverID) VALUES(?,?)";
+    pStmt.executeUpdate();
+    ResultSet ids = pStmt.getGeneratedKeys();
+    ids.next();
+    this.setID(ids.getInt(1));
+    sql = "INSERT INTO " + DBConnector.DATABASE + ".Receivers(conversationID, receiverID) VALUES(?,"
+        + "(SELECT id FROM " + DBConnector.DATABASE + ".Users WHERE username = ?))";
     for(User receiver: this.getReceivers()) {
       pStmt = conn.prepareStatement(sql);
       pStmt.setInt(1, this.getID());
-      pStmt.setInt(2, receiver.getId());
+      pStmt.setString(2, receiver.getUsername());
       pStmt.execute();
     }
     conn.close();
@@ -191,13 +195,17 @@ public class Conversation {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public Conversation sendMessage(Message message) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public int sendMessage(Message message) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, senderID) VALUES(?,?)";
+    String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Messages(content, senderID, conversationID) VALUES(?,?,?)";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
     pStmt.setString(1, message.getContent());
     pStmt.setInt(2, message.getSender().getId());
-    int id = pStmt.executeUpdate();
+    pStmt.setInt(3, this.getID());
+    pStmt.executeUpdate();
+    ResultSet ids = pStmt.getGeneratedKeys();
+    ids.next();
+    int id = ids.getInt(1);
     sqlQuery = "UPDATE " + DBConnector.DATABASE + ".Receivers SET deleted = 0 WHERE conversationID = ?";
     pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.getID());
@@ -208,7 +216,7 @@ public class Conversation {
     pStmt.setInt(2, message.getSender().getId());
     pStmt.setInt(3, this.getID());
     conn.close();
-    return this; 
+    return id; 
   }
 
   /**

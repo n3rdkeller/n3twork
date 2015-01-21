@@ -1176,38 +1176,48 @@ public class User {
         + "Users.id as userid, Users.username, Users.name as lastName, Users.firstName, Users.email, "
         + "(SELECT count(*) FROM " + DBConnector.DATABASE + ".Messages WHERE conversationID = Conversations.id "
         + "AND id > (SELECT lastreadID FROM " + DBConnector.DATABASE + ".Receivers "
-            + "WHERE receiverID = 45 AND conversationID = Conversations.id)) as unread"
+            + "WHERE receiverID = ? AND conversationID = Conversations.id)) as unread "
         + "FROM " + DBConnector.DATABASE + ".Conversations "
         + "JOIN " + DBConnector.DATABASE + ".Receivers ON Receivers.conversationID = Conversations.id "
         + "JOIN " + DBConnector.DATABASE + ".Users ON Receivers.receiverID = Users.id "
         + "WHERE Conversations.id IN (select Conversations.id "
           + "FROM " + DBConnector.DATABASE + ".Conversations "
           + "JOIN " + DBConnector.DATABASE + ".Receivers ON Receivers.conversationID = Conversations.id "
-          + "WHERE Receivers.receiverID = ? AND Receivers.deleted = 0)";
+          + "WHERE Receivers.receiverID = ? AND Receivers.deleted = 0) "
+          + "ORDER BY Conversations.id";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
+    pStmt.setInt(2, this.id);
     ResultSet messageTable = pStmt.executeQuery();
     Conversation con = new Conversation();
     List<User> receivers = new ArrayList<User>();
+    
     while(messageTable.next()) {
+      log.debug("conID " + con.getID());
+      log.debug("tableConID " + messageTable.getInt("id"));
       if(con.getID() != messageTable.getInt("id")) {
         if(receivers.size() != 0) {
           log.debug("receivers:" + receivers);
+          log.debug("id " + con.getID() + ", name " + con.getName() + ", unread " + con.getUnread());
           this.conversations.add(con.setReceivers(receivers));
         }
         receivers = new ArrayList<User>();
-        con.setID(messageTable.getInt("id"))
+        con = new Conversation()
+           .setID(messageTable.getInt("id"))
            .setName(messageTable.getString("name"))
            .setUnread(messageTable.getInt("unread"));
       }
-      if(messageTable.getString("username") != this.username) {
+      if(messageTable.getInt("userid") != this.id) {
         receivers.add(new User(messageTable.getInt("userid"),
                                messageTable.getString("username"),
                                messageTable.getString("email"),
                                messageTable.getString("lastName"),
                                messageTable.getString("firstName")));
-      }      
+      }
     }
+    log.debug(receivers);
+    log.debug("id " + con.getID() + ", name " + con.getName() + ", unread " + con.getUnread());
+    this.conversations.add(con.setReceivers(receivers));
     log.debug("conversations" + this.conversations);
     conn.close();
     return this.conversations;
