@@ -1193,12 +1193,8 @@ public class User {
     List<User> receivers = new ArrayList<User>();
     
     while(messageTable.next()) {
-      log.debug("conID " + con.getID());
-      log.debug("tableConID " + messageTable.getInt("id"));
       if(con.getID() != messageTable.getInt("id")) {
         if(receivers.size() != 0) {
-          log.debug("receivers:" + receivers);
-          log.debug("id " + con.getID() + ", name " + con.getName() + ", unread " + con.getUnread());
           this.conversations.add(con.setReceivers(receivers));
         }
         receivers = new ArrayList<User>();
@@ -1215,10 +1211,7 @@ public class User {
                                messageTable.getString("firstName")));
       }
     }
-    log.debug(receivers);
-    log.debug("id " + con.getID() + ", name " + con.getName() + ", unread " + con.getUnread());
     this.conversations.add(con.setReceivers(receivers));
-    log.debug("conversations" + this.conversations);
     conn.close();
     return this.conversations;
   }
