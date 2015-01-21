@@ -221,7 +221,6 @@
       PostSvc.newPost('groupID', vm.groupData.id, vm.newPostText, vm.newPostPrivate).then(function (successful) {
         PostSvc.getPostList({ 'groupID': vm.groupData.id }).then(function (postList) {
           resetNewPostForm();
-          console.log('no error');
           vm.postlist = postList;
           vm.newPostLoading = false;
         }, function (error) {
