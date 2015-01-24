@@ -5,8 +5,8 @@
     .module('n3twork.conversations')
     .controller('ConversationsCtrl', ConversationsCtrl);
 
-  ConversationsCtrl.$inject = ['ConversationSvc'];
-  function ConversationsCtrl(ConversationSvc) {
+  ConversationsCtrl.$inject = ['ConversationSvc', '$routeParams'];
+  function ConversationsCtrl(ConversationSvc, $routeParams) {
     var vm = this;
 
     vm.conversationList = [
@@ -67,5 +67,6 @@
     function init() {
       // TODO: get conversations from ConversationSvc
     }
+
   }
 })();

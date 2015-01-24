@@ -1,7 +1,7 @@
 <div class="row clearfix">
   <div class="col-sm-5 col-md-4 col-lg-4">
-    <div class="page-header">
-      <h3>
+    <div class="page-header no-margin-top">
+      <h3 class="no-margin-top">
         {{ 'Conversations' }}
         <span class="label label-warning" ng-bind="cons.conversationList.length"></span>
         <a type="button" href="#/conversations/new" class="btn btn-sm btn-warning pull-right" title="New conversation"><i class="fa fa-plus fa-fw"></i></a>
@@ -9,10 +9,10 @@
     </div>
     <div class="list-group">
       <a ng-href="#/conversations/{{ ::con.id }}" ng-repeat="con in cons.conversationList" class="list-group-item" ng-class="{ 'list-group-item-warning': isActive('/conversations/' + con.id )}">
-        <button ng-click="alert('Are you sure?')" type="button" class="btn btn-xs btn-warning small-margin-left pull-right" title="Archive">
+        <button type="button" class="btn btn-xs btn-warning small-margin-left pull-right" title="Archive">
           <i class="fa fa-fw" ng-class="{ 'fa-trash': !cons.loadingArchive[con.id], 'fa-spinner fa-spin': cons.loadingArchive[con.id] }"></i>
         </button>
-        <button ng-click="input('New name?')" type="button" class="btn btn-xs btn-warning small-margin-left pull-right" title="Rename">
+        <button type="button" class="btn btn-xs btn-warning small-margin-left pull-right" title="Rename">
           <i class="fa fa-fw fa-edit"></i>
         </button>
         <span class="badge" title="Unread messages" ng-bind="con.unreadCount" ng-show="con.unreadCount > 0"></span>
