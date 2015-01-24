@@ -1,21 +1,3 @@
-(function () {
-  'use strict';
-
-  angular
-    .module('n3twork.conversations')
-    .directive('conversationsButton', ConversationsButtonDirective);
-
-  function ConversationsButtonDirective() {
-    return {
-      restrict: 'A',
-      templateUrl: 'app/conversations/conversationsButton.html',
-      controller: 'ConversationsButtonCtrl',
-      controllerAs: 'mb'
-    };
-  }
-
-})();
-
 (function() {
   'use strict';
 
@@ -31,6 +13,7 @@
 
     function init() {
       vm.unreadLoading = true;
+      vm.unreadCount = 2;
       ConversationSvc.getUnreadForBadge().then(function (unreadCount) {
         vm.unreadCount = unreadCount;
         vm.unreadLoading = false;
@@ -41,4 +24,3 @@
     }
   }
 })();
-
