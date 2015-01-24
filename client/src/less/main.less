@@ -9,6 +9,10 @@
   font-style: normal;
 }
 
+@dark-yellow: #8a6d3b;
+@button-orange: #f0ad4e;
+
+
 nav {
   #brandimg {
     height: 50px;
@@ -25,7 +29,6 @@ nav {
 // .modal-backdrop {
 //   height: 1000%;
 // }
-
 
 .three-quarter-width {
   width: 75%;
@@ -110,9 +113,84 @@ nav {
     color: green;
   }
 
-  .panel-footer {
-    padding: 0 10px;
-    background-color: #fcf8e3;
+  .responsive-height {
+    min-height: 480px;
+    max-height: 480px;
+  }
+
+  .panel-warning {
+    .panel-heading {
+      h3, small, .form-control-static {
+        a, button {
+          color: @dark-yellow;
+        }
+      }
+      .btn-link {
+        color: @dark-yellow;
+      }
+      .receiver-list {
+        .receiver-label {
+          a, button {
+            color: white;
+          }
+          background-color: @button-orange; // @dark-yellow;
+          border-radius: 20px;
+          padding: 5px 10px;
+          margin: 5px 5px 0px 0px;
+          button {
+            margin: -5px;
+          }
+        }
+        .input-group {
+          input {
+            border-radius: 4px;
+          }
+        }
+      }
+      .only-names {
+        padding-bottom: 20px;
+      }
+      #newConTitle {
+        padding-bottom: 10px;
+      }
+      .active {
+        a {
+          background-color: @button-orange; // @dark-yellow;
+        }
+      }
+    }
+    .panel-footer {
+      // padding: 0 10px;
+      background-color: #fcf8e3;
+      border-top: 1px solid transparent;
+      border-color: #faebcc;
+    }
+  }
+
+  #history {
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-image: url(../img/bg_warning.png);
+  }
+
+  .message {
+    padding: 5px;
+    padding-bottom: 10px;
+    margin: 5px;
+    background-color: lighten(#000, 46.7%);
+    color: white;
+    min-width: 51%;
+    max-width: 70%;
+    clear: both;
+    display: inline-block;
+    border-radius: 3px;
+  }
+  .message-right {
+    background-color: @button-orange; // #f0ad4e; // #fcf8e3
+    color: #fff;
+    float: right;
+    text-align: right;
   }
 
   #register {
@@ -143,6 +221,12 @@ nav {
   #loginFailedText {
     padding-left: 14px;
   }
+
+  .responsive-height {
+    min-height: 300px;
+    max-height: 300px;
+  }
+
   .navbar-collapse {
     padding: 0;
     margin: 0;

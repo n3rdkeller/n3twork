@@ -1,0 +1,65 @@
+<div class="panel panel-warning" ng-if="!con.hideConversation">
+  <!-- Conversation Title -->
+  <div class="panel-heading">
+    <a type="button" class="close" href="#/conversations" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+    <h3 class="panel-title" ng-bind="con.currentConversation.name"></h3>
+    <h3 class="panel-title" id="newConTitle" ng-show="con.newConversation">New Conversation</h3>
+    <h3 class="panel-title only-names" ng-if="!con.currentConversation.name && !con.newConversation">
+      <span ng-repeat="receiver in con.currentConversation.receiverList" class="text-nowrap">
+        <a ng-href="#/user/{{ receiver.username }}" ng-bind="(receiver.firstName ? receiver.firstName : receiver.username)"></a><span ng-bind="($last ? '' : ', ')"></span>
+      </span>
+    </h3>
+    <small ng-if="con.currentConversation.name">
+      <span ng-repeat="receiver in con.currentConversation.receiverList">
+        <a ng-href="#/user/{{ receiver.username }}" ng-bind="(receiver.firstName ? receiver.firstName : receiver.username)"></a><span ng-bind="($last ? '' : ', ')"></span>
+      </span>
+    </small>
+    <!-- New conversation -->
+    <div ng-if="con.newConversation">
+      <!-- Receivers -->
+      <form class="form-inline receiver-list" role="form" name="newReceiverForm" ng-submit="con.addReceiver()" novalidate>
+        <div class="form-group has-warning">
+          <p class="form-control-static" ng-repeat="receiver in con.currentConversation.receiverList">
+            <span class="receiver-label">
+              <a ng-href="#/user/{{ receiver.username }}" ng-bind="(receiver.firstName ? receiver.firstName : receiver.username)"></a>
+              <button type="button" class="btn btn-link btn-xs"><i class="fa fa-remove"></i></button>
+            </span>
+          </p>
+          <!-- New receiver input -->
+          <div class="input-group">
+            <input autofocus required ng-model="con.newReceiver" type="text" class="form-control" placeholder="Add new receiver" typeahead="friend as (friend.firstName ? friend.firstName : friend.username) for friend in con.getFriends($viewValue)" typeahead-editable="false">
+            <span class="input-group-btn">
+              <button type="submit" ng-disabled="newReceiverForm.$invalid" class="btn btn-link">
+                <span><i class="fa fa-plus"></i></span>
+              </button>
+            </span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- History -->
+  <div class="panel-body responsive-height" id="history" scroll-glue>
+    <h1 ng-show="con.historyLoading" class="text-center"><i class="fa fa-spinner fa-spin"></i></h1>
+    <div ng-if="!con.historyLoading" ng-repeat="msg in con.messageList | orderBy:'senderDate'" class="message row" ng-class="{ 'message-right': msg.senderID == userData.id }">
+      <div class="col-sm-12">
+        <h5 ng-bind="msg.senderID"></h5>
+        <span ng-bind="msg.content"></span>
+      </div>
+    </div>
+  </div>
+  <!-- Inputfield -->
+  <div class="panel-footer">
+    <form role="form" name="newMessageForm" ng-submit="con.sendMessage()">
+      <div class="input-group has-warning">
+        <input autofocus required ng-model="con.newMessageText" type="text" class="form-control" ng-disabled="con.newConversation && !con.currentConversation.receiverList" ng-readonly="con.newMessageLoading" placeholder="Type something here">
+        <span class="input-group-btn">
+          <button type="submit" ng-disabled="newMessageForm.$invalid || con.newMessageLoading || con.historyLoading" class="btn btn-warning">
+            <span ng-hide="con.newMessageLoading">Send</span>
+            <span ng-show="con.newMessageLoading"><i class="fa fa-spinner fa-spin"></i></span>
+          </button>
+        </span>
+      </div>
+    </form>
+  </div>
+</div>
