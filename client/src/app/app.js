@@ -5,6 +5,7 @@
       'ngRoute',
       'ui.bootstrap',
       'ui.bootstrap.showErrors',
+      'luegg.directives',
       'n3twork.register',
       'n3twork.auth',
       'n3twork.profile',
