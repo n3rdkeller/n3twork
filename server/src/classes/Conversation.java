@@ -243,6 +243,35 @@ public class Conversation {
     return this;
   }
   
+  /**
+   * Gets the number of unread conversations from the db for a specific user and returns it in a jsonValue
+   * @param user
+   * @return<pre><code>{
+   *  "unread":0,
+   *  "successful":true
+   *}</code></pre>
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
+  public static JsonValue getUnreadConversations(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sql = "SELECT COUNT(*) as unread FROM " + DBConnector.DATABASE + ".Receivers "
+        + "WHERE receiverID = ? "
+        + "AND lastreadID < (SELECT MAX(id) FROM " + DBConnector.DATABASE + ".Messages "
+            + "WHERE conversationID = Receivers.conversationID)";
+    PreparedStatement pStmt = conn.prepareStatement(sql);
+    pStmt.setInt(1, user.getId());
+    ResultSet unreadTable = pStmt.executeQuery();
+    unreadTable.next();
+    JsonValue jsonUnread = Json.createObjectBuilder()
+        .add("unread", unreadTable.getInt("unread"))
+        .add("successful", true)
+        .build();
+    return jsonUnread;
+  }
+  
   public Conversation rename(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     conn.close();

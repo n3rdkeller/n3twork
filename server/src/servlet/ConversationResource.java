@@ -298,4 +298,42 @@ public class ConversationResource {
       return Helper.errorResponse(e);
     }
   }  
+  
+  @OPTIONS @Path("/unread")
+  public Response corsNumberOfUnreadConversations() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID"
+   *}</code></pre>
+   * @return <pre><code>{
+   *  "unread":0,
+   *  "successful":true
+   *}</code></pre>
+   */
+  @POST @Path("/unread")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response numberOfUnreadConversations(String jsonInput){
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/conversation/archive returns: " + entity);
+        return Helper.okResponse(entity);
+      } 
+      String entity = String.valueOf(Conversation.getUnreadConversations(user));
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }
+  }  
 }
