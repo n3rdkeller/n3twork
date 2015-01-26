@@ -158,7 +158,6 @@ public class ConversationResource {
    *  "session":"sessionID",
    *  "content":"asdfasdf",
    *  "conversationID":0
-   *  ]
    *}</code></pre>
    * @return <pre><code>{
    *  "successful":true,

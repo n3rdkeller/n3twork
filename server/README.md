@@ -8,33 +8,40 @@ We used `eclipse` to generate a `n3.war` we deployed on our Tomcat 8 Server.
 - [POST /login](#login)
 - [POST /logout](#logout)
 - [POST /register](#register)
-- [GET /register/checkuser](#registercheckuser)
-- [GET /user](#user)
+- [POST /register/checkuser](#registercheckuser)
+- [POST /user](#user)
 - [PUT /user/settings](#usersettings)
 - [POST /user/remove](#userremove)
-- [GET /user/find](#userfind)
-- [GET /user/count](#usercount)
-- [GET /user/friends](#userfriends)
-- [GET /user/friendrequests](#userfriendrequests)
+- [POST /user/find](#userfind)
+- [POST /user/count](#usercount)
+- [POST /user/friends](#userfriends)
+- [POST /user/friendrequests](#userfriendrequests)
 - [POST /user/friend/add](#userfriendadd)
 - [POST /user/friend/remove](#userfriendremove)
-- [GET /user/groups](#usergroups)
+- [POST /user/groups](#usergroups)
 - [POST /user/group/join and POST /user/group/leave](#usergroupjoin-and-usergroupleave)
 - [POST /group/create](#groupfound)
-- [GET /group/show](#groupshow)
-- [GET /group/find](#groupfind)
-- [GET /group/count](#groupcount)
-- [GET /group/members](#groupmembers)
-- [GET /post](#post)
-- [GET /post/newsfeed](#postnewsfeed)
-- [GET /post/votes](#postvotes)
+- [POST /group/show](#groupshow)
+- [POST /group/find](#groupfind)
+- [POST /group/count](#groupcount)
+- [POST /group/members](#groupmembers)
+- [POST /post](#post)
+- [POST /post/newsfeed](#postnewsfeed)
+- [POST /post/votes](#postvotes)
 - [POST /post/add](#postadd)
 - [PUT /post/update](#postupdate)
 - [POST /post/delete](#postdelete)
 - [POST /post/vote/add and POST /post/vote/remove](postvoteadd-and-postvoteremove)
-- [GET /post/comments](#postcomments)
+- [POST /post/comments](#postcomments)
 - [POST /post/comment/add](#postcommentadd)
 - [POST /post/comment/remove](#postcommentremove)
+- [POST /conversation/](#conversation)
+- [POST /conversation/show](#conversationshow)
+- [POST /conversation/send](#conversationsend)
+- [POST /conversation/new](#conversationnew)
+- [POST /conversation/archive](#conversationarchive)
+- [POST /conversation/unread](#conversationunread)
+- [POST /conversation/rename](#conversationrename)
 
 #### /login
 ##### POST
@@ -53,7 +60,7 @@ out:
         "username":"username",
         "email":"email",
         "lastname":"last name",
-        "firstname":"first name",
+        "firstName":"first name",
         "otherProperties":{
             "propertie1":"value",
             "propertie2":"value",
@@ -62,7 +69,7 @@ out:
 }
 ```
 #### /logout
-##### GET
+##### POST
 in:
 ``` json
 {
@@ -120,7 +127,7 @@ out:
 ``` json
 {
     "email": "zwerch1337@gmail.com",
-    "firstname": "Robin",
+    "firstName": "Robin",
     "id": 45,
     "lastname": "Temme",
     "otherProperties": {},
@@ -130,7 +137,7 @@ out:
 }
 ```
 #### /user/remove
-##### GET
+##### POST
 in:
 ``` json
 {
@@ -144,7 +151,7 @@ out:
 }
 ```
 #### /user/find
-##### GET
+##### POST
 in:
 ``` json
 {
@@ -158,7 +165,7 @@ out:
     "userList": [
         {
             "email": "asd@asd.de",
-            "firstname": "",
+            "firstName": "",
             "id": 29,
             "lastname": "",
             "otherProperties": {},
@@ -166,7 +173,7 @@ out:
         },
         {
             "email": "theres...neider@gmail.com",
-            "firstname": "",
+            "firstName": "",
             "id": 30,
             "lastname": "",
             "otherProperties": {},
@@ -176,7 +183,7 @@ out:
 }
 ```
 #### /user/count
-##### GET
+##### POST
 in:
 ``` json
 {
@@ -208,7 +215,7 @@ out:
         {
             "date": 1417123181000,
             "email": "zwerch1337@gmail.com",
-            "firstname": "Robin",
+            "firstName": "Robin",
             "id": 45,
             "lastname": "Temme",
             "trueFriend": false,
@@ -217,7 +224,7 @@ out:
         {
             "date": 1417122900000,
             "email": "horst@dieter.ded",
-            "firstname": "",
+            "firstName": "",
             "id": 42,
             "lastname": "",
             "trueFriend": false,
@@ -243,7 +250,7 @@ out:
         {
             "date": 1417208589000,
             "email": "dieter@rasse.de",
-            "firstname": "Dieter",
+            "firstName": "Dieter",
             "id": 44,
             "lastname": "Rasse",
             "trueFriend": false,
@@ -381,7 +388,7 @@ out:
 }
 ```
 #### /group/count
-##### GET
+##### POST
 in:
 ``` json
 {
@@ -458,7 +465,7 @@ out:
 }
 ```
 #### /post/newsfeed
-##### GET
+##### POST
 in:
 ``` json
 {
@@ -577,7 +584,7 @@ out:
     "commentList":[
         {
             "author":{
-                "firstname":"firstname text",
+                "firstName":"firstName text",
                 "lastname":"lastname text",
                 "username":"username text"
             },
@@ -613,6 +620,142 @@ in:
     "id":0, "//commentID"
     "session":"sessionID"
 
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /conversation
+##### POST
+in:
+``` json
+{
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "conversationList": [
+        {
+            "receiverList": [
+                {
+                "username":"",
+                "firstName":"",
+                "lastName":"",
+                "email":"",
+                "emailhash":""
+                },
+            ]
+            "name":"",
+            "id":0
+        },
+    ],
+    "successful":true
+}
+```
+#### /conversation/show
+##### POST
+in:
+``` json
+{
+    "session":"sessionID",
+    "conversationID":0, 
+    "lastread":0
+}
+``` 
+out:
+``` json
+{
+    "messageList":[
+        {
+            "content":"content",
+            "senderDate":456456465465,
+            "senderID":0
+        },
+    ],
+    "successful":true
+}
+```
+#### /conversation/send
+##### POST
+in:
+``` json
+{
+    "session":"sessionID",
+    "content":"asdfasdf",
+    "conversationID":0
+}
+```
+out:
+``` json
+{
+    "successful":true,
+    "id":0 //message id
+}
+```
+#### /conversation/new
+##### POST
+in:
+``` json
+{
+    "session":"sessionID",
+    "name":"conName", //optional
+    "receiverList":[
+        {
+            "username":"username"
+        },
+    ]
+}
+```
+out:
+``` json
+{
+    "successful":true,
+    "conversationID":0
+}
+```
+#### /conversation/archive
+##### POST
+in:
+``` json
+{
+    "session":"sessionID",
+    "conversationID":0
+}
+```
+out:
+``` json
+{
+    "successful":true
+}
+```
+#### /conversation/unread
+##### POST
+in:
+``` json
+{
+    "session":"sessionID"
+}
+```
+out:
+``` json
+{
+    "unread":0,
+    "successful":true
+}
+```
+#### /conversation/rename
+##### POST
+in:
+``` json
+{
+    "session":"sessionID",
+    "id":0,
+    "name":"new name"
 }
 ```
 out:
