@@ -371,12 +371,11 @@ public class User {
     }
     
     if (!userList.next()) {
-      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,usernameWithCase,email,password) VALUES(?,?,?,?)";
+      String sqlQuery = "INSERT INTO " + DBConnector.DATABASE + ".Users(username,email,password) VALUES(?,?,?)";
       PreparedStatement pStmt = conn.prepareStatement(sqlQuery,PreparedStatement.RETURN_GENERATED_KEYS);
       pStmt.setString(1, this.username);
-      pStmt.setString(2, this.username);
-      pStmt.setString(3, this.email);
-      pStmt.setString(4, this.password);
+      pStmt.setString(2, this.email);
+      pStmt.setString(3, this.password);
       log.debug(pStmt);
       pStmt.executeUpdate();
       ResultSet ids = pStmt.getGeneratedKeys();
