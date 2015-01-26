@@ -272,8 +272,22 @@ public class Conversation {
     return jsonUnread;
   }
   
+  /**
+   * Update conversation name in db
+   * @param name
+   * @return this
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Conversation rename(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
+    String sql = "UPDATE " + DBConnector.DATABASE + ".Conversations "
+        + "SET name = ? WHERE id = ?";
+    PreparedStatement pStmt = conn.prepareStatement(sql);
+    pStmt.setString(1, name);
+    pStmt.setInt(2, this.getID());
     conn.close();
     return this;
   }
