@@ -43,8 +43,8 @@ We used `eclipse` to generate a `n3.war` we deployed on our Tomcat 8 Server.
 - [POST /conversation/unread](#conversationunread)
 - [POST /conversation/rename](#conversationrename)
 
-#### /login
-##### POST
+### /login
+#### POST
 in:
 ``` json
 {
@@ -55,21 +55,21 @@ in:
 out:
 ``` json
 {
-        "session":"sessionID",
-        "id":0,
-        "username":"username",
-        "email":"email",
-        "lastname":"last name",
-        "firstName":"first name",
-        "otherProperties":{
-            "propertie1":"value",
-            "propertie2":"value",
+    "session":"sessionID",
+    "id":0,
+    "username":"username",
+    "email":"email",
+    "lastname":"last name",
+    "firstName":"first name",
+    "otherProperties":{
+        "propertie1":"value",
+        "propertie2":"value",
     },
     "successful":true
 }
 ```
-#### /logout
-##### POST
+### /logout
+#### POST
 in:
 ``` json
 {
@@ -82,8 +82,8 @@ out:
     "successful":true
 }
 ```
-#### /register
-##### POST
+### /register
+#### POST
 in:
 ``` json
 {
@@ -98,8 +98,8 @@ out:
     "successful":true
 }
 ```
-#### /register/checkuser
-##### POST
+### /register/checkuser
+#### POST
 in:
 ``` json
 {
@@ -114,8 +114,8 @@ out:
     "successful":true
 }
 ```
-#### /user
-##### POST
+### /user
+#### POST
 in:
 ``` json
 {
@@ -136,8 +136,8 @@ out:
     "username": "zwerch"
 }
 ```
-#### /user/remove
-##### POST
+### /user/remove
+#### POST
 in:
 ``` json
 {
@@ -150,8 +150,8 @@ out:
     "successful": true
 }
 ```
-#### /user/find
-##### POST
+### /user/find
+#### POST
 in:
 ``` json
 {
@@ -182,8 +182,8 @@ out:
     ]
 }
 ```
-#### /user/count
-##### POST
+### /user/count
+#### POST
 in:
 ``` json
 {
@@ -199,8 +199,8 @@ out:
 }
 ```
 
-#### /user/friends
-##### POST
+### /user/friends
+#### POST
 in:
 ``` json
 {
@@ -234,8 +234,8 @@ out:
     "successful": true
 }
 ```
-#### /user/friendrequests
-##### POST
+### /user/friendrequests
+#### POST
 in:
 ``` json
 {
@@ -260,8 +260,8 @@ out:
     "successful": true
 }
 ```
-#### /user/friend/add
-##### POST
+### /user/friend/add
+#### POST
 in:
 ``` json
 {
@@ -275,8 +275,8 @@ out:
     "successful": true
 }
 ```
-#### /user/friend/remove
-##### POST
+### /user/friend/remove
+#### POST
 in:
 ``` json
 {
@@ -289,8 +289,8 @@ out:
     "successful": true
 }
 ```
-#### /user/groups
-##### POST
+### /user/groups
+#### POST
 in:
 ``` json
 {
@@ -311,8 +311,8 @@ out:
     "successful": true
 }
 ```
-#### /user/group/join and /user/group/leave
-##### POST
+### /user/group/join and /user/group/leave
+#### POST
 in:
 ``` json
 {
@@ -327,8 +327,8 @@ out:
     "//Bei join auch wenn der user schon Mitglied ist. Wird aber nicht 2x in der db registriert"
 }
 ```
-#### /group/create
-##### POST
+### /group/create
+#### POST
 in:
 ``` json
 {
@@ -343,8 +343,8 @@ out:
     "successful": true
 }
 ```
-#### /group/show
-##### POST
+### /group/show
+#### POST
 in:
 ``` json
 {
@@ -362,7 +362,7 @@ out:
     "successful": true
 }
 ```
-#### /group/find
+### /group/find
 in:
 ``` json
 {
@@ -387,8 +387,8 @@ out:
     "successful": true
 }
 ```
-#### /group/count
-##### POST
+### /group/count
+#### POST
 in:
 ``` json
 {
@@ -401,8 +401,8 @@ out:
     "groups": 5
 }
 ```
-#### /group/members
-##### POST
+### /group/members
+#### POST
 in:
 ``` json
 {
@@ -432,8 +432,8 @@ out:
     "successful": true
 }
 ```
-#### /post
-##### POST
+### /post
+#### POST
 in:
 ``` json
 {
@@ -464,8 +464,8 @@ out:
     "successful":true
 }
 ```
-#### /post/newsfeed
-##### POST
+### /post/newsfeed
+#### POST
 in:
 ``` json
 {
@@ -494,8 +494,8 @@ out:
     "successful":true
 }
 ```
-#### /post/votes
-##### POST
+### /post/votes
+#### POST
 in:
 ``` json
 {
@@ -519,8 +519,8 @@ out:
     "successful":true
 }
 ```
-#### /post/add
-##### POST
+### /post/add
+#### POST
 in:
 ``` json
 {
@@ -539,8 +539,8 @@ out:
     "successful":true
 }
 ```
-#### /post/delete
-##### POST
+### /post/delete
+#### POST
 in:
 ``` json
 {
@@ -554,8 +554,8 @@ out:
     "successful":true
 }
 ```
-#### /post/vote/add and /post/vote/remove
-##### POST
+### /post/vote/add and /post/vote/remove
+#### POST
 in:
 ``` json
 {
@@ -569,8 +569,8 @@ out:
     "successful":true
 }
 ```
-#### /post/comments
-##### POST
+### /post/comments
+#### POST
 in:
 ``` json
 {
@@ -596,8 +596,8 @@ out:
     "successful":true
 }
 ```
-#### /post/comment/add
-##### POST
+### /post/comment/add
+#### POST
 in:
 ``` json
 {
@@ -612,8 +612,8 @@ out:
     "successful":true
 }
 ```
-#### /post/comment/remove
-##### POST
+### /post/comment/remove
+#### POST
 in:
 ``` json
 {
@@ -628,8 +628,8 @@ out:
     "successful":true
 }
 ```
-#### /conversation
-##### POST
+### /conversation
+#### POST
 in:
 ``` json
 {
@@ -657,8 +657,8 @@ out:
     "successful":true
 }
 ```
-#### /conversation/show
-##### POST
+### /conversation/show
+#### POST
 in:
 ``` json
 {
@@ -680,8 +680,8 @@ out:
     "successful":true
 }
 ```
-#### /conversation/send
-##### POST
+### /conversation/send
+#### POST
 in:
 ``` json
 {
@@ -697,8 +697,8 @@ out:
     "id":0 //message id
 }
 ```
-#### /conversation/new
-##### POST
+### /conversation/new
+#### POST
 in:
 ``` json
 {
@@ -718,8 +718,8 @@ out:
     "conversationID":0
 }
 ```
-#### /conversation/archive
-##### POST
+### /conversation/archive
+#### POST
 in:
 ``` json
 {
@@ -733,8 +733,8 @@ out:
     "successful":true
 }
 ```
-#### /conversation/unread
-##### POST
+### /conversation/unread
+#### POST
 in:
 ``` json
 {
@@ -748,8 +748,8 @@ out:
     "successful":true
 }
 ```
-#### /conversation/rename
-##### POST
+### /conversation/rename
+#### POST
 in:
 ``` json
 {
