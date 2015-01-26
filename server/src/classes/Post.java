@@ -442,8 +442,8 @@ public class Post {
     while (commentsTable.next()) {
       this.comments.put(new SimpleEntry<User,Integer>(
           new User(commentsTable.getInt("userid"),
-                   commentsTable.getString("email"),
                    commentsTable.getString("username"),
+                   commentsTable.getString("email"),
                    commentsTable.getString("name"),
                    commentsTable.getString("firstName")),
         commentsTable.getInt("id")), 
