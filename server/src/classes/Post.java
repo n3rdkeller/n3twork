@@ -83,7 +83,6 @@ public class Post {
           .add("didIVote", post.getDidIVote())
           .add("numberOfComments", post.getNumberOfComments());
       if (newsfeed) {
-        log.debug("newsfeed part");
         jsonPost
             .add("owner", Json.createObjectBuilder()
                 .add("id", post.getOwner().getId())
@@ -104,7 +103,6 @@ public class Post {
         .add("postList", jsonPostList)
         .add("successful", true)
         .build();
-    log.debug(output);
     return output;
   }
 
@@ -475,7 +473,7 @@ public class Post {
               .add("username", comment.getKey().getKey().getUsername())
               .add("lastName", comment.getKey().getKey().getName())
               .add("firstName", comment.getKey().getKey().getFirstName())
-              .add("emailhash", User.md5(comment.getKey().getKey().getEmail())))
+              .add("emailhash", User.md5(comment.getKey().getKey().getEmail().toLowerCase())))
           .add("content", comment.getValue().getKey())
           .add("id", comment.getKey().getValue())
           );
