@@ -69,8 +69,8 @@ public class ServletResource {
    *  "id":userID,
    *  "username":"username",
    *  "email":"email",
-   *  "lastname":"last name",
-   *  "firstname":"first name",
+   *  "lastName":"last name",
+   *  "firstName":"first name",
    *  "otherProperties":{
    *    "propertie1":"value",
    *    "propertie2":"value",

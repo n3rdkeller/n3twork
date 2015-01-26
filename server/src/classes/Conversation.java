@@ -68,8 +68,8 @@ public class Conversation {
         jsonReceiverList.add(Json.createObjectBuilder()
             .add("id", receiver.getId())
             .add("username", receiver.getUsername())
-            .add("firstname", receiver.getFirstName())
-            .add("lastname", receiver.getName())
+            .add("firstName", receiver.getFirstName())
+            .add("lastName", receiver.getName())
             .add("email", receiver.getEmail())
             .add("emailhash", User.md5(receiver.getEmail())));
       }

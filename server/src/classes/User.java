@@ -247,8 +247,8 @@ public class User {
         .add("username", user.getUsername())
         .add("email", user.getEmail())
         .add("emailhash", md5(user.getEmail().toLowerCase()))
-        .add("lastname", user.getName())
-        .add("firstname", user.getFirstName())
+        .add("lastName", user.getName())
+        .add("firstName", user.getFirstName())
         .add("otherProperties", otherProperties));
     }
     return String.valueOf(Json.createObjectBuilder()
@@ -410,8 +410,8 @@ public class User {
       .add("username", this.username)
       .add("email", this.email)
       .add("emailhash", md5(this.email.toLowerCase()))
-      .add("lastname", this.name)
-      .add("firstname", this.firstName)
+      .add("lastName", this.name)
+      .add("firstName", this.firstName)
       .add("otherProperties", otherProperties)
       .add("successful", true);
     return userJson.build();
@@ -720,8 +720,8 @@ public class User {
           .add("username", friend.getKey().getUsername())
           .add("email", friend.getKey().getEmail())
           .add("emailhash", md5(friend.getKey().getEmail().toLowerCase()))
-          .add("lastname", friend.getKey().getName())
-          .add("firstname", friend.getKey().getFirstName())
+          .add("lastName", friend.getKey().getName())
+          .add("firstName", friend.getKey().getFirstName())
           .add("trueFriend", friend.getValue().getValue())
           .add("date", friend.getValue().getKey()));
     }
@@ -813,8 +813,8 @@ public class User {
           .add("username", friendRequest.getKey().getUsername())
           .add("email", friendRequest.getKey().getEmail())
           .add("emailhash", md5(friendRequest.getKey().getEmail().toLowerCase()))
-          .add("lastname", friendRequest.getKey().getName())
-          .add("firstname", friendRequest.getKey().getFirstName())
+          .add("lastName", friendRequest.getKey().getName())
+          .add("firstName", friendRequest.getKey().getFirstName())
           .add("trueFriend", friendRequest.getValue().getValue())
           .add("date", friendRequest.getValue().getKey()));
     }

@@ -71,11 +71,11 @@ public class UserResource {
         log.debug("/user/settings returns: " + entity);
         return Helper.okResponse(entity);
       }
-      if (settingsAsJson.containsKey("firstname")) {
-        user.setFirstName(settingsAsJson.getString("firstname"));
+      if (settingsAsJson.containsKey("firstName")) {
+        user.setFirstName(settingsAsJson.getString("firstName"));
       }
-      if (settingsAsJson.containsKey("lastname")) {
-        user.setName(settingsAsJson.getString("lastname"));
+      if (settingsAsJson.containsKey("lastName")) {
+        user.setName(settingsAsJson.getString("lastName"));
       }
       if (settingsAsJson.containsKey("email")) {
         user.setEmail(settingsAsJson.getString("email"));
@@ -121,8 +121,8 @@ public class UserResource {
    *      "id":userID,
    *      "username":"username",
    *      "email":"email",
-   *      "lastname":"last name",
-   *      "firstname":"first name",
+   *      "lastName":"last name",
+   *      "firstName":"first name",
    *      "otherProperties":{
    *        "propertie1":"value",
    *        "propertie2":"value",
@@ -229,8 +229,8 @@ public class UserResource {
    *  "id":userID,
    *  "username":"username",
    *  "email":"email",
-   *  "lastname":"last name",
-   *  "firstname":"first name",
+   *  "lastName":"last name",
+   *  "firstName":"first name",
    *  "otherProperties":{
    *    "propertie1":"value",
    *    "propertie2":"value",
@@ -349,8 +349,8 @@ public class UserResource {
    *    {
    *      "id":"id",
    *      "username":"username",
-   *      "lastname":"last name",
-   *      "firstname":"first name",
+   *      "lastName":"last name",
+   *      "firstName":"first name",
    *      "email":"email",
    *      "trueFriend":true/false,
    *      "date":timestamp of adding      
@@ -414,8 +414,8 @@ public class UserResource {
    *    {
    *      "id":"id",
    *      "username":"username",
-   *      "lastname":"last name",
-   *      "firstname":"first name",
+   *      "lastName":"last name",
+   *      "firstName":"first name",
    *      "email":"email",
    *      "date":timestamp of adding 
    *    },

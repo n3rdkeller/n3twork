@@ -32,8 +32,8 @@ public class Message {
    *      "sender" : {
    *        "id":0,
    *        "username":"username",
-   *        "lastname":"lastname",
-   *        "firstname":"firstname",
+   *        "lastName":"lastName",
+   *        "firstName":"firstName",
    *        "email":"email",
    *        "emailhash":"emailhash"
    *      }
@@ -59,8 +59,8 @@ public class Message {
           .add("sender", Json.createObjectBuilder()
               .add("id", message.getSender().getId())
               .add("username", message.getSender().getUsername())
-              .add("lastname", message.getSender().getName())
-              .add("firstname", message.getSender().getFirstName())
+              .add("lastName", message.getSender().getName())
+              .add("firstName", message.getSender().getFirstName())
               .add("email", message.getSender().getEmail())
               .add("emailhash", User.md5(message.getSender().getEmail().toLowerCase())))
           .add("content", message.getContent())

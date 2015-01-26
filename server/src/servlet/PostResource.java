@@ -491,8 +491,8 @@ public class PostResource {
    *       "id":commentID,
    *       "date":commentDate number,
    *       "author":{
-   *         "firstname":"firstName text",
-   *         "lastname":"name text",
+   *         "firstName":"firstName text",
+   *         "lastName":"name text",
    *         "username":"username text"
    *       },
    *       "content":"content text"

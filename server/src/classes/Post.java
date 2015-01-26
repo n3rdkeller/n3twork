@@ -93,8 +93,8 @@ public class Post {
             .add("author", Json.createObjectBuilder()
               .add("id", post.getAuthor().getId())
               .add("username", post.getAuthor().getUsername())
-              .add("lastname", post.getAuthor().getName())
-              .add("firstname", post.getAuthor().getFirstName())
+              .add("lastName", post.getAuthor().getName())
+              .add("firstName", post.getAuthor().getFirstName())
               .add("email", post.getAuthor().getEmail())
               .add("emailhash", User.md5(post.getAuthor().getEmail().toLowerCase())));
       }      
@@ -358,8 +358,8 @@ public class Post {
           .add("date", upVote.getValue().getTime())
           .add("voter", Json.createObjectBuilder()
               .add("username", upVote.getKey().getUsername())
-              .add("lastname", upVote.getKey().getName())
-              .add("firstname", upVote.getKey().getFirstName()))
+              .add("lastName", upVote.getKey().getName())
+              .add("firstName", upVote.getKey().getFirstName()))
           );
     }
     JsonObject voteUps = Json.createObjectBuilder()
@@ -473,8 +473,8 @@ public class Post {
           .add("author", Json.createObjectBuilder()
               .add("id", comment.getKey().getKey().getId())
               .add("username", comment.getKey().getKey().getUsername())
-              .add("lastname", comment.getKey().getKey().getName())
-              .add("firstname", comment.getKey().getKey().getFirstName())
+              .add("lastName", comment.getKey().getKey().getName())
+              .add("firstName", comment.getKey().getKey().getFirstName())
               .add("emailhash", User.md5(comment.getKey().getKey().getEmail())))
           .add("content", comment.getValue().getKey())
           .add("id", comment.getKey().getValue())
