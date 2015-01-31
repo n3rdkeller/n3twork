@@ -61,7 +61,7 @@
           </a>
           <div class="media-body">
             <h4 class="media-heading">
-              <a ng-href="#/user/{{ post.author.username }}" ng-bind="(post.author.firstname ? post.author.firstname : post.author.username) + (post.author.lastname ? ' ' + post.author.lastname : '')"></a>
+              <a ng-href="#/user/{{ post.author.username }}" ng-bind="(post.author.firstName ? post.author.firstName : post.author.username) + (post.author.lastName ? ' ' + post.author.lastName : '')"></a>
             </h4>
             <span ng-bind-html="post.content | parsePost"></span><br>
             <div class="margin-top">
@@ -126,7 +126,7 @@
                 </a>
                 <div class="media-body">
                   <h5 class="media-heading">
-                    <a ng-href="#/user/{{ comment.author.username }}" ng-bind="(comment.author.firstname ? comment.author.firstname : comment.author.username) + (comment.author.lastname ? ' ' + comment.author.lastname : '')"></a>
+                    <a ng-href="#/user/{{ comment.author.username }}" ng-bind="(comment.author.firstName ? comment.author.firstName : comment.author.username) + (comment.author.lastName ? ' ' + comment.author.lastName : '')"></a>
                   </h5>
                   <span ng-bind="comment.content"></span><br>
                   <small class="text-muted">

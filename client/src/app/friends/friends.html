@@ -11,9 +11,9 @@
         <div class="media-body">
           <h4 class="media-heading">
             <a class="media-left media-middle" ng-href="#/user/{{ friend.username }}">
-              <span ng-bind="friend.firstname + ' ' + friend.lastname"></span><br ng-show="friend.firstname">
+              <span ng-bind="friend.firstName + ' ' + friend.lastName"></span><br ng-show="friend.firstName">
               <span ng-bind="friend.username"></span>
-            </a><abbr ng-show="friend.trueFriend" class="media-right color-green no-padding-left" title="You are true friends."><br ng-show="friend.firstname"><i class="fa fa-check fa-fw"></i></abbr>
+            </a><abbr ng-show="friend.trueFriend" class="media-right color-green no-padding-left" title="You are true friends."><br ng-show="friend.firstName"><i class="fa fa-check fa-fw"></i></abbr>
           </h4>
           <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::friend.email }}<br>
         </div>
@@ -37,7 +37,7 @@
         <div class="media-body">
           <h4 class="media-heading">
             <a class="media-left media-middle" ng-href="#/user/{{ friend.username }}">
-              <span ng-bind="friend.firstname + ' ' + friend.lastname"></span><br ng-show="friend.firstname">
+              <span ng-bind="friend.firstName + ' ' + friend.lastName"></span><br ng-show="friend.firstName">
               <span ng-bind="friend.username"></span>
             </a>
           </h4>

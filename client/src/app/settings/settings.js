@@ -70,10 +70,10 @@
 
     function changedData() {
       var dataThatHasChanged = {};
-      // is firstname given?
-      if (vm.user.firstname != $rootScope.userdata.firstname) { dataThatHasChanged.firstname = vm.user.firstname };
-      // are first- and lastname given?
-      if (vm.user.firstname && (vm.user.lastname != $rootScope.userdata.lastname)) { dataThatHasChanged.lastname = vm.user.lastname };
+      // is firstName given?
+      if (vm.user.firstName != $rootScope.userdata.firstName) { dataThatHasChanged.firstName = vm.user.firstName };
+      // are first- and lastName given?
+      if (vm.user.firstName && (vm.user.lastName != $rootScope.userdata.lastName)) { dataThatHasChanged.lastName = vm.user.lastName };
       // is email given?
       if (vm.user.email && (vm.user.email != $rootScope.userdata.email)) { dataThatHasChanged.email = vm.user.email };
       // is password given?
@@ -111,15 +111,15 @@
 
 
       // optional fields
-      if ($rootScope.userdata.firstname) {
-        vm.user.firstname = $rootScope.userdata.firstname
+      if ($rootScope.userdata.firstName) {
+        vm.user.firstName = $rootScope.userdata.firstName
       } else {
-        vm.user.firstname = "";
+        vm.user.firstName = "";
       }
-      if ($rootScope.userdata.lastname && $rootScope.userdata.firstname) {
-        vm.user.lastname = $rootScope.userdata.lastname
+      if ($rootScope.userdata.lastName && $rootScope.userdata.firstName) {
+        vm.user.lastName = $rootScope.userdata.lastName
       } else {
-        vm.user.lastname = "";
+        vm.user.lastName = "";
       }
 
       // otherProperties

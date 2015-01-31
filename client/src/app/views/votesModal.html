@@ -9,7 +9,7 @@
   <ul class="fa-ul">
     <li ng-repeat="vote in votes.voteList | orderBy: 'date':true">
       <i class="fa-li fa fa-thumbs-o-up"></i>
-      <a ng-href="#/user/{{ vote.voter.username }}" ng-click="votes.dismiss()" ng-bind="(vote.voter.firstname ? vote.voter.firstname : vote.voter.username) + (vote.voter.lastname ? ' ' + vote.voter.lastname : '')"></a>
+      <a ng-href="#/user/{{ vote.voter.username }}" ng-click="votes.dismiss()" ng-bind="(vote.voter.firstName ? vote.voter.firstName : vote.voter.username) + (vote.voter.lastName ? ' ' + vote.voter.lastName : '')"></a>
     </li>
   </ul>
 </div>

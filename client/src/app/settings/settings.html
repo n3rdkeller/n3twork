@@ -8,12 +8,12 @@
       <input disabled type="username" class="form-control" id="username" value="{{ userdata.username }}">
     </div>
     <div class="form-group">
-      <label for="firstname">First name (optional)</label>
-      <input type="text" class="form-control" name="firstname" id="firstname" ng-model="settings.user.firstname" ng-init="settings.user.firstname = userdata.firstname" placeholder="Enter your first name">
+      <label for="firstName">First name (optional)</label>
+      <input type="text" class="form-control" name="firstName" id="firstName" ng-model="settings.user.firstName" ng-init="settings.user.firstName = userdata.firstName" placeholder="Enter your first name">
     </div>
     <div class="form-group">
-      <label for="lastname">Family name (optional, but requires first name)</label>
-      <input ng-disabled="!settings.user.firstname" type="text" class="form-control" name="lastname" id="lastname" ng-model="settings.user.lastname" ng-init="settings.user.lastname = userdata.lastname" placeholder="Enter your family name">
+      <label for="lastName">Family name (optional, but requires first name)</label>
+      <input ng-disabled="!settings.user.firstName" type="text" class="form-control" name="lastName" id="lastName" ng-model="settings.user.lastName" ng-init="settings.user.lastName = userdata.lastName" placeholder="Enter your family name">
     </div>
     <div class="form-group" show-errors="{ showSuccess: true, trigger: 'keypress default paste' }">
       <label for="email">Email address (required), is also used for <a href="http://gravatar.com" target="_blank">Gravatar</a></label>

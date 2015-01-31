@@ -38,8 +38,8 @@
           id: parseddata.id,
           otherProperties: parseddata.otherProperties
         }
-        if (parseddata.firstname) { userdata.firstname = parseddata.firstname };
-        if (parseddata.lastname) { userdata.lastname = parseddata.lastname };
+        if (parseddata.firstName) { userdata.firstName = parseddata.firstName };
+        if (parseddata.lastName) { userdata.lastName = parseddata.lastName };
 
         // TODO: check session id at serverside (maybe check later)
         //        when actually doing a request
@@ -83,8 +83,8 @@
             id: response.data.id,
             otherProperties: response.data.otherProperties
           }
-          if (response.data.firstname) { userdata.firstname = response.data.firstname };
-          if (response.data.lastname) { userdata.lastname = response.data.lastname };
+          if (response.data.firstName) { userdata.firstName = response.data.firstName };
+          if (response.data.lastName) { userdata.lastName = response.data.lastName };
 
           // set data rootScope and localstorage
           if (setUserData(userdata)) {

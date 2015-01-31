@@ -9,8 +9,8 @@
       <div class="media-body">
         <h3 class="media-heading">
           <abbr ng-show="profile.trueFriend" class="pull-right media-right color-green no-padding-left" title="You are true friends."><i class="fa fa-check fa-fw"></i></abbr>
-          <span ng-bind="profile.userdata.firstname + ' ' + profile.userdata.lastname"></span>
-          <br ng-show="profile.userdata.firstname"><br ng-show="profile.userdata.firstname">
+          <span ng-bind="profile.userdata.firstName + ' ' + profile.userdata.lastName"></span>
+          <br ng-show="profile.userdata.firstName"><br ng-show="profile.userdata.firstName">
           <span ng-bind="profile.userdata.username"></span>
         </h3>
       </div>
@@ -143,7 +143,7 @@
               </a>
               <div class="media-body">
                 <h5 class="media-heading">
-                  <a ng-href="#/user/{{ comment.author.username }}" ng-bind="(comment.author.firstname ? comment.author.firstname : comment.author.username) + (comment.author.lastname ? ' ' + comment.author.lastname : '')"></a>
+                  <a ng-href="#/user/{{ comment.author.username }}" ng-bind="(comment.author.firstName ? comment.author.firstName : comment.author.username) + (comment.author.lastName ? ' ' + comment.author.lastName : '')"></a>
                 </h5>
                 <span ng-bind="comment.content"></span><br>
                 <small class="text-muted">

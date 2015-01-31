@@ -29,7 +29,7 @@
       </a>
       <div class="media-body">
         <h4 class="media-heading">
-          <a ng-href="#/user/{{ post.author.username }}" ng-bind="(post.author.firstname ? post.author.firstname : post.author.username) + (post.author.lastname ? ' ' + post.author.lastname : '')"></a>
+          <a ng-href="#/user/{{ post.author.username }}" ng-bind="(post.author.firstName ? post.author.firstName : post.author.username) + (post.author.lastName ? ' ' + post.author.lastName : '')"></a>
           <span ng-show="post.owner.id != 0">
            in <span class="text-nowrap"><i class="fa fa-users"></i> <a ng-href="#/group/{{ post.owner.id }}" ng-bind="post.owner.name"></a>:</span>
           </span>
@@ -97,7 +97,7 @@
             </a>
             <div class="media-body">
               <h5 class="media-heading">
-                <a ng-href="#/user/{{ comment.author.username }}" ng-bind="(comment.author.firstname ? comment.author.firstname : comment.author.username) + (comment.author.lastname ? ' ' + comment.author.lastname : '')"></a>
+                <a ng-href="#/user/{{ comment.author.username }}" ng-bind="(comment.author.firstName ? comment.author.firstName : comment.author.username) + (comment.author.lastName ? ' ' + comment.author.lastName : '')"></a>
               </h5>
               <span ng-bind="comment.content"></span><br>
               <small class="text-muted">
