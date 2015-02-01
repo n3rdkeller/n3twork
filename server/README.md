@@ -650,6 +650,7 @@ out:
                 "emailhash":""
                 },
             ]
+            "lastread":0,
             "name":"",
             "id":0
         },
