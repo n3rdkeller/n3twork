@@ -112,5 +112,4 @@ public class Suggestion {
     }
     return suggestionList;
   }
-  
 }
