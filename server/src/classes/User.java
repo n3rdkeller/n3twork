@@ -1184,7 +1184,7 @@ public class User {
           + "FROM " + DBConnector.DATABASE + ".Conversations "
           + "JOIN " + DBConnector.DATABASE + ".Receivers ON Receivers.conversationID = Conversations.id "
           + "WHERE Receivers.receiverID = ? AND Receivers.deleted = 0) "
-          + "ORDER BY Conversations.id";
+        + "ORDER BY Conversations.id";
     PreparedStatement pStmt = conn.prepareStatement(sqlQuery);
     pStmt.setInt(1, this.id);
     pStmt.setInt(2, this.id);

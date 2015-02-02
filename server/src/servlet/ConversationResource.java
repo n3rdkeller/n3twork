@@ -103,12 +103,12 @@ public class ConversationResource {
    * Post request to get messages
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
-   *  "conversationID":0, 
-   *  "lastread":0
+   *  "conversationID":0
    *}
    * @return  <pre><code>{
    *  "messageList":[
    *    {
+   *      "id":0,
    *      "content":"content",
    *      "senderDate":456456465465,
    *      "senderID":0
@@ -134,8 +134,6 @@ public class ConversationResource {
       } 
       Conversation con = new Conversation()
         .setID(input.getInt("conversationID"))
-        .setLastRead(new Message()
-          .setID(input.getInt("lastread")))
         .getConversationFromDB()
         .readConversation(user);
       String entity = String.valueOf(con

@@ -88,7 +88,17 @@ public class Conversation {
   
   /**
    * 
-   * @return
+   * @return <pre><code>{
+   *  "messageList": [
+   *    {
+   *      "id":0,
+   *      "content":"asdf",
+   *      "sendDate":00000000000,
+   *      "senderID":0
+   *    },
+   *  ],
+   *  "successful": true
+   *}</code></pre>
    * @throws NoSuchAlgorithmException
    * @throws UnsupportedEncodingException
    */
@@ -96,10 +106,10 @@ public class Conversation {
     JsonArrayBuilder jsonMessageList = Json.createArrayBuilder();
     for(Message message : this.getMessageList()) {
       jsonMessageList.add(Json.createObjectBuilder()
+          .add("id", message.getID())
           .add("content", message.getContent())
           .add("sendDate", message.getSendDate().getTime())
-          .add("senderID", message.getSender().getId())
-          .add("read", message.getID() <= this.getLastRead().getID()));
+          .add("senderID", message.getSender().getId()));
     }
     JsonObjectBuilder jsonCon = Json.createObjectBuilder()
         .add("messageList", jsonMessageList)
