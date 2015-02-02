@@ -23,6 +23,8 @@ public class OurServlet extends Application {
         classes.add(GroupResource.class);
         classes.add(PostResource.class);
         classes.add(ConversationResource.class);
+        classes.add(SuggestionResource.class);
+        Set<Integer> testset = new HashSet<Integer>();
         
         return classes;
     }
