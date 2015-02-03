@@ -3,6 +3,9 @@
  */
 package classes;
 
+import gnu.trove.TIntArrayList;
+import gnu.trove.TIntDoubleHashMap;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -65,20 +68,27 @@ public class Suggestion {
         + "FROM " + DBConnector.DATABASE + ".Users "
         + "JOIN " + DBConnector.DATABASE + ".Friends ON Users.id = friendID "
         + "WHERE Friends.userID in ("
-          + "SELECT userID from " + DBConnector.DATABASE + ".Friends WHERE friendID = 45 "
+          + "SELECT userID from " + DBConnector.DATABASE + ".Friends WHERE friendID = ? "
           + "UNION "
-          + "SELECT friendID from " + DBConnector.DATABASE + ".Friends WHERE userID = 45 "
-        + ") AND NOT Users.id = 45 "
+          + "SELECT friendID from " + DBConnector.DATABASE + ".Friends WHERE userID = ? "
+        + ") AND NOT Users.id = ? "
         + "UNION ALL "
         + "SELECT Users.id, Users.username, Users.email, Users.name, Users.firstName, Friends.friendId as partner "
         + "FROM " + DBConnector.DATABASE + ".Users "
         + "JOIN " + DBConnector.DATABASE + ".Friends ON Users.id = userID "
         + "WHERE Friends.friendID in ( "
-          + "SELECT userID from " + DBConnector.DATABASE + ".Friends WHERE friendID = 45 "
+          + "SELECT userID from " + DBConnector.DATABASE + ".Friends WHERE friendID = ? "
           + "UNION "
-          + "SELECT friendID from " + DBConnector.DATABASE + ".Friends WHERE userID = 45 "
-        + ") AND NOT Users.id = 45";
+          + "SELECT friendID from " + DBConnector.DATABASE + ".Friends WHERE userID = ? "
+        + ") AND NOT Users.id = ?";
     PreparedStatement pStmt = conn.prepareStatement(sql);
+    pStmt.setInt(1, user.getId());
+    pStmt.setInt(2, user.getId());
+    pStmt.setInt(3, user.getId());
+    pStmt.setInt(4, user.getId());
+    pStmt.setInt(5, user.getId());
+    pStmt.setInt(6, user.getId());
+    
     ResultSet suggestionTable = pStmt.executeQuery();
     Map<User, Integer> suggestionMap = new HashMap<User, Integer>();
     Set<HashSet<Integer>> idPairSet = new HashSet<HashSet<Integer>>();
@@ -105,11 +115,41 @@ public class Suggestion {
         suggestionMap.put(toBeAdded, 1);
       }
     }
+    conn.close();
+    TIntArrayList a;
     Suggestion.sortByValues(suggestionMap);
     List<User> suggestionList = new ArrayList<User>();
     for(Entry<User, Integer> entry: suggestionMap.entrySet()) {
       suggestionList.add(entry.getKey());
     }
     return suggestionList;
+  }
+  
+  public static List<User> postBasedSuggestion(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+    Connection conn = DBConnector.getConnection();
+    String sql = "SELECT Posts.content, Users.id, Users.username, Users.email, Users.name, Users.firstName "
+        + "FROM " + DBConnector.DATABASE + ".Posts "
+        + "JOIN " + DBConnector.DATABASE + ".Users ON Posts.authorID = Users.id "
+        + "WHERE Posts.authorID NOT IN ( "
+          + "SELECT userID from " + DBConnector.DATABASE + ".Friends WHERE friendID = ? "
+          + "UNION "
+          + "SELECT friendID from " + DBConnector.DATABASE + ".Friends WHERE userID = ? "
+        + ")";
+    PreparedStatement pStmt = conn.prepareStatement(sql);
+    pStmt.setInt(1, user.getId());
+    pStmt.setInt(2, user.getId());
+    ResultSet postTable = pStmt.executeQuery();
+    
+    User author = new User();
+    Map<User,ArrayList<String>> wordMatrix = new HashMap<User,ArrayList<String>>();
+    ArrayList<String> wordRow = new ArrayList<String>();
+    while(postTable.next()) {
+      if(author.getId() != postTable.getInt("id")) {
+        if(wordRow.size() != 0) {
+          wordMatrix.put(author, wordRow);
+        }
+      }
+    }
+    return null;
   }
 }
