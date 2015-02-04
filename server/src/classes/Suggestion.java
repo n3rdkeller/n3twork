@@ -141,13 +141,23 @@ public class Suggestion {
     ResultSet postTable = pStmt.executeQuery();
     
     User author = new User();
-    Map<User,ArrayList<String>> wordMatrix = new HashMap<User,ArrayList<String>>();
+    Map<User,ArrayList<String>> wordTable = new HashMap<User,ArrayList<String>>();
     ArrayList<String> wordRow = new ArrayList<String>();
     while(postTable.next()) {
       if(author.getId() != postTable.getInt("id")) {
         if(wordRow.size() != 0) {
-          wordMatrix.put(author, wordRow);
+          wordTable.put(author, wordRow);
         }
+        wordRow = new ArrayList<String>();
+        user = new User(
+            postTable.getInt("id"),
+            postTable.getString("username"),
+            postTable.getString("email"),
+            postTable.getString("name"),
+            postTable.getString("firstName"));
+      }
+      for(String word: postTable.getString("content").split("[0123456789 +-=.,!?@#$%^&*();\\/|<>'\"\t]")) {
+        wordRow.add(word.toLowerCase());
       }
     }
     return null;
