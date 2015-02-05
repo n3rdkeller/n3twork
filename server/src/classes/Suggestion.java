@@ -161,7 +161,7 @@ public class Suggestion {
             postTable.getString("firstName"));
       }
       //split the post into words and add them to wordRow
-      for(String word: postTable.getString("content").split("[0123456789 +-=.,!?@#$%^&*();\\/|<>'\"\t]")) {
+      for(String word: postTable.getString("content").split("[0123456789 +-=.,!?@#$%^&*();\\/|<>'\"\t]")) { //[\W]
         wordRow.add(word.toLowerCase());
       }
     }
@@ -215,8 +215,7 @@ public class Suggestion {
       }
       wordUserMatrix.add(matrixRow);
     }
-    //the bigger the row index of the matrix the longer the row!
-    //first entry of row is the id of the user!
+    
     TIntArrayList nList = new TIntArrayList(wordList.size());
     for(int i = 1; i <= wordList.size(); i++) {
       int n = 0;
