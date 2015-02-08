@@ -5,16 +5,23 @@
     .module('n3twork.conversations')
     .controller('ConversationsButtonCtrl', ConversationsButtonCtrl);
 
-  ConversationsButtonCtrl.$inject = ['ConversationSvc'];
-  function ConversationsButtonCtrl(ConversationSvc) {
+  ConversationsButtonCtrl.$inject = ['ConversationSvc', '$interval', '$rootScope'];
+  function ConversationsButtonCtrl(ConversationSvc, $interval, $rootScope) {
     var vm = this;
 
     init();
 
     function init() {
-      vm.unreadLoading = true;
-      vm.unreadCount = 2;
+      getUnreadFromAPI(true);
+      $interval(function () {
+        getUnreadFromAPI(false)
+      }, 10000);
+    }
+
+    function getUnreadFromAPI (loadingState) {
+      if (loadingState) vm.unreadLoading = true;
       ConversationSvc.getUnreadForBadge().then(function (unreadCount) {
+        if (vm.unreadCount != unreadCount) $rootScope.somethingNewThere = true;
         vm.unreadCount = unreadCount;
         vm.unreadLoading = false;
       }, function (err) {

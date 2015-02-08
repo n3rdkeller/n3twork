@@ -2,19 +2,15 @@
   'use strict';
 
   angular
-    .module('n3twork.conversations')
+    .module('n3twork.conversation')
     .directive('conversationMessages', ConversationMessagesDirective);
 
   function ConversationMessagesDirective() {
     return {
       restrict: 'E',
-      templateUrl: 'app/conversations/conversation.html',
+      templateUrl: 'app/conversation/conversation.html',
       controller: 'ConversationCtrl',
       controllerAs: 'con',
-      scope: {
-        conList: '=',
-        userData: '='
-      }
     };
   }
 

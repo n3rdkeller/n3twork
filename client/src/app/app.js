@@ -14,7 +14,8 @@
       'n3twork.friends',
       'n3twork.groups',
       'n3twork.feed',
-      'n3twork.conversations'
+      'n3twork.conversations',
+      'n3twork.conversation'
     ])
     .config(config);
 
@@ -53,6 +54,12 @@
         resolve: authResolver
       })
       .when('/conversations/:id', {
+        templateUrl: 'app/conversations/conversations.html',
+        controller: 'ConversationsCtrl',
+        controllerAs: 'cons',
+        resolve: authResolver
+      })
+      .when('/conversations/:id/:username', {
         templateUrl: 'app/conversations/conversations.html',
         controller: 'ConversationsCtrl',
         controllerAs: 'cons',
@@ -158,4 +165,3 @@
   }
 
 })();
-

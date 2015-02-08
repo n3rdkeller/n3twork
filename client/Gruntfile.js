@@ -48,7 +48,7 @@ module.exports = function(grunt) {
         options: {
           sourceMap: false
         },
-        src: ['src/js/angular.js', 'src/js/jquery.js', 'src/js/*.js', 'src/app/app.js', 'src/app/app.*.js', 'src/app/*/*.module.js', 'src/app/*/*.js'],
+        src: ['src/js/jquery.js', 'src/js/angular.js', 'src/js/*.js', 'src/app/app.js', 'src/app/app.*.js', 'src/app/*/*.module.js', 'src/app/*/*.js'],
         dest: 'dist/js/n3twork.min.js'
       }
     },
@@ -64,7 +64,7 @@ module.exports = function(grunt) {
           sourceMapIncludeSources: true
         },
         files: {
-          'dist/js/n3twork.min.js' : ['src/js/angular.js', 'src/js/jquery.js', 'src/js/*.js', 'src/app/app.js', 'src/app/app.*.js', 'src/app/*/*.module.js', 'src/app/*/*.js']//'dist/js/n3twork.js', //'src/js/*.js'],
+          'dist/js/n3twork.min.js' : ['src/js/jquery.js', 'src/js/angular.js', 'src/js/*.js', 'src/app/app.js', 'src/app/app.*.js', 'src/app/*/*.module.js', 'src/app/*/*.js']//'dist/js/n3twork.js', //'src/js/*.js'],
           //'dist/js/stuff.min.js' : ['src/js/*.js', '!**/*.min.js', '!**/app.js']
         }
       }

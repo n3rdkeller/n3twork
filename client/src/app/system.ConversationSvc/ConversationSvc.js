@@ -11,8 +11,9 @@
       getUnreadForBadge: getUnreadForBadge,
       getConversationList: getConversationList,
       getMessages: getMessages,
+      newConversation: newConversation,
       archiveConversation: archiveConversation,
-      readConversation: readConversation
+      sendMessage: sendMessage
     };
 
     return service;
@@ -23,10 +24,11 @@
       APISvc.request({
         method: 'POST',
         url: '/conversation/unread',
-        data: {}
+        data: {},
+        ignoreLoadingBar: true
       }).then(function (response) {
         if (response.data.successful) {
-          deferred.resolve(response.data.unreadCount);
+          deferred.resolve(response.data.unread);
         } else {
           deferred.reject(response.data.successful);
         }
@@ -43,7 +45,8 @@
       APISvc.request({
         method: 'POST',
         url: '/conversation',
-        data: {}
+        data: {},
+        ignoreLoadingBar: true
       }).then(function (response) {
         if (response.data.successful) {
           deferred.resolve(response.data.conversationList);
@@ -65,7 +68,8 @@
         url: '/conversation/show',
         data: {
           conversationID: conversationID
-        }
+        },
+        ignoreLoadingBar: true
       }).then(function (response) {
         if (response.data.successful) {
           deferred.resolve(response.data.messageList);
@@ -87,7 +91,8 @@
         url: '/conversation/archive',
         data: {
           conversationID: conversationID
-        }
+        },
+        ignoreLoadingBar: true
       }).then(function (response) {
         if (response.data.successful) {
           deferred.resolve(response.data.successful);
@@ -101,18 +106,43 @@
       return deferred.promise;
     }
 
-    function readConversation (conversationID) {
+    function newConversation (receiverList, name) {
       var deferred = $q.defer()
 
       APISvc.request({
         method: 'POST',
-        url: '/conversation/read',
+        url: '/conversation/new',
         data: {
-          conversationID: conversationID
+          receiverList: receiverList,
+          name: name
+        },
+        ignoreLoadingBar: true
+      }).then(function (response) {
+        if (response.data.successful) {
+          deferred.resolve(response.data.conversationID);
+        } else {
+          deferred.reject(response.data.successful);
+        }
+      }, function (err) {
+        deferred.reject(err);
+      });
+
+      return deferred.promise;
+    }
+
+    function sendMessage (conversationID, content) {
+      var deferred = $q.defer()
+
+      APISvc.request({
+        method: 'POST',
+        url: '/conversation/send',
+        data: {
+          conversationID: conversationID,
+          content: content
         }
       }).then(function (response) {
         if (response.data.successful) {
-          deferred.resolve(response.data.successful);
+          deferred.resolve(response.data.messageID);
         } else {
           deferred.reject(response.data.successful);
         }

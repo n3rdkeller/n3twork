@@ -1,9 +1,15 @@
-<div class="panel panel-warning" ng-if="!con.hideConversation">
+<div class="panel panel-warning" ng-if="!con.hideConversation" id="loading-bar-element">
   <!-- Conversation Title -->
   <div class="panel-heading">
     <a type="button" class="close" href="#/conversations" aria-label="Close"><span aria-hidden="true">&times;</span></a>
     <h3 class="panel-title" ng-bind="con.currentConversation.name"></h3>
-    <h3 class="panel-title" id="newConTitle" ng-show="con.newConversation">New Conversation</h3>
+    <div ng-show="con.newConversation" class="">
+      <form class="form three-quarter-width" role="form" name="newConTitleForm">
+        <div class="form-group has-warning">
+          <input type="text" class="form-control" ng-model="con.newConversationName" placeholder="Name this conversation">
+        </div>
+      </form>
+    </div>
     <h3 class="panel-title only-names" ng-if="!con.currentConversation.name && !con.newConversation">
       <span ng-repeat="receiver in con.currentConversation.receiverList" class="text-nowrap">
         <a ng-href="#/user/{{ receiver.username }}" ng-bind="(receiver.firstName ? receiver.firstName : receiver.username)"></a><span ng-bind="($last ? '' : ', ')"></span>
@@ -22,14 +28,14 @@
           <p class="form-control-static" ng-repeat="receiver in con.currentConversation.receiverList">
             <span class="receiver-label">
               <a ng-href="#/user/{{ receiver.username }}" ng-bind="(receiver.firstName ? receiver.firstName : receiver.username)"></a>
-              <button type="button" class="btn btn-link btn-xs"><i class="fa fa-remove"></i></button>
+              <button type="button" class="btn btn-link btn-xs" ng-click="con.deleteReceiver(receiver)"><i class="fa fa-remove"></i></button>
             </span>
           </p>
           <!-- New receiver input -->
-          <div class="input-group">
-            <input autofocus required ng-model="con.newReceiver" type="text" class="form-control" placeholder="Add new receiver" typeahead="friend as (friend.firstName ? friend.firstName : friend.username) for friend in con.getFriends($viewValue)" typeahead-editable="false">
+          <div class="input-group" ng-show="con.newReceiverAllowed">
+            <input autofocus required ng-model="con.newReceiver" type="text" class="form-control round-border input-sm" placeholder="Add new receiver" typeahead="friend as (friend.firstName ? friend.firstName : friend.username) for friend in con.getFriends($viewValue)" typeahead-editable="false">
             <span class="input-group-btn">
-              <button type="submit" ng-disabled="newReceiverForm.$invalid" class="btn btn-link">
+              <button type="submit" ng-disabled="newReceiverForm.$invalid" class="btn btn-link btn-sm">
                 <span><i class="fa fa-plus"></i></span>
               </button>
             </span>
@@ -39,13 +45,13 @@
     </div>
   </div>
   <!-- History -->
-  <div class="panel-body responsive-height" id="history" scroll-glue>
+  <div class="panel-body responsive-height" id="history" scroll-glue="!!!con.historyLoading">
     <h1 ng-show="con.historyLoading" class="text-center"><i class="fa fa-spinner fa-spin"></i></h1>
-    <div ng-if="!con.historyLoading" ng-repeat="msg in con.messageList | orderBy:'senderDate'" class="message row" ng-class="{ 'message-right': msg.senderID == userData.id }">
-      <div class="col-sm-12">
-        <h5 ng-bind="msg.senderID"></h5>
-        <span ng-bind="msg.content"></span>
-      </div>
+    <div ng-repeat="msg in con.messageList | orderBy:'sendDate'" title="{{ ::msg.sendDate | convertToDate }}" class="message" ng-class="{ 'message-right': msg.senderID == userdata.id }">
+      <a ng-href="#/user/{{ con.getUserForID(msg.senderID).username }}" title="{{ con.getUserForID(msg.senderID).firstName ? con.getUserForID(msg.senderID).firstName : con.getUserForID(msg.senderID).username }}">
+        <img width="40px" ng-src="http://www.gravatar.com/avatar/{{ con.getUserForID(msg.senderID).emailhash }}?d=mm&s=40" ng-srcset="http://www.gravatar.com/avatar/{{ con.getUserForID(msg.senderID).emailhash }}?d=mm&s=40 1x, http://www.gravatar.com/avatar/{{ con.getUserForID(msg.senderID).emailhash }}?d=mm&s=80 2x" />
+      </a>
+      <span ng-bind="msg.content"></span><br>
     </div>
   </div>
   <!-- Inputfield -->
