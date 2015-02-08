@@ -21,6 +21,7 @@
       <span ng-show="!profile.friendButtonLoading && profile.isFriend && !profile.checkingFriend"><i class="fa fa-fw fa-minus"></i> Remove from friends</span>
       <span ng-show="profile.friendButtonLoading || profile.checkingFriend"><i class="fa fa-fw fa-spinner fa-spin"></i> Loading</span>
     </button>
+    <a type="button" ng-show="!profile.friendButtonLoading && profile.isFriend && !profile.checkingFriend" ng-href="#/conversations/new/{{ profile.userdata.username }}" class="btn btn-block margin-top btn-warning"><i class="fa fa-envelope-o"></i> Start a conversation</a>
     <!-- otherProperties -->
     <hr>
     <ul class="fa-ul">

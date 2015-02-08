@@ -53,7 +53,8 @@
       APISvc.request({
         method: 'POST',
         url: '/user',
-        data: { 'username': username }
+        data: { 'username': username },
+        ignoreLoadingBar: true
       }).then(function (response) {
         if (response.data.successful) {
           deferred.resolve(response.data);
@@ -145,7 +146,8 @@
         APISvc.request({
           method: 'POST',
           url: '/user/friends',
-          data: { 'id': id }
+          data: { 'id': id },
+          ignoreLoadingBar: true
         }).then(function (response) {
           if (response.data.successful) {
             setSessionData(id, 'friendList', response.data.friendList);

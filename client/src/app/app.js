@@ -5,6 +5,7 @@
       'ngRoute',
       'ui.bootstrap',
       'ui.bootstrap.showErrors',
+      'luegg.directives',
       'n3twork.register',
       'n3twork.auth',
       'n3twork.profile',
@@ -12,7 +13,9 @@
       'n3twork.search',
       'n3twork.friends',
       'n3twork.groups',
-      'n3twork.feed'
+      'n3twork.feed',
+      'n3twork.conversations',
+      'n3twork.conversation'
     ])
     .config(config);
 
@@ -42,6 +45,24 @@
         templateUrl: 'app/search/search.html',
         controller: 'SearchCtrl',
         controllerAs: 'search',
+        resolve: authResolver
+      })
+      .when('/conversations', {
+        templateUrl: 'app/conversations/conversations.html',
+        controller: 'ConversationsCtrl',
+        controllerAs: 'cons',
+        resolve: authResolver
+      })
+      .when('/conversations/:id', {
+        templateUrl: 'app/conversations/conversations.html',
+        controller: 'ConversationsCtrl',
+        controllerAs: 'cons',
+        resolve: authResolver
+      })
+      .when('/conversations/:id/:username', {
+        templateUrl: 'app/conversations/conversations.html',
+        controller: 'ConversationsCtrl',
+        controllerAs: 'cons',
         resolve: authResolver
       })
       .when('/user/:username', {
@@ -134,10 +155,13 @@
   function NavCtrl($rootScope, $location) {
     $rootScope.isActive = isActive;
 
-    function isActive (viewLocation) {
-      return viewLocation === $location.path();
+    function isActive (viewLocation, notExact) {
+      if (notExact) {
+        return $location.path().lastIndexOf(viewLocation, 0) === 0;
+      } else {
+        return viewLocation == $location.path();
+      }
     }
   }
 
 })();
-

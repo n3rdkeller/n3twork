@@ -1,0 +1,6 @@
+<a href="#/conversations">
+  <i class="fa fa-envelope fa-fw"></i>
+  <span class="visible-xs-inline-block visible-lg-inline-block"> Conversations </span>
+  <span class="badge" ng-show="mb.unreadLoading"><i class="fa fa-spinner fa-spin"></i></span>
+  <span class="badge" ng-hide="mb.unreadLoading ||  mb.unreadCount == 0" ng-bind="mb.unreadCount"></span>
+</a>
