@@ -1,5 +1,6 @@
 # Server
 This is the server side of our n3twork.
+
 ## Table of Contents
 - [Introduction](#introduction)
 - [classes](#classes)
@@ -7,12 +8,15 @@ This is the server side of our n3twork.
 - [servlet](#servlet)
     -
 - [API](#n3twork-api-quick-reference)
+
+## Introduction
 We used `eclipse` to generate a `n3.war` we deployed on our Tomcat 8 Server.
 
-The Server is seperated into two parts, as is indicated by the directory structure: classes, which contains the classes, whose objects are used, and servlet, which contains classes of the REST API.
+The server is seperated into two parts, as is indicated by the directory structure: classes, which contains the classes, whose objects are used, and servlet, which contains classes of the REST API.
 
 ## classes
-
+### User
+The user class is central to n3twork, which is to be expected from a social network. Most of the db queries are found here. 
 ## n3twork API Quick Reference
 - [POST /login](#login)
 - [POST /logout](#logout)
