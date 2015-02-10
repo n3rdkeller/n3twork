@@ -1,48 +1,58 @@
 # Server
-
 This is the server side of our n3twork.
-
+## Table of Contents
+- [Introduction](#introduction)
+- [classes](#classes)
+    -
+- [servlet](#servlet)
+    -
+- [API](#n3twork-api-quick-reference)
 We used `eclipse` to generate a `n3.war` we deployed on our Tomcat 8 Server.
 
-# n3twork API Quick Reference
+The Server is seperated into two parts, as is indicated by the directory structure: classes, which contains the classes, whose objects are used, and servlet, which contains classes of the REST API.
+
+## classes
+
+## n3twork API Quick Reference
 - [POST /login](#login)
 - [POST /logout](#logout)
 - [POST /register](#register)
-- [POST /register/checkuser](#registercheckuser)
+- [POST /register/checkuser](#register-checkuser)
 - [POST /user](#user)
-- [PUT /user/settings](#usersettings)
-- [POST /user/remove](#userremove)
-- [POST /user/find](#userfind)
-- [POST /user/count](#usercount)
-- [POST /user/friends](#userfriends)
-- [POST /user/friendrequests](#userfriendrequests)
-- [POST /user/friend/add](#userfriendadd)
-- [POST /user/friend/remove](#userfriendremove)
-- [POST /user/groups](#usergroups)
-- [POST /user/group/join and POST /user/group/leave](#usergroupjoin-and-usergroupleave)
-- [POST /group/create](#groupfound)
-- [POST /group/show](#groupshow)
-- [POST /group/find](#groupfind)
-- [POST /group/count](#groupcount)
-- [POST /group/members](#groupmembers)
+- [PUT /user/settings](#user-settings)
+- [POST /user/remove](#user-remove)
+- [POST /user/find](#user-find)
+- [POST /user/count](#user-count)
+- [POST /user/friends](#user-friends)
+- [POST /user/friendrequests](#user-friendrequests)
+- [POST /user/friend/add](#user-friend-add)
+- [POST /user/friend/remove](#user-friend-remove)
+- [POST /user/groups](#user-groups)
+- [POST /user/group/join and POST /user/group/leave](#user-group-join-and-user-group-leave)
+- [POST /group/create](#group-create)
+- [POST /group/show](#group-show)
+- [POST /group/find](#group-find)
+- [POST /group/count](#group-count)
+- [POST /group/members](#group-members)
 - [POST /post](#post)
-- [POST /post/newsfeed](#postnewsfeed)
-- [POST /post/votes](#postvotes)
-- [POST /post/add](#postadd)
-- [PUT /post/update](#postupdate)
-- [POST /post/delete](#postdelete)
-- [POST /post/vote/add and POST /post/vote/remove](postvoteadd-and-postvoteremove)
-- [POST /post/comments](#postcomments)
-- [POST /post/comment/add](#postcommentadd)
-- [POST /post/comment/remove](#postcommentremove)
+- [POST /post/newsfeed](#post-newsfeed)
+- [POST /post/votes](#post-votes)
+- [POST /post/add](#post-add)
+- [PUT /post/update](#post-update)
+- [POST /post/delete](#post-delete)
+- [POST /post/vote/add and POST /post/vote/remove](post-vote-add-and-post-vote-remove)
+- [POST /post/comments](#post-comments)
+- [POST /post/comment/add](#post-comment-add)
+- [POST /post/comment/remove](#post-comment-remove)
 - [POST /conversation/](#conversation)
-- [POST /conversation/show](#conversationshow)
-- [POST /conversation/send](#conversationsend)
-- [POST /conversation/new](#conversationnew)
-- [POST /conversation/archive](#conversationarchive)
-- [POST /conversation/unread](#conversationunread)
-- [POST /conversation/rename](#conversationrename)
-
+- [POST /conversation/show](#conversation-show)
+- [POST /conversation/send](#conversation-send)
+- [POST /conversation/new](#conversation-new)
+- [POST /conversation/archive](#conversation-archive)
+- [POST /conversation/unread](#conversation-unread)
+- [POST /conversation/rename](#conversation-rename)
+- [POST /suggestion/network](#suggestion-network)
+- [POST /suggestion/post](#suggestion-post)
 ### /login
 #### POST
 in:
@@ -764,3 +774,71 @@ out:
 {
     "successful":true
 }
+### /suggestion/network
+#### POST
+in:
+``` json
+{
+    "session":"sessionID"
+}
+```
+out:
+```
+{
+    "userList": [
+        {
+            "date": 1417123181000,
+            "email": "zwerch1337@gmail.com",
+            "firstName": "Robin",
+            "id": 45,
+            "lastname": "Temme",
+            "trueFriend": false,
+            "username": "zwerch"
+        },
+        {
+            "date": 1417122900000,
+            "email": "horst@dieter.ded",
+            "firstName": "",
+            "id": 42,
+            "lastname": "",
+            "trueFriend": false,
+            "username": "ddasddddddasdasdasd"
+        },
+    ],
+    "successful": true
+}
+```
+### /suggestion/post
+#### POST
+in:
+``` json
+{
+    "session":"sessionID"
+}
+```
+out:
+```
+{
+    "userList": [
+        {
+            "date": 1417123181000,
+            "email": "zwerch1337@gmail.com",
+            "firstName": "Robin",
+            "id": 45,
+            "lastname": "Temme",
+            "trueFriend": false,
+            "username": "zwerch"
+        },
+        {
+            "date": 1417122900000,
+            "email": "horst@dieter.ded",
+            "firstName": "",
+            "id": 42,
+            "lastname": "",
+            "trueFriend": false,
+            "username": "ddasddddddasdasdasd"
+        },
+    ],
+    "successful": true
+}
+```
