@@ -63,6 +63,15 @@ public class Suggestion {
       return sortedMap;
   }
   
+  /**
+   * 
+   * @param user
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public static List<User> networkSuggestion(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sql = "SELECT Users.id, Users.username, Users.email, Users.name, Users.firstName, Friends.userID as partner "
@@ -117,8 +126,7 @@ public class Suggestion {
       }
     }
     conn.close();
-    TIntArrayList a;
-    Suggestion.sortByValues(suggestionMap);
+    suggestionMap = sortByValues(suggestionMap);
     List<User> suggestionList = new ArrayList<User>();
     for(Entry<User, Integer> entry: suggestionMap.entrySet()) {
       suggestionList.add(entry.getKey());
@@ -126,6 +134,15 @@ public class Suggestion {
     return suggestionList;
   }
   
+  /**
+   * 
+   * @param user
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public static List<User> postBasedSuggestion(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     // select the user in question and all users, that are not a friend of them
@@ -143,14 +160,16 @@ public class Suggestion {
     ResultSet postTable = pStmt.executeQuery();
     // put postTable in Hashmap<User, ArrayList<String>>, where every word in the posts is an entry in the ArrayList<String>
     User author = new User();
-    Map<User,ArrayList<String>> wordTable = new HashMap<User,ArrayList<String>>();
+    Map<Integer,ArrayList<String>> wordTable = new HashMap<Integer,ArrayList<String>>();
+    Map<Integer, User> userMap = new HashMap<Integer, User>();
     ArrayList<String> wordRow = new ArrayList<String>();
     while(postTable.next()) {
       //if the author is new, then add the old one to the HashMap
       if(author.getId() != postTable.getInt("id")) {
         if(wordRow.size() != 0) {
           Collections.sort(wordRow);
-          wordTable.put(author, wordRow);
+          wordTable.put(author.getId(), wordRow);
+          userMap.put(author.getId(), author);
         }
         wordRow = new ArrayList<String>();
         author = new User(
@@ -167,14 +186,19 @@ public class Suggestion {
     }
     //add last author to the wordTable
     Collections.sort(wordRow);
-    wordTable.put(author, wordRow);
+    wordTable.put(author.getId(), wordRow);
+    userMap.put(author.getId(), author);
     
     //fill the matrix
+    int userRow = 0;
     List<String> wordList = new ArrayList<String>();
     List<TDoubleArrayList> wordUserMatrix = new ArrayList<TDoubleArrayList>();
     TDoubleArrayList matrixRow = new TDoubleArrayList();
-    for(Entry<User, ArrayList<String>> row: wordTable.entrySet()) {
-      matrixRow.add(row.getKey().getId());
+    for(Entry<Integer, ArrayList<String>> row: wordTable.entrySet()) {
+      matrixRow.add(row.getKey());
+      if (row.getKey() == user.getId()) {
+        userRow = wordUserMatrix.size(); // needed later
+      }
       int wordCounter = 0;
       //count duplicates of every word in the row, which is already in the wordList
       //and save that in the matrixRow
@@ -241,6 +265,30 @@ public class Suggestion {
         j++;
       }
     }
-    return null;
+    Double userSum = 0.0;
+    for (int i = 1; i < wordUserMatrix.get(userRow).size(); i++) {
+      userSum = userSum + Math.pow(wordUserMatrix.get(userRow).get(i), 2);
+    }
+    userSum = Math.sqrt(userSum);
+    Map<User, Double> userRatingMap = new HashMap<User, Double>();
+    for(TDoubleArrayList row: wordUserMatrix) {
+      if(row.get(0) == user.getId()) continue;
+      Double rowSum = 0.0;
+      for (int i = 1; i < row.size(); i++) {
+        rowSum = rowSum + Math.pow(row.get(i), 2);
+      }
+      rowSum = Math.sqrt(rowSum);
+      Double productSum = 0.0;
+      for (int i = 1; i < Math.min(row.size(), wordUserMatrix.get(userRow).size()); i++) {
+        productSum = productSum + row.get(i) * wordUserMatrix.get(userRow).get(i);
+      }
+      userRatingMap.put(userMap.get(row.get(0)), productSum/(userSum*productSum));
+    }
+    userRatingMap = sortByValues(userRatingMap);
+    List<User> suggestionList = new ArrayList<User>();
+    for(Entry<User, Double> entry: userRatingMap.entrySet()) {
+      suggestionList.add(entry.getKey());
+    }
+    return suggestionList;
   }
 }
