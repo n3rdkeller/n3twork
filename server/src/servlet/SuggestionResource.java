@@ -47,9 +47,9 @@ public class SuggestionResource {
    *}</code></pre>
    * @return list of users in json format
    */
-  @POST @Path("/")
+  @POST @Path("/network")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
-  public Response showConversations(String jsonInput){
+  public Response getNeworkSuggestions(String jsonInput){
     try {
       JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
       JsonObject input = jsonReader.readObject();
@@ -70,4 +70,42 @@ public class SuggestionResource {
     }
   }
   
+  /**
+   * Options request for / (All options requests are identical, therefore all following are without docstring)
+   * @return Response with all needed headers
+   */
+  @OPTIONS @Path("/post")
+  public Response corsGetPostSuggestions() {
+    return Helper.optionsResponse();
+  }
+  
+  /**
+   * 
+   * @param jsonInput <pre><code>{
+   *  "session":"sessionID"
+   *}</code></pre>
+   * @return list of users in json format
+   */
+  @POST @Path("/post")
+  @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
+  public Response getPostSuggestions(String jsonInput){
+    try {
+      JsonReader jsonReader = Json.createReader(new StringReader(jsonInput));
+      JsonObject input = jsonReader.readObject();
+      User user = Helper.checkSessionID(input.getString("session"));
+      if (user == null){
+        String entity = String.valueOf(Json.createObjectBuilder()
+            .add("successful", false)
+            .add("reason", "SessionID invalid")
+            .build());
+        log.debug("/conversation returns:" + entity);
+        return Helper.okResponse(entity);
+      } 
+      String entity = String.valueOf(User.convertUserListToJson(Suggestion.postBasedSuggestion(user)));
+      return Helper.okResponse(entity);
+    } catch(Exception e) {
+      log.error(e);
+      return Helper.errorResponse(e);
+    }
+  }
 }

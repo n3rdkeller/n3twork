@@ -12,6 +12,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.33-bin.jar"/>
-	<classpathentry kind="lib" path="lib/trove-3.1a1-src.jar" sourcepath="lib/src"/>
+	<classpathentry kind="lib" path="lib/trove.jar"/>
 	<classpathentry kind="output" path="bin/"/>
 </classpath>
