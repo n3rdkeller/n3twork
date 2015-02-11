@@ -28,17 +28,38 @@ import org.apache.log4j.Logger;
 public class User {
   final static Logger log = LogManager.getLogger(User.class);
   
+  /**
+   * 
+   */
   private int id;
+  /**
+   * 
+   */
   private String name="";
+  /**
+   * 
+   */
   private String firstName="";
+  /**
+   * 
+   */
   private String username = ""; //TODO change login and register methods, so these don't have to be initialized
+  /**
+   * 
+   */
   private String email = "";
+  /**
+   * 
+   */
   private String password = "";
+  /**
+   * 
+   */
   private String sessionID;
   private Map<String,String> otherProperties = new HashMap<String,String>();
   // date of birth, education, gender
   private Map<User,SimpleEntry<Long,Boolean>> friends = new HashMap<User,SimpleEntry<Long,Boolean>>();
-  private Map<User,SimpleEntry<Long,Boolean>> friendRequests = new HashMap<User,SimpleEntry<Long,Boolean>>();
+  private Map<User,Long> friendRequests = new HashMap<User,Long>();
   private List<Group> groups = new ArrayList<Group>();
   private List<Post> posts = new ArrayList<Post>();
   private List<Conversation> conversations = new ArrayList<Conversation>();
@@ -743,10 +764,6 @@ public class User {
    */
   public User getFriendsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
-    
-    /* friends are a pain in the butt, because you can't return a ResultSet in DBConnector.selectQuery and I need it to extract the timestamp. 
-     * That's why I use the whole preparedStatement and ResultSet stuff which is normally hidden behind the selectQuery function
-     */
     String sqlQuery = 
         "SELECT Users.id,username,email,name,firstName,Friends.date FROM " + DBConnector.DATABASE + ".Friends "
         + "JOIN " + DBConnector.DATABASE + ".Users "
@@ -807,7 +824,7 @@ public class User {
    */
   public String getFriendRequestsAsJson() throws NoSuchAlgorithmException, UnsupportedEncodingException {
     JsonArrayBuilder friendRequestList = Json.createArrayBuilder();
-    for (Entry<User, SimpleEntry<Long,Boolean>> friendRequest : this.friendRequests.entrySet()) {
+    for (Entry<User, Long> friendRequest : this.friendRequests.entrySet()) {
       friendRequestList.add(Json.createObjectBuilder()
           .add("id", friendRequest.getKey().getId())
           .add("username", friendRequest.getKey().getUsername())
@@ -815,8 +832,8 @@ public class User {
           .add("emailhash", md5(friendRequest.getKey().getEmail().toLowerCase()))
           .add("lastName", friendRequest.getKey().getName())
           .add("firstName", friendRequest.getKey().getFirstName())
-          .add("trueFriend", friendRequest.getValue().getValue())
-          .add("date", friendRequest.getValue().getKey()));
+          .add("trueFriend", false)
+          .add("date", friendRequest.getValue()));
     }
     
     JsonObject friendRequestsObject = Json.createObjectBuilder()
@@ -870,7 +887,7 @@ public class User {
             friendRequestsTable.getString("email"), 
             friendRequestsTable.getString("name"), 
             friendRequestsTable.getString("firstName")),
-            new SimpleEntry<Long,Boolean>(friendRequestsTable.getTimestamp("date").getTime(), false));
+            friendRequestsTable.getTimestamp("date").getTime());
       }
     }
     conn.close();

@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="server">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-        <dependent-module archiveName="javax.ws.rs-api-2.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/server/lib/javax.ws.rs-api-2.0.1.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="javax.json-1.0.4.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/server/lib/javax.json-1.0.4.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="log4j-1.2.17.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/server/lib/log4j-1.2.17.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <dependent-module archiveName="jersey-container-servlet.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/server/lib/jersey-container-servlet.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -35,9 +27,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="jersey-guava-2.13.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/server/lib/jersey-guava-2.13.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="mysql-connector-java-5.1.33-bin.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/server/lib/mysql-connector-java-5.1.33-bin.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="validation-api-1.1.0.Final.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/server/lib/validation-api-1.1.0.Final.jar">

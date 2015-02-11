@@ -4,19 +4,70 @@ This is the server side of our n3twork.
 ## Table of Contents
 - [Introduction](#introduction)
 - [classes](#classes)
-    -
+    - [User](#user)
 - [servlet](#servlet)
-    -
+    - ...
 - [API](#n3twork-api-quick-reference)
 
 ## Introduction
-We used `eclipse` to generate a `n3.war` we deployed on our Tomcat 8 Server.
+We used eclipse to generate a `n3.war` we deployed on our Tomcat 8 Server.
 
 The server is seperated into two parts, as is indicated by the directory structure: classes, which contains the classes, whose objects are used, and servlet, which contains classes of the REST API.
 
 ## classes
+The class `Main` is only used for testing. 
+
 ### User
-The user class is central to n3twork, which is to be expected from a social network. Most of the db queries are found here. 
+This class is central to *n3twork*, which is to be expected from a social network. Most of the db queries are found here. An object of this class represents a user in the network. The most used attributes are:
+- `id` is a unique integer and analog to the `id` column in the `Users` table
+- `name` and `firstName` describe the name of the user
+- `username` is a unique String and analog to the `username` column in the `Users` table
+- `email` should also be a unique String, but is only used on login as a identifier
+- `password` is allways hashed with md5
+- `sessionID` is a md5 hash of the username with the current time in milliseconds concatenated
+- `otherProperties` is a HashMap of all other attributes a user could have (e.g. city, bio, workplace). This is implemented dynamically: support for a new property only has to be added to the client and the db
+
+The feature of friends is also implemented in `User`. It uses two attributes:
+- `friends` is a `HashMap<User, SimpleEntry<Long, Boolean>>`
+    - the key is the user object of the friend
+    - the key of the `SimpleEntry` is the timestamp when the connection was established
+    - the value of the `SimpleEntry` is true if the connection exists both ways
+- `friendRequests` is a `HashMap<User, Long>`
+    - the key is the user object of the friend request
+    - the value is the timestamp of the time the friend request was made
+
+## Group
+`Group` is part of the implementation of the groups feature. An object of the class represents a group with the following attributes:
+- `id` is a unique identifier, related to the `id` column in the `Groups` table
+- `name` and `descr` describe the group
+- `members` is a list of `User` objects
+- `memberCount` is needed to save the lenght of `members` without having the list
+- `otherProperties` is equal to the correspondent attribute in [User](#user)
+- `posts` see [Post](#post)
+
+A lot of the user related methods are found in `User`
+
+## Post
+Objects of this class represents posts of users on their profil or in a group. The attibutes are:
+- `id` is a unique identifier, related to the `id` column in the `Posts` table
+- `owner` is a group
+- `author` is the user, who wrote the post
+- `content` explains itself
+- `postDate` is the date of the creation of the post
+- `privatePost` is true if the post should only be visual to friends of the `author`. This is irrelevant, if `goupPost` is true.
+- `groupPost` is true if the post is in a group and false if it should be displayed in the profil. If it is false, `owner` is ignored
+- `upvotes` is a `HashMap<User,Date>`. The key is the voter and the value the date of voting
+- `numberOfUpVotes` is needed to save the size of `upVotes` without having the Map
+- `didIVote` is true if the spectating user has already voted
+- `comments` is a `HashMap<SimpleEntry<User,Integer>,SimpleEntry<String,Date>>`, which indicates, that this should've been a seperate class
+    - the key of the key is the commentator
+    - the value of the key is the comment id (from `Comments` table in db)
+    - the key of the value is the content
+    - the value of the key is the date of creation
+- `numberOfComments` is needed to save the size of `comments` without having the Map
+
+Methods implementing an action by a user are usually in `User`
+
 ## n3twork API Quick Reference
 - [POST /login](#login)
 - [POST /logout](#logout)
@@ -57,6 +108,7 @@ The user class is central to n3twork, which is to be expected from a social netw
 - [POST /conversation/rename](#conversation-rename)
 - [POST /suggestion/network](#suggestion-network)
 - [POST /suggestion/post](#suggestion-post)
+
 ### /login
 #### POST
 in:
