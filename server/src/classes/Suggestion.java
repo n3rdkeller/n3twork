@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -158,7 +159,8 @@ public class Suggestion {
     pStmt.setInt(1, user.getId());
     pStmt.setInt(2, user.getId());
     ResultSet postTable = pStmt.executeQuery();
-    // put postTable in Hashmap<User, ArrayList<String>>, where every word in the posts is an entry in the ArrayList<String>
+    log.debug("postTable -> wordTable");
+    // put postTable in Hashmap<Integer, ArrayList<String>>, where every word in the posts is an entry in the ArrayList<String>
     User author = new User();
     Map<Integer,ArrayList<String>> wordTable = new HashMap<Integer,ArrayList<String>>();
     Map<Integer, User> userMap = new HashMap<Integer, User>();
@@ -178,17 +180,21 @@ public class Suggestion {
             postTable.getString("email"),
             postTable.getString("name"),
             postTable.getString("firstName"));
-      }
+      } 
       //split the post into words and add them to wordRow
-      for(String word: postTable.getString("content").split("[0123456789 +-=.,!?@#$%^&*();\\/|<>'\"\t]")) { //[\W]
-        wordRow.add(word.toLowerCase());
+      String[] wordArray = postTable.getString("content").split("[0-9_\\W]");
+      for(String word: wordArray) { // 0-9 +-=.,!?@#$%^&*();\\\n/|<>'\"\t
+        if(!word.isEmpty()){
+          wordRow.add(word.toLowerCase());
+        }
       }
+      //log.debug(debug + "]");
+      //log.debug(wordRow);
     }
     //add last author to the wordTable
     Collections.sort(wordRow);
     wordTable.put(author.getId(), wordRow);
     userMap.put(author.getId(), author);
-    
     //fill the matrix
     int userRow = 0;
     List<String> wordList = new ArrayList<String>();
@@ -206,7 +212,7 @@ public class Suggestion {
         int i = row.getValue().indexOf(headerWord);
         wordCounter = 0;
         if(i != -1) {
-          while(row.getValue().get(i) == headerWord) {
+          while(row.getValue().get(i).equals(headerWord)) {
             wordCounter++;
             i++;
           }
@@ -219,7 +225,7 @@ public class Suggestion {
       Boolean addWord = false;
       String lastWord = "";
       for(String word: row.getValue()) {
-        if(word == lastWord) {
+        if(word.equals(lastWord)) {
           if(addWord) {
             wordCounter++;
           }
@@ -231,40 +237,45 @@ public class Suggestion {
             wordCounter = 1;
           }
           wordList.add(word);
+          wordCounter = 1;
           addWord = true;
         } else {
           addWord = false;
         }
         lastWord = word;
       }
+      if(wordCounter != 0) matrixRow.add(wordCounter);
       wordUserMatrix.add(matrixRow);
     }
-    
+    log.debug("fill nList");
     TIntArrayList nList = new TIntArrayList(wordList.size());
     for(int i = 1; i <= wordList.size(); i++) {
       int n = 0;
       for(TDoubleArrayList row: wordUserMatrix){
-        if(row.size() >= i && row.get(i) != 0) { 
-          n++;
+        if(i < row.size() && n < row.get(i)) { 
+          n = (int) row.get(i);
         }
       }
       nList.add(n);
     }
+    log.debug("fill maxList");
     TDoubleArrayList maxList = new TDoubleArrayList(wordUserMatrix.size());
     for(TDoubleArrayList row: wordUserMatrix) {
       maxList.add(row.max());
     }
-    for(int i = 1; i <= wordList.size(); i++) {
-      int j = 0;
-      for(TDoubleArrayList row: wordUserMatrix) {
-        if(row.size() >= i && row.get(i) != 0) {
-          // calculation of wij = (hij/maxk hkj)*log(N/ni)
-          Double newEntry = (row.get(i)/maxList.get(j))*Math.log(wordUserMatrix.size()/nList.get(i));
+    log.debug("calculate wij");
+    int j = 0;
+    for(TDoubleArrayList row: wordUserMatrix) {
+      for(int i = 1; i <= wordList.size(); i++) {
+        if(i < row.size() && row.get(i) != 0) {
+          // calculation of wij = (hij/maxj)*log(N/ni)
+          Double newEntry = (row.get(i)/maxList.get(j))*Math.log(wordUserMatrix.size()/nList.get(i-1));
           row.set(i, newEntry);
         }
-        j++;
       }
+      j++;
     }
+    log.debug("last calculation");
     Double userSum = 0.0;
     for (int i = 1; i < wordUserMatrix.get(userRow).size(); i++) {
       userSum = userSum + Math.pow(wordUserMatrix.get(userRow).get(i), 2);

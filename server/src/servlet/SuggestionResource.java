@@ -29,7 +29,7 @@ import classes.User;
  */
 @Path("/suggestion")
 public class SuggestionResource {
-  final static Logger log = LogManager.getLogger(PostResource.class);
+  final static Logger log = LogManager.getLogger(SuggestionResource.class);
   
   /**
    * Options request for / (All options requests are identical, therefore all following are without docstring)
