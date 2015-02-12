@@ -101,26 +101,5 @@ public class DBConnector {
     }
     
     return ids;
-
   }
-
-  public static void testQuerys(Connection conn) throws Exception {
-    DBConnector.printTestSelect(conn);
-    DBConnector.printTestSelect(conn);
-    //List<Integer> query = executeUpdate(conn, "insert into " + DATABASE + ".Users(username,name) values('tester','Der Tester')");
-    //DBConnector.printTestSelect(conn);
-    //query = DBConnector.executeUpdate(conn, "delete from " + DATABASE + ".Users where id=" + printIdString);
-  }
-  public static void printTestSelect(Connection conn) throws Exception {
-    List<ArrayList<String>> query = DBConnector.selectQuery(conn, "select id,name,username from " + DATABASE + ".Users where id=1");
-    String printString = "";
-    for (ArrayList<String> row : query) {
-      printString = printString + "\n";
-      for (String value : row){
-        printString = printString + value + " | ";
-      }
-    }
-    log.debug(printString);
-  }
-
 }

@@ -27,7 +27,6 @@ public class Message {
   private String content;
   private Date sendDate;
   private User sender;
-  private Boolean read;
 
   /**
    * Simple setter for id
@@ -100,15 +99,5 @@ public class Message {
    */
   public User getSender() { 
     return this.sender;
-  }
-  
-  public Message setRead(Boolean read) {
-    this.read = read;
-    return this;
-  }
-  
-  public Boolean getRead() {
-    if(this.read == null) return true;
-    return this.read;
   }
 }
