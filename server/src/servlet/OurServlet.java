@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Class needed to register resources.
  * @author rtemme
  *
  */

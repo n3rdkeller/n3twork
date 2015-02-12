@@ -26,6 +26,11 @@ import classes.Group;
 import classes.Post;
 import classes.User;
 
+/**
+ * Post related part of the api
+ * @author johannes
+ *
+ */
 @Path("/post")
 public class PostResource {
   final static Logger log = LogManager.getLogger(PostResource.class);
@@ -132,11 +137,29 @@ public class PostResource {
   }
   
   /**
-   * 
+   * Gets the newsfeed for the current user
    * @param jsonInput <pre><code> {
    *   "session":"sessionID"
    * }</code></pre>
-   * @return
+   * @return <pre><code> {
+   *   "postList": [
+   *     {
+   *       "author":authorID number,
+   *       "content":"content text",
+   *       "id":postID number,
+   *       "owner":ownerID number,
+   *       "postDate":timestamp number,
+   *       "upVotes": [
+   *         {
+   *           "date":timestamp number,
+   *           "voter":voterID number
+   *         },
+   *       ],
+   *       "private":true/false
+   *     },
+   *   ],
+   *   "successful":true
+   * } </code></pre>
    */
   @POST @Path("/newsfeed")
   @Produces(MediaType.APPLICATION_JSON)@Consumes(MediaType.APPLICATION_JSON)
@@ -168,7 +191,7 @@ public class PostResource {
   }
   
   /**
-   * 
+   * Save new post
    * @param jsonInput <pre><code> {
    *   "groupID":0, //optional if given uses group
    *   "userID":0, //optional if given uses user
@@ -235,7 +258,7 @@ public class PostResource {
   }
   
   /**
-   * Doesn't check if the post is made by the user
+   * Doesn't check if the post is made by the user, but edits a post.
    * @param jsonInput <pre><code> {
    *   "session":"sessionID"
    *   "id":0,
@@ -293,7 +316,7 @@ public class PostResource {
   }
   
   /**
-   * 
+   * Delete a post
    * @param jsonInput <pre><code> {
    *   "session":"sessionID"
    *   "id":0 //id of the doomed post
@@ -394,7 +417,7 @@ public class PostResource {
   }
   
   /**
-   * 
+   * Vote a post
    * @param jsonInput <pre><code>{
    *  "id":postID,
    *  "session":"sessionID"
@@ -437,7 +460,7 @@ public class PostResource {
   }
   
   /**
-   * 
+   * "Unvote" a post
    * @param jsonInput <pre><code>{
    *  "id":postID,
    *  "session":"sessionID"
@@ -531,7 +554,7 @@ public class PostResource {
   }
   
   /**
-   * 
+   * Save a new comment
    * @param jsonInput <pre><code>{
    *  "id":postID,
    *  "session":"sessionID",
@@ -583,7 +606,7 @@ public class PostResource {
   }
   
   /**
-   * 
+   * Remove a comment, if the user is the author of the comment or the post
    * @param jsonInput <pre><code>{
    *  "commentID":commentID,
    *  "session":"sessionID"

@@ -66,6 +66,11 @@ public class Helper {
         .build();
   }
   
+  /**
+   * Standard error Response used in a catch phrase
+   * @param e
+   * @return Response with needed header and the error as entity
+   */
   public static Response errorResponse(Exception e) {
     return Response.status(Status.INTERNAL_SERVER_ERROR)
         .entity(e.toString())

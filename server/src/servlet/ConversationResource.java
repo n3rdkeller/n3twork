@@ -31,6 +31,7 @@ import classes.User;
 import classes.Message;
 
 /**
+ * Conversation related API endpoints. Options requests are all identical
  * @author johannes
  *
  */
@@ -48,7 +49,7 @@ public class ConversationResource {
   }
   
   /**
-   * Post request to get messages
+   * Post request to get conversations
    * @param jsonInput <pre><code>{
    *  "session":"sessionID"
    *}
@@ -151,7 +152,7 @@ public class ConversationResource {
   }
   
   /**
-   * 
+   * Post request to send message
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
    *  "content":"asdfasdf",
@@ -200,7 +201,7 @@ public class ConversationResource {
   }
   
   /**
-   * 
+   * Post request to create new conversation
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
    *  "name":"conName", //optional
@@ -259,7 +260,7 @@ public class ConversationResource {
   }
   
   /**
-   * 
+   * Post request to archive a conversation
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
    *  "conversationID":0
@@ -302,7 +303,7 @@ public class ConversationResource {
   }
   
   /**
-   * 
+   * Post request to get the number of unread conversations
    * @param jsonInput <pre><code>{
    *  "session":"sessionID"
    *}</code></pre>
@@ -340,7 +341,7 @@ public class ConversationResource {
   }
   
   /**
-   * 
+   * Post request to rename conversation
    * @param jsonInput <pre><code>{
    *  "session":"sessionID",
    *  "id":0,
