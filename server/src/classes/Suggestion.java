@@ -37,10 +37,10 @@ public class Suggestion {
   
 
   /**
-   * Copied Method from http://javarevisited.blogspot.de/2012/12/how-to-sort-hashmap-java-by-key-and-value.html
-   * Java method to sort Map in Java by value e.g. HashMap or Hashtable
-   * throw NullPointerException if Map contains null values
+   * Copied Method from <a href="http://javarevisited.blogspot.de/2012/12/how-to-sort-hashmap-java-by-key-and-value.html">javarevisited.blogspot.de</a><br>
+   * Java method to sort Map in Java by value e.g. HashMap or Hashtable.
    * It also sort values even if they are duplicates
+   * @throws NullPointerException if Map contains null values
    */
   public static <K extends Object,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map){
       List<Map.Entry<K,V>> entries = new LinkedList<Map.Entry<K,V>>(map.entrySet());
@@ -66,8 +66,8 @@ public class Suggestion {
   
   /**
    * 
-   * @param user
-   * @return
+   * @param user - user, who is requesting suggestions
+   * @return suggestionList
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException

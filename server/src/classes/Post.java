@@ -23,6 +23,13 @@ import javax.json.JsonValue;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+/**
+ * Objects of this class represents posts of users on their profil or in a group. 
+ * Posts have an owner and an author, where the owner is a group and the author is a user. 
+ * If the user didn't post within a group the flag <code>groupPost</code> is false. 
+ * @author johannes
+ *
+ */
 public class Post {
   final static Logger log = LogManager.getLogger(Post.class);
   
@@ -128,7 +135,7 @@ public class Post {
   }
   
   /**
-   * Deletes this from the db
+   * Deletes this object from the db
    * @return false if this.id is not given
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -191,7 +198,7 @@ public class Post {
   
   /**
    * Simple setter for id
-   * @param id New Value for this.id
+   * @param id - New Value for this.id
    * @return this
    */
   public Post setId(int id) {
@@ -209,7 +216,7 @@ public class Post {
 
   /**
    * Simple setter for owner
-   * @param owner New Value for this.owner
+   * @param owner - New Value for this.owner
    * @return this
    */
   public Post setOwner(Group owner) {
@@ -227,7 +234,7 @@ public class Post {
 
   /**
    * Simple setter for content
-   * @param content New value for this.content
+   * @param content - New value for this.content
    * @return this
    */
   public Post setContent(String content) {
@@ -245,7 +252,7 @@ public class Post {
 
   /**
    * Simple setter for postDate
-   * @param postDate New value for this.postDate
+   * @param postDate - New value for this.postDate
    * @return this
    */
   public Post setPostDate(Date postDate) {
@@ -263,7 +270,7 @@ public class Post {
 
   /**
    * Simple setter for visibility
-   * @param visibility New value for this.visibility
+   * @param visibility - New value for this.visibility
    * @return this
    */
   public Post setPrivatePost(Boolean privatePost) {
@@ -271,37 +278,73 @@ public class Post {
     return this;
   }
   
+  /**
+   * Simple getter for the flag groupPost
+   * @return this.groupPost
+   */
   public Boolean getGroupPost() {
     return this.groupPost;
   }
   
+  /** 
+   * Simple setter for groupPost
+   * @param groupPost - New value for this.groupPost
+   * @return this
+   */
   public Post setGroupPost(Boolean groupPost) {
     this.groupPost = groupPost;
     return this;    
   }
   
+  /**
+   * Simple getter for author
+   * @return this.author
+   */
   public User getAuthor() {
     return this.author;
   }
   
+  /**
+   * Simple setter for author
+   * @param author - New value for this.author
+   * @return this
+   */
   public Post setAuthor(User author) {
     this.author = author;
     return this;
   }
   
+  /**
+   * Simple getter for numberOfUpVotes
+   * @return this.numberOfUpVotes
+   */
   public int getNumberOfUpVotes() {
     return this.numberOfUpVotes;
   }
   
+  /**
+   * Simple setter for numberOfUpVotes
+   * @param votesNum - New value for this.numberOfUpVotes
+   * @return
+   */
   public Post setNumberOfUpVotes(int votesNum) {
     this.numberOfUpVotes = votesNum;
     return this;
   }
   
+  /**
+   * Simple getter for didIVote. <code>didIVote is used in relation to the spectateing user</code>
+   * @return this.didIVote
+   */
   public Boolean getDidIVote() {
     return this.didIVote;
   }
   
+  /**
+   * Simple setter for didIVote. <code>didIVote is used in relation to the spectateing user</code>
+   * @param didIVote - New value for this.didIVote
+   * @return this
+   */
   public Post setDidIVote(Boolean didIVote) {
     this.didIVote = didIVote;
     return this;
@@ -316,7 +359,7 @@ public class Post {
   }
 
   /**
-   * Gets all upVotes of this from the db
+   * Gets all upVotes of <code>this</code> from the db
    * @return this
    * @throws SQLException 
    * @throws ClassNotFoundException 
@@ -347,7 +390,19 @@ public class Post {
   
   /**
    * Gets upVotes as Json
-   * @return 
+   * @return <pre><code> {
+   *   "voteList": [
+   *     {
+   *       "date":voteDate number,
+   *       "voter":{
+   *         "firstName":firstName text,
+   *         "name":name text,
+   *         "username":username text
+   *       }
+   *     },
+   *   ],
+   *   "successful":true
+   * } </code></pre>
    */
   public JsonValue getUpVotesAsJson() {
     JsonArrayBuilder voteList = Json.createArrayBuilder();
@@ -369,7 +424,7 @@ public class Post {
   
   /**
    * Add a new up vote to upVotes
-   * @param voter The voter only needs the User.id value
+   * @param voter - The voter only needs the User.id attribute set
    * @return this
    * @throws SQLException 
    * @throws ClassNotFoundException 
@@ -389,7 +444,7 @@ public class Post {
   /**
    * Remove a vote from the upVotes
    * @param voter
-   * @return
+   * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -405,25 +460,40 @@ public class Post {
     return this;
   }
 
+  /**
+   * Simple getter for numberOfComments
+   * @return this.numberOfComments
+   */
   public int getNumberOfComments() {
     return this.numberOfComments;
   }
   
+  /**
+   * Simple setter for numberOfComments
+   * @param noc - New value for this.numberOfComments
+   * @return this
+   */
   public Post setNumberOfComments(int noc) {
     this.numberOfComments = noc;
     return this;
   }
   
   /**
-   * Simple getter for comments
-   * @return this.upVotes
+   * Simple getter for comments. Comments should've been a seperate class
+   * <UL>
+   * <LI>the key of the key is the commentator 
+   * <LI>the value of the key is the comment id (from `Comments` table in db) 
+   * <LI>the key of the value is the content 
+   * <LI>the value of the key is the date of creation
+   * </UL>
+   * @return this.comments
    */
   public Map<SimpleEntry<User,Integer>,SimpleEntry<String,Date>> getComments() {
     return this.comments;
   }
   
   /**
-   * Gets all comments of this from the db
+   * Gets all comments of this from the db. 
    * @return this
    * @throws SQLException 
    * @throws ClassNotFoundException 
@@ -459,7 +529,21 @@ public class Post {
   
   /**
    * Gets comments as Json
-   * @return 
+   * @return <pre><code> {
+   *   "commentList": [
+   *     {
+   *       "id":commentID,
+   *       "date":commentDate number,
+   *       "author":{
+   *         "firstName":"firstName text",
+   *         "lastName":"name text",
+   *         "username":"username text"
+   *       },
+   *       "content":"content text"
+   *     },
+   *   ],
+   *   "successful":true
+   * } </code></pre>
    * @throws UnsupportedEncodingException 
    * @throws NoSuchAlgorithmException 
    */
@@ -507,15 +591,16 @@ public class Post {
   }
   
   /**
-   * Remove a comment
+   * Remove a comment. Uses 1 select and 1 delete query
    * @param commentID
-   * @return
+   * @param user - the spectating user. Needed to check, if he is allowed to delete the comment. A comment can be deleted by its author or the author of the post.
+   * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public Post removeComment(int commentID, int postID, User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public Post removeComment(int commentID, User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     List<ArrayList<String>> idList = DBConnector.selectQuery(conn, "SELECT Posts.authorID FROM " + DBConnector.DATABASE + ".Posts "
         + "JOIN `n3twork-dev`.Comments on Comments.postID=Posts.id WHERE Comments.id=" + commentID);

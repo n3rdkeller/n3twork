@@ -21,40 +21,18 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 /**
- * A User class object represents a user in the social n3twork.
- * @author johannes
+ * This class is central to n3twork, which is to be expected from a social network. Most of the db queries are found here. An object of this class represents a user in the network.
  *
  */
 public class User {
   final static Logger log = LogManager.getLogger(User.class);
   
-  /**
-   * 
-   */
   private int id;
-  /**
-   * 
-   */
   private String name="";
-  /**
-   * 
-   */
   private String firstName="";
-  /**
-   * 
-   */
   private String username = ""; //TODO change login and register methods, so these don't have to be initialized
-  /**
-   * 
-   */
   private String email = "";
-  /**
-   * 
-   */
   private String password = "";
-  /**
-   * 
-   */
   private String sessionID;
   private Map<String,String> otherProperties = new HashMap<String,String>();
   // date of birth, education, gender
@@ -207,8 +185,12 @@ public class User {
   }
   
   /**
-   * Gets total number of users and number of users currently online
-   * @return { "users":x, "usersOnline" }
+   * Gets total number of users and number of users currently online as a String in json form
+   * @return <pre><code>{
+   *  "users": totalNumberOfUsers,
+   *  "usersOnline":numberOfUsersOnline,
+   *  "successful":true
+   *}</code></pre>
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -250,8 +232,24 @@ public class User {
   
   /**
    * Converts any list of users to a json string
-   * @param users
-   * @return {"userList":[{"id":userID,...},...],"successful":true}
+   * @param users - users in the list don't necessarily need to have it's attributes set 
+   * @return <pre><code>{
+   *  "userList":[
+   *    {
+   *      "id":userID,
+   *      "username":"username",
+   *      "email":"em@il",
+   *      "emailhash":"hash of email",
+   *      "lastName":"name",
+   *      "firstName":"firstName",
+   *      "otherProperties:{
+   *        "property1":"value",
+   *        "property2":"value",
+   *      }
+   *    },
+   *  ],
+   *  successful":true
+   *}</code></pre>
    * @throws UnsupportedEncodingException 
    * @throws NoSuchAlgorithmException 
    */
@@ -280,7 +278,7 @@ public class User {
   
 /**
  * Hashes the seed with md5
- * @param seed
+ * @param seed - Any String
  * @return hashed seed
  * @throws NoSuchAlgorithmException
  * @throws UnsupportedEncodingException
@@ -299,7 +297,7 @@ public class User {
   }
   
   /**
-   * Removes the current user from db
+   * Removes the current user from db. References to this user will be deleted automatically.
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -368,7 +366,7 @@ public class User {
   
   /**
    * Inserts the User object into the database if there is no entry with the same username or email.
-   * @return Boolean - true if the registration was successful; false if either, neither username nor email are given, or the user already exists.
+   * @return true if the registration was successful; false if either, neither username nor email are given, or the user already exists.
    * @throws SQLException
    * @throws ClassNotFoundException
    * @throws IllegalAccessException
@@ -409,8 +407,19 @@ public class User {
   }
   
   /**
-   * Method to get the User object as a Json dictionary
-   * @return JsonObject converted to String
+   * Method to get the User object as a Json object
+   * @return <pre><code>{
+   *  "id":userID,
+   *  "username":"username",
+   *  "email":"email",
+   *  "lastName":"last name",
+   *  "firstName":"first name",
+   *  "otherProperties":{
+   *    "propertie1":"value",
+   *    "propertie2":"value",
+   *  },
+   *  "successful":true
+   *}</pre></code>
    * @throws UnsupportedEncodingException 
    * @throws NoSuchAlgorithmException 
    */
@@ -439,8 +448,8 @@ public class User {
   }
   
   /**
-   * Gets all data out of the database if the password is correct
-   * @return Boolean - true if login was successful; false if not
+   * Gets all data out of the database, after comparing the password hashes.
+   * @return true if login was successful; false if not
    * @throws SQLException
    * @throws ClassNotFoundException
    * @throws IllegalAccessException
@@ -481,7 +490,7 @@ public class User {
   }
   
   /**
-   * Deletes the sessionID out of the db if it exists
+   * Deletes the sessionID out of the db if it exists.
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -508,6 +517,11 @@ public class User {
     return this.id;
   }
 
+  /**
+   * Simple setter for the attribute id
+   * @param id
+   * @return this
+   */
   public User setId(int id) {
     this.id = id;
     return this;    
@@ -523,7 +537,7 @@ public class User {
   }
   
   /**
-   * Simple setter for the attribute name. Also sets value in db.
+   * Sets name attribute in db and in the object. Needs id to be set.
    * @param name
    * @throws SQLException
    * @throws ClassNotFoundException
@@ -551,7 +565,7 @@ public class User {
   }
   
   /**
-   * Simple setter for the attribute firstName. Also sets value in db.
+   * Sets firstName attribute in db and in the object. Needs id to be set.
    * @param firstName
    * @throws SQLException
    * @throws ClassNotFoundException
@@ -578,6 +592,11 @@ public class User {
     return this.username;
   }
 
+  /**
+   * Simple setter for username
+   * @param username
+   * @return this
+   */
   public User setUsername(String username) {
     this.username = username;
     return this;
@@ -611,7 +630,7 @@ public class User {
   }
 
   /**
-   * Simple setter for the attribute password. Also sets value in db.
+   * Sets password in db and in the object. Needs id to be set.
    * @param pw - password 
    * @throws UnsupportedEncodingException 
    * @throws NoSuchAlgorithmException 
@@ -630,11 +649,6 @@ public class User {
     pStmt.close();
     return this;
   }
-
-  public User setSessionID(String session) {
-    this.sessionID = session;
-    return this;
-  }
   
   /**
    * Gets property by name. e.g. getOtherProperty("gender")
@@ -647,8 +661,8 @@ public class User {
   }
   
   /**
-   * Setter for otherProperties. Also sets values in db. If a column doesn't exist the method creates it. This method uses 1 select query, 1 insert query and maybe 1 alter table query.
-   * @param otherProperties
+   * Setter for otherProperties. Also sets values in db. This method uses 1 select query and 1 insert query.
+   * @param properties - appends properties to otherProperties.
    * @throws SQLException 
    * @throws ClassNotFoundException 
    * @throws IllegalAccessException 
@@ -689,7 +703,7 @@ public class User {
   
   /**
    * Creates a sessionID as an md5 of the username and the current time and saves it in the db
-   * @return sessionID
+   * @return sessionID - <code>md5(this.username + System.currentTimeMillis())</code>
    * @throws UnsupportedEncodingException
    * @throws NoSuchAlgorithmException
    * @throws InstantiationException
@@ -727,9 +741,32 @@ public class User {
     return this.sessionID;
   }
 
+  /** 
+   * Simple setter for sessionID
+   * @param session
+   * @return this
+   */
+  public User setSessionID(String session) {
+    this.sessionID = session;
+    return this;
+  }
+  
   /**
    * Puts the friends attribute in a nice Json String
-   * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'
+   * @return <pre><code>{
+   *  "friendList":[
+   *    {
+   *      "id":"id",
+   *      "username":"username",
+   *      "lastName":"last name",
+   *      "firstName":"first name",
+   *      "email":"email",
+   *      "trueFriend":true/false,
+   *      "date":timestamp of adding      
+   *    },
+   *  ],
+   *  "successful":true
+   *}</pre></code>
    * @throws UnsupportedEncodingException 
    * @throws NoSuchAlgorithmException 
    */
@@ -817,8 +854,20 @@ public class User {
   }
   
   /**
-   * Puts the friends attribute in a nice Json String
-   * @return '{"friends":[{"id":"id","username":"username",...},...],"successful":true}'
+   * Puts the friendRequests attribute in a nice Json String
+   * @return <pre><code>{
+   *  "friendRequests":[
+   *    {
+   *      "id":"id",
+   *      "username":"username",
+   *      "lastName":"last name",
+   *      "firstName":"first name",
+   *      "email":"email",
+   *      "date":timestamp of adding 
+   *    },
+   *  ],
+   *  "successful":true
+   *}</pre></code>
    * @throws UnsupportedEncodingException 
    * @throws NoSuchAlgorithmException 
    */
@@ -845,7 +894,7 @@ public class User {
   }
   
   /**
-   * Gets friends list from db using 2 select queries
+   * Gets friendRequests list from db using 2 select queries
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -899,7 +948,7 @@ public class User {
   /**
    * Inserts a user with given userID into the Friends table on the db. 
    * There is no need to also put them in the friends attribute, because every time the friends list is requested getFromDB() is called, which does the same.
-   * @param friendID id of the added friend
+   * @param friendID - id of the added friend
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -913,8 +962,9 @@ public class User {
   }
   
   /**
-   * Deletes given friend
-   * @param friendID to be deleted friend
+   * Deletes given friend <pre>
+   * <code>DELETE FROM Friends WHERE userID=this.id AND friendID=friendID</code></pre>
+   * @param friendID - id of the to be deleted friend
    * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -962,7 +1012,7 @@ public class User {
   
   /**
    * Get the list of groups of the current user
-   * @return list of groups of the current user
+   * @return this.groups
    */
   public List<Group> getGroups() {
     return this.groups;
@@ -970,7 +1020,7 @@ public class User {
   
   /**
    * Get the list of groups of the current user as Json
-   * @return jsonString
+   * @return <code>Group.convertGroupListToJson(this.groups)</code>
    */
   public String getGroupsAsJson() {
     return Group.convertGroupListToJson(this.groups);
@@ -984,6 +1034,7 @@ public class User {
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
    * @throws SQLException
+   * @see Group.addMember
    */
   public User addGroup(Group group) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     this.groups.add(group);
@@ -992,8 +1043,8 @@ public class User {
   }
   
   /**
-   * removes mapping of a group to the current user
-   * @param group
+   * removes mapping of a group to the current user in the db and the object
+   * @param group - to be deleted group
    * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -1046,7 +1097,7 @@ public class User {
 
   /**
    * Add a post to db
-   * @param post
+   * @param post - doesn't need to have owner and author set
    * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -1059,11 +1110,15 @@ public class User {
     post.createInDB();
     return this;
   }
-
-  public User votePost(Post post) {
-    return this;
-  }
   
+  /**
+   * Gets all posts needed for the news feed with 3 select querys
+   * @return postList
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public List<Post> getNewsFeedFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT Groups.id as groupid, Groups.name as groupname, Groups.descr, "
@@ -1183,10 +1238,22 @@ public class User {
     return postList;
   }
 
+  /** 
+   * Simple getter for conversations
+   * @return this.conversations
+   */
   public List<Conversation> getConversations() {
     return this.conversations;
   }
   
+  /**
+   * Gets all conversations the user is associated with, which are not marked as archived
+   * @return this.conversations
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public List<Conversation> getConversationsFromDB() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT Conversations.id, Conversations.name, "

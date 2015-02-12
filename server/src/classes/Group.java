@@ -23,6 +23,11 @@ import javax.json.JsonValue;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+/**
+ * An object of the class represents a group.
+ * @author johannes
+ *
+ */
 public class Group {
   final static Logger log = LogManager.getLogger(Group.class);
   
@@ -488,6 +493,15 @@ public class Group {
     return this;
   }
 
+  /**
+   * Gets all posts in the group from the db
+   * @param lookingUser - checks if they voted on a post
+   * @return this.posts
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public List<Post> getPosts(User lookingUser) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sqlQuery = "SELECT Posts.id as postid, content, visibility, date, Users.id, Users.email, Users.username, Users.name, Users.firstName, "
@@ -520,10 +534,19 @@ public class Group {
         .setNumberOfComments(postsTable.getInt("comments"))
         );
     };
-    log.debug("end of getPosts");
     return this.posts;
   }
 
+  /**
+   * Adds a new post to the group in the db.
+   * @param post - author and owner don't need to be set
+   * @param author
+   * @return
+   * @throws InstantiationException
+   * @throws IllegalAccessException
+   * @throws ClassNotFoundException
+   * @throws SQLException
+   */
   public Group addPost(Post post, User author) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     post.setOwner(this);
     post.setAuthor(author);
@@ -533,14 +556,21 @@ public class Group {
     return this;    
   }
   
+  /**
+   * Simple getter for memberCount
+   * @return this.memberCount
+   */
   public int getMemberCount() {
     return this.memberCount;
   }
   
+  /**
+   * Simple setter for memberCount
+   * @param count - New Value for this.memberCount
+   * @return
+   */
   public Group setMemberCount(int count) {
     this.memberCount = count;
     return this;
   }
-
-
 }

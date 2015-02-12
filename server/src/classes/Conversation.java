@@ -22,6 +22,11 @@ import javax.json.JsonValue;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+/**
+ * Implementation of the messaging system. A Conversation holds information of the conversation partners and the messages within.
+ * @author johannes
+ *
+ */
 public class Conversation {
   final static Logger log = LogManager.getLogger(Conversation.class);
   
@@ -32,12 +37,15 @@ public class Conversation {
   private int unread;
   private String name;
 
+  /**
+   * Empty Constructor
+   */
   public Conversation() {
     //empty
   }
 
   /**
-   * 
+   * Converts any list of conversations to json
    * @param conList - Any list of conversations which have at least id and receiverList set
    * @return <pre><code>{
    *  "conversationList": [
@@ -87,7 +95,7 @@ public class Conversation {
   }
   
   /**
-   * 
+   * Gets the messages of a conversation as json
    * @return <pre><code>{
    *  "messageList": [
    *    {
@@ -118,8 +126,8 @@ public class Conversation {
   }
   
   /**
-   * 
-   * @return
+   * Gets messages of the conversation from db
+   * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -145,7 +153,7 @@ public class Conversation {
   }
   
   /**
-   * 
+   * Add this conversation to the db. Only receivers need to be set.
    * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
@@ -178,9 +186,9 @@ public class Conversation {
   }
   
   /**
-   * 
-   * @param receiver
-   * @return
+   * Archive the conversation (Set the deleted flag in the db) for a specific receiver
+   * @param receiver - user, who wants to archive the conversation
+   * @return this
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -197,9 +205,9 @@ public class Conversation {
   }
   
   /**
-   * 
-   * @param message - needs id, content, and id of the sender set
-   * @return
+   * Saves a message to the db
+   * @param message - content and id of the sender set
+   * @return id of the message
    * @throws InstantiationException
    * @throws IllegalAccessException
    * @throws ClassNotFoundException
@@ -255,7 +263,7 @@ public class Conversation {
   
   /**
    * Gets the number of unread conversations from the db for a specific user and returns it in a jsonValue
-   * @param user
+   * @param user - querying user
    * @return<pre><code>{
    *  "unread":0,
    *  "successful":true
@@ -302,57 +310,111 @@ public class Conversation {
     return this;
   }
 
+  /**
+   * Simple setter for id
+   * @param id
+   * @return this
+   */
   public Conversation setID(int id) {
     this.id = id;
     return this;
   }
   
+  /**
+   * Simple getter for id
+   * @return this.id
+   */
   public int getID() {
     return this.id;
   }
 
+  /**
+   * Simple setter for messageList
+   * @param messageList
+   * @return this
+   */
   public Conversation setMessageList(List<Message> messageList) {
     this.messageList = messageList;
     return this;
   }
   
+  /** 
+   * Simple getter for messageList
+   * @return this.messageList
+   */
   public List<Message> getMessageList() {
     return this.messageList;
   }
   
+  /**
+   * Simple setter for receivers
+   * @param receivers
+   * @return this
+   */
   public Conversation setReceivers(List<User> receivers) {
     this.receivers = receivers;
     return this;
   }
   
+  /**
+   * Simple getter for receivers
+   * @return this.receivers
+   */
   public List<User> getReceivers() {
     return this.receivers;
   }
   
+  /**
+   * Simple setter for lastRead, the message last read by the spectating user.
+   * @param lastRead
+   * @return this
+   */
   public Conversation setLastRead(Message lastRead) {
     this.lastRead = lastRead;
     return this;
   }
   
+  /**
+   * Simple getter for lastRead, the message last read by the spectating user.
+   * @return this.lastRead
+   */
   public Message getLastRead() {
     return this.lastRead;
   }
   
+  /**
+   * Simple setter for name
+   * @param name
+   * @return this
+   */
   public Conversation setName(String name) {
     this.name = name;
     return this;
   }
   
+  /**
+   * Simple getter for name.
+   * @return <code>""</code> if this.name is <code>null</code>, this.name otherwise
+   */
   public String getName() {
     if(this.name == null) return "";
     return this.name;
   }
   
+  /**
+   * Simple setter for unread, the number of unread messages by the spectating user
+   * @param unread
+   * @return this
+   */
   public Conversation setUnread(int unread) {
     this.unread = unread;
     return this;
   }
   
+  /**
+   * Simple getter for uread, the number of unread messages by the spectating user
+   * @return this.unread
+   */
   public int getUnread() {
     return this.unread;
   }
