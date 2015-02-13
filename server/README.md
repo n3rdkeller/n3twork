@@ -10,7 +10,15 @@ This is the server side of our n3twork.
     - [Conversation](#conversation)
     - [Message](#message)
 - [Database Model](#database-model)
-
+    - [Basics](#basics)
+    - [Friends](#friends)
+    - [Groups](#groups)
+    - [Posts](#posts)
+        - [Comments](#comments)
+        - [Votes](#votes)
+    - [Conversations](#conversations)
+        - [Messages](#messages)
+        - [Receivers](#receivers)
 - [servlet](#servlet)
     - ...
 - [API](#n3twork-api-quick-reference)
@@ -102,7 +110,7 @@ An object of this class represents a message within a conversation. It's main pu
 ## Database Model
 ![Database Model](../doc/EER_Diagram.png)
 ### Basics
-When a user registers in the system, username, email, and the hashed password are saved in `Users` and a id is automatically generated. The user can then login with username or email and password and get a sessionID (which is a md5 of the username + current time in miliseconds). Users can get unlimited amount of sessionIDs and the cleanup is on the clientside.
+When a user registers in the system, username, email, and the hashed password are saved in `Users` and a id is automatically generated. The user can then login with username or email and password and get a sessionID (which is a md5 of the username + current time in miliseconds). Users can get an unlimited amount of sessionIDs and the cleanup is on the clientside.
 
 Additional information of a user is added to the `Users` table. If support for a new field is supposed to be added, a new column has to be added to this table, but there are no changes in the backend required.
 
@@ -120,10 +128,30 @@ userID|friendID
 In this example user **1** added user **2** and user **2** added user **1**. User **3** only added user **1** but not the other way around; user **3** made a not yet accepted friend request to user **1**.
 
 ### Groups
-The tables used for this feature are `Groups` and `Members`. `Groups` contains a name of the group and a description, while `Members` connects users to a group. The date a user joined a group is also automatically saved.
+The tables used for this feature are `Groups` and `Members`. `Groups` contains a name of the group and a description, while `Members` connects users to a group. The date a user joined a group is automatically saved.
 
 ### Posts
-Three tables where needed for this feature: `Posts`, `Comments` and `Votes`. It also has a relation to `Groups`
+Three tables were needed for this feature: `Posts`, `Comments` and `Votes`. It also has a relation to `Groups`, because users can decide if they want to post in a group or on their profile. To support this, there are too columns with foreign keys: `ownerID` and `authorID`. `ownerID` represents the group, which "ownes" the post. The id is 0 if the post is on a profile; otherwise, the post is part of a group. The `authorID` is the id of the user, who wrote the post. The date of a post is automatically saved.
+
+#### Comments
+The `Comments` table is essentialy a second `Posts` table with the difference, that the "owner" is now a post through `postID`,but the date of a comment is automatically saved and doesn't have to be set.
+
+#### Votes
+`Votes` is like the `Comments` table without the `content` column and `authorID` is renamed `voterID`
+
+### Conversations
+For the messaging feature 3 tables are used:
+
+- `Messages` to save every individual message
+- `Receivers` for participants of a conversation
+- `Conversations` to tie everything together; this table consists just of an id and an optional name for a conversation
+
+#### Messages
+Messages consist of a link to the conversation they're a part of, a sender and the content. The date the message was send is saved automatically. 
+
+#### Receivers
+This table saves all participants of a conersation and their status within the conversation. `lastreadID` is the id of the last read message and 0, if there are no messages in the conversation. The flag `deleted` is 1, if the user has marked a conversation as archived and doesn't want to see it until new messages arrive. It is set to 0 by the backend, if someone writes a new message in this conversation.
+
 
 ## n3twork API Quick Reference
 - [POST /login](#login)
