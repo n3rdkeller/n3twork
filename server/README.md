@@ -1,37 +1,17 @@
 # Server
 This is the server side of our n3twork.
 
-## Table of Contents
-- [Introduction](#introduction)
-- [classes](#classes)
-    - [User](#user)
-    - [Group](#group)
-    - [Post](#post)
-    - [Conversation](#conversation)
-    - [Message](#message)
-- [Database Model](#database-model)
-    - [Basics](#basics)
-    - [Friends](#friends)
-    - [Groups](#groups)
-    - [Posts](#posts)
-        - [Comments](#comments)
-        - [Votes](#votes)
-    - [Conversations](#conversations)
-        - [Messages](#messages)
-        - [Receivers](#receivers)
-- [servlet](#servlet)
-    - ...
-- [API](#n3twork-api-quick-reference)
+[TOC]
 
-## Introduction
+# Introduction
 We used eclipse to generate a `n3.war` we deployed on our Tomcat 8 Server.
 
 The server is seperated into two parts, as is indicated by the directory structure: classes, which contains the classes, whose objects are used, and servlet, which contains classes of the REST API.
 
-## classes
+# classes
 The class `Main` is only used for testing. 
 
-### User
+## User
 This class is central to *n3twork*, which is to be expected from a social network. Most of the db queries are found here. An object of this class represents a user in the network. The most used attributes are:
 
 - `id` is a unique integer and analog to the `id` column in the `Users` table
@@ -52,7 +32,7 @@ The feature of friends is also implemented in `User`. It uses two attributes:
     - the key is the user object of the friend request
     - the value is the timestamp of the time the friend request was made
 
-### Group
+## Group
 `Group` is part of the implementation of the groups feature. An object of the class represents a group with the following attributes:
 
 - `id` is a unique identifier, related to the `id` column in the `Groups` table
@@ -64,7 +44,7 @@ The feature of friends is also implemented in `User`. It uses two attributes:
 
 A lot of the user related methods are found in `User`
 
-### Post
+## Post
 Objects of this class represents posts of users on their profil or in a group. The attibutes are:
 
 - `id` is a unique identifier, related to the `id` column in the `Posts` table
@@ -86,7 +66,7 @@ Objects of this class represents posts of users on their profil or in a group. T
 
 Methods retrieving posts from the db, like getting the newsfeed, are implemented in `User`
 
-### Conversation
+## Conversation
 This class is responsible for the messaging system of the network. It's mainly composed of a list of receivers and a list of messages.
 Attributes:
 
@@ -107,16 +87,26 @@ An object of this class represents a message within a conversation. It's main pu
 - `sendDate` date of creation
 - `sender` is the user, who send the message
 
-## Database Model
-![Database Model](../doc/EER_Diagram.png)
-### Basics
+## Suggestion
+This class contains the two static functions to the friend suggestions.
+
+### `networkSuggestion(User)`
+All friends of friends, which are not friends of the analyzed user, are selected. Then the function counts how often a user is contained in that list and returns a list of users without duplicates, sorted by that count.
+
+### `postBasedSuggestion(User)`
+The posts of all users, who are not friends with the analyzed user are selected. Those posts are split into words and the function then counts how often what word appears in the posts of a user.
+After creating the word-user matrix the algorithm of the lecture is applied to get a sorted list of users.
+
+# Database Model
+![Database Model](EER_Diagram.png)
+## Basics
 When a user registers in the system, username, email, and the hashed password are saved in `Users` and a id is automatically generated. The user can then login with username or email and password and get a sessionID (which is a md5 of the username + current time in miliseconds). Users can get an unlimited amount of sessionIDs and the cleanup is on the clientside.
 
 Additional information of a user is added to the `Users` table. If support for a new field is supposed to be added, a new column has to be added to this table, but there are no changes in the backend required.
 
 If a user is deleted all references to that user are deleted aswell.
 
-### Friends
+## Friends
 Friends are implemented through the table `Friends`. `userID` represents the user, who actively added the user in `friendID`. Here is an example:
 
 userID|friendID
@@ -127,79 +117,48 @@ userID|friendID
 
 In this example user **1** added user **2** and user **2** added user **1**. User **3** only added user **1** but not the other way around; user **3** made a not yet accepted friend request to user **1**.
 
-### Groups
+## Groups
 The tables used for this feature are `Groups` and `Members`. `Groups` contains a name of the group and a description, while `Members` connects users to a group. The date a user joined a group is automatically saved.
 
-### Posts
+## Posts
 Three tables were needed for this feature: `Posts`, `Comments` and `Votes`. It also has a relation to `Groups`, because users can decide if they want to post in a group or on their profile. To support this, there are too columns with foreign keys: `ownerID` and `authorID`. `ownerID` represents the group, which "ownes" the post. The id is 0 if the post is on a profile; otherwise, the post is part of a group. The `authorID` is the id of the user, who wrote the post. The date of a post is automatically saved.
 
-#### Comments
+### Comments
 The `Comments` table is essentialy a second `Posts` table with the difference, that the "owner" is now a post through `postID`,but the date of a comment is automatically saved and doesn't have to be set.
 
-#### Votes
+### Votes
 `Votes` is like the `Comments` table without the `content` column and `authorID` is renamed `voterID`
 
-### Conversations
+## Conversations
 For the messaging feature 3 tables are used:
 
 - `Messages` to save every individual message
 - `Receivers` for participants of a conversation
 - `Conversations` to tie everything together; this table consists just of an id and an optional name for a conversation
 
-#### Messages
+### Messages
 Messages consist of a link to the conversation they're a part of, a sender and the content. The date the message was send is saved automatically. 
 
-#### Receivers
+### Receivers
 This table saves all participants of a conersation and their status within the conversation. `lastreadID` is the id of the last read message and 0, if there are no messages in the conversation. The flag `deleted` is 1, if the user has marked a conversation as archived and doesn't want to see it until new messages arrive. It is set to 0 by the backend, if someone writes a new message in this conversation.
 
 
-## n3twork API Quick Reference
-- [POST /login](#login)
-- [POST /logout](#logout)
-- [POST /register](#register)
-- [POST /register/checkuser](#registercheckuser)
-- [POST /user](#user)
-- [PUT /user/settings](#usersettings)
-- [POST /user/remove](#userremove)
-- [POST /user/find](#userfind)
-- [POST /user/count](#usercount)
-- [POST /user/friends](#userfriends)
-- [POST /user/friendrequests](#userfriendrequests)
-- [POST /user/friend/add](#userfriendadd)
-- [POST /user/friend/remove](#userfriendremove)
-- [POST /user/groups](#usergroups)
-- [POST /user/group/join and POST /user/group/leave](#usergroupjoin-and-usergroupleave)
-- [POST /group/create](#groupcreate)
-- [POST /group/show](#groupshow)
-- [POST /group/find](#groupfind)
-- [POST /group/count](#groupcount)
-- [POST /group/members](#groupmembers)
-- [POST /post](#post)
-- [POST /post/newsfeed](#postnewsfeed)
-- [POST /post/votes](#postvotes)
-- [POST /post/add](#postadd)
-- [PUT /post/update](#postupdate)
-- [POST /post/delete](#postdelete)
-- [POST /post/vote/add and POST /post/vote/remove](#postvoteadd-and-postvoteremove)
-- [POST /post/comments](#postcomments)
-- [POST /post/comment/add](#postcommentadd)
-- [POST /post/comment/remove](#postcommentremove)
-- [POST /conversation/](#conversation)
-- [POST /conversation/show](#conversationshow)
-- [POST /conversation/send](#conversationsend)
-- [POST /conversation/new](#conversationnew)
-- [POST /conversation/archive](#conversationarchive)
-- [POST /conversation/unread](#conversationunread)
-- [POST /conversation/rename](#conversationrename)
-- [POST /suggestion/network](#suggestionnetwork)
-- [POST /suggestion/post](#suggestionpost)
+# servlet
 
-### /login
-#### POST
+There are only two endpoint, that aren't a POST request, but a PUT request, which are:
+
+- [/user/settings](#usersettings)
+- [/post/update](#postupdate)
+
+Dates are always in the unix timestamp format
+
+## `/login`
+Logs in a user with username or email and the password in plain text. 
+
 in:
 ``` json
 {
-    "login" : "username/email",
+    "login" : "username/email", 
     "password" : "pw in plain text"
 }
 ```
@@ -219,8 +178,9 @@ out:
     "successful":true
 }
 ```
-### /logout
-#### POST
+## `/logout`
+Deletes the sessionID from the database
+
 in:
 ``` json
 {
@@ -233,8 +193,9 @@ out:
     "successful":true
 }
 ```
-### /register
-#### POST
+## `/register`
+Hashes the password and puts all items in the db
+
 in:
 ``` json
 {
@@ -249,8 +210,9 @@ out:
     "successful":true
 }
 ```
-### /register/checkuser
-#### POST
+## `/register/checkuser`
+Checks if the username is taken or not
+
 in:
 ``` json
 {
@@ -265,13 +227,14 @@ out:
     "successful":true
 }
 ```
-### /user
-#### POST
+## `/user`
+Gets a user by id or gets the current user by the sessionID if no id is given and returns profile related attributes.
+
 in:
-``` json
+``` javascript
 {
 	"session":"sessionID",
-	"id":1337 "//userID: Optional (Wenn keine userID gegeben ist wird aktueller user genommen)"
+	"id":1337 //optional
 }
 ```
 out:
@@ -287,8 +250,30 @@ out:
     "username": "zwerch"
 }
 ```
-### /user/remove
-#### POST
+## `/user/settings`
+Changes the given attributes for the current user
+
+in:
+``` json 
+{
+  "session":"sessionID",
+  "changedSetting1":"newValue1",
+  "changedSetting2":"newValue2",
+  "otherProperties":{
+    "changedPropertie1":"newValue3",
+    "changedPropertie2":"newValue4"
+  }
+}
+```
+out:
+``` json
+{
+  "successful":true/false
+}
+```
+## `/user/remove`
+Removes the current User from the db
+
 in:
 ``` json
 {
@@ -301,12 +286,13 @@ out:
     "successful": true
 }
 ```
-### /user/find
-#### POST
+## `/user/find`
+Returns a list of all users
+
 in:
 ``` json
 {
-"session":"sessionID"
+    "session":"sessionID"
 }
 ```
 out:
@@ -333,8 +319,8 @@ out:
     ]
 }
 ```
-### /user/count
-#### POST
+## `/user/count`
+Returns total number of users and number of users online
 in:
 ``` json
 {
@@ -350,13 +336,13 @@ out:
 }
 ```
 
-### /user/friends
-#### POST
+## `/user/friends`
+Returns friends of the current user, or of a user with a specific id
 in:
-``` json
+``` javascript
 {
 	"session":"sessionID",
-	"id":45 "//userID: Optional (Wenn keine userID gegeben ist wird aktueller user genommen)"
+	"id":45 //optional
 }
 ```
 out:
@@ -385,13 +371,13 @@ out:
     "successful": true
 }
 ```
-### /user/friendrequests
-#### POST
+## `/user/friendrequests`
+Returns friendrequests for the current user, or of a user with a specific id
 in:
-``` json
+``` javascript
 {
     "session": "sessionID",
-    "id":45 "//userID: Optional (Wenn keine userID gegeben ist wird aktueller user genommen)"
+    "id":45 "//optionsl"
 }
 ```
 out:
@@ -411,8 +397,9 @@ out:
     "successful": true
 }
 ```
-### /user/friend/add
-#### POST
+## `/user/friend/add`
+Adds a friend for the current user
+
 in:
 ``` json
 {
@@ -426,8 +413,8 @@ out:
     "successful": true
 }
 ```
-### /user/friend/remove
-#### POST
+## `/user/friend/remove`
+Removes a friend for the current user
 in:
 ``` json
 {
@@ -440,13 +427,14 @@ out:
     "successful": true
 }
 ```
-### /user/groups
-#### POST
+## `/user/groups`
+Returns groups of the current user, or of a user with a specific id
+
 in:
-``` json
+``` javascript
 {
 	"session":"sessionID",
-	"id":45 "//userID: Optional (Wenn keine userID gegeben ist wird aktueller user genommen)"
+	"id":45 //optional
 }
 ```
 out:
@@ -462,8 +450,9 @@ out:
     "successful": true
 }
 ```
-### /user/group/join and /user/group/leave
-#### POST
+## `/user/group/join and /user/group/leave`
+Joins/leaves a group for the curren user
+
 in:
 ``` json
 {
@@ -478,8 +467,9 @@ out:
     "//Bei join auch wenn der user schon Mitglied ist. Wird aber nicht 2x in der db registriert"
 }
 ```
-### /group/create
-#### POST
+## `/group/create`
+Creates a new group
+
 in:
 ``` json
 {
@@ -494,8 +484,9 @@ out:
     "successful": true
 }
 ```
-### /group/show
-#### POST
+## `/group/show`
+Returns details of a group
+
 in:
 ``` json
 {
@@ -513,7 +504,9 @@ out:
     "successful": true
 }
 ```
-### /group/find
+## `/group/find`
+Returns a list of all groups
+
 in:
 ``` json
 {
@@ -538,8 +531,9 @@ out:
     "successful": true
 }
 ```
-### /group/count
-#### POST
+## `/group/count`
+Returns the number of groups in the network
+
 in:
 ``` json
 {
@@ -552,8 +546,8 @@ out:
     "groups": 5
 }
 ```
-### /group/members
-#### POST
+## `/group/members`
+Returns a list of the members of a group
 in:
 ``` json
 {
@@ -583,13 +577,13 @@ out:
     "successful": true
 }
 ```
-### /post
-#### POST
+## `/post`
+Returns the posts of the current user, a specific user or a group.
 in:
-``` json
+``` javascript
 {
-    "groupID":0, "//optional if given uses group"
-    "userID":0, "//optional if given uses user"
+    "groupID":0, //optional
+    "userID":0, //optional
     "session":"sessionID"
 }
 ```
@@ -615,8 +609,8 @@ out:
     "successful":true
 }
 ```
-### /post/newsfeed
-#### POST
+## `/post/newsfeed`
+Returns the newsfeed for the curren user
 in:
 ``` json
 {
@@ -645,12 +639,13 @@ out:
     "successful":true
 }
 ```
-### /post/votes
-#### POST
+## `/post/votes`
+Returns the votes for a post
+
 in:
 ``` json
 {
-    "id":postID number,
+    "id":0,
     "session":"sessionID"
 }
 ```
@@ -659,24 +654,23 @@ out:
 {
     "voteList": [
         {
-            "date":voteDate number,
+            "date":123123123,
             "voter":{
-                "firstName":firstName text,
-                "name":name text,
-                "username":username text
+                "firstName":"firstName",
+                "name":"name",
+                "username":"username"
             }
         },
     ],
     "successful":true
 }
 ```
-### /post/add
-#### POST
+## `/post/add`
+Posts to the profile of the current user or to a group
 in:
-``` json
+``` javascript
 {
-    "groupID":0, "//optional if given uses group"
-    "userID":0, "//optional if given uses user"
+    "groupID":0, //optional
     "session":"sessionID",
     "post": {
         "content":"",
@@ -690,13 +684,13 @@ out:
     "successful":true
 }
 ```
-### /post/delete
-#### POST
+## `/post/delete`
+Deletes a post by id
 in:
 ``` json
 {
     "session":"sessionID",
-    "id":0 "//id of the doomed post"
+    "id":0 
 }
 ```
 out:
@@ -705,12 +699,31 @@ out:
     "successful":true
 }
 ```
-### /post/vote/add and /post/vote/remove
-#### POST
+## `/post/update`
+Changes the attributes of a post
+
+in:
+``` javascript
+{
+   "session":"sessionID"
+   "id":0,
+   "content":"", //optional
+   "private":true/false //optional
+}
+```
+out:
+``` json
+{
+   "successful":true
+}
+```
+## `/post/vote/add and /post/vote/remove`
+Adds/removes a vote by the current user from a post by postID
+
 in:
 ``` json
 {
-    "id":postID,
+    "id":0,
     "session":"sessionID"
 }
 ```
@@ -720,12 +733,13 @@ out:
     "successful":true
 }
 ```
-### /post/comments
-#### POST
+## `/post/comments`
+Gets the comments of a specific post by postID
+
 in:
 ``` json
 {
-    "id":"postID",
+    "id":0,
     "session":"sessionID"
 }
 ```
@@ -740,20 +754,21 @@ out:
                 "username":"username text"
             },
             "content":"content text",
-            "date":0, "//comment date as unix timestamp"
-            "id":0 "//commentID"
+            "date":123123123, 
+            "id":0
         },
     ],
     "successful":true
 }
 ```
-### /post/comment/add
-#### POST
+## `/post/comment/add`
+Add a comment by the curren user to a post by postID
+
 in:
 ``` json
 {
-    "id":0, "//postID"
-    "content":"contentOfComment text",
+    "id":0, 
+    "content":"contentOfComment",
     "session":"sessionID"
 }
 ```
@@ -763,12 +778,13 @@ out:
     "successful":true
 }
 ```
-### /post/comment/remove
-#### POST
+## `/post/comment/remove`
+Removes a comment by commentID
+
 in:
 ``` json
 {
-    "id":0, "//commentID"
+    "id":0, 
     "session":"sessionID"
 
 }
@@ -779,8 +795,9 @@ out:
     "successful":true
 }
 ```
-### /conversation
-#### POST
+## `/conversation`
+Returns the list of conversations, the current user is a part of
+
 in:
 ``` json
 {
@@ -800,7 +817,7 @@ out:
                 "email":"",
                 "emailhash":""
                 },
-            ]
+            ],
             "lastread":0,
             "name":"",
             "id":0
@@ -809,14 +826,14 @@ out:
     "successful":true
 }
 ```
-### /conversation/show
-#### POST
+## `/conversation/show`
+Returns the list of messages of a conversation
+
 in:
 ``` json
 {
     "session":"sessionID",
     "conversationID":0, 
-    "lastread":0
 }
 ``` 
 out:
@@ -832,8 +849,9 @@ out:
     "successful":true
 }
 ```
-### /conversation/send
-#### POST
+## `/conversation/send`
+Sends a message in a conversation and returns the id of the new message.
+
 in:
 ``` json
 {
@@ -846,13 +864,14 @@ out:
 ``` json
 {
     "successful":true,
-    "id":0 //message id
+    "id":0 
 }
 ```
-### /conversation/new
-#### POST
+## `/conversation/new`
+Creates a new conversation and returns its id.
+
 in:
-``` json
+``` javascript
 {
     "session":"sessionID",
     "name":"conName", //optional
@@ -870,8 +889,9 @@ out:
     "conversationID":0
 }
 ```
-### /conversation/archive
-#### POST
+## `/conversation/archive`
+Sets the `deleted` flag in the db
+
 in:
 ``` json
 {
@@ -885,8 +905,9 @@ out:
     "successful":true
 }
 ```
-### /conversation/unread
-#### POST
+## `/conversation/unread`
+Returns the number of unread conversations of the current user
+
 in:
 ``` json
 {
@@ -900,8 +921,9 @@ out:
     "successful":true
 }
 ```
-### /conversation/rename
-#### POST
+## `/conversation/rename`
+Renames a conversation
+
 in:
 ``` json
 {
@@ -915,8 +937,10 @@ out:
 {
     "successful":true
 }
-### /suggestion/network
-#### POST
+```
+## `/suggestion/network`
+Returns all suggestions based on the friend network and sorted by rating
+
 in:
 ``` json
 {
@@ -924,7 +948,7 @@ in:
 }
 ```
 out:
-```
+``` json
 {
     "userList": [
         {
@@ -949,8 +973,9 @@ out:
     "successful": true
 }
 ```
-### /suggestion/post
-#### POST
+## `/suggestion/post`
+Returns all suggestions based on content of posts and sorted by rating
+
 in:
 ``` json
 {
@@ -958,7 +983,7 @@ in:
 }
 ```
 out:
-```
+``` json
 {
     "userList": [
         {

@@ -1,0 +1,2134 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body {
+  width: 45em;
+  border: 1px solid #ddd;
+  outline: 1300px solid #fff;
+  margin: 16px auto;
+}
+
+body .markdown-body
+{
+  padding: 30px;
+}
+
+@font-face {
+  font-family: fontawesome-mini;
+  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAzUABAAAAAAFNgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAABbAAAABwAAAAcZMzaOEdERUYAAAGIAAAAHQAAACAAOQAET1MvMgAAAagAAAA+AAAAYHqhde9jbWFwAAAB6AAAAFIAAAFa4azkLWN2dCAAAAI8AAAAKAAAACgFgwioZnBnbQAAAmQAAAGxAAACZVO0L6dnYXNwAAAEGAAAAAgAAAAIAAAAEGdseWYAAAQgAAAFDgAACMz7eroHaGVhZAAACTAAAAAwAAAANgWEOEloaGVhAAAJYAAAAB0AAAAkDGEGa2htdHgAAAmAAAAAEwAAADBEgAAQbG9jYQAACZQAAAAaAAAAGgsICJBtYXhwAAAJsAAAACAAAAAgASgBD25hbWUAAAnQAAACZwAABOD4no+3cG9zdAAADDgAAABsAAAAmF+yXM9wcmVwAAAMpAAAAC4AAAAusPIrFAAAAAEAAAAAyYlvMQAAAADLVHQgAAAAAM/u9uZ4nGNgZGBg4ANiCQYQYGJgBEJuIGYB8xgABMMAPgAAAHicY2Bm42OcwMDKwMLSw2LMwMDQBqGZihmiwHycoKCyqJjB4YPDh4NsDP+BfNb3DIuAFCOSEgUGRgAKDgt4AAB4nGNgYGBmgGAZBkYGEAgB8hjBfBYGCyDNxcDBwMTA9MHhQ9SHrA8H//9nYACyQyFs/sP86/kX8HtB9UIBIxsDXICRCUgwMaACRoZhDwA3fxKSAAAAAAHyAHABJQB/AIEAdAFGAOsBIwC/ALgAxACGAGYAugBNACcA/wCIeJxdUbtOW0EQ3Q0PA4HE2CA52hSzmZDGe6EFCcTVjWJkO4XlCGk3cpGLcQEfQIFEDdqvGaChpEibBiEXSHxCPiESM2uIojQ7O7NzzpkzS8qRqnfpa89T5ySQwt0GzTb9Tki1swD3pOvrjYy0gwdabGb0ynX7/gsGm9GUO2oA5T1vKQ8ZTTuBWrSn/tH8Cob7/B/zOxi0NNP01DoJ6SEE5ptxS4PvGc26yw/6gtXhYjAwpJim4i4/plL+tzTnasuwtZHRvIMzEfnJNEBTa20Emv7UIdXzcRRLkMumsTaYmLL+JBPBhcl0VVO1zPjawV2ys+hggyrNgQfYw1Z5DB4ODyYU0rckyiwNEfZiq8QIEZMcCjnl3Mn+pED5SBLGvElKO+OGtQbGkdfAoDZPs/88m01tbx3C+FkcwXe/GUs6+MiG2hgRYjtiKYAJREJGVfmGGs+9LAbkUvvPQJSA5fGPf50ItO7YRDyXtXUOMVYIen7b3PLLirtWuc6LQndvqmqo0inN+17OvscDnh4Lw0FjwZvP+/5Kgfo8LK40aA4EQ3o3ev+iteqIq7wXPrIn07+xWgAAAAABAAH//wAPeJyFlctvG1UUh+/12DPN1B7P3JnYjj2Ox4/MuDHxJH5N3UdaEUQLqBIkfQQioJWQ6AMEQkIqsPGCPwA1otuWSmTBhjtps2ADWbJg3EpIXbGouqSbCraJw7kzNo2dRN1cnXN1ZvT7zuuiMEI7ncizyA0URofRBJpCdbQuIFShYY+GZRrxMDVtih5TwQPHtXDFFSIKoWIbuREBjLH27Ny4MsbVx+uOJThavebgVrNRLAiYx06rXsvhxLgWx9xpfHdrs/ekc2Pl2cpPCVEITQpwbj8VQhfXSq2m+Wxqaq2D73Kne5e3NjHqQNj3CRYlJlgUl/jRNP+2Gs2pNYRQiOnmUaQDqm30KqKiTTWPWjboxnTWpvgxjXo0KrtZXAHt7hwIz0YVcj88JnKlJKi3NPAwLyDwZudSmJSMMJFDYaOkaol6XtESx3Gt1VTytdZJ3DCLeaVhVnCBH1fycHTxFXwPX+l2e3d6H/TufGGmMTLTnbSJUdo00zuBswMO/nl3YLeL/wnu9/limCuD3vC54h5NBVz6Li414AI8Vx3iiosKcQXUbrvhFFiYb++HN4DaF4XzFW0fIN4XDWJ3a3XQoq9V8WiyRmdsatV9xUcHims1JloH0YUa090G3Tro3mC6c01f+YwCPquINr1PTaCP6rVTOOmf0GE2dBc7zWIhji3/5MchSuBHgDbU99RMWt3YUNMZMJmx92YP6NsHx/5/M1yvInpnkIOM3Z8fA3JQ2lW1RFC1KaBPDFXNAHYYvGy73aYZZZ3HifbeuiVZCpwA3oQBs0wGPYJbJfg60xrKEbKiNtTe1adwrpBRwlAuQ3q3VRaX0QmQ9a49BTSCuF1MLfQ6+tinOubRBZuWPNoMevGMT+V41KitO1is3D/tpMcq1JHZqDHGs8DoYGDkxJgKjHROeTCmhZvzPm9pod+ltKm4PN7Dyvvldlpsg8D+4AUJZ3F/JBstZz7cbFRxsaAGV6yX/dkcycWf8eS3QlQea+YLjdm3yrOnrhFpUyKVvFE4lpv4bO3Svx/6F/4xmiDu/RT5iI++lko18mY1oX+5UGKR6kmVjM/Zb76yfHtxy+h/SyQ0lLdpdKy/lWB6szatetQJ8nZ80A2Qt6ift6gJeavU3BO4gtxs/KCtNPVibCtYCWY3SIlSBPKXZALXiIR9oZeJ1AuMyxLpHIy/yO7vSiSE+kZvk0ihJ30HgHfzZtEMmvV58x6dtqns0XTAW7Vdm4HJ04OCp/crOO7rd9SGxQAE/mVA9xRN+kVSMRFF6S9JFGUtthkjBA5tFCWc2l4V43Ex9GmUP3SI37Jjmir9KqlaDJ4S4JB3vuM/jzyH1+8MuoZ+QGzfnvPoJb96cZlWjMcKLfgDwB7E634JTY+asjsPzS5CiVnEWY+KsrsIN5rn3mAPjqmQBxGjcGKB9f9ZxY3mYC2L85CJ2FXIxKKyHk+dg0FHbuEc7D5NzWUX32WxFcWNGRAbvwSx0RmIXVDuYySafluQBmzA/ssqJAMLnli+WIC90Gw4lm85wcp0qjArEDPJJV/sSx4P9ungTpgMw5gVC1XO4uULq0s3v1rqLi0vX/z65vlH50f8T/RHmSPTk5xxWBWOluMT6WiOy+tdvWxlV/XQb3o3c6Ssr+r6I708GsX9/nzp1tKFh0s3v7m4vAy/Hnb/KMOvc1wump6Il48K6mGDy02X9Yd65pa+nQIjk76lWxCkG8NBCP0HQS9IpAAAeJxjYGRgYGBhcCrq214Qz2/zlUGenQEEzr/77oug/zewFbB+AHI5GJhAogBwKQ0qeJxjYGRgYH3/P46BgZ0BBNgKGBgZUAEPAE/7At0AAAB4nGNngAB2IGYjhBsYBAAIYADVAAAAAAAAAAAAAFwAyAEeAaACCgKmAx4DggRmAAAAAQAAAAwAagAEAAAAAAACAAEAAgAWAAABAAChAAAAAHiclZI7bxQxFIWPd/JkUYQChEhIyAVKgdBMskm1QkKrRETpQiLRUczueB/K7HhlOxttg8LvoKPgP9DxFxANDR0tHRWi4NjrPIBEgh1p/dm+vufcawNYFWsQmP6e4jSyQB2fI9cwj++RE9wTjyPP4LYoI89iWbyLPIe6+Bh5Hs9rryMv4GbtW+RF3EhuRa7jbrIbeQkPkjdUETOLnL0Kip4FVvAhco1RXyMnSPEz8gzWxE7kWTwUp5HnsCLeR57HW/El8gJWa58iL+JO7UfkOh4l9yMv4UnyEtvQGGECgwF66MNBooF1bGCL1ELB/TYU+ZBRlvsKQ44Se6jQ4a7hef+fh72Crv25kp+8lNWGmeKoOI5jJLb1aGIGvb6TjfWNLdkqdFvJw4l1amjlXtXRZqRN7lSRylZZyhBqpVFWmTEXgWfUrpi/hZOQXdOd4rKuXOtEWT3k5IArPRzTUU5tHKjecZkTpnVbNOnt6jzN8240GD4xtikvZW56043rPMg/dS+dlOceXoR+WPbJ55Dsekq1lJpnypsMUsYOdCW30o103Ytu/lvh+5RWFLfBjm9/N8hJntPhvx92rnoE/kyHdGasGy754kw36vsVf/lFeBi+0COu+cfgQr42G3CRpeLoZ53gmfe3X6rcKt5oVxnptHR9JS8ehVUd5wvvahN2uqxOOpMXapibI5k7Zwbt4xBSaTfoKBufhAnO/uqNcfK8OTs0OQ6l7JIqFjDhYj5WcjevCnI/1DDiI8j4ndWb/5YzDZWh79yomWXeXj7Nnw70/2TIeFPTrlSh89k1ObOSRVZWZfgF0r/zJQB4nG2JUQuCQBCEd07TTg36fb2IyBaLd3vWaUh/vmSJnvpgmG8YcmS8X3Shf3R7QA4OBUocUKHGER5NNbOOEvwc1txnuWkTRb/aPjimJ5vXabI+3VfOiyS15UWvyezM2xiGOPyuMohOH8O8JiO4Af+FsAGNAEuwCFBYsQEBjlmxRgYrWCGwEFlLsBRSWCGwgFkdsAYrXFhZsBQrAAA=) format('woff');
+}
+
+@font-face {
+  font-family: octicons-anchor;
+  src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+}
+
+.markdown-body {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #333333;
+  overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.markdown-body a {
+  background: transparent;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline: 0;
+}
+
+.markdown-body b,
+.markdown-body strong {
+  font-weight: bold;
+}
+
+.markdown-body mark {
+  background: #ff0;
+  color: #000;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body sub,
+.markdown-body sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.markdown-body sup {
+  top: -0.5em;
+}
+.markdown-body sub {
+  bottom: -0.25em;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.markdown-body img {
+  border: 0;
+}
+
+.markdown-body hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+.markdown-body pre {
+  overflow: auto;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre,
+.markdown-body samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+.markdown-body input {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body html input[disabled] {
+  cursor: default;
+}
+
+.markdown-body input {
+  line-height: normal;
+}
+
+.markdown-body input[type="checkbox"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body .codehilitetable {
+  border: 0;
+  border-spacing: 0;
+}
+
+.markdown-body .codehilitetable tr {
+  border: 0;
+}
+
+.markdown-body .codehilitetable pre,
+.markdown-body .codehilitetable div.codehilite {
+  margin: 0;
+}
+
+.markdown-body .linenos,
+.markdown-body .code,
+.markdown-body .codehilitetable td {
+  border: 0;
+  padding: 0;
+}
+
+.markdown-body td:not(.linenos) .linenodiv {
+  padding: 0 !important;
+}
+
+.markdown-body .code {
+  width: 100%;
+}
+
+.markdown-body .linenos div pre,
+.markdown-body .linenodiv pre,
+.markdown-body .linenodiv {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.markdown-body .code div pre,
+.markdown-body .code div {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.markdown-body * {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font: 13px Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  line-height: 1.4;
+}
+
+.markdown-body a {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+.markdown-body a:hover,
+.markdown-body a:focus,
+.markdown-body a:active {
+  text-decoration: underline;
+}
+
+.markdown-body hr {
+  height: 0;
+  margin: 15px 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-body hr:before,
+.markdown-body hr:after {
+  display: table;
+  content: " ";
+}
+
+.markdown-body hr:after {
+  clear: both;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  line-height: 1.1;
+}
+
+.markdown-body h1 {
+  font-size: 30px;
+}
+
+.markdown-body h2 {
+  font-size: 21px;
+}
+
+.markdown-body h3 {
+  font-size: 16px;
+}
+
+.markdown-body h4 {
+  font-size: 14px;
+}
+
+.markdown-body h5 {
+  font-size: 12px;
+}
+
+.markdown-body h6 {
+  font-size: 11px;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ul ul ol,
+.markdown-body ul ol ol,
+.markdown-body ol ul ol,
+.markdown-body ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre,
+.markdown-body samp {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
+}
+
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body kbd {
+  background-color: #e7e7e7;
+  background-image: -moz-linear-gradient(#fefefe, #e7e7e7);
+  background-image: -webkit-linear-gradient(#fefefe, #e7e7e7);
+  background-image: linear-gradient(#fefefe, #e7e7e7);
+  background-repeat: repeat-x;
+  border-radius: 2px;
+  border: 1px solid #cfcfcf;
+  color: #000;
+  padding: 3px 5px;
+  line-height: 10px;
+  font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  display: inline-block;
+}
+
+.markdown-body>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+.markdown-body .headeranchor-link {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  padding-right: 6px;
+  padding-left: 30px;
+  margin-left: -30px;
+}
+
+.markdown-body .headeranchor-link:focus {
+  outline: none;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  position: relative;
+  margin-top: 1em;
+  margin-bottom: 16px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.markdown-body h1 .headeranchor,
+.markdown-body h2 .headeranchor,
+.markdown-body h3 .headeranchor,
+.markdown-body h4 .headeranchor,
+.markdown-body h5 .headeranchor,
+.markdown-body h6 .headeranchor {
+  display: none;
+  color: #000;
+  vertical-align: middle;
+}
+
+.markdown-body h1:hover .headeranchor-link,
+.markdown-body h2:hover .headeranchor-link,
+.markdown-body h3:hover .headeranchor-link,
+.markdown-body h4:hover .headeranchor-link,
+.markdown-body h5:hover .headeranchor-link,
+.markdown-body h6:hover .headeranchor-link {
+  height: 1em;
+  padding-left: 8px;
+  margin-left: -30px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.markdown-body h1:hover .headeranchor-link .headeranchor,
+.markdown-body h2:hover .headeranchor-link .headeranchor,
+.markdown-body h3:hover .headeranchor-link .headeranchor,
+.markdown-body h4:hover .headeranchor-link .headeranchor,
+.markdown-body h5:hover .headeranchor-link .headeranchor,
+.markdown-body h6:hover .headeranchor-link .headeranchor {
+  display: inline-block;
+}
+
+.markdown-body h1 {
+  padding-bottom: 0.3em;
+  font-size: 2.25em;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.75em;
+  line-height: 1.225;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h3 {
+  font-size: 1.5em;
+  line-height: 1.43;
+}
+
+.markdown-body h4 {
+  font-size: 1.25em;
+}
+
+.markdown-body h5 {
+  font-size: 1em;
+}
+
+.markdown-body h6 {
+  font-size: 1em;
+  color: #777;
+}
+
+.markdown-body p,
+.markdown-body blockquote,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body dl,
+.markdown-body table,
+.markdown-body pre,
+.markdown-body .admonition {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-body hr {
+  height: 4px;
+  padding: 0;
+  margin: 16px 0;
+  background-color: #e7e7e7;
+  border: 0 none;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+}
+
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ol,
+.markdown-body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body li>p {
+  margin-top: 16px;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body dl dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.markdown-body blockquote {
+  padding: 0 15px;
+  color: #777;
+  border-left: 4px solid #ddd;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+
+.markdown-body table th {
+  font-weight: bold;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+
+.markdown-body table tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body code,
+.markdown-body samp {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 3px;
+}
+
+.markdown-body code:before,
+.markdown-body code:after {
+  letter-spacing: -0.2em;
+  content: "\00a0";
+}
+
+.markdown-body pre>code {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.markdown-body .codehilite {
+  margin-bottom: 16px;
+}
+
+.markdown-body .codehilite pre,
+.markdown-body pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+}
+
+.markdown-body .codehilite pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre code {
+  display: inline;
+  max-width: initial;
+  padding: 0;
+  margin: 0;
+  overflow: initial;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+
+.markdown-body pre code:before,
+.markdown-body pre code:after {
+  content: normal;
+}
+
+/* Admonition */
+.markdown-body .admonition {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  position: relative;
+  border-radius: 3px;
+  border: 1px solid #e0e0e0;
+  border-left: 6px solid #333;
+  padding: 10px 10px 10px 30px;
+}
+
+.markdown-body .admonition table {
+  color: #333;
+}
+
+.markdown-body .admonition p {
+  padding: 0;
+}
+
+.markdown-body .admonition-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.markdown-body .admonition>.admonition-title {
+  color: #333;
+}
+
+.markdown-body .attention>.admonition-title {
+  color: #a6d796;
+}
+
+.markdown-body .caution>.admonition-title {
+  color: #d7a796;
+}
+
+.markdown-body .hint>.admonition-title {
+  color: #96c6d7;
+}
+
+.markdown-body .danger>.admonition-title {
+  color: #c25f77;
+}
+
+.markdown-body .question>.admonition-title {
+  color: #96a6d7;
+}
+
+.markdown-body .note>.admonition-title {
+  color: #d7c896;
+}
+
+.markdown-body .admonition:before,
+.markdown-body .attention:before,
+.markdown-body .caution:before,
+.markdown-body .hint:before,
+.markdown-body .danger:before,
+.markdown-body .question:before,
+.markdown-body .note:before {
+  font: normal normal 16px fontawesome-mini;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  line-height: 1.5;
+  color: #333;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
+.markdown-body .admonition:before {
+  content: "\f056\00a0";
+  color: 333;
+}
+
+.markdown-body .attention:before {
+  content: "\f058\00a0";
+  color: #a6d796;
+}
+
+.markdown-body .caution:before {
+  content: "\f06a\00a0";
+  color: #d7a796;
+}
+
+.markdown-body .hint:before {
+  content: "\f05a\00a0";
+  color: #96c6d7;
+}
+
+.markdown-body .danger:before {
+  content: "\f057\00a0";
+  color: #c25f77;
+}
+
+.markdown-body .question:before {
+  content: "\f059\00a0";
+  color: #96a6d7;
+}
+
+.markdown-body .note:before {
+  content: "\f040\00a0";
+  color: #d7c896;
+}
+
+.markdown-body .admonition::after {
+  content: normal;
+}
+
+.markdown-body .attention {
+  border-left: 6px solid #a6d796;
+}
+
+.markdown-body .caution {
+  border-left: 6px solid #d7a796;
+}
+
+.markdown-body .hint {
+  border-left: 6px solid #96c6d7;
+}
+
+.markdown-body .danger {
+  border-left: 6px solid #c25f77;
+}
+
+.markdown-body .question {
+  border-left: 6px solid #96a6d7;
+}
+
+.markdown-body .note {
+  border-left: 6px solid #d7c896;
+}
+
+.markdown-body .admonition>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body .admonition>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* progress bar*/
+.markdown-body .progress {
+  display: block;
+  width: 300px;
+  margin: 10px 0;
+  height: 24px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #ededed;
+  position: relative;
+  box-shadow: inset -1px 1px 3px rgba(0, 0, 0, .1);
+}
+
+.markdown-body .progress-label {
+  position: absolute;
+  text-align: center;
+  font-weight: bold;
+  width: 100%; margin: 0;
+  line-height: 24px;
+  color: #333;
+  text-shadow: 1px 1px 0 #fefefe, -1px -1px 0 #fefefe, -1px 1px 0 #fefefe, 1px -1px 0 #fefefe, 0 1px 0 #fefefe, 0 -1px 0 #fefefe, 1px 0 0 #fefefe, -1px 0 0 #fefefe, 1px 1px 2px #000;
+  -webkit-font-smoothing: antialiased !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.markdown-body .progress-bar {
+  height: 24px;
+  float: left;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #96c6d7;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), inset 0 -1px 0 rgba(0, 0, 0, .1);
+  background-size: 30px 30px;
+  background-image: -webkit-linear-gradient(
+    135deg, rgba(255, 255, 255, .4) 27%,
+    transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%,
+    transparent 77%, transparent
+  );
+  background-image: -moz-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: -ms-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: -o-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 52%, rgba(255, 255, 255, .4) 52%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
+  );
+}
+
+.markdown-body .progress-100plus .progress-bar {
+  background-color: #a6d796;
+}
+
+.markdown-body .progress-80plus .progress-bar {
+  background-color: #c6d796;
+}
+
+.markdown-body .progress-60plus .progress-bar {
+  background-color: #d7c896;
+}
+
+.markdown-body .progress-40plus .progress-bar {
+  background-color: #d7a796;
+}
+
+.markdown-body .progress-20plus .progress-bar {
+  background-color: #d796a6;
+}
+
+.markdown-body .progress-0plus .progress-bar {
+  background-color: #c25f77;
+}
+
+.markdown-body .candystripe-animate .progress-bar{
+  -webkit-animation: animate-stripes 3s linear infinite;
+  -moz-animation: animate-stripes 3s linear infinite;
+  animation: animate-stripes 3s linear infinite;
+}
+
+@-webkit-keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+@-moz-keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+@keyframes animate-stripes {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 60px 0;
+  }
+}
+
+.markdown-body .gloss .progress-bar {
+  box-shadow:
+    inset 0 4px 12px rgba(255, 255, 255, .7),
+    inset 0 -12px 0 rgba(0, 0, 0, .05);
+}
+
+/* Multimarkdown Critic Blocks */
+.markdown-body .critic_mark {
+  background: #ff0;
+}
+
+.markdown-body .critic_delete {
+  color: #c82829;
+  text-decoration: line-through;
+}
+
+.markdown-body .critic_insert {
+  color: #718c00 ;
+  text-decoration: underline;
+}
+
+.markdown-body .critic_comment {
+  color: #8e908c;
+  font-style: italic;
+}
+
+.markdown-body .headeranchor {
+  font: normal normal 16px octicons-anchor;
+  line-height: 1;
+  display: inline-block;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.headeranchor:before {
+  content: '\f05c';
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 3px;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 4px 0.25em -20px;
+  vertical-align: middle;
+}
+
+/* Media */
+@media only screen and (min-width: 480px) {
+  .markdown-body {
+    font-size:14px;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .markdown-body {
+    font-size:16px;
+  }
+}
+
+@media print {
+  .markdown-body * {
+    background: transparent !important;
+    color: black !important;
+    filter:none !important;
+    -ms-filter: none !important;
+  }
+
+  .markdown-body {
+    font-size:12pt;
+    max-width:100%;
+    outline:none;
+    border: 0;
+  }
+
+  .markdown-body a,
+  .markdown-body a:visited {
+    text-decoration: underline;
+  }
+
+  .markdown-body .headeranchor-link {
+    display: none;
+  }
+
+  .markdown-body a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  .markdown-body abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  .markdown-body .ir a:after,
+  .markdown-body a[href^="javascript:"]:after,
+  .markdown-body a[href^="#"]:after {
+    content: "";
+  }
+
+  .markdown-body pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .markdown-body pre,
+  .markdown-body blockquote {
+    border: 1px solid #999;
+    padding-right: 1em;
+    page-break-inside: avoid;
+  }
+
+  .markdown-body .progress,
+  .markdown-body .progress-bar {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .markdown-body .progress {
+    border: 1px solid #ddd;
+  }
+
+  .markdown-body .progress-bar {
+    height: 22px;
+    border-right: 1px solid #ddd;
+  }
+
+  .markdown-body tr,
+  .markdown-body img {
+    page-break-inside: avoid;
+  }
+
+  .markdown-body img {
+    max-width: 100% !important;
+  }
+
+  .markdown-body p,
+  .markdown-body h2,
+  .markdown-body h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .markdown-body h2,
+  .markdown-body h3 {
+    page-break-after: avoid;
+  }
+}
+</style><style>.codehilite pre .hll { background-color: #f8eec7 }
+.codehilite pre  { background: #ffffff; color: #333333 }
+.codehilite pre .c { color: #999988; font-style: italic } /* Comment */
+.codehilite pre .err { color: #a61717; background-color: #e3d2d2 } /* Error */
+.codehilite pre .k { font-weight: bold } /* Keyword */
+.codehilite pre .n { color: #333333 } /* Name */
+.codehilite pre .o { font-weight: bold } /* Operator */
+.codehilite pre .cm { color: #999988; font-style: italic } /* Comment.Multiline */
+.codehilite pre .cp { color: #999999; font-weight: bold } /* Comment.Preproc */
+.codehilite pre .c1 { color: #999988; font-style: italic } /* Comment.Single */
+.codehilite pre .cs { color: #999988; font-style: italic } /* Comment.Special */
+.codehilite pre .gd { color: #000000; background-color: #ffdddd } /* Generic.Deleted */
+.codehilite pre .ge { font-style: italic } /* Generic.Emph */
+.codehilite pre .gr { color: #aa0000 } /* Generic.Error */
+.codehilite pre .gh { color: #999999 } /* Generic.Heading */
+.codehilite pre .gi { color: #000000; background-color: #ddffdd } /* Generic.Inserted */
+.codehilite pre .go { color: #888888 } /* Generic.Output */
+.codehilite pre .gp { color: #555555 } /* Generic.Prompt */
+.codehilite pre .gs { font-weight: bold } /* Generic.Strong */
+.codehilite pre .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite pre .gt { color: #aa0000 } /* Generic.Traceback */
+.codehilite pre .kc { font-weight: bold } /* Keyword.Constant */
+.codehilite pre .kd { font-weight: bold } /* Keyword.Declaration */
+.codehilite pre .kn { font-weight: bold } /* Keyword.Namespace */
+.codehilite pre .kp { font-weight: bold } /* Keyword.Pseudo */
+.codehilite pre .kr { font-weight: bold } /* Keyword.Reserved */
+.codehilite pre .kt { font-weight: bold } /* Keyword.Type */
+.codehilite pre .m { color: #945277 } /* Literal.Number */
+.codehilite pre .s { color: #df5000 } /* Literal.String */
+.codehilite pre .na { color: #008080 } /* Name.Attribute */
+.codehilite pre .nb { color: #0086b3 } /* Name.Builtin */
+.codehilite pre .nc { color: #445588; font-weight: bold } /* Name.Class */
+.codehilite pre .no { color: #094e99 } /* Name.Constant */
+.codehilite pre .nd { color: #333333 } /* Name.Decorator */
+.codehilite pre .ni { color: #800080 } /* Name.Entity */
+.codehilite pre .ne { color: #990000; font-weight: bold } /* Name.Exception */
+.codehilite pre .nf { color: #945277; font-weight: bold } /* Name.Function */
+.codehilite pre .nl { color: #333333 } /* Name.Label */
+.codehilite pre .nn { color: #555555 } /* Name.Namespace */
+.codehilite pre .nx { color: #333333 } /* Name.Other */
+.codehilite pre .py { color: #333333 } /* Name.Property */
+.codehilite pre .nt { color: #000080 } /* Name.Tag */
+.codehilite pre .nv { color: #008080 } /* Name.Variable */
+.codehilite pre .ow { font-weight: bold } /* Operator.Word */
+.codehilite pre .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite pre .mb { color: #945277 } /* Literal.Number.Bin */
+.codehilite pre .mf { color: #945277 } /* Literal.Number.Float */
+.codehilite pre .mh { color: #945277 } /* Literal.Number.Hex */
+.codehilite pre .mi { color: #945277 } /* Literal.Number.Integer */
+.codehilite pre .mo { color: #945277 } /* Literal.Number.Oct */
+.codehilite pre .sb { color: #df5000 } /* Literal.String.Backtick */
+.codehilite pre .sc { color: #df5000 } /* Literal.String.Char */
+.codehilite pre .sd { color: #df5000 } /* Literal.String.Doc */
+.codehilite pre .s2 { color: #df5000 } /* Literal.String.Double */
+.codehilite pre .se { color: #df5000 } /* Literal.String.Escape */
+.codehilite pre .sh { color: #df5000 } /* Literal.String.Heredoc */
+.codehilite pre .si { color: #df5000 } /* Literal.String.Interpol */
+.codehilite pre .sx { color: #df5000 } /* Literal.String.Other */
+.codehilite pre .sr { color: #017936 } /* Literal.String.Regex */
+.codehilite pre .s1 { color: #df5000 } /* Literal.String.Single */
+.codehilite pre .ss { color: #8b467f } /* Literal.String.Symbol */
+.codehilite pre .bp { color: #999999 } /* Name.Builtin.Pseudo */
+.codehilite pre .vc { color: #008080 } /* Name.Variable.Class */
+.codehilite pre .vg { color: #008080 } /* Name.Variable.Global */
+.codehilite pre .vi { color: #008080 } /* Name.Variable.Instance */
+.codehilite pre .il { color: #945277 } /* Literal.Number.Integer.Long */</style><title>README</title></head><body><article class="markdown-body"><h1 id="server"><a name="user-content-server" href="#server" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Server</h1>
+<p>This is the server side of our n3twork.</p>
+<div class="toc">
+<ul>
+<li><a href="#server">Server</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#classes">classes</a><ul>
+<li><a href="#user">User</a></li>
+<li><a href="#group">Group</a></li>
+<li><a href="#post">Post</a></li>
+<li><a href="#conversation">Conversation</a><ul>
+<li><a href="#message">Message</a></li>
+</ul>
+</li>
+<li><a href="#suggestion">Suggestion</a><ul>
+<li><a href="#networksuggestionuser">networkSuggestion(User)</a></li>
+<li><a href="#postbasedsuggestionuser">postBasedSuggestion(User)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#database-model">Database Model</a><ul>
+<li><a href="#basics">Basics</a></li>
+<li><a href="#friends">Friends</a></li>
+<li><a href="#groups">Groups</a></li>
+<li><a href="#posts">Posts</a><ul>
+<li><a href="#comments">Comments</a></li>
+<li><a href="#votes">Votes</a></li>
+</ul>
+</li>
+<li><a href="#conversations">Conversations</a><ul>
+<li><a href="#messages">Messages</a></li>
+<li><a href="#receivers">Receivers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#servlet">servlet</a><ul>
+<li><a href="#login">/login</a></li>
+<li><a href="#logout">/logout</a></li>
+<li><a href="#register">/register</a></li>
+<li><a href="#registercheckuser">/register/checkuser</a></li>
+<li><a href="#user_1">/user</a></li>
+<li><a href="#usersettings">/user/settings</a></li>
+<li><a href="#userremove">/user/remove</a></li>
+<li><a href="#userfind">/user/find</a></li>
+<li><a href="#usercount">/user/count</a></li>
+<li><a href="#userfriends">/user/friends</a></li>
+<li><a href="#userfriendrequests">/user/friendrequests</a></li>
+<li><a href="#userfriendadd">/user/friend/add</a></li>
+<li><a href="#userfriendremove">/user/friend/remove</a></li>
+<li><a href="#usergroups">/user/groups</a></li>
+<li><a href="#usergroupjoin-and-usergroupleave">/user/group/join and /user/group/leave</a></li>
+<li><a href="#groupcreate">/group/create</a></li>
+<li><a href="#groupshow">/group/show</a></li>
+<li><a href="#groupfind">/group/find</a></li>
+<li><a href="#groupcount">/group/count</a></li>
+<li><a href="#groupmembers">/group/members</a></li>
+<li><a href="#post_1">/post</a></li>
+<li><a href="#postnewsfeed">/post/newsfeed</a></li>
+<li><a href="#postvotes">/post/votes</a></li>
+<li><a href="#postadd">/post/add</a></li>
+<li><a href="#postdelete">/post/delete</a></li>
+<li><a href="#postupdate">/post/update</a></li>
+<li><a href="#postvoteadd-and-postvoteremove">/post/vote/add and /post/vote/remove</a></li>
+<li><a href="#postcomments">/post/comments</a></li>
+<li><a href="#postcommentadd">/post/comment/add</a></li>
+<li><a href="#postcommentremove">/post/comment/remove</a></li>
+<li><a href="#conversation_1">/conversation</a></li>
+<li><a href="#conversationshow">/conversation/show</a></li>
+<li><a href="#conversationsend">/conversation/send</a></li>
+<li><a href="#conversationnew">/conversation/new</a></li>
+<li><a href="#conversationarchive">/conversation/archive</a></li>
+<li><a href="#conversationunread">/conversation/unread</a></li>
+<li><a href="#conversationrename">/conversation/rename</a></li>
+<li><a href="#suggestionnetwork">/suggestion/network</a></li>
+<li><a href="#suggestionpost">/suggestion/post</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="introduction"><a name="user-content-introduction" href="#introduction" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Introduction</h1>
+<p>We used eclipse to generate a <code>n3.war</code> we deployed on our Tomcat 8 Server.</p>
+<p>The server is seperated into two parts, as is indicated by the directory structure: classes, which contains the classes, whose objects are used, and servlet, which contains classes of the REST API.</p>
+<h1 id="classes"><a name="user-content-classes" href="#classes" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>classes</h1>
+<p>The class <code>Main</code> is only used for testing. </p>
+<h2 id="user"><a name="user-content-user" href="#user" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>User</h2>
+<p>This class is central to <em>n3twork</em>, which is to be expected from a social network. Most of the db queries are found here. An object of this class represents a user in the network. The most used attributes are:</p>
+<ul>
+<li><code>id</code> is a unique integer and analog to the <code>id</code> column in the <code>Users</code> table</li>
+<li><code>name</code> and <code>firstName</code> describe the name of the user</li>
+<li><code>username</code> is a unique String and analog to the <code>username</code> column in the <code>Users</code> table</li>
+<li><code>email</code> should also be a unique String, but is only used on login as a identifier</li>
+<li><code>password</code> is allways hashed with md5</li>
+<li><code>sessionID</code> is a md5 hash of the username with the current time in milliseconds concatenated</li>
+<li><code>otherProperties</code> is a HashMap of all other attributes a user could have (e.g. city, bio, workplace). This is implemented dynamically: support for a new property only has to be added to the client and the db</li>
+</ul>
+<p>The feature of friends is also implemented in <code>User</code>. It uses two attributes:</p>
+<ul>
+<li><code>friends</code> is a <code>HashMap&lt;User, SimpleEntry&lt;Long, Boolean&gt;&gt;</code><ul>
+<li>the key is the user object of the friend</li>
+<li>the key of the <code>SimpleEntry</code> is the timestamp when the connection was established</li>
+<li>the value of the <code>SimpleEntry</code> is true if the connection exists both ways</li>
+</ul>
+</li>
+<li><code>friendRequests</code> is a <code>HashMap&lt;User, Long&gt;</code><ul>
+<li>the key is the user object of the friend request</li>
+<li>the value is the timestamp of the time the friend request was made</li>
+</ul>
+</li>
+</ul>
+<h2 id="group"><a name="user-content-group" href="#group" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Group</h2>
+<p><code>Group</code> is part of the implementation of the groups feature. An object of the class represents a group with the following attributes:</p>
+<ul>
+<li><code>id</code> is a unique identifier, related to the <code>id</code> column in the <code>Groups</code> table</li>
+<li><code>name</code> and <code>descr</code> describe the group</li>
+<li><code>members</code> is a list of <code>User</code> objects</li>
+<li><code>memberCount</code> is needed to save the lenght of <code>members</code> without having the list</li>
+<li><code>otherProperties</code> is equal to the correspondent attribute in <a href="#user">User</a></li>
+<li><code>posts</code> see <a href="#post">Post</a></li>
+</ul>
+<p>A lot of the user related methods are found in <code>User</code></p>
+<h2 id="post"><a name="user-content-post" href="#post" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Post</h2>
+<p>Objects of this class represents posts of users on their profil or in a group. The attibutes are:</p>
+<ul>
+<li><code>id</code> is a unique identifier, related to the <code>id</code> column in the <code>Posts</code> table</li>
+<li><code>owner</code> is a group</li>
+<li><code>author</code> is the user, who wrote the post</li>
+<li><code>content</code> explains itself</li>
+<li><code>postDate</code> is the date of the creation of the post</li>
+<li><code>privatePost</code> is true if the post should only be visual to friends of the <code>author</code>. This is irrelevant, if <code>goupPost</code> is true.</li>
+<li><code>groupPost</code> is true if the post is in a group and false if it should be displayed in the profil. If it is false, <code>owner</code> is ignored</li>
+<li><code>upvotes</code> is a <code>HashMap&lt;User,Date&gt;</code>. The key is the voter and the value the date of voting</li>
+<li><code>numberOfUpVotes</code> is needed to save the size of <code>upVotes</code> without having the Map</li>
+<li><code>didIVote</code> is true if the spectating user has already voted</li>
+<li><code>comments</code> is a <code>HashMap&lt;SimpleEntry&lt;User,Integer&gt;,SimpleEntry&lt;String,Date&gt;&gt;</code>, which indicates, that this should&rsquo;ve been a seperate class<ul>
+<li>the key of the key is the commentator</li>
+<li>the value of the key is the comment id (from <code>Comments</code> table in db)</li>
+<li>the key of the value is the content</li>
+<li>the value of the key is the date of creation</li>
+</ul>
+</li>
+<li><code>numberOfComments</code> is needed to save the size of <code>comments</code> without having the Map</li>
+</ul>
+<p>Methods retrieving posts from the db, like getting the newsfeed, are implemented in <code>User</code></p>
+<h2 id="conversation"><a name="user-content-conversation" href="#conversation" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Conversation</h2>
+<p>This class is responsible for the messaging system of the network. It&rsquo;s mainly composed of a list of receivers and a list of messages.<br />
+Attributes:</p>
+<ul>
+<li><code>id</code> is a unique identifier, related to the <code>id</code> column in the <code>Conversations</code> table</li>
+<li><code>messageList</code> is a list of messages (see <a href="#message">Message</a>)</li>
+<li><code>receivers</code> is a list of users, including the sending user</li>
+<li><code>lastRead</code> is the <code>id</code> of the last message read by the querying user</li>
+<li><code>unread</code> is the number of unread messages in the conversation</li>
+<li><code>name</code> is an optional attribute</li>
+</ul>
+<p>Similar to <code>Post</code>, the method neccessary to get user specific list from the db is in <code>User</code></p>
+<h3 id="message"><a name="user-content-message" href="#message" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Message</h3>
+<p>An object of this class represents a message within a conversation. It&rsquo;s main purpose is to simplify <code>Conversation</code>. It only consists of setters and getters to modify the following attributes:</p>
+<ul>
+<li><code>id</code> is a unique identifier, related to the <code>id</code> column in the <code>Messages</code> table</li>
+<li><code>content</code> explains itself</li>
+<li><code>sendDate</code> date of creation</li>
+<li><code>sender</code> is the user, who send the message</li>
+</ul>
+<h2 id="suggestion"><a name="user-content-suggestion" href="#suggestion" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Suggestion</h2>
+<p>This class contains the two static functions to the friend suggestions.</p>
+<h3 id="networksuggestionuser"><code>networkSuggestion(User)</code></h3>
+<p>All friends of friends, which are not friends of the analyzed user, are selected. Then the function counts how often a user is contained in that list and returns a list of users without duplicates, sorted by that count.</p>
+<h3 id="postbasedsuggestionuser"><code>postBasedSuggestion(User)</code></h3>
+<p>The posts of all users, who are not friends with the analyzed user are selected. Those posts are split into words and the function then counts how often what word appears in the posts of a user.<br />
+After creating the word-user matrix the algorithm of the lecture is applied to get a sorted list of users.</p>
+<h1 id="database-model"><a name="user-content-database-model" href="#database-model" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Database Model</h1>
+<p><img alt="Database Model" src="EER_Diagram.png" /></p>
+<h2 id="basics"><a name="user-content-basics" href="#basics" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Basics</h2>
+<p>When a user registers in the system, username, email, and the hashed password are saved in <code>Users</code> and a id is automatically generated. The user can then login with username or email and password and get a sessionID (which is a md5 of the username + current time in miliseconds). Users can get an unlimited amount of sessionIDs and the cleanup is on the clientside.</p>
+<p>Additional information of a user is added to the <code>Users</code> table. If support for a new field is supposed to be added, a new column has to be added to this table, but there are no changes in the backend required.</p>
+<p>If a user is deleted all references to that user are deleted aswell.</p>
+<h2 id="friends"><a name="user-content-friends" href="#friends" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Friends</h2>
+<p>Friends are implemented through the table <code>Friends</code>. <code>userID</code> represents the user, who actively added the user in <code>friendID</code>. Here is an example:</p>
+<table>
+<thead>
+<tr>
+<th align="center">userID</th>
+<th align="center">friendID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">1</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<p>In this example user <strong>1</strong> added user <strong>2</strong> and user <strong>2</strong> added user <strong>1</strong>. User <strong>3</strong> only added user <strong>1</strong> but not the other way around; user <strong>3</strong> made a not yet accepted friend request to user <strong>1</strong>.</p>
+<h2 id="groups"><a name="user-content-groups" href="#groups" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Groups</h2>
+<p>The tables used for this feature are <code>Groups</code> and <code>Members</code>. <code>Groups</code> contains a name of the group and a description, while <code>Members</code> connects users to a group. The date a user joined a group is automatically saved.</p>
+<h2 id="posts"><a name="user-content-posts" href="#posts" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Posts</h2>
+<p>Three tables were needed for this feature: <code>Posts</code>, <code>Comments</code> and <code>Votes</code>. It also has a relation to <code>Groups</code>, because users can decide if they want to post in a group or on their profile. To support this, there are too columns with foreign keys: <code>ownerID</code> and <code>authorID</code>. <code>ownerID</code> represents the group, which &ldquo;ownes&rdquo; the post. The id is 0 if the post is on a profile; otherwise, the post is part of a group. The <code>authorID</code> is the id of the user, who wrote the post. The date of a post is automatically saved.</p>
+<h3 id="comments"><a name="user-content-comments" href="#comments" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Comments</h3>
+<p>The <code>Comments</code> table is essentialy a second <code>Posts</code> table with the difference, that the &ldquo;owner&rdquo; is now a post through <code>postID</code>,but the date of a comment is automatically saved and doesn&rsquo;t have to be set.</p>
+<h3 id="votes"><a name="user-content-votes" href="#votes" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Votes</h3>
+<p><code>Votes</code> is like the <code>Comments</code> table without the <code>content</code> column and <code>authorID</code> is renamed <code>voterID</code></p>
+<h2 id="conversations"><a name="user-content-conversations" href="#conversations" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Conversations</h2>
+<p>For the messaging feature 3 tables are used:</p>
+<ul>
+<li><code>Messages</code> to save every individual message</li>
+<li><code>Receivers</code> for participants of a conversation</li>
+<li><code>Conversations</code> to tie everything together; this table consists just of an id and an optional name for a conversation</li>
+</ul>
+<h3 id="messages"><a name="user-content-messages" href="#messages" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Messages</h3>
+<p>Messages consist of a link to the conversation they&rsquo;re a part of, a sender and the content. The date the message was send is saved automatically. </p>
+<h3 id="receivers"><a name="user-content-receivers" href="#receivers" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Receivers</h3>
+<p>This table saves all participants of a conersation and their status within the conversation. <code>lastreadID</code> is the id of the last read message and 0, if there are no messages in the conversation. The flag <code>deleted</code> is 1, if the user has marked a conversation as archived and doesn&rsquo;t want to see it until new messages arrive. It is set to 0 by the backend, if someone writes a new message in this conversation.</p>
+<h1 id="servlet"><a name="user-content-servlet" href="#servlet" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>servlet</h1>
+<p>There are only two endpoint, that aren&rsquo;t a POST request, but a PUT request, which are:</p>
+<ul>
+<li><a href="#usersettings">/user/settings</a></li>
+<li><a href="#postupdate">/post/update</a></li>
+</ul>
+<p>Dates are always in the unix timestamp format</p>
+<h2 id="login"><code>/login</code></h2>
+<p>Logs in a user with username or email and the password in plain text. </p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;login&quot;</span> <span class="p">:</span> <span class="s2">&quot;username/email&quot;</span><span class="p">,</span> 
+    <span class="nt">&quot;password&quot;</span> <span class="p">:</span> <span class="s2">&quot;pw in plain text&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="s2">&quot;username&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="s2">&quot;email&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;lastname&quot;</span><span class="p">:</span><span class="s2">&quot;last name&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="s2">&quot;first name&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;otherProperties&quot;</span><span class="p">:{</span>
+        <span class="nt">&quot;propertie1&quot;</span><span class="p">:</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;propertie2&quot;</span><span class="p">:</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="logout"><code>/logout</code></h2>
+<p>Deletes the sessionID from the database</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span> <span class="p">:</span> <span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="register"><code>/register</code></h2>
+<p>Hashes the password and puts all items in the db</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="s2">&quot;email@text&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="s2">&quot;pw as plain text&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="s2">&quot;usernametext&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="registercheckuser"><code>/register/checkuser</code></h2>
+<p>Checks if the username is taken or not</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="s2">&quot;usernametext&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="s2">&quot;usernametext&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;taken&quot;</span><span class="p">:</span><span class="kc">true</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="user_1"><code>/user</code></h2>
+<p>Gets a user by id or gets the current user by the sessionID if no id is given and returns profile related attributes.</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;session&quot;</span><span class="o">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">1337</span> <span class="c1">//optional</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch1337@gmail.com&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Robin&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
+    <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Temme&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;otherProperties&quot;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="usersettings"><code>/user/settings</code></h2>
+<p>Changes the given attributes for the current user</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+  <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;changedSetting1&quot;</span><span class="p">:</span><span class="s2">&quot;newValue1&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;changedSetting2&quot;</span><span class="p">:</span><span class="s2">&quot;newValue2&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;otherProperties&quot;</span><span class="p">:{</span>
+    <span class="nt">&quot;changedPropertie1&quot;</span><span class="p">:</span><span class="s2">&quot;newValue3&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;changedPropertie2&quot;</span><span class="p">:</span><span class="s2">&quot;newValue4&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+  <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span><span class="err">/</span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="userremove"><code>/user/remove</code></h2>
+<p>Removes the current User from the db</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="userfind"><code>/user/find</code></h2>
+<p>Returns a list of all users</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;userList&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;asd@asd.de&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;otherProperties&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;asdddddd&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;theres...neider@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;otherProperties&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;Tessa1337&quot;</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="usercount"><code>/user/count</code></h2>
+<p>Returns total number of users and number of users online<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span> <span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;users&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="nt">&quot;usersOnline&quot;</span><span class="p">:</span> <span class="mi">3</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="userfriends"><code>/user/friends</code></h2>
+<p>Returns friends of the current user, or of a user with a specific id<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;session&quot;</span><span class="o">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">45</span> <span class="c1">//optional</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;friends&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417123181000</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch1337@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Robin&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Temme&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;trueFriend&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417122900000</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;horst@dieter.ded&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;trueFriend&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;ddasddddddasdasdasd&quot;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="userfriendrequests"><code>/user/friendrequests</code></h2>
+<p>Returns friendrequests for the current user, or of a user with a specific id<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;session&quot;</span><span class="o">:</span> <span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">45</span> <span class="s2">&quot;//optionsl&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;friendRequests&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417208589000</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;dieter@rasse.de&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Dieter&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Rasse&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;trueFriend&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;dieter&quot;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="userfriendadd"><code>/user/friend/add</code></h2>
+<p>Adds a friend for the current user</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;friend&quot;</span><span class="p">:</span><span class="mi">1337</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="userfriendremove"><code>/user/friend/remove</code></h2>
+<p>Removes a friend for the current user<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;friend&quot;</span><span class="p">:</span><span class="mi">1337</span>
+<span class="p">}</span>
+<span class="err">out:</span>
+<span class="err">```</span> <span class="err">json</span>
+<span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="usergroups"><code>/user/groups</code></h2>
+<p>Returns groups of the current user, or of a user with a specific id</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;session&quot;</span><span class="o">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">45</span> <span class="c1">//optional</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;groups&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;groupDescr&quot;</span><span class="p">:</span> <span class="s2">&quot;Beschreibung&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;groupID&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="nt">&quot;groupName&quot;</span><span class="p">:</span> <span class="s2">&quot;Coole Gruppe&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="usergroupjoin-and-usergroupleave"><code>/user/group/join and /user/group/leave</code></h2>
+<p>Joins/leaves a group for the curren user</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="mi">1337</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="s2">&quot;//Bei join auch wenn der user schon Mitglied ist. Wird aber nicht 2x in der db registriert&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="groupcreate"><code>/group/create</code></h2>
+<p>Creates a new group</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;groupDescr&quot;</span><span class="p">:</span> <span class="s2">&quot;Beschreibung&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;groupName&quot;</span><span class="p">:</span> <span class="s2">&quot;Name&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span> <span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="groupshow"><code>/group/show</code></h2>
+<p>Returns details of a group</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="mi">1337</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;descr&quot;</span><span class="p">:</span> <span class="s2">&quot;Beschreibung&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Name&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;otherProperties&quot;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="groupfind"><code>/group/find</code></h2>
+<p>Returns a list of all groups</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;groups&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;groupDescr&quot;</span><span class="p">:</span> <span class="s2">&quot;Beschreibung&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;groupID&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;groupName&quot;</span><span class="p">:</span> <span class="s2">&quot;Coole Gruppe&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;groupDescr&quot;</span><span class="p">:</span> <span class="s2">&quot;Beschreibung&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;groupID&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;groupName&quot;</span><span class="p">:</span> <span class="s2">&quot;Coole Gruppe&quot;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="groupcount"><code>/group/count</code></h2>
+<p>Returns the number of groups in the network</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span> <span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;groups&quot;</span><span class="p">:</span> <span class="mi">5</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="groupmembers"><code>/group/members</code></h2>
+<p>Returns a list of the members of a group<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="mi">1337</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;members&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;dieter@rasse.de&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Dieter&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Rasse&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;dieter&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;johannes@n3rdkeller.de&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">47</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;johannes&quot;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="post_1"><code>/post</code></h2>
+<p>Returns the posts of the current user, a specific user or a group.<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;groupID&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span> <span class="c1">//optional</span>
+    <span class="s2">&quot;userID&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span> <span class="c1">//optional</span>
+    <span class="s2">&quot;session&quot;</span><span class="o">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;postList&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="err">authorID</span> <span class="err">number</span><span class="p">,</span>
+            <span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="s2">&quot;content text&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="err">postID</span> <span class="err">number</span><span class="p">,</span>
+            <span class="nt">&quot;owner&quot;</span><span class="p">:</span><span class="err">ownerID</span> <span class="err">number</span><span class="p">,</span>
+            <span class="nt">&quot;postDate&quot;</span><span class="p">:</span><span class="err">timestamp</span> <span class="err">number</span><span class="p">,</span>
+            <span class="nt">&quot;upVotes&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="err">timestamp</span> <span class="err">number</span><span class="p">,</span>
+                    <span class="nt">&quot;voter&quot;</span><span class="p">:</span><span class="err">voterID</span> <span class="err">number</span>
+                <span class="p">},</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;private&quot;</span><span class="p">:</span><span class="kc">true</span><span class="err">/</span><span class="kc">false</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postnewsfeed"><code>/post/newsfeed</code></h2>
+<p>Returns the newsfeed for the curren user<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;postList&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;author&quot;</span><span class="p">:</span><span class="err">authorID</span> <span class="err">number</span><span class="p">,</span>
+            <span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="s2">&quot;content text&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="err">postID</span> <span class="err">number</span><span class="p">,</span>
+            <span class="nt">&quot;owner&quot;</span><span class="p">:</span><span class="err">ownerID</span> <span class="err">number</span><span class="p">,</span>
+            <span class="nt">&quot;postDate&quot;</span><span class="p">:</span><span class="err">timestamp</span> <span class="err">number</span><span class="p">,</span>
+            <span class="nt">&quot;upVotes&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="err">timestamp</span> <span class="err">number</span><span class="p">,</span>
+                    <span class="nt">&quot;voter&quot;</span><span class="p">:</span><span class="err">voterID</span> <span class="err">number</span>
+                <span class="p">},</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;private&quot;</span><span class="p">:</span><span class="kc">true</span><span class="err">/</span><span class="kc">false</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postvotes"><code>/post/votes</code></h2>
+<p>Returns the votes for a post</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;voteList&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="mi">123123123</span><span class="p">,</span>
+            <span class="nt">&quot;voter&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="s2">&quot;firstName&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;name&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="s2">&quot;username&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postadd"><code>/post/add</code></h2>
+<p>Posts to the profile of the current user or to a group<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;groupID&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span> <span class="c1">//optional</span>
+    <span class="s2">&quot;session&quot;</span><span class="o">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;post&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;content&quot;</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;private&quot;</span><span class="o">:</span><span class="kc">true</span> <span class="kc">false</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postdelete"><code>/post/delete</code></h2>
+<p>Deletes a post by id<br />
+in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span> 
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postupdate"><code>/post/update</code></h2>
+<p>Changes the attributes of a post</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+   <span class="s2">&quot;session&quot;</span><span class="o">:</span><span class="s2">&quot;sessionID&quot;</span>
+   <span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span>
+   <span class="s2">&quot;content&quot;</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="c1">//optional</span>
+   <span class="s2">&quot;private&quot;</span><span class="o">:</span><span class="kc">true</span><span class="o">/</span><span class="kc">false</span> <span class="c1">//optional</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+   <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postvoteadd-and-postvoteremove"><code>/post/vote/add and /post/vote/remove</code></h2>
+<p>Adds/removes a vote by the current user from a post by postID</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postcomments"><code>/post/comments</code></h2>
+<p>Gets the comments of a specific post by postID</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;commentList&quot;</span><span class="p">:[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;author&quot;</span><span class="p">:{</span>
+                <span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="s2">&quot;firstName text&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;lastname&quot;</span><span class="p">:</span><span class="s2">&quot;lastname text&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="s2">&quot;username text&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="s2">&quot;content text&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="mi">123123123</span><span class="p">,</span> 
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postcommentadd"><code>/post/comment/add</code></h2>
+<p>Add a comment by the curren user to a post by postID</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="s2">&quot;contentOfComment&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="postcommentremove"><code>/post/comment/remove</code></h2>
+<p>Removes a comment by commentID</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="conversation_1"><code>/conversation</code></h2>
+<p>Returns the list of conversations, the current user is a part of</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;conversationList&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;receiverList&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                <span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;lastName&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;emailhash&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span>
+                <span class="p">},</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;lastread&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="conversationshow"><code>/conversation/show</code></h2>
+<p>Returns the list of messages of a conversation</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;conversationID&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> 
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;messageList&quot;</span><span class="p">:[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="s2">&quot;content&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;senderDate&quot;</span><span class="p">:</span><span class="mi">456456465465</span><span class="p">,</span>
+            <span class="nt">&quot;senderID&quot;</span><span class="p">:</span><span class="mi">0</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="conversationsend"><code>/conversation/send</code></h2>
+<p>Sends a message in a conversation and returns the id of the new message.</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="s2">&quot;asdfasdf&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;conversationID&quot;</span><span class="p">:</span><span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span> 
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="conversationnew"><code>/conversation/new</code></h2>
+<p>Creates a new conversation and returns its id.</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="s2">&quot;session&quot;</span><span class="o">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;conName&quot;</span><span class="p">,</span> <span class="c1">//optional</span>
+    <span class="s2">&quot;receiverList&quot;</span><span class="o">:</span><span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;username&quot;</span><span class="o">:</span><span class="s2">&quot;username&quot;</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;conversationID&quot;</span><span class="p">:</span><span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="conversationarchive"><code>/conversation/archive</code></h2>
+<p>Sets the <code>deleted</code> flag in the db</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;conversationID&quot;</span><span class="p">:</span><span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="conversationunread"><code>/conversation/unread</code></h2>
+<p>Returns the number of unread conversations of the current user</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;unread&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="conversationrename"><code>/conversation/rename</code></h2>
+<p>Renames a conversation</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;new name&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="suggestionnetwork"><code>/suggestion/network</code></h2>
+<p>Returns all suggestions based on the friend network and sorted by rating</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;userList&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417123181000</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch1337@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Robin&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Temme&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;trueFriend&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417122900000</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;horst@dieter.ded&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;trueFriend&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;ddasddddddasdasdasd&quot;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p>
+<h2 id="suggestionpost"><code>/suggestion/post</code></h2>
+<p>Returns all suggestions based on content of posts and sorted by rating</p>
+<p>in:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
+<span class="p">}</span>
+</pre></div>
+<br />
+out:<br />
+<div class="codehilite"><pre><span class="p">{</span>
+    <span class="nt">&quot;userList&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417123181000</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch1337@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Robin&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Temme&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;trueFriend&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417122900000</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;horst@dieter.ded&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+            <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;trueFriend&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;ddasddddddasdasdasd&quot;</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;successful&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</p></article></body></html>
