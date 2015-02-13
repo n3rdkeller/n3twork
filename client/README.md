@@ -204,18 +204,18 @@ This handles the groups overview, the display of one group, and the group creati
 	- the view `groups.html
 	- the modal to create a group
 		- the controller `CreateGroupCtrl`
-		- the view createGroupModal.html
+		- the view `createGroupModal.html`
 
 - Group (one group)
 	- the controller `GroupCtrl`
-	- the view `group.html
+	- the view `group.html`
 	- the modal to confirm leaving if user is the last one in the group
 		- the controller `LeaveConfirmationCtrl`
 		- the view (`ng-template` at the end of `group.html`) `groupLeaveConfirmation.html`
 
 - Members
 	- the controller `MembersCtrl`
-	- the view `members.html
+	- the view `members.html`
 
 ### `src/app/profile`
 This handles the profile page.
