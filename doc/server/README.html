@@ -1252,7 +1252,7 @@ Attributes:</p>
 <p>The posts of all users, who are not friends with the analyzed user are selected. Those posts are split into words and the function then counts how often what word appears in the posts of a user.<br />
 After creating the word-user matrix the algorithm of the lecture is applied to get a sorted list of users.</p>
 <h1 id="database-model"><a name="user-content-database-model" href="#database-model" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Database Model</h1>
-<p><img alt="Database Model" src="EER_Diagram.png" /></p>
+<p><img alt="Database Model" src="../EER_Diagram.png" /></p>
 <h2 id="basics"><a name="user-content-basics" href="#basics" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Basics</h2>
 <p>When a user registers in the system, username, email, and the hashed password are saved in <code>Users</code> and a id is automatically generated. The user can then login with username or email and password and get a sessionID (which is a md5 of the username + current time in miliseconds). Users can get an unlimited amount of sessionIDs and the cleanup is on the clientside.</p>
 <p>Additional information of a user is added to the <code>Users</code> table. If support for a new field is supposed to be added, a new column has to be added to this table, but there are no changes in the backend required.</p>
@@ -1312,7 +1312,7 @@ After creating the word-user matrix the algorithm of the lecture is applied to g
 <p>Logs in a user with username or email and the password in plain text. </p>
 <p>in:<br />
 <div class="codehilite"><pre><span class="p">{</span>
-    <span class="nt">&quot;login&quot;</span> <span class="p">:</span> <span class="s2">&quot;username/email&quot;</span><span class="p">,</span> 
+    <span class="nt">&quot;login&quot;</span> <span class="p">:</span> <span class="s2">&quot;username/email&quot;</span><span class="p">,</span>
     <span class="nt">&quot;password&quot;</span> <span class="p">:</span> <span class="s2">&quot;pw in plain text&quot;</span>
 <span class="p">}</span>
 </pre></div>
@@ -1390,7 +1390,7 @@ out:<br />
 <br />
 out:<br />
 <div class="codehilite"><pre><span class="p">{</span>
-    <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch1337@gmail.com&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;asdf@as.df&quot;</span><span class="p">,</span>
     <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Robin&quot;</span><span class="p">,</span>
     <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
     <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Temme&quot;</span><span class="p">,</span>
@@ -1456,12 +1456,12 @@ out:<br />
             <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;asdddddd&quot;</span>
         <span class="p">},</span>
         <span class="p">{</span>
-            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;theres...neider@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;asdf@as.df&quot;</span><span class="p">,</span>
             <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
             <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
             <span class="nt">&quot;otherProperties&quot;</span><span class="p">:</span> <span class="p">{},</span>
-            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;Tessa1337&quot;</span>
+            <span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;some1else&quot;</span>
         <span class="p">},</span>
     <span class="p">]</span>
 <span class="p">}</span>
@@ -1496,7 +1496,7 @@ out:<br />
     <span class="nt">&quot;friends&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417123181000</span><span class="p">,</span>
-            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch1337@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;asdf@as.df&quot;</span><span class="p">,</span>
             <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Robin&quot;</span><span class="p">,</span>
             <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
             <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Temme&quot;</span><span class="p">,</span>
@@ -1827,7 +1827,7 @@ out:<br />
 in:<br />
 <div class="codehilite"><pre><span class="p">{</span>
     <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span> 
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span>
 <span class="p">}</span>
 </pre></div>
 <br />
@@ -1888,7 +1888,7 @@ out:<br />
                 <span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="s2">&quot;username text&quot;</span>
             <span class="p">},</span>
             <span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="s2">&quot;content text&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="mi">123123123</span><span class="p">,</span> 
+            <span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="mi">123123123</span><span class="p">,</span>
             <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span>
         <span class="p">},</span>
     <span class="p">],</span>
@@ -1900,7 +1900,7 @@ out:<br />
 <p>Add a comment by the curren user to a post by postID</p>
 <p>in:<br />
 <div class="codehilite"><pre><span class="p">{</span>
-    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
     <span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="s2">&quot;contentOfComment&quot;</span><span class="p">,</span>
     <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
 <span class="p">}</span>
@@ -1916,7 +1916,7 @@ out:<br />
 <p>Removes a comment by commentID</p>
 <p>in:<br />
 <div class="codehilite"><pre><span class="p">{</span>
-    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
     <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span>
 
 <span class="p">}</span>
@@ -1963,7 +1963,7 @@ out:<br />
 <p>in:<br />
 <div class="codehilite"><pre><span class="p">{</span>
     <span class="nt">&quot;session&quot;</span><span class="p">:</span><span class="s2">&quot;sessionID&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;conversationID&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="nt">&quot;conversationID&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
 <span class="p">}</span>
 </pre></div>
 <br />
@@ -1993,7 +1993,7 @@ out:<br />
 out:<br />
 <div class="codehilite"><pre><span class="p">{</span>
     <span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span> 
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="mi">0</span>
 <span class="p">}</span>
 </pre></div>
 </p>
@@ -2077,7 +2077,7 @@ out:<br />
     <span class="nt">&quot;userList&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417123181000</span><span class="p">,</span>
-            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch1337@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;asdf@as.df&quot;</span><span class="p">,</span>
             <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Robin&quot;</span><span class="p">,</span>
             <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
             <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Temme&quot;</span><span class="p">,</span>
@@ -2111,7 +2111,7 @@ out:<br />
     <span class="nt">&quot;userList&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="mi">1417123181000</span><span class="p">,</span>
-            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;zwerch1337@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;asdf@as.df&quot;</span><span class="p">,</span>
             <span class="nt">&quot;firstName&quot;</span><span class="p">:</span> <span class="s2">&quot;Robin&quot;</span><span class="p">,</span>
             <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
             <span class="nt">&quot;lastname&quot;</span><span class="p">:</span> <span class="s2">&quot;Temme&quot;</span><span class="p">,</span>
