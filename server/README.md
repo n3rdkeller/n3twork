@@ -5,6 +5,12 @@ This is the server side of our n3twork.
 - [Introduction](#introduction)
 - [classes](#classes)
     - [User](#user)
+    - [Group](#group)
+    - [Post](#post)
+    - [Conversation](#conversation)
+    - [Message](#message)
+- [Database Model](#database-model)
+
 - [servlet](#servlet)
     - ...
 - [API](#n3twork-api-quick-reference)
@@ -19,6 +25,7 @@ The class `Main` is only used for testing.
 
 ### User
 This class is central to *n3twork*, which is to be expected from a social network. Most of the db queries are found here. An object of this class represents a user in the network. The most used attributes are:
+
 - `id` is a unique integer and analog to the `id` column in the `Users` table
 - `name` and `firstName` describe the name of the user
 - `username` is a unique String and analog to the `username` column in the `Users` table
@@ -28,6 +35,7 @@ This class is central to *n3twork*, which is to be expected from a social networ
 - `otherProperties` is a HashMap of all other attributes a user could have (e.g. city, bio, workplace). This is implemented dynamically: support for a new property only has to be added to the client and the db
 
 The feature of friends is also implemented in `User`. It uses two attributes:
+
 - `friends` is a `HashMap<User, SimpleEntry<Long, Boolean>>`
     - the key is the user object of the friend
     - the key of the `SimpleEntry` is the timestamp when the connection was established
@@ -36,8 +44,9 @@ The feature of friends is also implemented in `User`. It uses two attributes:
     - the key is the user object of the friend request
     - the value is the timestamp of the time the friend request was made
 
-## Group
+### Group
 `Group` is part of the implementation of the groups feature. An object of the class represents a group with the following attributes:
+
 - `id` is a unique identifier, related to the `id` column in the `Groups` table
 - `name` and `descr` describe the group
 - `members` is a list of `User` objects
@@ -47,8 +56,9 @@ The feature of friends is also implemented in `User`. It uses two attributes:
 
 A lot of the user related methods are found in `User`
 
-## Post
+### Post
 Objects of this class represents posts of users on their profil or in a group. The attibutes are:
+
 - `id` is a unique identifier, related to the `id` column in the `Posts` table
 - `owner` is a group
 - `author` is the user, who wrote the post
@@ -66,48 +76,95 @@ Objects of this class represents posts of users on their profil or in a group. T
     - the value of the key is the date of creation
 - `numberOfComments` is needed to save the size of `comments` without having the Map
 
-Methods implementing an action by a user are usually in `User`
+Methods retrieving posts from the db, like getting the newsfeed, are implemented in `User`
+
+### Conversation
+This class is responsible for the messaging system of the network. It's mainly composed of a list of receivers and a list of messages.
+Attributes:
+
+- `id` is a unique identifier, related to the `id` column in the `Conversations` table
+- `messageList` is a list of messages (see [Message](#message))
+- `receivers` is a list of users, including the sending user
+- `lastRead` is the `id` of the last message read by the querying user
+- `unread` is the number of unread messages in the conversation
+- `name` is an optional attribute
+
+Similar to `Post`, the method neccessary to get user specific list from the db is in `User`
+
+### Message
+An object of this class represents a message within a conversation. It's main purpose is to simplify `Conversation`. It only consists of setters and getters to modify the following attributes:
+
+- `id` is a unique identifier, related to the `id` column in the `Messages` table
+- `content` explains itself
+- `sendDate` date of creation
+- `sender` is the user, who send the message
+
+## Database Model
+![Database Model](../doc/EER_Diagram.png)
+### Basics
+When a user registers in the system, username, email, and the hashed password are saved in `Users` and a id is automatically generated. The user can then login with username or email and password and get a sessionID (which is a md5 of the username + current time in miliseconds). Users can get unlimited amount of sessionIDs and the cleanup is on the clientside.
+
+Additional information of a user is added to the `Users` table. If support for a new field is supposed to be added, a new column has to be added to this table, but there are no changes in the backend required.
+
+If a user is deleted all references to that user are deleted aswell.
+
+### Friends
+Friends are implemented through the table `Friends`. `userID` represents the user, who actively added the user in `friendID`. Here is an example:
+
+userID|friendID
+:---:|:---:
+1|2
+2|1
+3|1
+
+In this example user **1** added user **2** and user **2** added user **1**. User **3** only added user **1** but not the other way around; user **3** made a not yet accepted friend request to user **1**.
+
+### Groups
+The tables used for this feature are `Groups` and `Members`. `Groups` contains a name of the group and a description, while `Members` connects users to a group. The date a user joined a group is also automatically saved.
+
+### Posts
+Three tables where needed for this feature: `Posts`, `Comments` and `Votes`. It also has a relation to `Groups`
 
 ## n3twork API Quick Reference
 - [POST /login](#login)
 - [POST /logout](#logout)
 - [POST /register](#register)
-- [POST /register/checkuser](#register-checkuser)
+- [POST /register/checkuser](#registercheckuser)
 - [POST /user](#user)
-- [PUT /user/settings](#user-settings)
-- [POST /user/remove](#user-remove)
-- [POST /user/find](#user-find)
-- [POST /user/count](#user-count)
-- [POST /user/friends](#user-friends)
-- [POST /user/friendrequests](#user-friendrequests)
-- [POST /user/friend/add](#user-friend-add)
-- [POST /user/friend/remove](#user-friend-remove)
-- [POST /user/groups](#user-groups)
-- [POST /user/group/join and POST /user/group/leave](#user-group-join-and-user-group-leave)
-- [POST /group/create](#group-create)
-- [POST /group/show](#group-show)
-- [POST /group/find](#group-find)
-- [POST /group/count](#group-count)
-- [POST /group/members](#group-members)
+- [PUT /user/settings](#usersettings)
+- [POST /user/remove](#userremove)
+- [POST /user/find](#userfind)
+- [POST /user/count](#usercount)
+- [POST /user/friends](#userfriends)
+- [POST /user/friendrequests](#userfriendrequests)
+- [POST /user/friend/add](#userfriendadd)
+- [POST /user/friend/remove](#userfriendremove)
+- [POST /user/groups](#usergroups)
+- [POST /user/group/join and POST /user/group/leave](#usergroupjoin-and-usergroupleave)
+- [POST /group/create](#groupcreate)
+- [POST /group/show](#groupshow)
+- [POST /group/find](#groupfind)
+- [POST /group/count](#groupcount)
+- [POST /group/members](#groupmembers)
 - [POST /post](#post)
-- [POST /post/newsfeed](#post-newsfeed)
-- [POST /post/votes](#post-votes)
-- [POST /post/add](#post-add)
-- [PUT /post/update](#post-update)
-- [POST /post/delete](#post-delete)
-- [POST /post/vote/add and POST /post/vote/remove](post-vote-add-and-post-vote-remove)
-- [POST /post/comments](#post-comments)
-- [POST /post/comment/add](#post-comment-add)
-- [POST /post/comment/remove](#post-comment-remove)
+- [POST /post/newsfeed](#postnewsfeed)
+- [POST /post/votes](#postvotes)
+- [POST /post/add](#postadd)
+- [PUT /post/update](#postupdate)
+- [POST /post/delete](#postdelete)
+- [POST /post/vote/add and POST /post/vote/remove](#postvoteadd-and-postvoteremove)
+- [POST /post/comments](#postcomments)
+- [POST /post/comment/add](#postcommentadd)
+- [POST /post/comment/remove](#postcommentremove)
 - [POST /conversation/](#conversation)
-- [POST /conversation/show](#conversation-show)
-- [POST /conversation/send](#conversation-send)
-- [POST /conversation/new](#conversation-new)
-- [POST /conversation/archive](#conversation-archive)
-- [POST /conversation/unread](#conversation-unread)
-- [POST /conversation/rename](#conversation-rename)
-- [POST /suggestion/network](#suggestion-network)
-- [POST /suggestion/post](#suggestion-post)
+- [POST /conversation/show](#conversationshow)
+- [POST /conversation/send](#conversationsend)
+- [POST /conversation/new](#conversationnew)
+- [POST /conversation/archive](#conversationarchive)
+- [POST /conversation/unread](#conversationunread)
+- [POST /conversation/rename](#conversationrename)
+- [POST /suggestion/network](#suggestionnetwork)
+- [POST /suggestion/post](#suggestionpost)
 
 ### /login
 #### POST
