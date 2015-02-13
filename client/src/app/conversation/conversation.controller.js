@@ -13,6 +13,7 @@
     vm.sendMessage = sendMessage;
     vm.getFriends = getFriends;
     vm.addReceiver = addReceiver;
+    vm.deleteReceiver = deleteReceiver;
     vm.getUserForID = getUserForID;
 
     // vars
@@ -153,6 +154,10 @@
       if (!vm.currentConversation.receiverList) vm.currentConversation.receiverList = [];
       vm.currentConversation.receiverList.push(vm.newReceiver);
       vm.newReceiver = undefined;
+    }
+
+    function deleteReceiver (receiver) {
+      vm.currentConversation.receiverList.splice(receiver, 1);
     }
 
     function getUserForID (senderID) {
