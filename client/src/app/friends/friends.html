@@ -31,7 +31,7 @@
   </div>
 
   <div class="col-md-3" ng-hide="friends.loadingFriendRequests || !friends.itsMe">
-    <h2 class="text-center">Requests <span ng-hide="friends.friendRequestList.length == 0" class="label label-warning">{{ ::friends.friendRequestList.length }}</span><i ng-show="friends.friendRequestList.length == 0" class="fa fa-fw fa-smile-o"></i></h2>
+    <h2 class="text-center">Requests <span ng-hide="friends.friendRequestList.length == 0" class="label label-warning" ng-bind="friends.friendRequestList.length"></span><i ng-show="friends.friendRequestList.length == 0" class="fa fa-fw fa-smile-o"></i></h2>
     <button class="btn btn-xs btn-primary btn-block text-center margin-top visible-xs-block visible-sm-inline" ng-click="hideFriendRequests = !hideFriendRequests;" ng-hide="friends.loadingFriendRequests || friends.friendRequestList.length == 0">
       <span ng-show="hideFriendRequests">Show <i class="fa fa-caret-down"></i></span>
       <span ng-hide="hideFriendRequests">Hide <i class="fa fa-caret-up"></i></span>
@@ -65,7 +65,7 @@
   </div>
 
   <div class="col-md-3" ng-hide="friends.loadingNetworkSuggestions || !friends.itsMe">
-    <h2 class="text-center">Network-based Suggestions <span class="label label-warning">{{ ::friends.networkSuggestions.length }}</span></h2>
+    <h2 class="text-center">Network-based Suggestions <span class="label label-warning" ng-bind="friends.networkSuggestions.length"></span></h2>
     <button class="btn btn-xs btn-primary btn-block text-center margin-top visible-xs-block visible-sm-inline" ng-click="hideNetworkSuggestions = !hideNetworkSuggestions;" ng-hide="friends.loadingNetworkSuggestions || friends.networkSuggestions.length == 0">
       <span ng-show="hideNetworkSuggestions">Show <i class="fa fa-caret-down"></i></span>
       <span ng-hide="hideNetworkSuggestions">Hide <i class="fa fa-caret-up"></i></span>
@@ -99,7 +99,7 @@
   </div>
 
   <div class="col-md-3" ng-hide="friends.loadingPostSuggestions || !friends.itsMe">
-    <h2 class="text-center">Post-based Suggestions <span class="label label-warning">{{ ::friends.postSuggestions.length }}</span></h2>
+    <h2 class="text-center">Post-based Suggestions <span class="label label-warning" ng-bind="friends.postSuggestions.length"></span></h2>
     <button class="btn btn-xs btn-primary btn-block text-center margin-top visible-xs-block visible-sm-inline" ng-click="hidePostSuggestions = !hidePostSuggestions;" ng-hide="friends.loadingPostSuggestions || friends.postSuggestions.length == 0">
       <span ng-show="hidePostSuggestions">Show <i class="fa fa-caret-down"></i></span>
       <span ng-hide="hidePostSuggestions">Hide <i class="fa fa-caret-up"></i></span>
