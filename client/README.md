@@ -117,11 +117,11 @@ Here are all modules registered and also the `$routeProvider` which is the Angul
 - `ngRoute`
 	- Angulars built-in module for easier and advanced routing
 - `ui.bootstrap`
-	- AngularJS Bootstrap UI (see above)
+	- AngularJS Bootstrap UI (see [above](#external-dependencies))
 - `ui.bootstrap.showErrors`
-	- angular-bootstrap-show-errors (see above)
+	- angular-bootstrap-show-errors (see [above](#external-dependencies))
 - `luegg.directives`
-	- angular-scroll-glue (see above)
+	- angular-scroll-glue (see [above](#external-dependencies))
 - `n3twork.register`
 	- handles the registration form
 - `n3twork.auth`
