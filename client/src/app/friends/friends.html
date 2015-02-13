@@ -1,7 +1,11 @@
 <div class="row" ng-hide="friends.doesntexist">
-  <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-2 col-md-4' : friends.itsMe }" ng-hide="friends.loadingFriends">
-    <h2 ng-class="{ 'text-center' : !friends.itsMe }">Friends<span ng-hide="friends.itsMe"> of <a ng-bind="::friends.userdata.username" ng-href="#/user/{{ ::friends.userdata.username }}"></a></span> <span ng-hide="friends.friendList.length == 0" ng-bind="friends.friendList.length" class="label label-warning"></span><i ng-show="friends.friendList.length == 0" class="fa fa-fw fa-frown-o"></i></h2>
-    <ul class="media-list big-margin-top">
+  <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-md-3' : friends.itsMe }" ng-hide="friends.loadingFriends">
+    <h2 class="text-center">Friends<span ng-hide="friends.itsMe"> of <a ng-bind="::friends.userdata.username" ng-href="#/user/{{ ::friends.userdata.username }}"></a></span> <span ng-hide="friends.friendList.length == 0" ng-bind="friends.friendList.length" class="label label-warning"></span><i ng-show="friends.friendList.length == 0" class="fa fa-fw fa-frown-o"></i></h2>
+    <button class="btn btn-xs btn-primary btn-block text-center margin-top visible-xs-block visible-sm-inline" ng-click="hideFriends = !hideFriends;" ng-hide="friends.loadingFriends || friends.friendList.length == 0">
+      <span ng-show="hideFriends">Show <i class="fa fa-caret-down"></i></span>
+      <span ng-hide="hideFriends">Hide <i class="fa fa-caret-up"></i></span>
+    </button>
+    <ul class="media-list big-margin-top" ng-hide="hideFriends">
       <li class="media" ng-repeat="friend in friends.friendList | orderBy: 'date':true">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
@@ -19,16 +23,20 @@
         </div>
       </li>
     </ul>
-    <h4 ng-show="friends.friendList.length == 0" ng-class="{ 'text-center' : !friends.itsMe }">There are no friends to display here.</h4>
+    <h4 ng-show="friends.friendList.length == 0" ng-class="text-center">There are no friends to display here.</h4>
   </div>
 
-  <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-sm-offset-1 col-sm-5 col-md-offset-2 col-md-4' : friends.itsMe }" ng-show="friends.loadingFriends">
+  <div ng-class="{ 'col-md-offset-3 col-md-6' : !friends.itsMe, 'col-md-3' : friends.itsMe }" ng-show="friends.loadingFriends">
     <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
   </div>
 
-  <div class="col-sm-5 col-md-4" ng-hide="friends.loadingFriendRequests || !friends.itsMe">
-    <h2>Friend Requests <span ng-hide="friends.friendRequestList.length == 0" class="label label-warning">{{ ::friends.friendRequestList.length }}</span><i ng-show="friends.friendRequestList.length == 0" class="fa fa-fw fa-smile-o"></i></h2>
-    <ul class="media-list big-margin-top">
+  <div class="col-md-3" ng-hide="friends.loadingFriendRequests || !friends.itsMe">
+    <h2 class="text-center">Requests <span ng-hide="friends.friendRequestList.length == 0" class="label label-warning">{{ ::friends.friendRequestList.length }}</span><i ng-show="friends.friendRequestList.length == 0" class="fa fa-fw fa-smile-o"></i></h2>
+    <button class="btn btn-xs btn-primary btn-block text-center margin-top visible-xs-block visible-sm-inline" ng-click="hideFriendRequests = !hideFriendRequests;" ng-hide="friends.loadingFriendRequests || friends.friendRequestList.length == 0">
+      <span ng-show="hideFriendRequests">Show <i class="fa fa-caret-down"></i></span>
+      <span ng-hide="hideFriendRequests">Hide <i class="fa fa-caret-up"></i></span>
+    </button>
+    <ul class="media-list big-margin-top" ng-hide="hideFriendRequests">
       <li class="media" ng-repeat="friend in friends.friendRequestList">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
@@ -50,12 +58,81 @@
         <hr style="margin: 10px 0;">
       </li>
     </ul>
-    <h4 ng-show="friends.friendRequestList.length == 0">You have no pending friend requests.</h4>
+    <h4 ng-show="friends.friendRequestList.length == 0" class="text-center">You have no pending friend requests.</h4>
   </div>
-
-  <div class="col-sm-5 col-md-4" ng-show="friends.loadingFriendRequests && friends.itsMe">
+  <div class="col-md-3" ng-show="friends.loadingFriendRequests && friends.itsMe">
     <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
   </div>
+
+  <div class="col-md-3" ng-hide="friends.loadingNetworkSuggestions || !friends.itsMe">
+    <h2 class="text-center">Network-based Suggestions <span class="label label-warning">{{ ::friends.networkSuggestions.length }}</span></h2>
+    <button class="btn btn-xs btn-primary btn-block text-center margin-top visible-xs-block visible-sm-inline" ng-click="hideNetworkSuggestions = !hideNetworkSuggestions;" ng-hide="friends.loadingNetworkSuggestions || friends.networkSuggestions.length == 0">
+      <span ng-show="hideNetworkSuggestions">Show <i class="fa fa-caret-down"></i></span>
+      <span ng-hide="hideNetworkSuggestions">Hide <i class="fa fa-caret-up"></i></span>
+    </button>
+    <ul class="media-list big-margin-top" ng-hide="hideNetworkSuggestions">
+      <li class="media" ng-repeat="suggestion in friends.networkSuggestions">
+        <span class="media-left">
+          <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=128 2x"/>
+        </span>
+        <div class="media-body">
+          <h4 class="media-heading">
+            <a class="media-left media-middle" ng-href="#/user/{{ suggestion.username }}">
+              <span ng-bind="suggestion.firstName + ' ' + suggestion.lastName"></span><br ng-show="suggestion.firstName">
+              <span ng-bind="suggestion.username"></span>
+            </a>
+          </h4>
+          <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::suggestion.email }}<br>
+        </div>
+        <button class="btn btn-xs btn-success margin-top" ng-disabled="friends.addButtonLoading[suggestion.id]" style="min-width: 50%;" ng-click="friends.addToFriends(suggestion.id)">
+          <span ng-hide="friends.addButtonLoading[suggestion.id]"><i class="fa fa-plus"></i> Add to friends</span>
+          <span ng-show="friends.addButtonLoading[suggestion.id]"><i class="fa fa-spinner fa-spin"></i> Adding</span>
+        </button>
+        <hr style="margin: 10px 0;">
+      </li>
+    </ul>
+    <h4 ng-show="friends.networkSuggestions.length == 0" class="text-center">You have no network-based friend-suggestions.</h4>
+  </div>
+  <div class="col-md-3" ng-show="friends.loadingNetworkSuggestions && friends.itsMe">
+    <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
+  </div>
+
+  <div class="col-md-3" ng-hide="friends.loadingPostSuggestions || !friends.itsMe">
+    <h2 class="text-center">Post-based Suggestions <span class="label label-warning">{{ ::friends.postSuggestions.length }}</span></h2>
+    <button class="btn btn-xs btn-primary btn-block text-center margin-top visible-xs-block visible-sm-inline" ng-click="hidePostSuggestions = !hidePostSuggestions;" ng-hide="friends.loadingPostSuggestions || friends.postSuggestions.length == 0">
+      <span ng-show="hidePostSuggestions">Show <i class="fa fa-caret-down"></i></span>
+      <span ng-hide="hidePostSuggestions">Hide <i class="fa fa-caret-up"></i></span>
+    </button>
+    <ul class="media-list big-margin-top" ng-hide="hidePostSuggestions">
+      <li class="media" ng-repeat="suggestion in friends.postSuggestions">
+        <span class="media-left">
+          <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
+          <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=128 2x"/>
+        </span>
+        <div class="media-body">
+          <h4 class="media-heading">
+            <a class="media-left media-middle" ng-href="#/user/{{ suggestion.username }}">
+              <span ng-bind="suggestion.firstName + ' ' + suggestion.lastName"></span><br ng-show="suggestion.firstName">
+              <span ng-bind="suggestion.username"></span>
+            </a>
+          </h4>
+          <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::suggestion.email }}<br>
+        </div>
+        <button class="btn btn-xs btn-success margin-top" ng-disabled="friends.addButtonLoading[suggestion.id]" style="min-width: 50%;" ng-click="friends.addToFriends(suggestion.id)">
+          <span ng-hide="friends.addButtonLoading[suggestion.id]"><i class="fa fa-plus"></i> Add to friends</span>
+          <span ng-show="friends.addButtonLoading[suggestion.id]"><i class="fa fa-spinner fa-spin"></i> Adding</span>
+        </button>
+        <hr style="margin: 10px 0;">
+      </li>
+    </ul>
+    <h4 ng-show="friends.postSuggestions.length == 0" class="text-center">You have no post-based friend-suggestions.</h4>
+  </div>
+
+  <div class="col-md-3" ng-show="friends.loadingPostSuggestions && friends.itsMe">
+    <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></h3>
+  </div>
+
 </div>
 
 

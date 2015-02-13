@@ -22,20 +22,36 @@
     init(true);
 
     function init(loadingStates) {
-      if (loadingStates) {
-        vm.loadingFriends = true;
-        vm.loadingFriendRequests = true;
-      }
+      if (loadingStates) vm.loadingFriends = true;
       var username = $routeParams.username;
       vm.itsMe = (username == $rootScope.userdata.username);
       CacheSvc.getUserData(username).then(function (userdata) {
         vm.userdata = userdata;
         if (vm.itsMe) {
+          if (loadingStates) {
+            vm.loadingFriendRequests = true;
+            vm.loadingNetworkSuggestions = true;
+            vm.loadingPostSuggestions = true;
+          }
           CacheSvc.getFriendRequests().then(function (friendRequestList) {
             vm.friendRequestList = friendRequestList;
             vm.loadingFriendRequests = false;
           }, function (error) {
             vm.loadingFriendRequests = false;
+            vm.errorOccured = true;
+          });
+          CacheSvc.getFriendNetworkSuggestions().then(function (networkSuggestions) {
+            vm.networkSuggestions = networkSuggestions;
+            vm.loadingNetworkSuggestions = false;
+          }, function (error) {
+            vm.loadingNetworkSuggestions = false;
+            vm.errorOccured = true;
+          });
+          CacheSvc.getFriendPostSuggestions().then(function (postSuggestions) {
+            vm.postSuggestions = postSuggestions;
+            vm.loadingPostSuggestions = false;
+          }, function (error) {
+            vm.loadingPostSuggestions = false;
             vm.errorOccured = true;
           });
         }

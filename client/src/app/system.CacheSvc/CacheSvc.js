@@ -15,6 +15,8 @@
       getFriendListOfUser: getFriendListOfUser,
       checkIfFriend: checkIfFriend,
       getFriendRequests: getFriendRequests,
+      getFriendNetworkSuggestions: getFriendNetworkSuggestions,
+      getFriendPostSuggestions: getFriendPostSuggestions,
       removeFriendCache: removeFriendCache,
       removeGroupCache: removeGroupCache
     };
@@ -219,9 +221,65 @@
       return deferred.promise;
     }
 
+    function getFriendNetworkSuggestions () {
+      var deferred = $q.defer();
+      var sessionData = getSessionData('my', 'friendNetworkSuggestions');
+
+      if (sessionData) {
+        deferred.resolve(sessionData);
+      } else {
+        // get friendList from API
+        APISvc.request({
+          method: 'POST',
+          url: '/suggestion/network',
+          data: { }
+        }).then(function (response) {
+          if (response.data.successful) {
+            setSessionData('my', 'friendNetworkSuggestions', response.data.userList);
+            deferred.resolve(response.data.userList);
+          } else {
+            deferred.reject(response.data.successful);
+          }
+        }, function (error) {
+          deferred.reject(error);
+        });
+      }
+
+      return deferred.promise;
+    }
+
+    function getFriendPostSuggestions () {
+      var deferred = $q.defer();
+      var sessionData = getSessionData('my', 'friendPostSuggestions');
+
+      if (sessionData) {
+        deferred.resolve(sessionData);
+      } else {
+        // get friendList from API
+        APISvc.request({
+          method: 'POST',
+          url: '/suggestion/post',
+          data: { }
+        }).then(function (response) {
+          if (response.data.successful) {
+            setSessionData('my', 'friendPostSuggestions', response.data.userList);
+            deferred.resolve(response.data.userList);
+          } else {
+            deferred.reject(response.data.successful);
+          }
+        }, function (error) {
+          deferred.reject(error);
+        });
+      }
+
+      return deferred.promise;
+    }
+
     function removeFriendCache() {
       removeSessionData($rootScope.userdata.id, 'friendList');
       removeSessionData('my', 'friendRequestList');
+      removeSessionData('my', 'friendNetworkSuggestions');
+      removeSessionData('my', 'friendPostSuggestions');
     }
 
     function removeGroupCache() {
