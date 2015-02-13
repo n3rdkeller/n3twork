@@ -201,7 +201,7 @@ This handles the groups overview, the display of one group, and the group creati
 
 - Groups Overview
 	- the controller `GroupsCtrl`
-	- the view `groups.html
+	- the view `groups.html`
 	- the modal to create a group
 		- the controller `CreateGroupCtrl`
 		- the view `createGroupModal.html`
