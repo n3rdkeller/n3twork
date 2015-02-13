@@ -17,12 +17,13 @@
 
     function init() {
       getConversationList(true);
-      $rootScope.$watch(function () {
-        return $rootScope.somethingNewThere;
-      }, function () {
-        console.log('something happened');
-        getConversationList(false);
-        $rootScope.somethingNewThere = false;
+      $rootScope.$on('reload-messages', function () {
+        return getConversationList(false);
+      });
+      $rootScope.$on('opened-message', function (_, conversationID) {
+        if (conversationID == $routeParams.id) {
+          return getConversationList(false);
+        } else return;
       });
     }
 

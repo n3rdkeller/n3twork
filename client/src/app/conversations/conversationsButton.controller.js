@@ -16,12 +16,17 @@
       $interval(function () {
         getUnreadFromAPI(false)
       }, 10000);
+      $rootScope.$on('opened-message', function () {
+        return getUnreadFromAPI(false);
+      });
     }
 
     function getUnreadFromAPI (loadingState) {
       if (loadingState) vm.unreadLoading = true;
       ConversationSvc.getUnreadForBadge().then(function (unreadCount) {
-        if (vm.unreadCount != unreadCount) $rootScope.somethingNewThere = true;
+        if ((vm.unreadCount != undefined) && (unreadCount != 0) && (vm.unreadCount != unreadCount)) {
+          $rootScope.$broadcast('reload-messages');
+        }
         vm.unreadCount = unreadCount;
         vm.unreadLoading = false;
       }, function (err) {

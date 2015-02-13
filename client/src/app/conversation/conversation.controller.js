@@ -29,11 +29,7 @@
           vm.newConversation = true;
         } else {
           getMessagesFromAPI(true);
-          $rootScope.$watch(function () {
-            for (var i = 0; i < $rootScope.conversationList.length; i++) {
-              if ($rootScope.conversationList[i].id == vm.currentConversation.id) return $rootScope.conversationList[i].unreadCount;
-            };
-          }, function () {
+          $rootScope.$on('reload-messages', function () {
             return getMessagesFromAPI(false);
           });
         }
@@ -48,6 +44,7 @@
       if (loadingState) vm.historyLoading = true;
       ConversationSvc.getMessages(vm.currentConversation.id).then(function (messageList) {
         vm.messageList = messageList;
+        $rootScope.$emit('opened-message', vm.currentConversation.id);
         if (loadingState) vm.historyLoading = false;
       }, function (err) {
         vm.hideConversation = true;
