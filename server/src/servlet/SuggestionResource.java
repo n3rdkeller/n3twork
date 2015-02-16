@@ -62,7 +62,7 @@ public class SuggestionResource {
         log.debug("/conversation returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      String entity = String.valueOf(User.convertUserListToJson(Suggestion.networkSuggestion(user)));
+      String entity = String.valueOf(Suggestion.convertUserMapToJson(Suggestion.networkSuggestion(user)));
       return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);
@@ -101,7 +101,7 @@ public class SuggestionResource {
         log.debug("/conversation returns:" + entity);
         return Helper.okResponse(entity);
       } 
-      String entity = String.valueOf(User.convertUserListToJson(Suggestion.postBasedSuggestion(user)));
+      String entity = String.valueOf(Suggestion.convertUserMapToJson(Suggestion.postBasedSuggestion(user)));
       return Helper.okResponse(entity);
     } catch(Exception e) {
       log.error(e);

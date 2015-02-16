@@ -7,6 +7,8 @@ import gnu.trove.TDoubleArrayList;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntDoubleHashMap;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +26,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -35,33 +41,52 @@ public class Suggestion {
 
   final static Logger log = LogManager.getLogger(Suggestion.class);
   
-
   /**
-   * Copied Method from <a href="http://javarevisited.blogspot.de/2012/12/how-to-sort-hashmap-java-by-key-and-value.html">javarevisited.blogspot.de</a><br>
-   * Java method to sort Map in Java by value e.g. HashMap or Hashtable.
-   * It also sort values even if they are duplicates
-   * @throws NullPointerException if Map contains null values
+   * Converts any map of users with their rating to a json string
+   * @param users - users in the list don't necessarily need to have it's attributes set 
+   * @return <pre><code>{
+   *  "userList":[
+   *    {
+   *      "id":userID,
+   *      "username":"username",
+   *      "email":"em@il",
+   *      "emailhash":"hash of email",
+   *      "lastName":"name",
+   *      "firstName":"firstName",
+   *      "rating":1,
+   *      "otherProperties:{
+   *        "property1":"value",
+   *        "property2":"value",
+   *      }
+   *    },
+   *  ],
+   *  successful":true
+   *}</code></pre>
+   * @throws UnsupportedEncodingException 
+   * @throws NoSuchAlgorithmException 
    */
-  public static <K extends Object,V extends Comparable> Map<K,V> sortByValues(Map<K,V> map){
-      List<Map.Entry<K,V>> entries = new LinkedList<Map.Entry<K,V>>(map.entrySet());
-   
-      Collections.sort(entries, new Comparator<Map.Entry<K,V>>() {
-
-          @Override
-          public int compare(Entry<K, V> o1, Entry<K, V> o2) {
-              return o1.getValue().compareTo(o2.getValue());
-          }
-      });
-   
-      //LinkedHashMap will keep the keys in the order they are inserted
-      //which is currently sorted on natural ordering
-      Map<K,V> sortedMap = new LinkedHashMap<K,V>();
-   
-      for(Map.Entry<K,V> entry: entries){
-          sortedMap.put(entry.getKey(), entry.getValue());
+  public static String convertUserMapToJson(Map<User, Double> users) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    JsonArrayBuilder userList = Json.createArrayBuilder();
+    for (Entry<User, Double> user : users.entrySet()) {
+      JsonObjectBuilder otherProperties = Json.createObjectBuilder();
+      for (Entry<String, String> e : user.getKey().getOtherProperties().entrySet()) {
+        if (e.getValue() == null) e.setValue("");
+        if (e.getValue() != "") otherProperties.add(e.getKey(), e.getValue());
       }
-   
-      return sortedMap;
+      userList.add(Json.createObjectBuilder()
+        .add("id", user.getKey().getId())
+        .add("username", user.getKey().getUsername())
+        .add("email", user.getKey().getEmail())
+        .add("emailhash", User.md5(user.getKey().getEmail().toLowerCase()))
+        .add("lastName", user.getKey().getName())
+        .add("firstName", user.getKey().getFirstName())
+        .add("rating", user.getValue())
+        .add("otherProperties", otherProperties));
+    }
+    return String.valueOf(Json.createObjectBuilder()
+        .add("userList", userList)
+        .add("successful", true)
+        .build());
   }
   
   /**
@@ -73,7 +98,7 @@ public class Suggestion {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public static List<User> networkSuggestion(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public static Map<User, Double> networkSuggestion(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     String sql = "SELECT Users.id, Users.username, Users.email, Users.name, Users.firstName, Friends.userID as partner "
         + "FROM " + DBConnector.DATABASE + ".Users "
@@ -101,36 +126,49 @@ public class Suggestion {
     pStmt.setInt(6, user.getId());
     
     ResultSet suggestionTable = pStmt.executeQuery();
-    Map<User, Integer> suggestionMap = new HashMap<User, Integer>();
+    Map<Integer, Integer> suggestionMap = new HashMap<Integer, Integer>();
+    Map<Integer, User> idUserMap = new HashMap<Integer, User>();
     Set<HashSet<Integer>> idPairSet = new HashSet<HashSet<Integer>>();
-    whileLoop:
     while (suggestionTable.next()) {
+      // wandle gerrichtete kanten in ungerrichtete kanten um
       HashSet<Integer> newIdPair = new HashSet<Integer>();
       newIdPair.add(suggestionTable.getInt("id"));
       newIdPair.add(suggestionTable.getInt("partner"));
-      for (HashSet<Integer> idPair: idPairSet) {
-        if(idPair.equals(newIdPair)) {
-          continue whileLoop;
-        }
-      }
+      if(idPairSet.contains(newIdPair)) continue;
       idPairSet.add(newIdPair);
+      
+      // Add user to suggestionMap, if he is not already in the Map
+      int userID = suggestionTable.getInt("id");
       User toBeAdded = new User(
-          suggestionTable.getInt("id"),
+          userID,
           suggestionTable.getString("username"),
           suggestionTable.getString("email"),
           suggestionTable.getString("name"),
           suggestionTable.getString("firstName"));
-      if(suggestionMap.containsKey(toBeAdded)){
-        suggestionMap.put(toBeAdded, suggestionMap.get(toBeAdded) + 1);
+      if(suggestionMap.containsKey(userID)){
+        suggestionMap.put(userID, suggestionMap.get(userID) + 1);
       } else {
-        suggestionMap.put(toBeAdded, 1);
+        suggestionMap.put(userID, 1);
       }
+      idUserMap.put(userID, toBeAdded);
+    }
+    log.debug(idPairSet);
+    log.debug(suggestionMap);
+    //select all friends of the user
+    sql = "SELECT userID as id FROM " + DBConnector.DATABASE + ".Friends WHERE friendID=? "
+        + "UNION "
+        + "SELECT friendID as id FROM " + DBConnector.DATABASE + ".Friends WHERE userID=?";
+    pStmt = conn.prepareStatement(sql);
+    pStmt.setInt(1, user.getId());
+    pStmt.setInt(2, user.getId());
+    ResultSet friendsTable = pStmt.executeQuery();
+    while(friendsTable.next()) {
+      suggestionMap.remove(friendsTable.getInt("id"));
     }
     conn.close();
-    suggestionMap = sortByValues(suggestionMap);
-    List<User> suggestionList = new ArrayList<User>();
-    for(Entry<User, Integer> entry: suggestionMap.entrySet()) {
-      suggestionList.add(entry.getKey());
+    Map<User, Double> suggestionList = new HashMap<User, Double>();
+    for(Entry<Integer, Integer> entry: suggestionMap.entrySet()) {
+      suggestionList.put(idUserMap.get(entry.getKey()), (double) (entry.getValue()));
     }
     return suggestionList;
   }
@@ -144,7 +182,7 @@ public class Suggestion {
    * @throws ClassNotFoundException
    * @throws SQLException
    */
-  public static List<User> postBasedSuggestion(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+  public static Map<User, Double> postBasedSuggestion(User user) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
     Connection conn = DBConnector.getConnection();
     // select the user in question and all users, that are not a friend of them
     String sql = "SELECT Posts.content, Users.id, Users.username, Users.email, Users.name, Users.firstName "
@@ -195,12 +233,14 @@ public class Suggestion {
     Collections.sort(wordRow);
     wordTable.put(author.getId(), wordRow);
     userMap.put(author.getId(), author);
+    log.debug(wordTable);
     //fill the matrix
     int userRow = 0;
     List<String> wordList = new ArrayList<String>();
     List<TDoubleArrayList> wordUserMatrix = new ArrayList<TDoubleArrayList>();
     TDoubleArrayList matrixRow = new TDoubleArrayList();
     for(Entry<Integer, ArrayList<String>> row: wordTable.entrySet()) {
+      matrixRow = new TDoubleArrayList();
       matrixRow.add(row.getKey());
       if (row.getKey() == user.getId()) {
         userRow = wordUserMatrix.size(); // needed later
@@ -247,6 +287,7 @@ public class Suggestion {
       if(wordCounter != 0) matrixRow.add(wordCounter);
       wordUserMatrix.add(matrixRow);
     }
+    log.debug("wordUserMatrix " + wordUserMatrix);
     log.debug("fill nList");
     TIntArrayList nList = new TIntArrayList(wordList.size());
     for(int i = 1; i <= wordList.size(); i++) {
@@ -258,12 +299,19 @@ public class Suggestion {
       }
       nList.add(n);
     }
+    log.debug(nList);
     log.debug("fill maxList");
-    TDoubleArrayList maxList = new TDoubleArrayList(wordUserMatrix.size());
-    for(TDoubleArrayList row: wordUserMatrix) {
-      maxList.add(row.max());
+    TDoubleArrayList maxList = new TDoubleArrayList();
+    for(int i = 0; i < wordUserMatrix.size(); i++) {
+      TDoubleArrayList row = wordUserMatrix.get(i);
+      Double max = 0.0;
+      for(int j = 1; j < row.size(); j++) {
+        if(max < row.get(j)) max = row.get(j);
+      }
+      maxList.add(max);
     }
-    log.debug("calculate wij");
+    log.debug(maxList);
+    log.debug("calculation of wij");
     int j = 0;
     for(TDoubleArrayList row: wordUserMatrix) {
       for(int i = 1; i <= wordList.size(); i++) {
@@ -275,12 +323,13 @@ public class Suggestion {
       }
       j++;
     }
-    log.debug("last calculation");
+    log.debug("Calculate userSum: sqrt(sum(wi^2))");
     Double userSum = 0.0;
     for (int i = 1; i < wordUserMatrix.get(userRow).size(); i++) {
       userSum = userSum + Math.pow(wordUserMatrix.get(userRow).get(i), 2);
     }
     userSum = Math.sqrt(userSum);
+    log.debug("Calc userRatingMap");
     Map<User, Double> userRatingMap = new HashMap<User, Double>();
     for(TDoubleArrayList row: wordUserMatrix) {
       if(row.get(0) == user.getId()) continue;
@@ -289,17 +338,15 @@ public class Suggestion {
         rowSum = rowSum + Math.pow(row.get(i), 2);
       }
       rowSum = Math.sqrt(rowSum);
+      log.debug("rowSum: " + rowSum);
       Double productSum = 0.0;
       for (int i = 1; i < Math.min(row.size(), wordUserMatrix.get(userRow).size()); i++) {
         productSum = productSum + row.get(i) * wordUserMatrix.get(userRow).get(i);
       }
-      userRatingMap.put(userMap.get(row.get(0)), productSum/(userSum*productSum));
+      log.debug("productSum: " + productSum);
+      Double sim = productSum/(userSum*productSum);
+        userRatingMap.put(userMap.get((int) (row.get(0))), productSum/(userSum*rowSum));
     }
-    userRatingMap = sortByValues(userRatingMap);
-    List<User> suggestionList = new ArrayList<User>();
-    for(Entry<User, Double> entry: userRatingMap.entrySet()) {
-      suggestionList.add(entry.getKey());
-    }
-    return suggestionList;
+    return userRatingMap;
   }
 }

@@ -660,6 +660,10 @@ public class User {
     return this.otherProperties.get(key);
   }
   
+  public Map<String, String> getOtherProperties() {
+    return this.otherProperties;
+  }
+  
   /**
    * Setter for otherProperties. Also sets values in db. This method uses 1 select query and 1 insert query.
    * @param properties - appends properties to otherProperties.
