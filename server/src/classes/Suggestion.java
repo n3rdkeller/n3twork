@@ -192,7 +192,7 @@ public class Suggestion {
           + "SELECT userID from " + DBConnector.DATABASE + ".Friends WHERE friendID = ? "
           + "UNION "
           + "SELECT friendID from " + DBConnector.DATABASE + ".Friends WHERE userID = ? "
-        + ")";
+        + ") ORDER BY Users.id";
     PreparedStatement pStmt = conn.prepareStatement(sql);
     pStmt.setInt(1, user.getId());
     pStmt.setInt(2, user.getId());
@@ -203,7 +203,9 @@ public class Suggestion {
     Map<Integer,ArrayList<String>> wordTable = new HashMap<Integer,ArrayList<String>>();
     Map<Integer, User> userMap = new HashMap<Integer, User>();
     ArrayList<String> wordRow = new ArrayList<String>();
+    log.debug("id | content");
     while(postTable.next()) {
+      log.debug(postTable.getInt("id") + " | " + postTable.getString("content"));
       //if the author is new, then add the old one to the HashMap
       if(author.getId() != postTable.getInt("id")) {
         if(wordRow.size() != 0) {
@@ -240,6 +242,7 @@ public class Suggestion {
     List<TDoubleArrayList> wordUserMatrix = new ArrayList<TDoubleArrayList>();
     TDoubleArrayList matrixRow = new TDoubleArrayList();
     for(Entry<Integer, ArrayList<String>> row: wordTable.entrySet()) {
+      log.debug(row);
       matrixRow = new TDoubleArrayList();
       matrixRow.add(row.getKey());
       if (row.getKey() == user.getId()) {
@@ -293,8 +296,8 @@ public class Suggestion {
     for(int i = 1; i <= wordList.size(); i++) {
       int n = 0;
       for(TDoubleArrayList row: wordUserMatrix){
-        if(i < row.size() && n < row.get(i)) { 
-          n = (int) row.get(i);
+        if(i < row.size() && row.get(i) != 0) { 
+          n++;
         }
       }
       nList.add(n);
@@ -306,7 +309,9 @@ public class Suggestion {
       TDoubleArrayList row = wordUserMatrix.get(i);
       Double max = 0.0;
       for(int j = 1; j < row.size(); j++) {
-        if(max < row.get(j)) max = row.get(j);
+        if(max < row.get(j)){
+          max = row.get(j);
+        }
       }
       maxList.add(max);
     }
@@ -323,12 +328,16 @@ public class Suggestion {
       }
       j++;
     }
+    log.debug(wordUserMatrix);
     log.debug("Calculate userSum: sqrt(sum(wi^2))");
     Double userSum = 0.0;
     for (int i = 1; i < wordUserMatrix.get(userRow).size(); i++) {
+      //log.debug(userSum + " + " + wordUserMatrix.get(userRow).get(i) + "^2");
       userSum = userSum + Math.pow(wordUserMatrix.get(userRow).get(i), 2);
     }
+    //log.debug(userSum);
     userSum = Math.sqrt(userSum);
+    log.debug("userSum: " + userSum);
     log.debug("Calc userRatingMap");
     Map<User, Double> userRatingMap = new HashMap<User, Double>();
     for(TDoubleArrayList row: wordUserMatrix) {
