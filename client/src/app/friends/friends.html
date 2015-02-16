@@ -71,7 +71,7 @@
       <span ng-hide="hideNetworkSuggestions">Hide <i class="fa fa-caret-up"></i></span>
     </button>
     <ul class="media-list big-margin-top" ng-hide="hideNetworkSuggestions">
-      <li class="media" ng-repeat="suggestion in friends.networkSuggestions | orderBy:'rating'">
+      <li class="media" ng-repeat="suggestion in friends.networkSuggestions | orderBy:'rating':true">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
           <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=128 2x"/>
@@ -84,6 +84,7 @@
             </a>
           </h4>
           <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::suggestion.email }}<br>
+          <i class="fa fa-heart-o" title="Common Friends"></i> {{ ::suggestion.rating }}
         </div>
         <button class="btn btn-xs btn-success margin-top" ng-disabled="friends.addButtonLoading[suggestion.id]" style="min-width: 50%;" ng-click="friends.addToFriends(suggestion.id)">
           <span ng-hide="friends.addButtonLoading[suggestion.id]"><i class="fa fa-plus"></i> Add to friends</span>
@@ -105,7 +106,7 @@
       <span ng-hide="hidePostSuggestions">Hide <i class="fa fa-caret-up"></i></span>
     </button>
     <ul class="media-list big-margin-top" ng-hide="hidePostSuggestions">
-      <li class="media" ng-repeat="suggestion in friends.postSuggestions | orderBy:'rating'">
+      <li class="media" ng-repeat="suggestion in friends.postSuggestions | orderBy:'rating':true">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
           <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=128 2x"/>
@@ -118,6 +119,7 @@
             </a>
           </h4>
           <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::suggestion.email }}<br>
+          <i class="fa fa-bar-chart-o" title="Match"></i> {{ ::suggestion.rating * 1000 | number:0 }}%
         </div>
         <button class="btn btn-xs btn-success margin-top" ng-disabled="friends.addButtonLoading[suggestion.id]" style="min-width: 50%;" ng-click="friends.addToFriends(suggestion.id)">
           <span ng-hide="friends.addButtonLoading[suggestion.id]"><i class="fa fa-plus"></i> Add to friends</span>
