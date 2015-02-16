@@ -71,7 +71,7 @@
       <span ng-hide="hideNetworkSuggestions">Hide <i class="fa fa-caret-up"></i></span>
     </button>
     <ul class="media-list big-margin-top" ng-hide="hideNetworkSuggestions">
-      <li class="media" ng-repeat="suggestion in friends.networkSuggestions">
+      <li class="media" ng-repeat="suggestion in friends.networkSuggestions | orderBy:'rating'">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
           <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=128 2x"/>
@@ -105,7 +105,7 @@
       <span ng-hide="hidePostSuggestions">Hide <i class="fa fa-caret-up"></i></span>
     </button>
     <ul class="media-list big-margin-top" ng-hide="hidePostSuggestions">
-      <li class="media" ng-repeat="suggestion in friends.postSuggestions">
+      <li class="media" ng-repeat="suggestion in friends.postSuggestions | orderBy:'rating'">
         <span class="media-left">
           <!-- <i class="fa fa-user fa-fw fa-3x"></i> -->
           <img width="64px" ng-src="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64" ng-srcset="http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=64 1x, http://www.gravatar.com/avatar/{{ suggestion.emailhash }}?d=mm&s=128 2x"/>
