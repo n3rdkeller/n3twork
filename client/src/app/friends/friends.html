@@ -84,7 +84,7 @@
             </a>
           </h4>
           <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::suggestion.email }}<br>
-          <i class="fa fa-heart-o" title="Common Friends"></i> {{ ::suggestion.rating }}
+          <i class="fa fa-fw fa-heart-o" title="Mutual Friends"></i> {{ ::suggestion.rating }}
         </div>
         <button class="btn btn-xs btn-success margin-top" ng-disabled="friends.addButtonLoading[suggestion.id]" style="min-width: 50%;" ng-click="friends.addToFriends(suggestion.id)">
           <span ng-hide="friends.addButtonLoading[suggestion.id]"><i class="fa fa-plus"></i> Add to friends</span>
@@ -119,7 +119,7 @@
             </a>
           </h4>
           <strong><i class="fa fa-fw fa-envelope-o"></i></strong> {{ ::suggestion.email }}<br>
-          <i class="fa fa-bar-chart-o" title="Match"></i> {{ ::suggestion.rating * 1000 | number:0 }}%
+          <i class="fa fa-fw fa-bar-chart-o" title="Match"></i> {{ ::suggestion.rating * 1000 | number:0 }}%
         </div>
         <button class="btn btn-xs btn-success margin-top" ng-disabled="friends.addButtonLoading[suggestion.id]" style="min-width: 50%;" ng-click="friends.addToFriends(suggestion.id)">
           <span ng-hide="friends.addButtonLoading[suggestion.id]"><i class="fa fa-plus"></i> Add to friends</span>
