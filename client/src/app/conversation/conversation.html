@@ -51,6 +51,12 @@
       <a ng-href="#/user/{{ con.getUserForID(msg.senderID).username }}" title="{{ con.getUserForID(msg.senderID).firstName ? con.getUserForID(msg.senderID).firstName : con.getUserForID(msg.senderID).username }}">
         <img width="40px" ng-src="http://www.gravatar.com/avatar/{{ con.getUserForID(msg.senderID).emailhash }}?d=mm&s=40" ng-srcset="http://www.gravatar.com/avatar/{{ con.getUserForID(msg.senderID).emailhash }}?d=mm&s=40 1x, http://www.gravatar.com/avatar/{{ con.getUserForID(msg.senderID).emailhash }}?d=mm&s=80 2x" />
       </a>
+      <span class="history-username" ng-show="con.currentConversation.receiverList.length > 1">
+        <strong>
+          <a ng-href="#/user/{{ con.getUserForID(msg.senderID).username }}" title="{{ con.getUserForID(msg.senderID).firstName ? con.getUserForID(msg.senderID).firstName : con.getUserForID(msg.senderID).username }}" ng-bind="(con.getUserForID(msg.senderID).firstName ? con.getUserForID(msg.senderID).firstName : con.getUserForID(msg.senderID).username)"></a>
+          <br>
+        </strong>
+      </span>
       <span ng-bind="msg.content"></span><br>
     </div>
   </div>

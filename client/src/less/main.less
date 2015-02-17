@@ -11,6 +11,7 @@
 
 @dark-yellow: #8a6d3b;
 @button-orange: #f0ad4e;
+@dark-grey: lighten(#000, 46.7%);
 
 
 nav {
@@ -172,7 +173,7 @@ nav {
   .message {
     padding: 10px;
     margin: 5px;
-    background-color: lighten(#000, 46.7%);
+    background-color: @dark-grey;
     color: white;
     min-width: 51%;
     max-width: 70%;
@@ -182,6 +183,9 @@ nav {
     img {
       margin-right: 8px;
       float: left;
+    }
+    strong a {
+      color: white; // @button-orange;
     }
   }
   .message-right {
@@ -193,6 +197,9 @@ nav {
       margin-left: 8px;
       margin-right: 0;
       float: right;
+    }
+    strong a {
+      color: white; // @dark-grey;
     }
   }
 
